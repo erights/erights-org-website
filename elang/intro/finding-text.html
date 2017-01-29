@@ -1,0 +1,457 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Example: Finding Text</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">intro</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="starting-e.html" title="Back to: Starting E & Elmer"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Starting E & Elmer" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="standalone.html" title="On to: Standalone E Programs"><img src="../../images/next.gif" width="64" height="32" alt="On to: Standalone E Programs" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>Example:<br>
+              Finding Text<font size="3"><br>
+              <br>
+              adapted by MarkM from a chapter by Amy Mar</font></b></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> In this tutorial, you are going to write
+      an E program that finds occurrences of a specific text string in a file.
+      You will need an example file to work with. Use a text editor to create
+      a text file containing the following stanzas of the poem &quot;Jabberwocky&quot;:
+      <blockquote>'Twas brillig and the slithy toves <br>
+        Did gyre and gimble in the wabe: <br>
+        All mimsy were the borogoves, <br>
+        And the mome raths outgrabe.
+        <p>&quot;Beware the Jabberwock, my son! <br>
+          The jaws that bite, the claws that catch! <br>
+          Beware the Jubjub bird and shun <br>
+          The frumious Bandersnatch.&quot;
+      </blockquote>
+      <p>Save the text in a file called jabberwocky.txt in a directory on your
+        file system called, for example, &quot;<tt>c:/jabbertest</tt>&quot;.
+        Or, you can fetch it from the web at <a href="http://www.erights.org/elang/intro/jabberwocky.txt">http://www.erights.org/elang/intro/jabberwocky.txt</a>
+        and save it in this directory. If your directory isn't &quot;<tt>c:/jabbertest</tt>&quot;,
+        be sure to change the directory name in all the example code below. </p>
+      <p>Alternatively, you can enter the following E code, to automatically copy
+        jabberwocky.txt from the web into your file. (Don't worry if you don't
+        understand this code yet. It's just here to set up the example.)</p>
+      <p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+? def poem := &lt;http://www.erights.org/elang/intro/jabberwocky.txt&gt;
+# value: &lt;http://www.erights.org/elang/intro/jabberwocky.txt&gt;
+
+? &lt;file:c:/jabbertest&gt;.mkdirs(null); null
+? &lt;file:c:/jabbertest/jabberwocky.txt&gt;.setText(poem.getText())</pre>
+      </blockquote>
+      <h3> The for-loop</h3>
+      A loop is used to run one or more expressions multiple times. The most common
+      kind of loop is the for-loop. Type the following for-loop into <b><tt>elmer</tt></b>.
+      <blockquote>
+        <pre>? for line in &lt;file:c:/jabbertest/jabberwocky.txt&gt; {
+>     print(line)
+> }</pre>
+      </blockquote>
+      After the first and second line, <b><tt>elmer</tt></b> knows it doesn't
+      yet have a complete expression so it keeps prompting for more with the &quot;<tt>&gt;</tt>&quot;.
+      After typing the third line, elmer knows the for-loop expression is complete,
+      and runs it. You should see the contents of the file jabberwocky.txt:
+      <blockquote>'Twas brillig and the slithy toves <br>
+        Did gyre and gimble in the wabe: <br>
+        All mimsy were the borogoves, <br>
+        And the mome raths outgrabe.
+        <p>&quot;Beware the Jabberwock, my son! <br>
+          The jaws that bite, the claws that catch! <br>
+          Beware the Jubjub bird and shun <br>
+          The frumious Bandersnatch.&quot;
+      </blockquote>
+      For every line found in the file jabberwocky.txt, the for-loop prints the
+      line to the display. It repeats this operation until it has read all the
+      lines in the file.
+      <h3> Functions</h3>
+      The for-loop you have written is good for printing the file jabberwocky.txt,
+      but suppose you want to print a different file? You would like to have the
+      same code perform the same operation for any input you provide. A function
+      does just that.
+      <p>Add lines before and after the for-loop to change it to look like this:
+      <pre>        ? def show(file) :void {
+        >     for line in file {
+        >         print(line)
+        >     }
+        > }
+        # value: &lt;show>
+
+        ? show(&lt;file:c:/jabbertest/jabberwocky.txt&gt;)</pre>
+      As in the previous example, the contents of the file jabberwocky.txt are
+      output in the Program window.
+      <h4> Function definition</h4>
+      The define-expression, which begins at the word <tt>def</tt> and ends
+      at the last curly brace, }, defines a function called &quot;<tt>show</tt>&quot;.
+      Executing the define-expression performs no action except creating a function
+      that you can use later, defining a variable named &quot;show&quot;, and
+      initializing this variable to hold this function as its initial value.
+      <p>If you indeed edited the original for-loop in place to create the <tt>show</tt>
+        function, be sure to hit <i>Enter</i> after the last closing curly brace,
+        }, in order to cause the function to be defined. Of course, this rules
+        applies to all the examples below as well. Until this last <i>Enter</i>,
+        you are just editing text, but not effecting the E interpreter.
+      <h4> Parameters</h4>
+      The <tt>show</tt> function contains the for-loop operating on the variable
+      <tt>file</tt>. The variable <tt>file</tt> is called the function's
+      parameter. A parameter is a placeholder for data provided when the function
+      is called. Wherever <tt>file</tt> appears in the function definition,
+      the actual data provided will be used.
+      <h4> Function call</h4>
+      The last line is not part of the function definition. It is a function call:
+      it runs the <tt>show</tt> function. The name <tt>&lt;file:c:/jabbertest/jabberwocky.txt&gt;</tt>
+      is given as the argument to the <tt>show</tt> function. You could call
+      the same function for a different file by providing a different file name.
+      <h3> Conditions: the if-expression</h3>
+      Suppose you want to print only certain lines of a file, not all of them.
+      Suppose you want to print only those lines containing a text string you
+      specify. Use the if-expression to run code only if a condition tests true.
+      <p>Add lines before and after the print function call, change the name of
+        the function to find, and add a second argument to it, so that the function
+        definition looks like this:
+      <pre>        ? def find(file, substring) :void {
+        >     for line in file {
+        >         if (line.includes(substring)) {
+        >             print(line)
+        >         }
+        >     }
+        > }
+        # value: &lt;find></pre>
+      Add a second argument value to the function call:
+      <pre>        ? find(&lt;file:c:/jabbertest/jabberwocky.txt&gt;, &quot;and&quot;)</pre>
+      Now only the lines in the file jabberwocky.txt that contain the string &quot;and&quot;
+      are printed in the Program window.
+      <blockquote>'Twas brillig and the slithy toves <br>
+        Did gyre and gimble in the wabe: <br>
+        Beware the Jubjub bird and shun <br>
+        The frumious Bandersnatch.&quot;</blockquote>
+      The line that contains &quot;Bandersnatch&quot; is included because of the
+      &quot;and&quot; in &quot;Bandersnatch&quot;. The line that contains &quot;And&quot;
+      is not included because the comparison is case-sensitive.
+      <p>Try the function call again specifying a different text string.
+      <h3> Function Calls and Message Calls</h3>
+      You have been using the print function to display text. The <tt>print</tt>
+      function is a function built into <i><b><font color="#009000">E</font></b></i>. The variable named &quot;<tt>print</tt>&quot;
+      is simply a predefined variable initialized to hold this built-in function
+      as its initial value. A function is simply an object that can be called
+      with function-call notation. In other words, it can be called with a (possibly
+      empty) list of arguments enclosed in parentheses. In the <tt>show</tt>
+      and <tt>find</tt> examples above, you defined your own new functions.
+      <p>What about the line containing <tt>includes</tt>?
+      <pre>        line.includes(substring)</pre>
+      Here, we are also calling an object, the value of the <tt>line</tt>
+      variable, which will be a string. However, this is a <i>message call</i>,
+      but not a <i>function call</i>. We are calling line with the message <tt>includes(substring)</tt>.
+      Between the parentheses is an argument list, just as in a function call.
+      To the left of argument list is a <i>message name</i>, &quot;<tt>includes</tt>&quot;.
+      A message is used to ask the object to do something for us. Of the many
+      things an object might do for us, the message name is used to distinguish
+      which one we are asking it to do. Here, we are asking a string to tell us
+      whether the substring can be found within itself, ie, whether it <i>includes</i>
+      the substring. We expect an answer of <tt>true</tt> or <tt>false</tt>.
+      <p>A function call is actually just a message call in which no message name
+        is provided. It requests the object to <i>do its thing</i> with the provided
+        arguments. For the <tt>print</tt> function, <i>its thing</i> consists
+        of printing these arguments to the display.
+      <p>In the next chapter, we will see how to define new objects that respond
+        to message calls, not just function calls.
+      <h2> Mappings: the <tt>=></tt> operator</h2>
+      E supports several features that facilitate working with files. You have
+      already used one of these features in the function call:
+      <pre>        find(&lt;file:c:/jabbertest/jabberwocky.txt&gt;, &quot;and&quot;)</pre>
+      The prefix <tt>file:</tt> tells E to create an object that represents
+      the designated file, and enables it to be opened. In E, collections are
+      mappings from <i>keys</i> of some sort to <i>values</i> of some sort. A
+      for-loop can be used on any collection. When used on a file, the file is
+      assumed to be a text file, and considered a collection mapping from line
+      numbers (starting at 1, since this is the text file convention) to corresponding
+      lines of the file. Each time around the for-loop, the key is the next line
+      number and the value is a string with the contents of that line (including
+      a terminating newline). So for your example file, the mapping is:
+      <blockquote>
+        <table border cellspacing=4 cellpadding=4 >
+          <tr>
+            <th>Keys</th>
+            <th>Values</th>
+          </tr>
+          <tr>
+            <td>
+              <div align=right>1 <br>
+                2 <br>
+                3 <br>
+                4 <br>
+                5 <br>
+                6 <br>
+                7 <br>
+                8 <br>
+                9</div>
+            </td>
+            <td>'Twas brillig and the slithy toves <br>
+              Did gyre and gimble in the wabe: <br>
+              All mimsy were the borogoves, <br>
+              And the mome raths outgrabe.
+              <p>&quot;Beware the Jabberwock, my son! <br>
+                The jaws that bite, the claws that catch! <br>
+                Beware the Jubjub bird and shun <br>
+                The frumious Bandersnatch.&quot;
+            </td>
+          </tr>
+        </table>
+      </blockquote>
+      You can access the keys of a mapping using the <tt>=></tt> operator.
+      This operator is read <i>maps to</i>, as in &quot;<tt>k => v</tt>&quot;
+      reading &quot;<i>k maps to v</i>&quot;.
+      <p>Add to the for-loop and the print function call so your program looks
+        like this:
+      <pre>        ? def find(file, substring) :void {
+        >     for num => line in file {
+        >         if (line.includes(substring)) {
+        >             print(`$num:$line`)
+        >         }
+        >     }
+        > }
+        > find(&lt;file:c:/jabbertest/jabberwocky.txt&gt;, &quot;and&quot;)</pre>
+      You get the same lines that printed before, and now the lines are numbered.
+      <blockquote>1:'Twas brillig and the slithy toves <br>
+        2:Did gyre and gimble in the wabe: <br>
+        8:Beware the Jubjub bird and shun <br>
+        9:The frumious Bandersnatch.&quot;</blockquote>
+      <h2> String concatenation</h2>
+      The <tt>+</tt> operator asks its left operand (using a <i>message call</i>)
+      to add the right operand to itself and answer with the result. If the left
+      operand is a number, it will try to perform numeric addition to satisfy
+      the request. If the left operand is a string, it performs concatenation;
+      it appends the second argument -- converted to a string -- to the end of
+      the first and returns the result. In the expression:
+      <pre>        print(&quot;&quot; + num + &quot;:&quot; + line)</pre>
+      the argument to the <tt>print</tt> function is a concatenation of four
+      strings.
+      <p>Why the empty string? The variable <tt>num</tt> actually contains
+        a numeric value, not a string. The concatenation succeeds because the
+        empty string automatically converts the numeric value in <tt>num</tt>
+        to the equivalent string as a result of trying to concatenate <tt>num</tt>
+        with itself. The result of this is a string, which is then asked to add
+        the next argument, and so on. If the expression began with <tt>num</tt>
+      <blockquote>
+        <pre>print(num + &quot;:&quot; + line)</pre>
+      </blockquote>
+      The value of num, which is a number, would expect a numeric value to add
+      to itself and would generate an exception when it encountered the string
+      &quot;:&quot; instead.
+      <h2> Calling Java methods</h2>
+      The E interpreter not only runs on Java, it makes all Java objects available
+      in E as if they had been written in <i><b><font color="#009000">E</font></b></i>. For example, <i><b><font color="#009000">E</font></b></i>'s string objects are
+      simply normal Java string objects -- instance of the Java class <a href="http://www.javasoft.com/products/jdk/1.2/docs/api/java/lang/String.html">java.lang.String</a>.
+      As a result, (with some <a href="../kernel/e2j-binding.html">exceptions</a>
+      resulting from the difference between <i><b><font color="#009000">E</font></b></i>'s semantics and Java's semantics)
+      all of String's public messages are also available from <i><b><font color="#009000">E</font></b></i>.
+      <p>Change the if-expression condition:
+      <pre>        ? def find(file, substring) :void {
+        >     for num => line in file {
+        >         if (line.indexOf(substring) != -1) {
+        >             print(`$num:$line`)
+        >         }
+        >     }
+        > }
+        # value: &lt;find&gt;</pre>
+      You get the same result as before. Since line is a string, you can call
+      the String method <tt><a href="http://www.javasoft.com/products/jdk/1.2/docs/api/java/lang/String.html#indexOf(java.lang.String)">indexOf</a></tt>,
+      which returns the index (or position) of a specified substring if the substring
+      exists, or -1 if the substring is not found.
+      <p>E runs on all platforms compatible with at least Javasoft's JDK-1.1.7.
+        If you are running E on a Java-1.1.7 or later platform, the public messages
+        documented <a href="http://java.sun.com/products/jdk/1.1/docs/api/packages.html">here</a>
+        are available to you. If you are running E on a Java-1.2.x (also known
+        as Java-2.x) or later platform, the public messages documented <a href="http://www.javasoft.com/products/jdk/1.2/docs/api/index.html">here</a>
+        are available to you as well. However, if you use messages that are only
+        available on a more recent platform, only those people running at least
+        that more recent platform will be able to use your E program.
+      <p>Of course, Java libraries written by yourself and others are available
+        from E in the same way as libraries written by Javasoft.
+      <h3> Calling a function from another function</h3>
+      So far you have written a function that reads a specified file and prints
+      out any lines containing a specified string. To make good use of the function
+      you have written, you would call it more than once.
+      <p>Let's write another function that calls your function for all .txt files
+        in a directory.
+      <pre>        ? def findall(dir, substring) :void {
+        >     for file in dir {
+        >         if (file.getName().endsWith(&quot;.txt&quot;)) {
+        >             find(file, substring)
+        >         }
+        >     }
+        > }
+        # value: &lt;findall>
+
+        ? findall(&lt;file:c:/jabbertest&gt;, &quot;and&quot;)</pre>
+      You get at least the same result as before. If you have other .txt files
+      in your jabbertest directory, and if they contain the string &quot;and&quot;,
+      you will get additional lines.
+      <h2> The File class</h2>
+      The for-loop
+      <pre>        for file in dir {</pre>
+      runs once for each element of dir. The elements of dir are File objects,
+      instances of the <a href="http://www.javasoft.com/products/jdk/1.2/docs/api/java/io/File.html">java.io.File</a>
+      class. On each iteration of the loop, the variable file contains a different
+      File object.
+      <p>The if-expression
+      <pre>        if (file.getName().endsWith(&quot;.txt&quot;)) {</pre>
+      contains two method calls:
+      <pre>        file.getName()</pre>
+      calls the <tt><a href="../../javadoc/java/io/File.html#getName()">getName</a></tt>
+      method of the File class, which returns as a String the name of the file
+      that the File object represents.
+      <pre>        endsWith(&quot;.txt&quot;)</pre>
+      calls the <tt><a
+      href="../../javadoc/java/lang/String.html#endsWith(java.lang.String)">endsWith</a></tt>
+      method of the String class, which returns true if the String object ends
+      with the specified argument string.
+      <h2> Recursion: calling a function from itself</h2>
+      Now you have a function that checks all the files in a directory. However,
+      it ignores subdirectories. It would be useful if it could check files in
+      subdirectories as well.
+      <p>Checking subdirectories is tricky, because a directory tree can have
+        any number of branches of any length. You cannot know ahead of time how
+        many levels of subdirectories to search. What you need is a way to say
+        &quot;keep going until you get to the end.&quot; Recursion provides this
+        functionality. Recursion happens when a function calls itself.
+      <p>To create a simple directory tree to test, create a subdirectory in your
+        jabbertest directory called <tt>test</tt>. Make a copy of jabberwocky.txt
+        and put the copy in the <tt>test</tt> subdirectory.
+      <p>Change the <tt>findall</tt> function by renaming the <tt>dir</tt>
+        argument and replacing the for-loop with a compound if-expression:
+      <pre>        ? def findall(dirfile, substring) :void {
+        >    if (dirfile.isDirectory()) {
+        >        for file in dirfile {
+        >            findall(file, substring)
+        >        }
+        >    } else if (dirfile.getName().endsWith(&quot;.txt&quot;)) {
+        >        find(dirfile, substring)
+        >    }
+        > }
+        # value: &lt;findall>
+
+        ? findall(&lt;file:c:/jabbertest&gt;, &quot;and&quot;)</pre>
+      You get (at least):
+      <blockquote>1:'Twas brillig and the slithy toves <br>
+        2:Did gyre and gimble in the wabe: <br>
+        8:Beware the Jubjub bird and shun <br>
+        9:The frumious Bandersnatch.&quot; <br>
+        1:'Twas brillig and the slithy toves <br>
+        2:Did gyre and gimble in the wabe: <br>
+        8:Beware the Jubjub bird and shun <br>
+        9:The frumious Bandersnatch.&quot;</blockquote>
+      plus the lines containing &quot;and&quot; from any other .txt files you
+      have anywhere in your file system. How would you modify this program to
+      show the name of the file in which the match was found?
+      <h3> Compound if-expression</h3>
+      The above if-expression has a second clause that beigin with &quot;<tt>else
+      if</tt>&quot;.
+      <p>If the condition of the first clause is true, the first clause is run
+        and the second clause is ignored.
+      <p>If the condition of the first clause is false, and the condition of the
+        second clause is true, the second clause is run.
+      <p>If the condition of the first clause is false, and the condition of the
+        second clause is false, none of the if-expression is run.
+      <p>When <tt>findall</tt> is called, the variable <tt>dirfile</tt>
+        will contain an instance of the File class that represents either a directory
+        or a file. The first clause of the if-expression is run if the object
+        in dirfile represents a directory. If it does not, you know that the object
+        represents a file. In that case, the condition of the second clause test
+        if it is a .txt file. If it is, the second clause performs the string
+        search operation that you have been doing all along. If <tt>dirfile</tt>
+        is neither a directory nor a .txt file, then <tt>findall</tt> does
+        nothing.
+      <p>A danger in recursion is that with each function call, the function calls
+        itself again, creating a never-ending loop. In this example, the <tt>findall</tt>
+        function will stop calling itself when it can find no more directories,
+        which has to happen eventually.
+      <p><i>Note: Under Windows, a directory tree must be finite, and therefore
+        the above routine is safe. Under Unix, on the other hand, symbolic links
+        can be used to create cycles -- effectively infinite directory trees.
+        In a later chapter <font color="#FF0000">(*** link needed)</font>, we
+        will see how to finitely walk such &quot;infinite&quot; cyclic structures.</i>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">intro</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="starting-e.html" title="Back to: Starting E & Elmer"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Starting E & Elmer" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="standalone.html" title="On to: Standalone E Programs"><img src="../../images/next.gif" width="64" height="32" alt="On to: Standalone E Programs" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

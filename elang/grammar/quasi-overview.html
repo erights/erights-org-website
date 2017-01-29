@@ -1,0 +1,537 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>QuasiLiterals</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">grammar</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="patterns.html" title="Back to: Pattern Grammar"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Pattern Grammar" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="quasi-terms.html" title="On to: Quasi-Literals and Term / Functor Trees"><img src="../../images/next.gif" width="64" height="32" alt="On to: Quasi-Literals and Term / Functor Trees" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Quasi-Literals</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <h1 ALIGN="left"><a name="why"></a>Why Quasi-Literals?</h1>
+      <p ALIGN="left">Consider the ancient C printf and scanf statements:</p>
+      <p ALIGN="left">
+      <blockquote>
+        <pre>printf("hello %s world\n", worldState);</pre>
+      </blockquote>
+      <p></p>
+      <p ALIGN="left">as contrasted with the modern</p>
+      <p ALIGN="left">
+      <blockquote>
+        <pre>out.print("hello " + worldState + " world\n");</pre>
+      </blockquote>
+      <p></p>
+      <p ALIGN="left">They both say approximately the same thing, but the notation
+        of the first is optimized to make visible the nature of the resulting
+        value: <i>It'll be like the format string but with the %-holes filled
+        in</i>. The second form is instead optimized to make visible the nature
+        of the computation that will produce this value: <i>Calculate these expressions
+        and concatenate these strings together.</i> Unfortunately for my explanation,
+        it doesn't seem to make much difference on this case. </p>
+      <p ALIGN="left">Though less familiar, the point is clearer with Lisp's quasi-quote,
+        since it expands to a normal expression: </p>
+      <p ALIGN="left">
+      <blockquote>
+        <pre>`(hello ,worldState world)</pre>
+      </blockquote>
+      <p></p>
+      <p ALIGN="left">which means <i>A list whose first element is the literal
+        symbol <tt>'hello</tt>, whose second element is the value of the variable
+        <tt>worldState</tt>, and whose third element is the literal symbol <tt>'world</tt>.
+        </i> Like "%", "," marks a hole to be filled in at runtime. This expression
+        macro-expands to</p>
+      <p ALIGN="left">
+      <blockquote>
+        <pre>(cons 'hello (cons worldState '(world)))</pre>
+      </blockquote>
+      <p></p>
+      <p ALIGN="left">which describes the process for making such a list. In the
+        first form, the nature of the list being produced is clear but the means
+        of its production -- two cons operations -- is obscure. In the second
+        form the reverse is true. </p>
+      <p ALIGN="left">I believe this observation about the respective strengths
+        and weaknesses of the two kinds of notations goes back to Alonzo Church,
+        the <a href="../../elib/capability/ode/ode-references.html#Church41">inventor
+        of Lambda</a>. For most purposes, more literal forms of expression should
+        be preferred when possible, for the same reasons that user interfaces
+        should work by "direct manipulation" where possible. Much of the popularity
+        of modern "scripting" languages -- Perl, Python, Tcl, etc -- is due to
+        their support for quasi-literal expression of text by "interpolation"
+        ($-substitution) and for quasi-literal text pattern matching by regular
+        expressions. </p>
+      <p ALIGN="left">As the Lisp language shows, there's no reason a language
+        can't enable literals or quasi-literals to express data types other than
+        scalars and strings, but few languages do. Lisp provides for the literal
+        and quasi-literal expression of lists. But what about arbitrary user-defined
+        objects? By providing a pluggable quasi-parser framework, each quasi-parser
+        designer can define their own syntax for [quasi-]literally expressing
+        whatever data types they choose. In closing below, we propose a radical
+        future/past extension of this direction. </p>
+      <hr>
+      <h1 ALIGN="left"><a name="quasi-expr"></a>Quasi-Literal Expressions</h1>
+      <p ALIGN="left">A quasi-literal expression (or a quasi-expression) consists
+        of an optional quasi-parser name (defaulting to "<tt>simple</tt>" if left
+        out), a quasi-quote (also known as backquote, "<tt>`</tt>"), a string
+        in the grammar accepted by that quasi-parser, and a closing quasi-quote.
+        This string may also have several embedded "$" &lt;identifier&gt; or "$"
+        "{" &lt;E expression&gt; "}" indicating values to be substituted in. The
+        quasi-parser sees the string without the embedded expression source. For
+        example: </p>
+      <p ALIGN="left">
+      <blockquote>
+        <pre>foo`some text${bar() + 3}more text$baz`</pre>
+      </blockquote>
+      <p></p>
+      <p ALIGN="left">expands to</p>
+      <p ALIGN="left">
+      <blockquote>
+        <pre>foo__quasiParser.valueMaker("some text${0}more text${1}").
+      substitute([bar() + 3, baz])
+</pre>
+      </blockquote>
+      <p></p>
+      <p ALIGN="left"><i>In <b><font color="#009000">E</font></b>, line end normally
+        terminates statements. However, if the line ends with a dangling binary
+        operator, then it is continued on the next line. &quot;.&quot; is the
+        binary operator for immediate-call, familiar from other C-tradition oo
+        languages.</i></p>
+      <p ALIGN="left">The quasi-parser named "<tt>foo__quasiParser</tt>" is looked
+        up, and is asked to created a ValueMaker from the transformed string.
+        The transformation extracts each expression and leaves behind a "<tt>$</tt>"
+        "<tt>{</tt>" &lt;digit&gt;+ "<tt>}</tt>", ie, a "<i>substitution hole</i>".
+        Since this applies to all quasi-expressions, all quasi-grammars must recognize
+        these substitution holes. The resulting ValueMaker is then invoked with
+        a list of the values of the extracted expressions, which the ValueMaker
+        should "plug into" the corresponding substitution holes, in order to make
+        whatever kind of value the quasi-parser took to be described by the quasi-string.
+        We currently have two quasi-parsers that support quasi-expressions: "<tt>simple__quasiParser</tt>"
+        and "<tt>e__quasiParser</tt>". </p>
+      <h3 ALIGN="left">&quot;simple&quot; Quasi-Expressions for Text</h3>
+      <p ALIGN="left">The "<tt>simple</tt>" quasi-parser is indeed the simplest
+        useful example consistent with these rules. Except for the embedded holes,
+        it takes the input text to just describe itself. Substitution consists
+        of stringification of the value, and string substitution. It corresponds
+        to the "interpolation" familiar from at least Perl, Tcl, and various shells:
+      </p>
+      <p ALIGN="left">
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+? `abc${2+3}def`
+# value: &quot;abc5def&quot;</pre>
+      </blockquote>
+      <p></p>
+      <p ALIGN="left">The expression expands to</p>
+      <p ALIGN="left">
+      <blockquote>
+        <pre>simple__quasiParser.valueMaker("abc${0}def").substitute([2 + 3])</pre>
+      </blockquote>
+      <p></p>
+      <h3 ALIGN="left">&quot;e&quot; Quasi-Parser for Parse Trees</h3>
+      <p ALIGN="left">The "e" quasi-parser is simply <i><b><font color="#009000">E</font></b></i>'s own parser used as a
+        quasi-parser. It accepts E source-code as its quasi-grammar, and takes
+        it to describe ASTs (which we call parse trees) of the post-expansion
+        Kernel E language: </p>
+      <p ALIGN="left">
+      <blockquote>
+        <pre>? def sum := e`x + y`
+# value: e`x.add(y)`
+
+? def prod := e`a * $sum * b`
+# value: e`a.multiply(x.add(y)).multiply(b)`</pre>
+      </blockquote>
+      <p></p>
+      <p ALIGN="left">In E, "<tt>+</tt>" and "<tt>*</tt>" are just syntactic sugar
+        for the "<tt>add</tt>" and "<tt>multiply</tt>" messages. (Kernel E parse
+        trees print as e`...` quasi-expressions as well.) Since the substitution
+        is structural, not textual, the fact that "<tt>*</tt>" binds tighter in
+        E than "<tt>+</tt>" does not cause confusion. "<tt><i>deriv.e</i></tt>"
+        in the distribution is a symbolic differentiation package written in E
+        using the <tt>e</tt> quasi-parser so that algebraic expressions can be
+        represented as trees, but expressed in familiar infix-operator notation.
+      </p>
+      <p ALIGN="left">Notice that each time the same quasi-expression is evaluated,
+        the <tt>valueMaker(..)</tt> argument is the same, though the <tt>substitute(..)</tt>
+        argument is usually different. Modulo some security issues beyond the
+        scope of this overview, quasi-parsers should therefore cache ValueMakers
+        by transformed string. It can then spend a lot of work "compiling" a ValueMaker
+        so that <tt>substitute(..)</tt> can go faster. </p>
+      <p ALIGN="left"><i>See also <a href="quasi-xml.html">Quasi-Literals and
+        XML</a>, which proposes to use XML DOM trees as the universal parse-tree
+        data structure.</i></p>
+      <hr>
+      <h1><a name="quasi-pattern"></a>Quasi-Literal Patterns</h1>
+      <p>A quasi-literal pattern (or a quasi-pattern) is also written as an optional
+        quasi-parser name, a quasi-quote, a quasi-string with embedded stuff,
+        and a closing quasi quote. This time the embedded stuff can consist of
+        several </p>
+      <p>
+      <blockquote>
+        <pre>	"$"&lt;identifier&gt;
+|	"$" "{" &lt;E expression&gt; "}"
+|	"@"&lt;identifier&gt;
+|	"@" "{" &lt;E pattern&gt; "}"</pre>
+      </blockquote>
+      <p></p>
+      <p ALIGN="left">You can think of <i><b><font color="#009000">E</font></b></i>'s
+        grammar as having two parsing contexts: expression and pattern. A quasi-literal
+        is parsed and transformed as a quasi-expression or a quasi-pattern based
+        on its parsing context. The quasi-pattern transformation is more complex:
+      </p>
+      <p ALIGN="left">
+      <blockquote>
+        <pre>? "abcde" =~ `a@{x}d@y`
+# value: true
+
+? x
+# value: &quot;bc&quot;
+
+? y
+# value: &quot;e&quot;</pre>
+      </blockquote>
+      <p></p>
+      <p ALIGN="left">As in Perl, "<tt>=~</tt>" is the pattern match operator.
+        It takes an expression on the left and a pattern on the right. That first
+        line expands to: </p>
+      <p ALIGN="left">
+      <blockquote>
+        <pre>("abcde" =~ _4q ? (simple__quasiParser.
+                       matchMaker("a@{0}d@{1}").
+                       matchBind([], _4q) =~ [x, y]))</pre>
+      </blockquote>
+      <p></p>
+      <p ALIGN="left">"<tt>_4q</tt>" is an E-expansion-generated temporary variable
+        name. (By introducing a temporary variable, we can expand the pattern
+        by itself into a Kernel-E pattern, and we preserve the source's original
+        left-to-right order, necessary for both scoping and execution order.)
+        The pattern constructs needed to understand the above pattern are: </p>
+      <table cellpadding="12">
+        <tr>
+          <td valign="top">
+            <pre>&lt;identifier&gt;</pre>
+          </td>
+          <td>Always matches, and binds identifier to the specimen. This is the
+            only form of variable definition in E.</td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre>&lt;pattern&gt; "?" &lt;expression&gt;</pre>
+          </td>
+          <td>"<tt>?</tt>" is pronounced "such that". First matches &lt;pattern&gt;
+            to the specimen; if it succeeds, evaluates &lt;expression&gt; in the
+            resulting scope. If its value is true, then the such-that pattern
+            as a whole succeeds.</td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre>[&lt;pattern&gt;, ...]</pre>
+          </td>
+          <td>Matches a list of the same length by matching each element against
+            the corresponding pattern.</td>
+        </tr>
+      </table>
+      <p ALIGN="left">So, reading from the inside out, the quasi-parser named
+        "<tt>simple</tt>" is asked to produce a MatchMaker from the string "<tt>a@{0}d@{1}</tt>",
+        which is presumed to be in the quasi-grammar understood by this quasi-parser.
+        (Once again, it pays for the quasi-parser to cache a compiled MatchMaker
+        indexed by this string.) The MatchMaker is then asked to "<tt>matchBind(args,
+        specimen)</tt>" where the args are extracted from embedded <tt>$</tt>-expressions,
+        as with the earlier <tt>substitute(args)</tt>. '<tt>args</tt>' is here
+        an empty list since there were no embedded <tt>$</tt>-expressions, and
+        the specimen is here "<tt>abcde</tt>" by the logic of "<tt>?</tt>". </p>
+      <p ALIGN="left">(Detail: If the argument to matchMaker contains more than
+        one @-hole with the same index number, then the quasiParser may reject
+        this string by throwing an exception. If the quasiParser accepts this
+        string, then it must treat the first occurrence of an @-hole of a given
+        index as a normal binding @-hole. All successive occurrences match only
+        if the value they would have bound is the same (E's "==") to the value
+        bound by the first occurrence. Note that this case will never be generated
+        by expanding a quasi-literal pattern.)</p>
+      <h3 ALIGN="left">&quot;simple&quot; Quasi-Patterns for Matching Text</h3>
+      <p ALIGN="left">If the <tt>matchBind()</tt> fails, it returns null, which
+        will not match any list pattern, even the empty list pattern, resulting
+        in the overall match failing. If the <tt>matchBind()</tt> succeeds, it
+        returns a list with elements extracted from the specimen by <tt>@</tt>-holes,
+        and put into the list at positions corresponding to the <tt>@</tt>-numbers.
+        The MatchMaker resulting from the "<tt>simple</tt>" quasi-parser just
+        does the simplest useful anti-greedy (ascetic?) string match and extract
+        without backtrack consistent with this framework. Except for holes, all
+        characters just represent themselves and must match exactly.</p>
+      <h3 ALIGN="left">&quot;e&quot; Quasi-Patterns for Matching Trees</h3>
+      <p ALIGN="left">As with quasi-expressions, none of this is specific to text.
+        A MatchMaker can accept whatever kind of object it wishes as specimen
+        and extract whatever it wishes as the bindings. As you might guess, the
+        <tt>e</tt> quasi-parser can also be used to match parse trees and extract
+        subtrees. A portion of <i><tt>deriv.e</tt></i>:</p>
+      <p ALIGN="left">
+      <blockquote>
+        <pre><font class="comment">/**</font><font class="comment">
+ * What's the derivative of expr wrt var?  Ie, what's "d(expr)/d(var)"?
+ */</font>
+def deriv(expr, var) :any {
+
+    switch (expr) {
+
+        match e`$var ** @exp` ? (isConst(exp))  {
+            e`$exp * $var ** ($exp -1)`
+        }
+        match e`@a + @b` {
+            def da := deriv(a, var)
+            def db := deriv(b, var)
+            e`$da + $db`</pre>
+      </blockquote>
+      <p></p>
+      <p ALIGN="left">The last 3 lines could also have been written</p>
+      <p ALIGN="left">
+      <blockquote>
+        <pre>e`${deriv(a, var)} + $(deriv(b, var)}`</pre>
+      </blockquote>
+      <p></p>
+      <p ALIGN="left">depending on your taste. These two examples show the similarity
+        between the match-bind-substitute styles of programming as practiced by
+        "scripting" languages on text, and that practiced by Prolog on trees of
+        symbols.</p>
+      <h3 ALIGN="left">&quot;rx&quot; Quasi-Patterns for Perl-5 Regular Expressions</h3>
+      <p ALIGN="left">The third quasi-parser currently available in <i><b><font color="#009000">E</font></b></i>
+        is named "<tt>rx</tt>", standing for "Regular eXression". "<tt>rx</tt>"
+        takes a full Perl-5 regular expression engine obtained from <a href="http://www.oroinc.com">Original
+        Reusable Objects</a> (now <a href="http://www.savarese.org">Savarese.Org</a>)
+        and wraps it to turn it into a quasi-parser. (This quasi-parser is written
+        in <i><b><font color="#009000">E</font></b></i> and is found in the <i><b><font color="#009000">E</font></b></i>
+        distribution as "<tt><i>PerlMatchMakerMaker.emaker</i></tt>".) As expected,
+        most of the work is in the treatment of holes. The equivalent of the above
+        string match written using "<tt>rx</tt>" rather than "<tt>simple</tt>"
+        would be: </p>
+      <p ALIGN="left">
+      <blockquote>
+        <pre>? "abcde" =~ rx`a(@{x}.*?)d(@y.*)`</pre>
+      </blockquote>
+      <p></p>
+      <p ALIGN="left">The expansion is the same of course, except that the "<tt>rx</tt>"
+        quasi parser is looked up instead of "<tt>simple</tt>", and the transformed
+        string fed to <tt>matchMaker(..)</tt> is </p>
+      <p ALIGN="left">
+      <blockquote>
+        <pre>"a(@{0}.*?)d(@{1}.*)"</pre>
+      </blockquote>
+      <p></p>
+      <p ALIGN="left">Parentheses play a role in Perl regular expressions related
+        to <i><b><font color="#009000">E</font></b></i>'s <tt>@</tt>-holes: they extract the part of the specimen matched
+        against the sub-pattern they contain. To generate a proper Perl regular
+        expression, the "<tt>rx</tt>" wrapper removes the <tt>@</tt>-holes leaving
+      </p>
+      <p ALIGN="left">
+      <blockquote>
+        <pre>"a(.*?)d(.*)"</pre>
+      </blockquote>
+      <p></p>
+      <p ALIGN="left">but verifies that each <tt>@</tt>-hole was at the beginning
+        of such a parenthesized group, and remembers which group it is. The (cached)
+        MatchMaker consists of a compiled Perl Pattern object plus the correspondence
+        between paren-group-number and <tt>@</tt>-number. On a successful match
+        it returns the bindings in a list ordered according to the original <tt>@</tt>-numbers.
+      </p>
+      <p ALIGN="left">Unfortunately, to do this, "<tt>rx</tt>" must correctly
+        distinguish between an "<tt>(</tt>" that starts a Perl-saved-group and
+        one that doesn't. We currently impose some restrictions (reject some valid
+        Perl patterns) to make this recognition easier, but we still don't always
+        get this right. Fortunately, the known bugs here haven't yet bitten anyone
+        on any real examples, but this needs to be fixed. Ideally, the OroMatcher
+        code could be enhanced so "<tt>rx</tt>" could ask Pattern where it thinks
+        the open parens of save-groups are. </p>
+      <p ALIGN="left">The ORO website also provides a <a href="http://www.oroinc.com/developers/docs/OROMatcher/Syntax.html">good
+        quick reference</a> to Perl-5 regular expressions, and a link to the official
+        one.</p>
+      <h3 ALIGN="left">Beware Write-Only Code</h3>
+      <p ALIGN="left">I always hated a lot of Perl code for being so hard to read.
+        I took pride in how readable E was by comparison. That is, until I started
+        heavily using Regular expressions. My code became a dense gobbledygook
+        of punctuation characters that reminded several folks of APL. The answer
+        is not to give up on regular expressions. Rather the answer comes with
+        a new Perl-5 feature imported into <i><b><font color="#009000">E</font></b></i>
+        courtesy of the ORO folks: The &quot;<tt>(?x)</tt>&quot; flag. </p>
+      <p ALIGN="left">Put &quot;<tt>(?x)</tt>&quot; at the beginning of your &quot;<tt>rx</tt>&quot;
+        pattern and now you can freely embed whitespace and &quot;<tt>#</tt>&quot;
+        comments in your pattern. Of course, you will then have to escape whitespace
+        and &quot;<tt>#</tt>&quot; characters that are supposed to be part of
+        the pattern, but this is a small price to pay. A good example of readable
+        code using regular expressions can be found in the old &quot;<tt><i>parseUpdoc.emaker</i></tt>&quot;
+        <a href="http://www.eros-os.org/pipermail/e-lang/1999-April/002555.html">before</a>
+        and <a href="http://www.eros-os.org/pipermail/e-lang/1999-April/002570.html">after</a>
+        using &quot;<tt>(?x)</tt>&quot;. In any case, the current updoc parser,
+        in <tt>makeUpdocParser.emaker</tt> in the source tree, no longer uses
+        the <tt>rx__quasiParser</tt>. We think it's more readable without it,
+        but YMMV.</p>
+      <hr>
+      <h1 ALIGN="left"><a name="future"></a>Long Term Future Directions: Hypercard</h1>
+      <p ALIGN="left">Our long term future takes us back to the conversation with
+        <a href="http://www.scottkim.com/">Scott Kim</a> that pointed us in this
+        direction long ago. Hypercard had just come out and was obviously powerful
+        in a way most of had not seen before. Scott had a unique perspective on
+        this power: </p>
+      <p ALIGN="left">Most programming languages have as literal data types things
+        like numbers, characters, and strings. Lisp, in addition, has lists, but
+        all these only express literals using text strings. Why? Because the program
+        itself is a text string. A weird pun is going on: when you put the insertion
+        point of your text editor between the quotes of a literal string you're
+        effectively no longer in a program editor, but in a nested text editor.
+        The text you are editing is -- almost -- simply the text that that literal
+        evaluates to. Whereas normally programming is indirect, here we're operating
+        by direct manipulation -- creating the actual output directly.</p>
+      <p ALIGN="left">Hypercard is normally conceived of as primarily a visual
+        application builder with an embedded silly programming language (Hypertalk).
+        Think instead of a whole Hypercard stack as a mostly literal program.
+        In addition to numbers and strings, the literals you can directly edit
+        include bitmaps, forms, buttons, and menus. You can literally assemble
+        most things, but where you need dynamic behavior, there's a hole in the
+        literal filled in by a Hypertalk script. The program editor for this script
+        is experienced as being nested inside the direct manipulation user interface
+        editor.</p>
+      <p ALIGN="left">It's one of those 15 minute conversations that change your
+        life.</p>
+      <p ALIGN="left">Though there have been many many visual interface builders
+        since Hypercard, I'm not aware of any that have pursued this analogy between
+        partially literal user-interface construction and Lisp quasi-quote. How
+        should <i><b><font color="#009000">E</font></b></i> eventually pursue
+        this?</p>
+      <p ALIGN="left">Well, we could get fancy and say that source code should
+        stop being text, and should instead be a graph of objects. Unfortunately,
+        though this approach has paid off in the past, it is becoming increasingly
+        less possible, as the world becomes increasingly more wedded to text.
+        (Overall net progress can obscure many cases of horrifying regress, and
+        the computer world is rife with them.) Fortunately, there's a low road:</p>
+      <p ALIGN="left">The Macintosh Resource Fork and ResEdit was a crude but
+        effective form for direct manipulation editing of an extensible set of
+        non-textual literal data types. They fell short of what we seek in only
+        two regards: 1) The literals weren't "quasi", ie, they were fully literal,
+        rather than having holes to be filled in by more code. 2) They weren't
+        meaningfully embedded within the program text -- not visually, and not
+        scoping-wise. As pure literals, the lack of scope embedding doesn't matter.
+        But once you fix #1 you must make sure the embedded expressions are in
+        their lexical context. </p>
+      <p ALIGN="left">Elmer currently uses the Java Swing plain text editor, a
+        sibling of the Java Swing compound document editor (of which the wysiwyg
+        html editor is a subclass). Java also has a resource mechanism (which
+        I'd guess was inspired by the Macintosh's), and Java can serialize/unserialize
+        object graphs into such resources.</p>
+      <p ALIGN="left">A future <i><b><font color="#009000">E</font></b></i> compound
+        document editor could generate and recognize, for example, the expression</p>
+      <p ALIGN="left">
+      <blockquote>
+        <pre>reseditor`&lt;resource name&gt; foo=${expr0} bar=${expr1}`</pre>
+      </blockquote>
+      <p></p>
+      <p ALIGN="left">unserialize the resource with this name into (hopefully)
+        a ValueMaker that's also an editable Model, and embed at this place in
+        the program editor a nested editor for this type of Model. Of course,
+        to preserve the quasi-literal illusion, the editor for the Model should
+        seem like the editor for the data type the ValueMaker makes (in response
+        to substitute()), but it would in turn contain embedded program editors
+        at the positions in the Model corresponding to the names "<tt>foo</tt>"
+        and "<tt>bar</tt>". Perhaps the literal plane should be shown above the
+        program plane using shadows. The embedded program editors would be shown,
+        in wells using reverse shadows, to be on the same plane (and so the same
+        scope) as the surrounding program. On "Save", the editor would serialize
+        the ValueMaker back into resource land.</p>
+      <p ALIGN="left">Similarly, of course, for serialized MatchMakers.</p>
+      <p ALIGN="left">Besides user interface construction, what would you use
+        this for? How about generating graphics? Right now, you can either write
+        computer graphics code, which is very indirect but very general; or use
+        a drawing program, which works great as long as what you're drawing fits
+        its limitations. What if you're not even trying to produce a single drawing,
+        but rather to produce a program that does data-dependent drawing? Currently
+        you'd be stuck with a mostly indirect way of expressing yourself. It would
+        seem the ability to intimately mix elements expressed at different levels
+        of literalness could let us use the best of both on the same task.</p>
+      <p ALIGN="left">Or (borrowing slightly from the Garden system) how about
+        embedding a graphical state diagram or state chart editor. The transition
+        arcs could have holes containing actions expressed in code that's in the
+        scope of the lexical context containing the embedded state diagram.</p>
+      <hr>
+      <h1 ALIGN="left"><a name="ack"></a>Acknowledgement</h1>
+      <p ALIGN="left">The quasi-literals of <i><b><font color="#009000">E</font></b></i>
+        owe a tremendous debt to Alonzo Church, Lisp quasi-quote, Hypercard and
+        the Hypercard team, Scott Kim, Dean Tribble, and Joule. Thanks!! </p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">grammar</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="patterns.html" title="Back to: Pattern Grammar"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Pattern Grammar" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="quasi-terms.html" title="On to: Quasi-Literals and Term / Functor Trees"><img src="../../images/next.gif" width="64" height="32" alt="On to: Quasi-Literals and Term / Functor Trees" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

@@ -1,0 +1,275 @@
+ 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>Paradigm Regained: Abstraction Mechanisms for Access Control</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">talks</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="../agoric/index.html" title="Back to: Agoric Open Systems papers"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Agoric Open Systems papers" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="../no-sep/index.html" title="On to: The Structure of Authority: Why security is not a separable concern"><img src="../../images/next.gif" width="64" height="32" alt="On to: The Structure of Authority: Why security is not a separable concern" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>Paradigm 
+              Regained:<br>
+              <font size="5">Abstraction Mechanisms for Access Control<br>
+              <font size="4"><br>
+              by Mark S. Miller, Jonathan S. Shapiro</font></font></b></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <p ALIGN="left">Superseded by <a href="../thesis/index.html"><i>Robust Composition</i></a>.</p>
+      <p ALIGN="left"> Proceedings of <a href="http://www.cse.psu.edu/asian03/">ASIAN'03</a>, 
+        edited by Vijay Saraswat. Springer Verlag</p>
+      <p ALIGN="left">Eighth Asian Computing Science Conference<br>
+        Tata Institute of Fundamental Research, Mumbai India<br>
+        December 10-13 2003 </p>
+      <p ALIGN="left"><a href="http://www.eros-os.org/pipermail/cap-talk/2003-August/001260.html">Discussion 
+        thread root</a></p>
+      <h2 ALIGN="left">Versions</h2>
+      <table cellpadding="12">
+        <tr> 
+          <td><b>Read this one.</b> Revised to use modern E syntax (&quot;return&quot; 
+            rather than &quot;^&quot;). </td>
+          <td><a href="paradigm-revised.pdf">PDF</a></td>
+          <td><a href="paradigm-revised.odt">OpenOffice2.0</a></td>
+          <td><a href="paradigm-revised.sxw">OpenOffice1.1</a></td>
+          <td><a href="paradigm-revised.txt">Plain text</a></td>
+        </tr>
+        <tr> 
+          <td>Unabridged (21 pages), as HP Labs <a href="http://www.hpl.hp.com/techreports/2003/HPL-2003-222.html">Tech 
+            Report HPL-2003-222</a></td>
+          <td><a href="http://www.hpl.hp.com/techreports/2003/HPL-2003-222.pdf">PDF</a></td>
+          <td>&nbsp;</td>
+          <td><a href="HPL-2003-222.sxw">OpenOffice1.1</a></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr> 
+          <td>As it will appear in <a href="http://www.cse.psu.edu/asian03/">ASIAN'03</a> 
+            (20 pages)</td>
+          <td><a href="paradigm-final.pdf">PDF</a></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr> 
+          <td>Earlier Johns Hopkins <a href="http://srl.cs.jhu.edu/">Systems Research 
+            Labs</a> Tech Report SRL2003-03</td>
+          <td><a href="http://srl.cs.jhu.edu/pubs/SRL2003-03.pdf">PDF</a></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr> 
+          <td colspan="5"><hr></td>
+        </tr>
+        <tr> 
+          <td>As the second of the <a href="../index.html#google-abac">Google 
+            ABAC Techtalk series</a></td>
+          <td><a href="https://www.cypherpunks.to/erights/talks/asian03/google.pdf">PDF</a></td>
+          <td><a href="http://video.google.com/videoplay?docid=-8527120258517176598">Google 
+            Video</a></td>
+          <td><a href="https://www.cypherpunks.to/erights/talks/asian03/google.ppt">Powerpoint</a></td>
+          <td>&nbsp;</td>
+        </tr>
+      </table>
+      <h2 ALIGN="left">Abstract</h2>
+      <P ALIGN="left">Access control systems must be evaluated in part on how 
+        well they enable one to distribute the access rights needed for cooperation, 
+        while simultaneously limiting the propagation of rights which would create 
+        vulnerabilities. Analysis to date implicitly assumes access is controlled 
+        only by manipulating a system's protection state--the arrangement of the 
+        access graph. Because of the limitations of this analysis, capability 
+        systems have been &quot;proven&quot; unable to enforce some basic policies: 
+        revocation, confinement, and the *-properties (explained in the text). 
+      <P ALIGN="left">In actual practice, programmers build access abstractions--programs 
+        that help control access, extending the kinds of access control that can 
+        be expressed. Working in Dennis and van Horn's original capability model, 
+        we show how abstractions were used in actual capability systems to enforce 
+        the above policies. These simple, often tractable programs limited the 
+        rights of arbitrarily complex, untrusted programs. When analysis includes 
+        the possibility of access abstractions, as it must, the original capability 
+        model is shown to be stronger than is commonly supposed. 
+      <P ALIGN="center"><img src="images/banquet.jpg" width="590" height="254"> 
+      <P ALIGN="center">At the Banquet: <a href="http://www.caplet.com/">Mark 
+        S. Miller</a>, <a href="http://www.ueda.info.waseda.ac.jp/%7Eueda/">Kazunori 
+        Ueda</a>, ???, <a href="http://www.info.ucl.ac.be/people/fsp/fred.html">Fred 
+        Spiessens</a><br>
+        Photo by <a href="http://www.saraswat.org/">Vijay Saraswat</a> 
+      <hr>
+      <h2>Supplemental Explanations</h2>
+      <p>The following map of concepts may aid in following the paper:</p>
+      <P ALIGN="center"><img src="images/Bounds.gif" width="505" height="470"> 
+      <P ALIGN="left">The transition arrows show possible sequences of analysis. 
+        The terminology and the example are explained in the paper. 
+      <table cellpadding="12">
+        <tr> 
+          <td valign="top"> <p><b>Permission Now</b> says what direct actions 
+              may happen now. This is the current <i>arrangement of permissions</i>, 
+              or <i>state of the access graph</i>, or <i>protection state</i>. 
+              Actually, it is only the portion of the subgraph we know, which 
+              already represents a bound on the actual graph. Analysis starts 
+              here.</p>
+            <p>We see here the subgraph at the moment that Bob receives access 
+              to the Caretaker, <tt>carol2</tt>, assuming that Alice also drops 
+              her links to Carol and <tt>carol2</tt>. The double arrow going off 
+              the the diagram indicates our ignorance about who Alice, Bob, or 
+              Carol already have access to and who has access to them.</p></td>
+          <td valign="top"><img src="images/caretaker.gif" width="225" height="245"></td>
+        </tr>
+        <tr> 
+          <td valign="top"><tt><b>&quot;&lt;-&quot;</b></tt> is the E symbol for 
+            &quot;eventually&quot;, so this blob represents &quot;eventual permissions&quot;. 
+            This includes all the permissions that various programs will actually 
+            acquire because other programs granted them those abilities. Since 
+            the actual behavior of other programs is intractable, calculating 
+            this is intractable. </td>
+          <td valign="top">&nbsp;</td>
+        </tr>
+        <tr> 
+          <td valign="top"> <p><b>Authority</b> says what effects programs may 
+              actually eventually cause, using both present and future permissions 
+              and the actual behaviors of other programs. Calculating this is 
+              intractable, so our analysis seeks safe approximations. An approximation 
+              is safe if it includes all actual authority.</p>
+            <p>Because of the behavior of the revoker, Alice may affect target. 
+              Because the the behavior of carol2 and the state of target, Bob 
+              may affect Carol. Since this also affects the behavior of carol2, 
+              we show the green authority line including her in its path.</p></td>
+          <td valign="top"><img src="images/caretaker-auth.gif" width="225" height="245"></td>
+        </tr>
+        <tr> 
+          <td valign="top"> <p><b>Arrangement / Permissions</b> is an <i>arrangement-only 
+              bound on permissions</i>, or <i>potential de jure analysis</i>, 
+              calculating possible arrangements of eventual permissions based 
+              only on the current arrangement. By itself it gives an unsafe result, 
+              as it ignores the dangers posed by programs interacting with each 
+              other.</p>
+            <p>For our starting graph, this bound is no bound--everything becomes 
+              fully connected. In this case, the estimate is safe but useless, 
+              since it does not preclude any possibility.</p>
+            <p>We should probably have a notational convention where a fully connected 
+              subgraph is simply aggregated into a single blob. After all, to 
+              our analysis, it no longer has any internal structure.</p></td>
+          <td valign="top"><img src="images/caretaker-arrange-permit.gif" width="224" height="239"></td>
+        </tr>
+        <tr> 
+          <td valign="top"> <p><b>Behavior / Permissions</b> is a <i>partially 
+              behavioral bound on permission</i>, in which some program behavior 
+              is taken into account, in order to set tighter bounds.</p>
+            <p>Assume we know that carol2, revoker, and target behave according 
+              to the Caretaker code. Assume we know that Carol's behavior is to 
+              not provide her clients with access to herself. We know nothing 
+              further of her behavior, or anything about the behaviors of Alice, 
+              Bob, or anyone beyond the horizon.</p>
+            <p>The open arrowheads are connectivity that could only have come 
+              from prior connectivity beyond the horizon of our subgraph. If we 
+              didn't know anything about Carol's behavior, then the arrowheads 
+              on the Bob-to-Carol link would be closed. </p></td>
+          <td valign="top"><img src="images/caretaker-behave-permit.gif" width="224" height="239"></td>
+        </tr>
+        <tr> 
+          <td valign="top"> <p><b>Arrangement / Authority</b> is an <i>arrangement-only 
+              bound on authority</i>, or <i>potential de facto analysis</i>. It 
+              is safe because it takes account of the dangers from program behavior. 
+            </p>
+            <p>In this case, since the bound on permission was already all inclusive, 
+              the bound on authority cannot be any larger.</p></td>
+          <td valign="top"><img src="images/caretaker-arrange-permit.gif" width="224" height="239"></td>
+        </tr>
+        <tr> 
+          <td valign="top"><b>Behavior / Authority</b> is a <i>partially behavioral 
+            bound on authority</i>, which is still safe, but less conservative, 
+            because it recognizes the possibility of using program behavior for 
+            good as well as evil. This bound can be used to determine if a security 
+            enforcing program can enforce a given policy objective.</td>
+          <td valign="top"><img src="images/caretaker-behave-auth.gif" width="224" height="239"></td>
+        </tr>
+        <tr> 
+          <td valign="top">If we further assume that Alice sends a <tt>revoke()</tt> 
+            message to the revoker at time t1, we know this erases the link from 
+            target to Carol. Rerunning our analysis under these new conditions, 
+            a partially behavioral bound on authority shows that Bob no longer 
+            has authority to affect Carol, unless he separately obtains this authority 
+            by virtue of their possible joint connectivity beyond the horizon.</td>
+          <td valign="top"><img src="images/revoke-behave-auth.gif" width="224" height="239"></td>
+        </tr>
+      </table>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">talks</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="../agoric/index.html" title="Back to: Agoric Open Systems papers"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Agoric Open Systems papers" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="../no-sep/index.html" title="On to: The Structure of Authority: Why security is not a separable concern"><img src="../../images/next.gif" width="64" height="32" alt="On to: The Structure of Authority: Why security is not a separable concern" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

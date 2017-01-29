@@ -1,0 +1,19 @@
+\chapter*{Overview of Access Control}
+
+\markmsays{say something}
+
+\begin{description}
+\item[Bounding Access Rights] \markmsays{permission, authority}
+
+\item[The Object-Capability Paradigm] \markmsays{objects, connectivity
+  rules, caretaker, blind spots}
+
+\item[The Loader] \markmsays{How new code enters already running
+  system. Loader isolation}
+
+\item[Confinement] \markmsays{Lampson's confinement
+  problem. *-properties, Composing policies. Limits of crypto}
+
+\item[Plan Coordination and Access Control] \markmsays{sums up}
+
+\end{description}

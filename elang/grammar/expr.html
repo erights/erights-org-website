@@ -1,0 +1,997 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Expression Grammar</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">grammar</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="prim-expr.html" title="On to: Primitive Expression Grammar"><img src="../../images/next.gif" width="64" height="32" alt="On to: Primitive Expression Grammar" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>Expression<br>
+              Grammar</b></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p>The expression subset of the <i><b><font color="#009000">E</font></b></i> grammar is presented here in <i>precedence</i>
+        order, meaning that later constructs bind tighter than earlier constructs.
+        For example, <i><tt>expr</tt></i><tt> &quot;+&quot; <i>expr </i></tt>is
+        presented before <tt><i>expr</i> &quot;*&quot; <i>expr</i></tt>, so
+        &quot;<tt>*</tt>&quot; binds tighter than &quot;<tt>+</tt>&quot;.
+        Therefore, &quot;<tt>a + b * c + d</tt>&quot; is equivalent to &quot;<tt>a
+        + (b * c) + d</tt>&quot;. All the constructs in presented in the same
+        box have the same precedence.</p>
+      <p>The title of each box states the <i>associativity</i> of the box, which
+        states how members of the box are grouped when they are composed with
+        each other. The possibilities are:</p>
+      <p>
+      <ul>
+        <li>Left associative. E.g., &quot;<tt>a - b - c</tt>&quot; groups
+          as &quot;<tt>(a - b) - c</tt>&quot;.</li>
+        <li>Right associative. E.g., &quot;<tt>a := b := c</tt>&quot; groups
+          as &quot;<tt>a := (b := c)</tt>&quot;.</li>
+        <li>Don't care associative. E.g., it doesn't matter how &quot;<tt>a
+          &amp;&amp; b &amp;&amp; c</tt>&quot; is grouped.</li>
+        <li>Non associative. E.g., &quot;<tt>a == b == c</tt>&quot; is a syntax
+          error.</li>
+      </ul>
+      <p>As is familiar, parentheses can be used to obtain any desired grouping,
+        and should be used even, if they aren't strictly necessary, for those
+        cases where the meaning might otherwise be unclear to a reader.</p>
+      <p>The <i><b><font color="#009000">E</font></b></i> language as seen by the programmer has the rich set of syntactic
+        conveniences expected of a modern scripting language. However, to be secure,
+        <i><b><font color="#009000">E</font></b></i> must have a simple analyzable semantics. We reconcile these by defining
+        a subset of the full language called Kernel E, and only this subset need
+        be given a rigorous semantics. The rest of <i><b><font color="#009000">E</font></b></i> is defined by syntactic expansion
+        to this subset. In the expansion column for each construct below, either
+        an expansion into more primitive constructs (closer to Kernel E) is shown,
+        or the word &quot;<b>kernel</b>&quot; appears as a link to the corresponding
+        place in the <a href="../kernel/index.html">Kernel-<i><b><font color="#009000">E</font></b></i> Reference Manual</a>.
+        When an expansion is shown, &quot;<tt>l</tt>&quot; stands for the
+        left-hand expression, and &quot;<tt>r</tt>&quot; for the right-hand
+        expression. </p>
+      <h3><a name="sequence"></a>Sequence (don't care associative)</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td>
+            <pre>&quot;<b>\n</b>&quot;*</pre>
+          </td>
+          <td valign="top"> nothing</td>
+          <td>
+            <pre>null</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre><i>expr</i> &quot;<b>\n</b>&quot;*<br><i>expr</i></pre>
+          </td>
+          <td valign="top">
+            <p>Do is order.<br>
+              Value is last value</p>
+          </td>
+          <td>
+            <pre><a href="../kernel/SeqExpr.html"><b>kernel</b></a></pre>
+          </td>
+        </tr>
+      </table>
+      <p>This is the familiar sequence of expressions, one per line. C, C++, and
+        Java programmers should notice that newlines are normally used, rather
+        than semicolons, to terminate <i><b><font color="#009000">E</font></b></i> expressions. (Python and Tcl programmers
+        will find this familiar.) As with Tcl, this enables <i><b><font color="#009000">E</font></b></i> to be used as a
+        pleasant command line language as well.</p>
+      <p>Whereas C and most of its descendents are <i>statement languages</i>,
+        like Smalltalk, Lisp and others, <i><b><font color="#009000">E</font></b></i> is an <i>expression language</i>. In
+        a statements language, there are many <i>statements</i> (like C's &quot;if&quot;
+        statement) that cannot yield a value. These languages also have <i>expressions</i>
+        (like &quot;i + j&quot;) that do yield a value. In an expression language,
+        everything that would have been a statement is defined to yield a value,
+        and is therefore allowed to nest freely within other expressions.</p>
+      <p>E's sequence expression is the first example of this. Not only are the
+        component expressions evaluated in order, but the value yielded by the
+        sequence expression as a whole is the value yielded by its last component
+        expression.</p>
+      <h3 ALIGN="left"><a name="semicolon"></a>In-Line Sequence (don't care associative)</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td>
+            <pre><i>expr</i> &quot;<b>;</b>&quot;</pre>
+          </td>
+          <td valign="top"> &quot;<tt>;</tt>&quot; is harmless</td>
+          <td>
+            <pre>l</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre><i>expr</i> &quot;<b>;</b>&quot; <i>expr</i></pre>
+          </td>
+          <td valign="top">
+            <p>Do is order.<br>
+              Value is last value</p>
+          </td>
+          <td>
+            <pre>l &quot;<b>\n</b>&quot;<br>r</pre>
+          </td>
+        </tr>
+      </table>
+      <P ALIGN="left">You can also write a sequence on one line by separating
+        them with semicolons. Terminating an expression with a semicolon is harmless.
+      <h3 ALIGN="left"><a name="define"></a>Assignment and Definition (right associative)</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th> Grammar</th>
+          <th> Meaning</th>
+          <th> Expansion</th>
+        </tr>
+        <tr>
+          <td>
+            <pre><i>varName</i> &quot;<b>:=</b>&quot; <i>expr</i></pre>
+          </td>
+          <td valign="top"> assignment</td>
+          <td>
+            <pre><a href="../kernel/AssignExpr.html"><b>kernel</b></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre><i>expr</i> "<b>.</b>" <b>get(</b><i>...</i><b>)</b> &quot;<b>:=</b>&quot; <i>expr
+expr</i> "<b>.</b>" <b>get</b><i>Name</i><b>(</b><i>...</i><b>) :=</b><i> expr
+expr</i> "<b>.</b>" <b>run(</b><i>...</i><b>) := </b><i>expr</i></pre>
+          </td>
+          <td valign="top">
+            <p>table update<br>
+              setting a bean property<br>
+              replacing a run</p>
+          </td>
+          <td>
+            <pre>l.put(..., r); r
+l.set<i>Name</i>(..., r); r
+l.setRun(..., r); r</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre><i>lval</i>  &quot;<b>|=</b>&quot; <i>expr</i>
+<i></i><i>lval</i>  &quot;<b>&amp;=</b>&quot; <i>expr</i>
+<i>lval</i>  &quot;<b>^=</b>&quot; <i>expr</i>
+<i>lval</i> &quot;<b>&lt;&lt;=</b>&quot; <i>expr</i>
+<i></i><i>lval</i>  &quot;<b>+=</b>&quot; <i>expr</i>
+<i>lval</i>  &quot;<b>-=</b>&quot; <i>expr
+</i><i>lval</i>  &quot;<b>*=</b>&quot; <i>expr</i>
+<i>lval</i>  &quot;<b>/=</b>&quot; <i>expr</i>
+<i>lval</i> &quot;<b>//=</b>&quot; <i>expr</i>
+<i>lval</i>  &quot;<b>%=</b>&quot; <i>expr</i>
+<i>lval</i> &quot;<b>%%=</b>&quot; <i>expr
+lval</i> &quot;<b>**=</b>&quot; <i>expr</i></pre>
+          </td>
+          <td valign="top"> update, ie, assign a value derived from the old value</td>
+          <td>
+            <pre>l := l  | r
+l := l  &amp; r
+l := l  ^ r
+l := l &lt;&lt; r
+l := l  + r
+l := l  - r
+l := l  * r
+l := l  / r
+l := l // r
+l := l  % r
+l := l %% r
+l := l ** r</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre><i>lval</i> &quot;<b>&gt;&gt;=</b>&quot; <i>expr</i></pre>
+          </td>
+          <td valign="top"> update by right shift</td>
+          <td>
+            <pre>l &lt;&lt;= -r</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre>&quot;<b>def</b>&quot; <i>patt</i> &quot;<b>:=</b>&quot; <i>expr</i>
+&quot;<b>def</b>&quot; <i>patt</i> "<b>exit</b>" <i>expr</i> &quot;<b>:=</b>&quot; <i>expr</i></pre>
+          </td>
+          <td valign="top"> define variables by pattern matching</td>
+          <td>
+            <pre><b><a href="../kernel/DefineExpr.html">kernel</a></b>(*)</pre>
+          </td>
+        </tr>
+      </table>
+      <P ALIGN="left">As in Pascal, the <i><b><font color="#009000">E</font></b></i> assignment operator is &quot;<tt>:=</tt>&quot;,
+        rather than &quot;<tt>=</tt>&quot;. &quot;<tt>=</tt>&quot; was
+        originally the equality symbol from mathematics, which has a much longer
+        and more honorable history than Fortran or C, so it would be offensive
+        for <i><b><font color="#009000">E</font></b></i> to use &quot;<b>=</b>&quot; for assignment, but it would be confusing
+        for <i><b><font color="#009000">E</font></b></i> to use &quot;<tt>=</tt>&quot; for equality. Instead, <i><b><font color="#009000">E</font></b></i> uses
+        &quot;:=&quot; for assignment, &quot;==&quot; to test whether two things
+        are the same, and &quot;&lt;=&gt;&quot; to test whether two things are as big
+        as each other (same magnitude).
+      <P ALIGN="left">An <i>lval</i> is first parsed and expanded as an expression.
+        After this lval-expansion, the lval must either be a name or one of the
+        three kinds of call expression shown above. When these occur, they are
+        rewritten as shown, except that r is evaluated only once. The lval-expansions
+        coupled with the above assignment-expansions have the following pleasant
+        effects:
+      <table border="4" cellpadding="4" cellspacing="0" align="center">
+        <tr>
+          <th>Example</th>
+          <th>lval-Expansion</th>
+          <th>Assignment Expansion</th>
+        </tr>
+        <tr>
+          <td>
+            <pre>table[key] := val<i></i></pre>
+          </td>
+          <td valign="top">
+            <pre>table.get(key) := val</pre>
+          </td>
+          <td>
+            <pre>table.put(key, val); val</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre>jframe::border := b</pre>
+          </td>
+          <td valign="top">
+            <pre>jframe.getBorder() := b</pre>
+          </td>
+          <td>
+            <pre>jframe.setBorder(b); b</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre>flist(3,5) := subl</pre>
+          </td>
+          <td valign="top">
+            <pre>flist.run(3,5) := subl</pre>
+          </td>
+          <td>
+            <pre>flist.setRun(3,5, subl); subl</pre>
+          </td>
+        </tr>
+      </table>
+      <P ALIGN="left">As is familiar from C and its descendents, &quot;<tt>a
+        &lt;op&gt;= b</tt>&quot;, where <tt>&lt;op&gt;</tt> is a binary
+        operator, means the same thing as &quot;<tt>a := a &lt;op&gt; b</tt>&quot;,
+        except that &quot;a&quot; is rewritten if necessary so that it's only
+        executed once.
+      <P ALIGN="left">Since, as seen below, right shift expands to a left shift
+        with a negated right-hand side, we similarly expand right-shift-assign
+        to left-shift-assign with a negated right-hand side.
+      <P ALIGN="left">The only defining occurrences of variables occur in patterns,
+        and these variable only come to exist -- and be bound to initial values
+        -- when these patterns are matched against some value (referred to as
+        the specimen). The <a href="../blocks/defVar.html">define expression</a>
+        is the main form for explicitly using pattern matching to define new variables.
+        Hence its name. &quot;<tt>def</tt>&quot; is just shorthand for &quot;<tt>define</tt>&quot;.
+      <h3 ALIGN="left"><a name="condOr"></a>Conditional-Or (don't care associative)</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td>
+            <pre><i>expr</i> &quot;<b>||</b>&quot; <i>expr</i></pre>
+          </td>
+          <td valign="top"> left-to-right <i>or</i></td>
+          <td>
+            <pre>See <a href="../blocks/orExpr.html">text</a></pre>
+          </td>
+        </tr>
+      </table>
+      <p>As is familiar, this <i><a href="../blocks/orExpr.html">or</a></i><a href="../blocks/orExpr.html">
+        operator</a> evaluates its operand expressions left-to-right, but stops
+        on the first <tt>true</tt>.</p>
+      <h3 ALIGN="left"><a name="condAnd"></a>Conditional-And (don't case associative)</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td>
+            <pre><i>expr</i> &quot;<b>&amp;&amp;</b>&quot; <i>expr</i></pre>
+          </td>
+          <td valign="top">
+            <p>left-to-right <i>and</i></p>
+          </td>
+          <td>
+            <pre>See <a href="../blocks/andExpr.html">text</a></pre>
+          </td>
+        </tr>
+      </table>
+      <P ALIGN="left">As is familiar, this <i><a href="../blocks/orExpr.html">and</a></i><a href="../blocks/andExpr.html">
+        operator</a> evaluates its operand expressions left-to-right, but stops
+        on the first <tt>false</tt>.
+      <h3 ALIGN="left"><a name="similar"></a>Comparisons and Bitwise/Logical Operators
+        (non-associative)</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td>
+            <pre><i>expr</i> &quot;<b>==</b>&quot; <i>expr
+expr</i> &quot;<b>!=</b>&quot; <i>expr</i></pre>
+          </td>
+          <td valign="top">
+            <pre>are they the same?
+are they different?</pre>
+          </td>
+          <td>
+            <pre>__equalizer.sameEver(l, r)
+!(l == r)</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre><i>expr</i> &quot;<b>&amp;</b>&quot; <i>expr
+</i><i>expr</i> &quot;<b>|</b>&quot; <i>expr
+</i><i>expr</i> &quot;^&quot; <i>expr</i></pre>
+          </td>
+          <td valign="top"> meaning dependent on type</td>
+          <td>
+            <pre>l.and(r)
+l.or (r)
+l.xor(r)</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre><i>expr</i> &quot;<b>=~</b>&quot; <i>patt
+</i><i>expr</i> &quot;<b>!~</b>&quot; <i>patt</i></pre>
+          </td>
+          <td valign="top">
+            <pre>match
+mismatch </pre>
+          </td>
+          <td>
+            <pre><a href="../kernel/MatchBindExpr.html"><b>kernel</b></a>
+!(l =~ r)</pre>
+          </td>
+        </tr>
+      </table>
+      <P ALIGN="left">&quot;<tt>==</tt>&quot; and &quot;<tt>!=</tt>&quot;
+        tests whether two values are <a href="../same-ref.html">the same</a>,
+        which is <i><b><font color="#009000">E</font></b></i>'s generalization of the traditional identity check (EQ to Lispers,
+        &quot;==&quot; to C, C++, and Java'ers).
+      <P ALIGN="left">There's no general statement one can make about &quot;<tt>&amp;</tt>&quot;,
+        &quot;<tt>|</tt>&quot;, and &quot;<tt>^</tt>&quot;, except that
+        they expand to &quot;<tt>and</tt>&quot;, &quot;<tt>or</tt>&quot;,
+        and &quot;<tt>xor</tt>&quot;, so they mean whatever these messages
+        mean on the objects in question. For the types built into E, the meanings
+        are:
+      <P ALIGN="left">
+      <ul>
+        <li>On <a href="../scalars/integer-ref.html">integers</a>, they are bitwise
+          operators, as in C, C++, and Java.</li>
+        <li>On <a href="../scalars/boolean-ref.html">booleans</a>, they are logical
+          operators, but of course evaluate both sides. </li>
+        <li>On <a href="../../elib/capability/ode/ode-capabilities.html#simple-money">maps</a>,
+          &quot;<tt>&amp;</tt>&quot; and &quot;<tt>|</tt>&quot; are intersection
+          and union of the keys (domains), with the left-hand side dominating
+          the values (range).</li>
+        <li>Similarly, on <a href="../collect/coord/index.html">regions</a>, &quot;<tt>&amp;</tt>&quot;
+          and &quot;<tt>|</tt>&quot; are the intersection and union of the
+          positions in these regions.</li>
+      </ul>
+      <P ALIGN="left">Of course, you are free to make your objects respond to
+        the &quot;<tt>and</tt>&quot;, &quot;<tt>or</tt>&quot;, and &quot;<tt>xor</tt>&quot;
+        messages, in which case you can use &quot;<tt>&amp;</tt>&quot;, &quot;<tt>|</tt>&quot;,
+        and &quot;<tt>^</tt>&quot; to operate on them as well. This principle
+        applies everywhere operators expand to messages.
+      <P ALIGN="left">We've borrowed from Perl &quot;<tt>=~</tt>&quot; and
+        &quot;!~&quot;, the pattern match operators. These attempt to match the
+        value yielded by the expression of the left with the pattern on the right.
+        &quot;<tt>=~</tt>&quot; says whether the match succeeded, whereas
+        &quot;<tt>!~</tt>&quot; says whether it failed. Only if a &quot;<tt>=~</tt>&quot;
+        match succeeds are the resulting variable bindings availble in the succeeding
+        scope. Otherwise, the names are still defined (since this is a static
+        property), but they are bound to broken references (as slots), which will throw an exception
+        under normal variable use.
+      <h3 ALIGN="left"><a name="compareTo"></a>Partial Ordering (non associative)</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td>
+            <pre><i>expr</i>  &quot;<b>&lt;</b>&quot; <i> expr</i><i>
+expr</i>  &quot;<b>&lt;=</b>&quot; <i>expr</i><i>
+expr</i>  &quot;<b>&gt;=</b>&quot; <i>expr</i><i>
+</i><i>expr</i>  &quot;<b>&gt;</b>&quot;  <i>expr</i>
+<i>expr</i> &quot;<b>&lt;=&gt;</b>&quot; <i>expr</i></pre>
+          </td>
+          <td valign="top">
+            <pre>less than
+less or equal
+greater or equal
+greater than
+as big as</pre>
+          </td>
+          <td>
+            <pre>l.compareTo(r).belowZero()
+l.compareTo(r).atMostZero()
+l.compareTo(r).atLeastZero()
+l.compareTo(r).aboveZero()
+l.compareTo(r).isZero()</pre>
+          </td>
+        </tr>
+      </table>
+      <P ALIGN="left">The four ordering operators all expand into &quot;<tt>compareTo</tt>&quot;,
+        followed by testing the result. &quot;compareTo&quot; is supposed to implement
+        a partial ordering by responding with
+      <P ALIGN="left">
+      <ul>
+        <li>a negative number if <tt>l</tt> is less than <tt>r.</tt></li>
+        <li>zero if <tt>l</tt> is the same magnitude as <tt>r</tt> (equal
+          to it in the ordering).</li>
+        <li>a positive number if <tt>l</tt> is greater than <tt>r.</tt></li>
+        <li>NaN if <tt>l</tt> and <tt>r</tt> are incomparable.</li>
+      </ul>
+      <P ALIGN="left">Since a NaN is neither <tt>belowZero</tt>, <tt>atMostZero</tt>,
+        <tt>atLeastZero</tt>, <tt>aboveZero</tt>, nor <tt>isZero</tt>,
+        if <tt>l</tt> and <tt>r</tt> are incomparable, then all five comparisons
+        will yield false. Otherwise, they will do as expected. The built in E
+        types for which an ordering is defined are:
+      <P ALIGN="left">
+      <ul>
+        <li><a href="../scalars/integer-ref.html">integers</a> are fully ordered
+          as you'd expect.</li>
+        <li><a href="../scalars/float64-ref.html">float64s</a> are fully ordered
+          as you'd expect, except NaN, which is incomparable to everything else.
+          To comply with the IEEE spec, NaN is also incomparable with itself (causing
+          <tt>compareTo</tt> to not be reflexive).</li>
+        <li><a href="../../javadoc/org/erights/e/elib/tables/ConstList.html">ConstLists</a>
+          compare lexicographically, meaning they are compared pairwise, and their
+          ordering is according to their first unequal pair. Strings are a kind
+          of ConstList, and this rule yields &quot;alphabetical ordering&quot;
+          of Strings ordered by the unicode encoding of their characters.</li>
+        <li><a href="../../elib/capability/ode/ode-capabilities.html#simple-money">ConstMaps</a>
+          test whether the keys (domain) of one is a subset of the keys (domain)
+          of the other. If &quot;<tt>a &lt;= b</tt>&quot;, than &quot;<tt>a</tt>&quot;'s
+          domain is a subset of &quot;<tt>b</tt>&quot;'s domain. If neither
+          is a subset of the other, they are incomparable.</li>
+        <li><a href="../collect/coord/index.html">Regions</a> test whether one
+          is enclosed by the other, ie, whether the positions in one are a subset
+          of the positions of the other.</li>
+        <li>Similarly, Types test whether one Type is a subtype of the other.
+          That is, if &quot;<tt>a &lt;= b</tt>&quot; then all objects which
+          are members of the &quot;<tt>a</tt>&quot; type are also members
+          of the &quot;<tt>b</tt>&quot; type. </li>
+      </ul>
+      <P ALIGN="left">There is an important difference between, for example, the
+        seemingly identical tests &quot;<tt>a &lt;= b</tt>&quot; and &quot;<tt>b
+        &gt;= a</tt>&quot;. Although these both ask the same question, the first
+        test asks &quot;<tt>a</tt>&quot;'s opinion while the second asks &quot;<tt>b</tt>&quot;'s
+        opinion. Depending on your trust relationship to &quot;a&quot; and &quot;b&quot;,
+        you may care who you ask for an answer.
+      <table width="75%" border="4" cellspacing="3" cellpadding="3" align="center">
+        <tr>
+          <td>
+            <p align="left">The traditional language specification would state
+              &quot;<i>a's behavior and b's behavior must agree</i>&quot; (see
+              for example the specification of &quot;equals&quot; in Java). However,
+              when code is integrated from multiple sources, such specifications
+              are incoherent. If &quot;<tt>a</tt>&quot; and &quot;<tt>b</tt>&quot;
+              don't agree, who's at fault? In Java, once someone adds the following
+              code to a system,
+            <p align="left">
+            <blockquote>
+              <pre><font class="comment">/**
+ * A "more equal" class of objects
+ */</font>
+public class OrwellPig {
+    public boolean equals(Object other) {
+        return true;
+    }
+    public int hashCode() {
+        return 0;
+    }
+}</pre>
+            </blockquote>
+            <p align="left"> it is equally valid, from the Java spec, to say <i>OrwellPig
+              is buggy</i> as it is to say <i>OrwellPig is correct and the equals/hashCode
+              behavior of all other classes is buggy</i>. In a programming model
+              intended to support the interaction of mutually suspicious code
+              (which Java claims to be), such diffusion of responsibility is unacceptable.</p>
+          </td>
+        </tr>
+      </table>
+      <h3 ALIGN="left"><a name="interval"></a>Interval (non associative)</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr valign="top">
+          <td>
+            <pre><i>expr</i> &quot;<b>..</b>&quot;<b> </b><i> expr
+expr</i> &quot;<b>..!</b>&quot; <i>expr</i></pre>
+          </td>
+          <td>
+            <pre>inclusive-inclusive
+inclusive-exclusive</pre>
+          </td>
+          <td>
+            <pre>__makeOrderedSpace.op__thru(l, r)
+__makeOrderedSpace.op__till(l, r)
+</pre>
+          </td>
+        </tr>
+      </table>
+      <p align="left">An interval expression is used to form a <a href="../collect/coord/index.html">region</a>
+        that represents all the positions between two boundaries. 1..3 means all
+        the integers from 1 inclusive to 3 inclusive. 1..!3 means all the integers
+        from 1 inclusive to 3 exclusive, ie, &quot;<i>from 1 to3, but not 3</i>&quot;,
+        and so is equivalent to 1..2. Even though they are equivalent, the &quot;..!&quot;
+        form is preferred, as <i><b><font color="#009000">E</font></b></i> encourages thinking in terms of open-closed, or
+        inclusive-exclusive intervals.
+      <p align="left">Currently such intervals are only supported for <a href="../scalars/integer-ref.html">integer</a>s,
+        <a href="../scalars/float64-ref.html">float64</a>s, and <a href="../scalars/char-ref.html">char</a>s.
+      <h3 align="left"><a name="shift"></a>Shift (left associative)</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td>
+            <pre><i>expr</i> &quot;<b>&lt;&lt;</b>&quot;<b> </b><i>expr
+expr</i> &quot;<b>&gt;&gt;</b>&quot; <i>expr</i></pre>
+          </td>
+          <td valign="top">
+            <pre>left shift
+right shift</pre>
+          </td>
+          <td>
+            <pre>l.shiftLeft(r)
+l.shiftLeft(-r)</pre>
+          </td>
+        </tr>
+      </table>
+      <p align="left">Among <i><b><font color="#009000">E</font></b></i>'s built in data types, this is only defined on integers,
+        and has the traditional meaning but with no precision limit.
+      <h3 align="left"><a name="additive"></a>Additive (left associative)</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td>
+            <pre><i>expr</i> &quot;<b>+</b>&quot;<b> </b><i>expr
+expr</i> &quot;<b>-</b>&quot; <i>expr</i></pre>
+          </td>
+          <td valign="top">
+            <pre>addition, concatenation
+subtraction, difference</pre>
+          </td>
+          <td>
+            <pre>l.add(r)
+l.subtract(r)</pre>
+          </td>
+        </tr>
+      </table>
+      <p align="left">On <a href="../scalars/integer-ref.html">integer</a>s, <a href="../scalars/float64-ref.html">float64</a>s,
+        and <a href="../scalars/char-ref.html">char</a>/integer pairs, this has
+        the traditional meaning.
+      <p align="left">On <a href="../../javadoc/org/erights/e/elib/tables/ConstList.html">ELists</a>,
+        and therefore on <a href="../collect/String-ref.html">Strings</a>, &quot;<tt>+</tt>&quot;
+        appends two lists to get another. This is a generalization of Java's use
+        of &quot;<tt>+</tt>&quot; on Strings.
+      <p align="left">On <a href="../../elib/capability/ode/ode-capabilities.html#simple-money">EMaps</a>,
+        and therefore on sets, &quot;-&quot; takes the set difference of the domain,
+        with the left-hand operand providing the range. In other words, &quot;<tt>a
+        - b</tt>&quot; is that subset of &quot;<tt>a</tt>&quot; whose keys
+        are not keys of &quot;<tt>b</tt>&quot;
+      <p align="left">
+      <h3 align="left"><a name="mult"></a>Multiplicative (left associative)</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td>
+            <pre><i>expr</i>  &quot;<b>*</b>&quot;<b> </b><i>expr
+expr</i>  &quot;<b>/</b>&quot;<b> </b><i>expr
+expr</i> &quot;<b>//</b>&quot;<b> </b><i>expr
+expr</i>  &quot;<b>%</b>&quot;<b> </b><i>expr
+</i><i>expr</i> &quot;<b>%%</b>&quot; <i>expr</i></pre>
+          </td>
+          <td valign="top">
+            <pre>times
+floating divide
+integer divide
+remainder
+modulo</pre>
+          </td>
+          <td>
+            <pre>l.multiply(r)
+l.approxDivide(r)
+l.floorDivide(r)
+l.remainder(r)
+l.modulo(r)</pre>
+          </td>
+        </tr>
+        <tr valign="top">
+          <td>
+            <pre>expr ** expr %% expr</pre>
+          </td>
+          <td>
+            <p>modular exponentiation</p>
+          </td>
+          <td>
+            <pre>l.modPow(e, m)</pre>
+          </td>
+        </tr>
+      </table>
+      <p>Mostly, these apply to <a href="../scalars/integer-ref.html">integer</a>s
+        and <a href="../scalars/float64-ref.html">float64</a>s. See their documentation
+        for details. </p>
+      <p>&quot;<tt>*</tt>&quot; also applies to an <a href="../../javadoc/org/erights/e/elib/tables/ConstList.html">EList</a>-integer
+        pair, and has the traditional meaning of repeated addition. But remember
+        that addition of lists has the non-traditional meaning of appending the
+        lists together. Therefore, &quot;a <tt>* n</tt>&quot; will append
+        &quot;<tt>a</tt>&quot; to itself &quot;<tt>n</tt>&quot; times.
+        For example, &quot;[1, 2] * 3&quot; yields &quot;[1, 2, 1, 2, 1, 2]&quot;.</p>
+      <p>&quot;<tt>base ** exponent %% modulus</tt>&quot; yields a result
+        that's mathematically equivalent to &quot;<tt>(base ** exponent) %%
+        modulus</tt>&quot;, but the grammar does not expand the first to the
+        second. Rather, it expands the first directly to a call involving all
+        three operands since, at least for integers, this can be calculated vastly
+        more efficiently than composing the two separate calculations. <font color="#ff0000">***bug:
+        in the current parser, even it you put in the above parenthesis, it will
+        still expand directly to the trinary operation</font>.</p>
+      <p align="left">
+      <h3 align="left"><a name="pow"></a>Exponentiation (non associative)</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td>
+            <pre><i>expr</i> &quot;<b>**</b>&quot;<b> </b><i>expr</i></pre>
+          </td>
+          <td valign="top">
+            <p>raised to the power of</p>
+          </td>
+          <td>
+            <pre>l.pow(r)
+</pre>
+          </td>
+        </tr>
+      </table>
+      <p align="left">Among <i><b><font color="#009000">E</font></b></i>'s built-in types, this applies only to integers
+        and float64s in the expected way.
+      <p align="left">
+      <h3 align="left"><a name="UnaryPrefix"></a>Unary Prefix (<i>extremely</i>
+        non associative)</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr valign="top">
+          <td>
+            <pre>&quot;<b>!</b>&quot;<b> </b><i>prim
+</i>&quot;<b>~</b>&quot;<b> </b><i>prim
+</i>&quot;<b>-</b>&quot;<b> </b><i>prim</i></pre>
+          </td>
+          <td>
+            <pre align="left">not
+one's complement
+zero - <i>expr</i></pre>
+          </td>
+          <td>
+            <pre>r.not()
+r.complement()
+r.negate()</pre>
+          </td>
+        </tr>
+        <tr valign="top">
+          <td>
+            <pre>&quot;<b>&amp;</b>&quot; <i>varName</i></pre>
+          </td>
+          <td>
+            <pre>slot of variable</pre>
+          </td>
+          <td>
+            <pre><a href="../kernel/SlotExpr.html"><b>kernel</b></a></pre>
+          </td>
+        </tr>
+        <!--<tr valign="top">
+          <td>
+            <pre><i>protName</i> &quot;<b>:</b>&quot; <i>prim</i></pre>
+          </td>
+          <td>
+            <pre>dynamic uri expr</pre>
+          </td>
+          <td>
+            <pre>See <a href="../io/uri-exprs.html">text</a></pre>
+          </td>
+        </tr>-->
+      </table>
+      <p align="left">Among <i><b><font color="#009000">E</font></b></i>'s built in types, &quot;<tt>!</tt>&quot; applies
+        to booleans, &quot;~&quot; to integers, and &quot;-&quot; to integers
+        and float64s, all in the standard way. On integers, unary &quot;<tt>~</tt>&quot;
+        and &quot;<tt>-</tt>&quot; yield the precision-unlimited one's and
+        two's complement, respectively.
+      <p align="left">Unary &quot;<tt>&amp;</tt>&quot; exposes a deeper theory
+        of scoping than the casual <i><b><font color="#009000">E</font></b></i> programmer would normally ever have to be
+        aware of. Where the expression &quot;<tt>foo</tt>&quot; yield the
+        value of the variable named &quot;foo&quot;, the expression &quot;<tt>&amp;foo</tt>&quot;
+        yields the Slot object holding the value of the variable &quot;foo&quot;.
+      <!--<p align="left">A <a href="../io/uri-exprs.html">uri</a> protocol header,
+        eg, &quot;<tt>file:</tt>&quot;, can be used as a unary prefix operator
+        to be applied at an expression that's expected to yield a string. The
+        result is equivalent to the uri literal expression in which that string
+        immediately follows the colon, eg, &quot;<tt>file:<i>&lt;that string&gt;</i></tt>&quot;.-->
+      <p align="left">We say that unary prefix expressions are <i>extremely</i>
+        non-associative because their component expressions can only be primitive
+        expressions. Not only do they not associate with themselves, they don't
+        associate with the unary postfix or call expressions.
+      <p align="left">
+      <h3 align="left"></h3>
+      <h3 align="left"><a name="postfix"></a>Unary Postfix (left associative)</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr valign="top">
+          <td><pre>
+<i>expr</i> &quot;<b>[</b>&quot; <i>expr</i> &quot;<b>]</b>&quot;
+<i>expr</i> &quot;<b>::</b>&quot; <i>propName</i>
+<i>expr</i> &quot;<b>::</b>&quot; <i>propName</i>&quot;<b>(</b>&quot;<i>expr,...</i>&quot;<b>)</b>&quot;</pre>
+          </td>
+          <td>
+            <pre align="left">indexing
+property access
+indexed prop access
+</pre>
+          </td>
+          <td>
+            <pre>l.get(r)
+<i></i>l.get<i>PropName</i>()
+l.get<i>PropName</i>(<i>expr,...)</i></pre>
+          </td>
+        </tr>
+        <tr valign="top">
+          <td>
+            <pre><i>expr</i> &quot;<b>&lt;-</b>&quot; <i>verb</i> &quot;<b>(</b>&quot; <i>expr,...</i> &quot;<b>)</b>&quot;<i>
+expr</i> &quot;<b>&lt;-</b>&quot; <i>verb</i>
+<i>expr</i> &quot;<b>&lt;-</b>&quot;      &quot;<b>(</b>&quot; <i>expr,...</i> &quot;<b>)</b>&quot;</pre>
+          </td>
+          <td>
+            <pre>send, do eventually
+simple send
+functional send</pre>
+          </td>
+          <td>
+            <pre>E.send(<i>expr</i>, "<i>verb</i>", [<i>expr,...</i>])
+l &lt;- <i>verb</i>()
+l &lt;- run(<i>expr,...</i>)</pre>
+          </td>
+        </tr>
+        <tr valign="top">
+          <td>
+            <pre>&quot;<b>meta</b>&quot; &quot;<b>.</b>&quot; <i>verb</i> &quot;<b>()</b>&quot;</pre>
+          </td>
+          <td>
+            <pre>static reflection</pre>
+          </td>
+          <td>
+            <pre><b>kernel</b></pre>
+          </td>
+        </tr>
+      </table>
+      <p align="left">Unary Postfix and Call are documented together below.</p>
+      <h3 align="left"><a name="call"></a>Call (<i>mostly</i> left associative)</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr valign="top">
+          <td>
+            <pre><i>postfix</i> &quot;<b>.</b>&quot; <i>verb</i> &quot;<b>(</b>&quot; <i>expr,...</i> &quot;<b>)</b>&quot;
+<i>expr</i>             &quot;<b>(</b>&quot; <i>expr,...</i> &quot;<b>)</b>&quot;</pre>
+          </td>
+          <td>
+            <pre align="left">call, do now
+function call</pre>
+          </td>
+          <td>
+            <pre><b>kernel</b>
+l.run(<i>expr,...</i>)</pre>
+          </td>
+        </tr>
+        <tr valign="top">
+          <td>
+            <pre>&quot;<b>meta</b>&quot; &quot;<b>.</b>&quot; <i>verb</i> &quot;<b>(</b>&quot; <i>expr,...</i> &quot;<b>)</b>&quot;</pre>
+          </td>
+          <td>
+            <pre>static reflection</pre>
+          </td>
+          <td>
+            <pre><b>kernel</b></pre>
+          </td>
+        </tr>
+      </table>
+      <p align="left">(XXX need to add verb-curry syntax to these tables)
+      <p align="left">The grammar for synchronous (do it now) calls and asynchronous
+        (do it eventally) sends is split between the Unary Postfix box and the
+        Call box in order to resolve a parsing ambiguity. To do so, we violate
+        our convention of presenting the grammar as a strict precedence hierarchy,
+        in that the first grammar construct below uses <i>postfix</i>, meaning
+        the first box, as part of its definition.
+      <p align="left">The postfix box contains three of the shorthand forms for
+        synchronous calls. The first form shows that the familiar array indexing
+        notation is just syntactic sugar for a one-argument &quot;get&quot; message.
+      <p align="left">The second form makes it straightforward to deal with JavaBeans
+        properties. A JavaBean property &quot;foo&quot; is defined by a pair of
+        a getFoo method for accessing it, and a setFoo method for setting it.
+        The first letter of the property name is upper-cased according to JavaBeans
+        property naming rules. Rather than writing &quot;<tt>x.getFoo()</tt>&quot;,
+        the <i><b><font color="#009000">E</font></b></i> programmer may say &quot;<tt>x::foo</tt>&quot;. To change a property,
+        rather than say &quot;<tt>x.setFoo(newFoo)</tt>&quot;, by virtue of
+        the expansion of assignment, the <i><b><font color="#009000">E</font></b></i> programmer may say &quot;<tt>x::foo
+        := newFoo</tt>&quot;. The third form enables one to likewise deal with
+        JavaBeans indexed properties.
+      <p align="left">The fourth shorthand form is shown in the Call box. As long
+        as an argument list is explicitly provided (even if it's empty), you may
+        leave out the verb, which will default to &quot;run&quot;. Such an expression
+        is referred to as a <i>function call</i>.
+      <p align="left">Asynchronous calls are identified by the &quot;<tt>&lt;-</tt>&quot;
+        operator, which is read &quot;eventually&quot;. For example, &quot;<tt>counter
+        &lt;- incr()</tt>&quot; is a request that the counter eventually increment
+        itself. As with calls, the verb &quot;run&quot; may be left out.
+      <p align="left">The &quot;meta&quot; forms are an escape for allowing an
+        object's program to make reflective queries about itself. These reflective
+        queries must be carefully defined so they don't violate any security properties,
+        and the easiest way to ensure this is to provide only conveniences for
+        what the object could have acheived more awkwardly otherwise. Therefore,
+        they <i>could</i> be defined by a source-to-source transformation, although
+        the current <i><b><font color="#009000">E</font></b></i> definition doesn't do so.
+      <p align="left">The meta forms are all introduced by the keyword &quot;<b>meta</b>&quot;
+        so they will be apparent to static analysis. The only meta forms currently
+        accepted are those that give an object easy access to information about
+        itself. Classically, an object consists of state and behavior, so
+      <p align="left">
+      <ul>
+        <li>&quot;<b>meta</b>.getState&quot;()<br>
+          &quot;scope&quot; is not a keyword, but must be the verb that appears
+          after meta. This expression yields the scope object that represents
+          the bindings in-scope at that point in the program. These bindings only
+          include variables defined outside the closest enclosing object if the
+          code of this object uses this variable.</li>
+        <p>
+        <li>&quot;<b>meta</b>.sourceTree(<i>name</i>)&quot;<br>
+          Similarly, &quot;sourceTree&quot; isn't a keyword, but but must be the
+          provided verb. <i>name</i> must be the definition-name of an enclosing
+          object expression. This meta form yield the parse tree of this object
+          expression as canonically expanded to Kernel E. (XXX this has been replaced by meta.context(); explain)</li>
+      </ul>
+      <p align="left">These are used most often to create <i><a href="../same-ref.html">transparent</a></i>
+        objects -- object that auditably reveal their state and behavior to their
+        clients. By <i>auditably</i>, we mean that the client does not need to
+        trust the object's claim that it is reporting its internals accurately.
+        Rather, it can trust an independent auditor that's in a position to check.
+      <p align="left">
+      <h3 align="left"></h3>
+      <h3 align="left">Primitive (no parse ambiguity to be resolved)</h3>
+      The last step of our precedence hierarchy are the primitive expressions,
+      whose grammar is unambiguous, so they can be the &quot;atomic&quot; expressions
+      all other all built from. They are documented on a <a href="prim-expr.html">separate
+      page</a>.<!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">grammar</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="prim-expr.html" title="On to: Primitive Expression Grammar"><img src="../../images/next.gif" width="64" height="32" alt="On to: Primitive Expression Grammar" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

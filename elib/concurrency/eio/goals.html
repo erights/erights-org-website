@@ -1,0 +1,317 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>EIO Design Goals</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">concurrency</a>&nbsp;/&nbsp;<a href="index.html">eio</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="obtaining.html" title="On to: Obtaining Elements from an InStream"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Obtaining Elements from an InStream" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>EIO
+              Design Goals:<br>
+              <font size="5">Requirements and Preferences</font></B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <h1>General EIO Requirements</h1>
+      <ul>
+        <li>
+          <p><b><a name="noblock"></a>Non-blocking.</b> Normal usage of the EIO
+            library should not cause a vat to block indefinitely on external I/O,
+            or block at all on any non-prompt I/O, even when there are bugs in
+            the <i><b><font color="#009000">E</font></b></i> code using EIO.</p>
+          <p>(It would be pointless to require that malicious usage must not cause
+            a vat to block, since a malicious entity in a vat can effectively
+            block its whole hosting vat anyway with an infinite loop.) </p>
+          <p>When wrapping legacy I/O libraries, this requirement relies on those
+            libraries stating accurately what operations may proceed promptly.
+            For example, an <tt><a href="../../../javadoc/org/erights/e/elib/eio/InStream.html">InStream</a></tt>
+            that wraps a Java1.3 <tt>InputStream</tt> or <tt>Reader</tt> will
+            only be prompt to the extent that <tt><a href="../../../javadoc/java/io/InputStream.html#available()">InputStream.available()</a></tt>
+            or <tt><a href="../../../javadoc/java/io/Reader.html#ready()">Reader.ready()</a></tt>
+            indicates what can be read promptly.</p>
+        </li>
+        <li>
+          <p><b><a name="nio"></a>Efficient later.</b> EIO must be implementable
+            in Java1.4 using <a href="http://java.sun.com/j2se/1.4/docs/guide/nio/">NIO</a>
+            without introducing unnecessary threads. </p>
+        <li>
+          <p><b><a name="pure"></a>Possible now.</b> EIO must be implementable
+            in pure Java1.3 (ie, without <a href="http://java.sun.com/j2se/1.4/docs/guide/nio/">NIO</a>
+            or <a href="http://www.cs.berkeley.edu/%7Emdw/proj/java-nbio/">NBIO</a>).
+            Note that <i><b><font color="#009000">E</font></b></i> itself requires
+            only 1.3 and so must depend on only 1.3. (Though of course, <i><b><font color="#009000">E</font></b></i>
+            must be compatible with 1.4 and later versions.) Note that this requirement
+            cannot be met efficiently now -- on Java 1.3-based implementation
+            will require a separate thread to block on each separately blockable
+            I/O device on which there's a separate I/O operation posted.</p>
+      </ul>
+      <h1><a name="streams"></a>InStream and OutStream</h1>
+      <p>The center of any I/O library design are the interfaces often known by
+        names like InputStream and OutputStream. For EIO, these are <tt><a href="../../../javadoc/org/erights/e/elib/eio/InStream.html">InStream</a></tt>
+        and <tt><a href="../../../javadoc/org/erights/e/elib/eio/OutStream.html">OutStream</a></tt>,
+        refered to jointly as <i>EIO Streams</i>.</p>
+      <p><font color="#FF0000">(XXX I find it difficult to write requirements
+        per se. The following list mixes goals with some description of the actual
+        design we arrived at in service of those goals.)</font></p>
+      <p>As with other I/O libraries, the EIO library both defines the types <tt>InStream</tt>/<tt>OutStream</tt>,
+        for itself and others to implement, and provides some built-in implementations
+        of these types. When the following list of goals says, for example, that
+        &quot;<i>A conforming Foo <a href="../../../glossary.html#MUST" class="glossary">MUST</a>
+        ...</i>&quot;, this means, as is conventional, that an implementation
+        of Foo <i>must</i> have the stated property in order to be considered
+        conforming, though conformance is not detected or enforced, and so should
+        not generally be relied upon by clients of a Foo. </p>
+      <p>Unless stated otherwise, we do require all built in primitive Stream
+        implementations provided by the EIO library to conform, and the built-in
+        layered EOI-provided Stream implementations (see <a href="#Composability">Composability</a>
+        below) to be <i>conformance preserving</i> -- if the layers they're built
+        on conform, then they must conform as well. Likewise, an EIO-provided
+        Stream that wraps (is layered upon) a <tt>java.io</tt> stream must be
+        conformance preserving -- if the <tt>java.io</tt> stream conforms to its
+        contract, then the wrapping EIO Stream must conform as well.</p>
+      <p>The goals EIO Streams (<tt>InStream</tt> and <tt>OutStream</tt>) should
+        meet are:</p>
+      <ul>
+        <li>
+          <p><b><a name="wraps"></a>Wraps legacy.</b> EIO Streams must be able
+            to wrap the common <tt>java.io</tt> byte and character stream classes,
+            such that EIO Streams can be used from <i><b><font color="#009000">E</font></b></i>
+            instead of these <tt>java.io</tt> stream classes with well enough
+            that the <tt>java.io</tt> stream classes can be removed from the portable
+            <i><b><font color="#009000">E</font></b></i> API spec without loss
+            of needed functionality. </p>
+        <li>
+          <p><b><a name="tames"></a>Tames legacy.</b> This wrapping must eventually
+            be sufficient that we can <a href="../../legacy/index.html">tame</a>
+            legacy blocking operations out of existence (from the perspective
+            of the <i><b><font color="#009000">E</font></b></i> programmer), or
+            at least make them unnecessary for normal use.</p>
+        <li>
+          <p><b><a name="objects"></a>Objects can play too.</b> Besides bytes
+            and chars, the API must provide for streams of any type of element,
+            in order to bring the power of stream-oriented programming to objects.
+            However, when the type is in fact a <tt><a href="../../../javadoc/java/lang/Class.html#isPrimitive()">scalar
+            type</a></tt>, then a packed list-of-scalar representation should
+            be used. When used within a vat, a stream of objects must pass references
+            to the objects themselves, without serialization. </p>
+        <li>
+          <p><b><a name="model"></a>Simple model.</b> The following is the model
+            we're using, and serves as an example of the kind of model we require:</p>
+          <blockquote>
+            <p>A stream is an ongoing sequence of elements of some type, some
+              of which may be known now, and some of which are expected to become
+              known in the future. The stream of elements may continue forever,
+              it may successfully <i>close</i>, or it may <i>fail</i> with a <i>terminal
+              problem</i> (an <tt>IOException</tt> explaining the reason for failure).
+              Whether it closes or fails, it is <i>done</i> with a <i>terminator</i>
+              indicating how it is done (either <tt>true</tt> or a reference broken
+              by the terminal problem). This terminator is conceptually in the
+              stream after the last element, but it is not itself an element of
+              the stream. </p>
+            <p>Elements enter a stream through an <tt>OutStream</tt> and exit
+              through an <tt>InStream</tt>. When Alice is writing into a stream
+              that Bob reads, we say that Alice is <i>upstream</i> of Bob. Likewise,
+              the <tt>OutStream</tt> is upstream of the <tt>InStream</tt>. A client
+              of an <tt>OutStream</tt>, such as Alice, is a <i>producer</i>. A
+              client of an <tt>InStream</tt>, such as Bob, is a <i>consumer</i>.</p>
+          </blockquote>
+        <li>
+          <p><b><a name="familiar"></a>Synchronous use is instantly familiar.</b>
+            The synchronous reading operations must be easily understandable to
+            someone familiar with <tt>java.io</tt>'s <tt><a href="../../../javadoc/java/io/InputStream.html">InputStream</a></tt>
+            or <tt><a href="../../../javadoc/java/io/Reader.html">Reader</a></tt>.
+            Likewise with the synchronous writing operations and java.io's <tt><a href="../../../javadoc/java/io/OutputStream.html">OutputStream</a></tt>
+            and <tt><a href="../../../javadoc/java/io/Writer.html">Writer</a></tt>.</p>
+        <li>
+          <p><b><a name="learned"></a>Asynchronous use is easily learned.</b>
+            The asynchronous operations must be easily understandable to someone
+            who's learned the synchronous operations and is already familiar with
+            the basic <i><b><font color="#009000">E</font></b></i> concurrency
+            model.</p>
+        </li>
+        <li>
+          <p><b><a name="simple"></a>Simple things <i>must</i> be simple, complex
+            things <i>should</i> be possible.</b> We are explicitly willing to
+            accept APIs unable to do some complex things, to be examined on a
+            case-by-case basis.</p>
+        <li>
+          <p><b><a name="failstop"></a>Fail-stop.</b> The streams that <tt>OutStream</tt>
+            writes and <tt>InStream</tt> reads should be fail-stop. The built-in
+            streams provided by EIO must be fail-stop. This means they must reliably
+            deliver the elements of the stream in order until they close or fail.
+            Failure must be distinguishable from normal termination. As on normal
+            termination, on failure the stream must stop -- termination must be
+            a permanent condition. Once a stream is done, it should release its
+            buffers.</p>
+        <li>
+          <p><b><a name="Composability"></a>Composability:</b></p>
+          <ul>
+            <li>
+              <p><b><a name="pipes"></a>Pipes.</b> EIO must provide a pipe abstraction
+                that has an <tt>InStream</tt> facet and an <tt>OutStream</tt>
+                facet. Everything written to the <tt>OutStream</tt> facet must
+                be immediately available to from the <tt>InStream</tt> facet.</p>
+            <li>
+              <p><b><a name="filters"></a>Filters.</b> Streams must be easily
+                composable: As with Unix shell programming, it must be easy to
+                create <i>filters</i> -- intermediaries that read from an InStream
+                and write to an OutStream. Placing filters between pipes effectively
+                makes longer pipes or transducting pipes. Such a filter may or
+                may not require the InStream and OutStream to be in the same vat
+                as itself. The EIO library itself must provide a some basic filters,
+                including an inter-vat copying filter, which can therefore be
+                used for making inter-vat pipes.</p>
+            <li>
+              <p><b><a name="isolators"></a>Pipes as &quot;opto-isolators&quot;.</b>
+                As is generally true of capability style, InStreams and OutStreams
+                should have no <a href="http://www.combex.com/papers/darpa-report/html/index.html#unchecked">unchecked
+                preconditions</a>. The InStreams and OutStreams provided by EIO
+                must nave no unchecked preconditions. Therefore, when Alice writes
+                to the OutStream W of a pipe and Bob reads from the InStream R
+                of the pipe (<tt>Alice-&gt;W=R-&gt;Bob</tt>), then Alice must
+                see good W behavior even if Bob misbehaves, and Bob must see good
+                R behavior even if Alice misbehaves. </p>
+            <li>
+              <p><b><a name="failprop"></a>Failure propogation.</b> Pipes and
+                filters, including the built-in ones, may spontaneously fail unless
+                their specific contract says otherwise. They may also be told
+                to fail by their clients (through the InStream and OutStream interfaces).
+                The built in pipes and filters must report their failure both
+                upstream and downstream. A built-in pipe or filter that isn't
+                already done and receives a failure report must itself fail with
+                the same terminal problem, whose report it must therefore propogate.
+                Other pipes and filters should do likewise.</p>
+            <li>
+              <p><b><a name="closeprop"></a>Close propogation.</b> The built-in
+                pipes and filters must not spontaneously <i>close</i> (terminate
+                successfully) -- A <i>close</i> indicates an intentional decision
+                by some client of the EIO library. When Alice closes her OutStream,
+                she is informing Bob that she has finished writing elements to
+                the stream. When Bob closes his InStream, he is informing Alice
+                that he's no longer interested in anything she has to say.</p>
+              <p> If Carol closes an InStream or OutStream that's in the chain
+                between Alice and Bob (or likewise, if she tells it to fail),
+                then she's revoking Alice's ability to talk to Bob through that
+                channel. The built-in pipes and filters must therefore propogate
+                closes both upstream and downstream. (For this use, we currently
+                recommend that Carol tell the stream to fail rather then close.
+                She can then use the terminal problem to inform both Alice and
+                Bob why she's revoked their ability to communicate.)</p>
+            <li>
+              <p><b><a name="backpressure"></a>Backpressure, or flow control.</b>
+                There must be a basic set of built-in pipes and filters that only
+                require bounded buffers. As these buffers fill up, these must
+                propogate backpressure upstream, which is to say, avoid draining
+                elements from the upstream pipes and filters. Therefore, the InStream
+                and OutStream APIs must make it possible to deal with bounded
+                buffers and to propogate backpressure. Backpressure must be able
+                to propogate to the EIO client code at the end point who can use
+                it to postpone further production.</p>
+            <li>
+              <p><s><b><font color="#FF0000"><a name="retransmit"></a>Error control</font></b></s><b>,
+                not.</b> Although comm protocols typically bundle flow control
+                and error control together, error control (retransmission) is
+                explicitly not a requirement, since any such errors can be masked
+                at a lower level, and our fail-stop requirement requires them
+                to be masked. By contrast, flow control cannot be masked, but
+                must instead be made visible to application code.</p>
+            <li>
+              <p><b><a name="flush"></a>Flush pressure.</b> With an OutStream,
+                it must be possible to obligate a stream to eventually deliver
+                all elements that have already entered the stream. The built-in
+                pipes and filters must honor this obligation up to the limits
+                set by termination and backpressure. </p>
+          </ul>
+        </li>
+        <li>
+          <p><b><a name="immediacy"></a>Preserve immediacy.</b> The built-in legacy
+            wrappers must provide all the immediate reading or writing power of
+            the underlying stream abstractions: If 37 bytes are available on the
+            underlying stream, then it must be possible to read 37 bytes <i>now</i>
+            from an InStream that wraps that stream. When composed through pipes
+            and filters, this immediacy may be subject to the limitations imposed
+            by these intermediaries. In particular, all immediacy guarantees are
+            lost over an inter-vat pipe.</p>
+      </ul>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">concurrency</a>&nbsp;/&nbsp;<a href="index.html">eio</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="obtaining.html" title="On to: Obtaining Elements from an InStream"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Obtaining Elements from an InStream" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

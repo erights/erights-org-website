@@ -1,0 +1,2088 @@
+// Copyright (C) 2011 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+var RegExp;
+
+/**
+ * @fileoverview Monkey patch almost ES5 platforms into a closer
+ * emulation of full <a href=
+ * "http://code.google.com/p/es-lab/wiki/SecureableES5"
+ * >secureable ES5</a>.
+ *
+ * <p>On not-quite-ES5 platforms, some elements of these emulations
+ * may lose SES safety, as enumerated in the comment on each
+ * kludge-switch variable below. The platform must at least provide
+ * Object.getOwnPropertyNames, because it cannot reasonably be
+ * emulated.
+ */
+(function() {
+  "use strict";
+
+
+  /////////////// KLUDGE SWITCHES ///////////////
+
+  /////////////////////////////////
+  // The following are only the minimal kludges needed for the current
+  // Firefox, Safari, or the current Chrome Beta. At the time of
+  // this writing, these are Firefox 4.0, Safari 5.0.4 (5533.20.27)
+  // and Chrome 12.0.742.12 dev
+  // As these move forward, kludges can be removed until we simply
+  // rely on ES5.
+
+  /**
+   * Workaround for https://bugs.webkit.org/show_bug.cgi?id=55537
+   *
+   * <p>This kludge is safety preserving.
+   *
+   * <p>TODO(erights): Turning on this kludge is expensive, so we
+   * should auto-detect at initialization time whether we need to on
+   * this platform.
+   */
+  //var TOLERATE_MISSING_CALLEE_DESCRIPTOR = false;
+  var TOLERATE_MISSING_CALLEE_DESCRIPTOR = true;
+
+  /**
+   * Work around for https://bugzilla.mozilla.org/show_bug.cgi?id=591846
+   * as applied to the RegExp constructor.
+   *
+   * <p>Note that Mozilla lists this bug as closed. But reading that
+   * bug thread clarifies that is partially because the following code
+   * allows us to work around the non-configurability of the RegExp
+   * statics.
+   *
+   * <p>This kludge is safety preserving.
+   */
+  //var REGEXP_CANT_BE_NEUTERED = false;
+  var REGEXP_CANT_BE_NEUTERED = true;
+
+  /**
+   * Work around for http://code.google.com/p/google-caja/issues/detail?id=528
+   *
+   * <p>This kludge is safety preserving.
+   */
+  //var REGEXP_TEST_EXEC_UNSAFE = false;
+  var REGEXP_TEST_EXEC_UNSAFE = true;
+
+  /**
+   * Workaround for https://bugs.webkit.org/show_bug.cgi?id=55736
+   *
+   * <p>As of this writing, the only major browser that does implement
+   * Object.getOwnPropertyNames but not Object.freeze etc is the
+   * released Safari 5 (JavaScriptCore). The Safari beta 5.0.4
+   * (5533.20.27, r84622) already does, which is why this WebKit bug
+   * is listed as closed. When the released Safari has this fix, we
+   * can retire this kludge.
+   *
+   * <p>This kludge is <b>not</b> safety preserving. The emulations it
+   * installs if needed do not actually provide the safety that the
+   * rest of SES relies on.
+   */
+  //var TOLERATE_MISSING_FREEZE_ETC = false;
+  var TOLERATE_MISSING_FREEZE_ETC = true;
+
+  /**
+   * Workaround for https://bugs.webkit.org/show_bug.cgi?id=26382.
+   *
+   * As of this writing, the only major browser that does implement
+   * Object.getOwnPropertyNames but not Function.prototype.bind is
+   * Safari 5 (JavaScriptCore), including the current Safari beta
+   * 5.0.4 (5533.20.27, r84622).
+   *
+   * <p>This kludge is safety preserving. But see
+   * https://bugs.webkit.org/show_bug.cgi?id=26382#c25 for why this
+   * kludge cannot faithfully implement the specified semantics.
+   *
+   * <p>See also https://bugs.webkit.org/show_bug.cgi?id=42371
+   */
+  //var TOLERATE_MISSING_BIND = false;
+  var TOLERATE_MISSING_BIND = true;
+
+  /**
+   * Workaround for an unfortunate oversight in the ES5 spec: Even if
+   * Date.prototype is frozen, it is still defined to be a Date, and
+   * so has mutable state in internal properties that can be mutated
+   * by the primordial mutation methods on Date.prototype, such as
+   * {@code Date.prototype.setFullYear}.
+   *
+   * <p>TODO(erights): find an appropriate venue to report this bug
+   * and report it.
+   */
+  //var PATCH_MUTABLE_FROZEN_DATE_PROTO = false;
+  var PATCH_MUTABLE_FROZEN_DATE_PROTO = true;
+
+  /**
+   * Workaround for a bug in the current FF6.0a1 implementation: Even
+   * if WeakMap.prototype is frozen, it is still defined to be a
+   * WeakMap, and so has mutable state in internal properties that can
+   * be mutated by the primordial mutation methods on
+   * WeakMap.prototype, such as {@code WeakMap.prototype.set}.
+   *
+   * <p>TODO(erights): Update the ES spec page to reflect the current
+   * agreement with Mozilla, and file a bug against the current Mozilla
+   * implementation.
+   */
+  //var PATCH_MUTABLE_FROZEN_WEAKMAP_PROTO = false;
+  var PATCH_MUTABLE_FROZEN_WEAKMAP_PROTO = true;
+
+  //////////////// END KLUDGE SWITCHES ///////////
+
+  var hop = Object.prototype.hasOwnProperty;
+  var slice = Array.prototype.slice;
+  var classTester = Object.prototype.toString;
+  var defProp = Object.defineProperty;
+  var getParent = Object.getPrototypeOf;
+
+  if (TOLERATE_MISSING_CALLEE_DESCRIPTOR) {
+    (function(realGOPN) {
+      if (!realGOPN) {
+        throw new EvalError('Please upgrade to a JavaScript platform ' +
+                            'which implements Object.getOwnPropertyNames');
+      }
+      Object.getOwnPropertyNames = function calleeFix(base) {
+        var result = realGOPN(base);
+        if (typeof base === 'function') {
+          var i = result.indexOf('callee');
+          if (i >= 0 && !hop.call(base, 'callee')) {
+            result.splice(i, 1);
+          }
+        }
+        return result;
+      };
+    })(Object.getOwnPropertyNames);
+  }
+
+  if (REGEXP_CANT_BE_NEUTERED) {
+    var UnsafeRegExp = RegExp;
+    var FakeRegExp = function FakeRegExp(pattern, flags) {
+      switch (arguments.length) {
+      case 0: {
+        return UnsafeRegExp();
+      }
+      case 1: {
+        return UnsafeRegExp(pattern);
+      }
+      default: {
+        return UnsafeRegExp(pattern, flags);
+      }
+      }
+    };
+    FakeRegExp.prototype = UnsafeRegExp.prototype;
+    FakeRegExp.prototype.constructor = FakeRegExp;
+    RegExp = FakeRegExp;
+  }
+
+  if (REGEXP_TEST_EXEC_UNSAFE) {
+    var unsafeRegExpExec = RegExp.prototype.exec;
+    var unsafeRegExpTest = RegExp.prototype.test;
+    RegExp.prototype.exec = function fakeExec(specimen) {
+      return unsafeRegExpExec.call(this, String(specimen));
+    };
+    RegExp.prototype.test = function fakeTest(specimen) {
+      return unsafeRegExpTest.call(this, String(specimen));
+    };
+  }
+
+  function patchMissingProp(base, name, missingFunc) {
+    if (!(name in base)) {
+      defProp(base, name, {
+        value: missingFunc,
+        writable: true,
+        enumerable: false,
+        configurable: true
+      });
+    }
+  }
+
+  if (TOLERATE_MISSING_FREEZE_ETC) {
+    patchMissingProp(Object, 'freeze',
+                     function fakeFreeze(obj) { return obj; });
+    patchMissingProp(Object, 'seal',
+                     function fakeSeal(obj) { return obj; });
+    patchMissingProp(Object, 'preventExtensions',
+                     function fakePreventExtensions(obj) { return obj; });
+    patchMissingProp(Object, 'isFrozen',
+                     function fakeIsFrozen(obj) { return false; });
+    patchMissingProp(Object, 'isSealed',
+                     function fakeIsSealed(obj) { return false; });
+    patchMissingProp(Object, 'isExtensible',
+                     function fakeIsExtensible(obj) { return true; });
+  }
+
+  if (TOLERATE_MISSING_BIND) {
+    patchMissingProp(Function.prototype, 'bind',
+                     function fakeBind(self, var_args) {
+      var thisFunc = this;
+      var leftArgs = slice.call(arguments, 1);
+      function funcBound(var_args) {
+        var args = leftArgs.concat(slice.call(arguments, 0));
+        return thisFunc.apply(self, args);
+      }
+      delete funcBound.prototype;
+      return funcBound;
+    });
+  }
+
+  /**
+   * Make a function suitable for using as a forEach argument on a
+   * list of method names, where that function will monkey patch each
+   * of these names methods on {@code constr.prototype} so that they
+   * can't be called on {@code constr.prototype} itself even across
+   * frames.
+   *
+   * <p>This only works when {@code constr} corresponds to an internal
+   * [[Class]] property whose value is {@code classString}. To test
+   * for {@code constr.prototype} cross-frame, we observe that for all
+   * objects of this [[Class]], only the prototypes directly inherits
+   * from an object that does not have this [[Class]].
+   */
+  function makeMutableProtoPatcher(constr, classString) {
+    var proto = constr.prototype;
+    var baseToString = classTester.call(proto);
+    if (baseToString !== '[object ' + classString + ']') {
+      throw new TypeError('unexpected: ' + baseToString);
+    }
+    if (getParent(proto) !== Object.prototype) {
+      throw new TypeError('unexpected inheritance: ' + classString);
+    }
+    function mutableProtoPatcher(name) {
+      if (!hop.call(proto, name)) { return; }
+      var originalMethod = proto[name];
+      function replacement(var_args) {
+        var parent = getParent(this);
+        if (classTester.call(parent) !== baseToString) {
+          var thisToString = classTester.call(this);
+          if (thisToString === baseToString) {
+            throw new TypeError('May not mutate internal state of a ' +
+                              classString + '.prototype');
+          } else {
+            throw new TypeError('Unexpected: ' + thisToString);
+          }
+        }
+        return originalMethod.apply(this, arguments);
+      }
+      proto[name] = replacement;
+    }
+    return mutableProtoPatcher;
+  }
+
+  if (PATCH_MUTABLE_FROZEN_DATE_PROTO) {
+    // Note: coordinate this list with maintanence of whitelist.js
+    ['setYear',
+     'setTime',
+     'setFullYear',
+     'setUTCFullYear',
+     'setMonth',
+     'setUTCMonth',
+     'setDate',
+     'setUTCDate',
+     'setHours',
+     'setUTCHours',
+     'setMinutes',
+     'setUTCMinutes',
+     'setSeconds',
+     'setUTCSeconds',
+     'setMilliseconds',
+     'setUTCMilliseconds'].forEach(makeMutableProtoPatcher(Date, 'Date'));
+  }
+
+  if (PATCH_MUTABLE_FROZEN_WEAKMAP_PROTO && typeof WeakMap === 'function') {
+    // Note: coordinate this list with maintanence of whitelist.js
+    ['set',
+     'delete'].forEach(makeMutableProtoPatcher(WeakMap, 'WeakMap'));
+  }
+
+})();
+// Copyright (C) 2011 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @fileoverview Install a leaky WeakMap emulation on platforms that
+ * don't provide a built-in one.
+ */
+
+/**
+ * This {@code WeakMap} emulation is observably equivalent to the
+ * ES-Harmony WeakMap, but with leakier garbage collection properties.
+ *
+ * <p>As with true WeakMaps, in this emulation, a key does not
+ * retain maps indexed by that key and (crucially) a map does not
+ * retain the keys it indexes. A key by itself also does not retain
+ * the values associated with that key.
+ *
+ * <p>However, the values placed in an emulated WeakMap are retained
+ * so long as that map is retained and those associations are not
+ * overridden. For example, when used to support membranes, all
+ * values exported from a given membrane will live for the lifetime
+ * of the membrane. But when the membrane is revoked, all objects
+ * encapsulated within that membrane will still be collected. This
+ * is the best we can do without VM support.
+ *
+ * <p>The API implemented here is approximately the API as implemented
+ * in FF6.0a1 and agreed to MarkM, Andreas Gal, and Dave Herman,
+ * rather than the offially approved proposal page. TODO(erights):
+ * upgrade the ecmascript WeakMap proposal page to explain this API
+ * change and present to EcmaScript committee for their approval.
+ *
+ * <p>The first difference between the emulation here and that in
+ * FF6.0a1 is the presence on non enumerable {@code get___, has___,
+ * set___, and delete___} methods on WeakMap instances to represent
+ * what would be the hidden internal properties of a primitive
+ * implementation. Whereas the FF6.0a1 WeakMap.prototype methods
+ * require their {@code this} to be a genuine WeakMap instance (i.e.,
+ * and object of {@code [[Class]]} "WeakMap}), since there is nothing
+ * unforgeable about the pseudo-internal method names used here,
+ * nothing prevents these emulated prototype methods from being
+ * applied to non-WeakMaps with pseudo-internal methods of the same
+ * names.
+ *
+ * <p>Another difference is that our emulated {@code
+ * WeakMap.prototype} is not itself a WeakMap. A
+ * problem with the current FF6.0a1 API is that WeakMap.prototype is
+ * itself a WeakMap providing ambient mutability and an ambient
+ * communications channel. Thus, if a WeakMap is already present and
+ * has this problem, es5shim.js wraps it in a safe wrappper in order
+ * to prevent access to this channel. (See
+ * PATCH_MUTABLE_FROZEN_WEAKMAP_PROTO in es5shim.js).
+ */
+var WeakMap;
+
+/**
+ * If this is a full <a href=
+ * "http://code.google.com/p/es-lab/wiki/SecureableES5"
+ * >secureable ES5</a> platform and the ES-Harmony {@code WeakMap} is
+ * absent, install an approximate emulation.
+ *
+ * <p>If this is almost a secureable ES5 platform, then WeakMap.js
+ * should be run after es5shim.js.
+ *
+ * <p>See {@code WeakMap} for documentation of the garbage collection
+ * properties of this WeakMap emulation.
+ */
+(function() {
+  "use strict";
+
+  if (typeof WeakMap === 'function') { return; }
+
+  var hop = Object.prototype.hasOwnProperty;
+  var gopn = Object.getOwnPropertyNames;
+  var defProp = Object.defineProperty;
+
+  /**
+   * Holds the orginal static properties of the Object constructor,
+   * after es5shim fixes these if necessary to be a more complete
+   * secureable ES5 environment, but before installing the following
+   * WeakMap emulation overrides and before any untrusted code runs.
+   */
+  var originalProps = {};
+  gopn(Object).forEach(function(name) {
+    originalProps[name] = Object[name];
+  });
+
+  var NO_IDENT = 'noident:0';
+
+  /**
+   * Gets a value which is either NO_IDENT or uniquely identifies the
+   * key object, for use in making maps keyed by this key object.
+   *
+   * <p>Two keys that are <a href=
+   * "http://wiki.ecmascript.org/doku.php?id=harmony:egal">egal</a>
+   * MUST have the same {@code identity}. Two keys that are not egal
+   * MUST either have different identities, or at least one of their
+   * identities MUST be {@code NO_IDENT}.
+   *
+   * <p><b>Plan</b>: An identity is either a string or a const
+   * function returning a mostly-unique string. The identity of an
+   * object is always either NO_IDENT or such a function. The
+   * egal-identity of the function itself is used to resolve
+   * collisions on the string returned by the function. For now, if
+   * the key is not an object (i.e., a primitive, null, or undefined),
+   * then identity(key) throws a TypeError.
+   *
+   * <p><b>What's currently implemented</b>: An identity is either a
+   * string or a frozen singleton array containing a mostly-unique
+   * string. The identity of an object is always either NO_IDENT or
+   * such an array. The egal-identity of the array itself is used to
+   * resolve collisions on the string within the array.
+   *
+   * <p>When a map stores a key's identity rather than the key itself,
+   * the map does not cause the key to be retained. See the emulated
+   * {@code WeakMap} below for the resulting gc properties.
+   *
+   * <p>To identify objects with reasonable efficiency on ES5 by
+   * itself (i.e., without any object-keyed collections), we need to
+   * add a reasonably hidden property to such key objects when we
+   * can. This raises three issues:
+   * <ul>
+   * <li>arranging to add this property to objects before we lose the
+   *     chance, and
+   * <li>reasonably hiding the existence of this new property from
+   *     most JavaScript code.
+   * <li><b>Unimplemented plan</b> preventing <i>identity theft</i>,
+   *     where one object is created falsely claiming to have the
+   *     identity of another object.
+   * </ul>
+   * We do so by
+   * <ul>
+   * <li>Making the hidden property non-enumerable, so we need not
+   *     worry about for-in loops or {@code Object.keys},
+   * <li><b>Plan</b>: Making the hidden property an accessor property,
+   *     where the hidden property's getter is the identity, and the
+   *     value the getter returns is the mostly unique string.
+   * <li>monkey patching those reflective methods that would
+   *     prevent extensions, to add this hidden property first,
+   * <li>monkey patching those methods that would reveal this
+   *     hidden property, and
+   * <li>monkey patching those methods that would overwrite this
+   *     hidden property.
+   * </ul>
+   * Given our parser-less verification strategy, the remaining
+   * non-transparencies which are not easily fixed are
+   * <ul>
+   * <li>The {@code delete}, {@code in}, property access
+   *     ({@code []}, and {@code .}), and property assignment
+   *     operations each reveal the presence of the hidden
+   *     property. The property access operations also reveal the
+   *     randomness provided by {@code Math.random}. This not
+   *     currently an issue but may become one if SES otherwise seeks
+   *     to hide Math.random.
+   * </ul>
+   * These are not easily fixed because they are primitive operations
+   * which cannot be monkey patched. However, because (<b>Plan</b>)
+   * we're representing the precious identity by the identity of the
+   * property's getter rather than the value gotten, this identity
+   * itself cannot leak or be installed by the above non-transparent
+   * operations.
+   *
+   * <p>Due to <a href=
+   * "https://bugzilla.mozilla.org/show_bug.cgi?id=637994">Bug:
+   * Inherited accessor properties (sometimes?) reported as own
+   * properties</a> we're reverting the logic of <a href=
+   * "http://code.google.com/p/es-lab/source/browse/trunk/src/ses/WeakMap.js"
+   * >WeakMap.js</a> from getter based as in r493 to array-based as in
+   * r491. This leaves us open to the identity theft attack, and so is
+   * weaker than the security we actually require.
+   */
+  function identity(key) {
+    if (key !== Object(key)) {
+      throw new TypeError('Not an object: ' + key);
+    }
+    if (hop.call(key, 'ident___')) { return key.ident___; }
+    if (!originalProps.isExtensible(key)) { return NO_IDENT; }
+    var name = 'hash:' + Math.random();
+    var result = originalProps.freeze([name]);
+
+    defProp(key, 'ident___', {
+      value: result,
+      writable: false,
+      enumerable: false,
+      configurable: false
+    });
+    return result;
+  }
+
+  /**
+   * Monkey patch operations that would make their first argument
+   * non-extensible.
+   *
+   * <p>The monkey patched versions throw a TypeError if their first
+   * argument is not an object, so it should only be used on functions
+   * that should throw a TypeError if their first arg is not an
+   * object.
+   */
+  function identifyFirst(base, name) {
+    var oldFunc = base[name];
+    defProp(base, name, {
+      value: function(obj, var_args) {
+        identity(obj);
+        return oldFunc.apply(this, arguments);
+      }
+    });
+  }
+  identifyFirst(Object, 'freeze');
+  identifyFirst(Object, 'seal');
+  identifyFirst(Object, 'preventExtensions');
+  identifyFirst(Object, 'defineProperty');
+  identifyFirst(Object, 'defineProperties');
+
+  defProp(Object, 'getOwnPropertyNames', {
+    value: function fakeGetOwnPropertyNames(obj) {
+      var result = gopn(obj);
+      var i = result.indexOf('ident___');
+      if (i >= 0) { result.splice(i, 1); }
+      return result;
+    }
+  });
+
+  defProp(Object, 'getOwnPropertyDescriptor', {
+    value: function fakeGetOwnPropertyDescriptor(obj, name) {
+      if (name === 'ident___') { return undefined; }
+      return originalProps.getOwnPropertyDescriptor(obj, name);
+    }
+  });
+
+  if ('getPropertyNames' in Object) {
+    // Not in ES5 but in whitelist as expected for ES-Harmony
+    defProp(Object, 'getPropertyNames', {
+      value: function fakeGetPropertyNames(obj) {
+        var result = originalProps.getPropertyNames(obj);
+        var i = result.indexOf('ident___');
+        if (i >= 0) { result.splice(i, 1); }
+        return result;
+      }
+    });
+  }
+
+  if ('getPropertyDescriptor' in Object) {
+    // Not in ES5 but in whitelist as expected for ES-Harmony
+    defProp(Object, 'getPropertyDescriptor', {
+      value: function fakeGetPropertyDescriptor(obj, name) {
+        if (name === 'ident___') { return undefined; }
+        return originalProps.getPropertyDescriptor(obj, name);
+      }
+    });
+  }
+
+  defProp(Object, 'create', {
+    value: function fakeCreate(parent, pdmap) {
+      var result = originalProps.create(parent);
+      identity(result);
+      if (pdmap) {
+        originalProps.defineProperties(result, pdmap);
+      }
+      return result;
+    }
+  });
+
+  function constFunc(func) {
+    Object.freeze(func.prototype);
+    return Object.freeze(func);
+  }
+
+  WeakMap = function WeakMap() {
+    var identities = {};
+    var values = {};
+
+    function find(key) {
+      var id = identity(key);
+      var name;
+      if (typeof id === 'string') {
+        name = id;
+        id = key;
+      } else {
+        name = id[0];
+      }
+      var opt_ids = identities[name];
+      var i = opt_ids ? opt_ids.indexOf(id) : -1;
+      return Object.freeze({
+        name: name,
+        id: id,
+        opt_ids: opt_ids,
+        i: i
+      });
+    }
+
+    function get___(key, opt_default) {
+      var f = find(key);
+      return (f.i >= 0) ? values[f.name][f.i] : opt_default;
+    }
+
+    function has___(key) {
+      return find(key).i >= 0;
+    }
+
+    function set___(key, value) {
+      var f = find(key);
+      var ids = f.opt_ids || (identities[f.name] = []);
+      var vals = values[f.name] || (values[f.name] = []);
+      var i = (f.i >= 0) ? f.i : ids.length;
+      ids[i] = f.id;
+      vals[i] = value;
+    }
+
+    function delete___(key) {
+      var f = find(key);
+      if (f.i < 0) { return false; }
+      var ids = f.opt_ids;
+      var last = ids.length -1;
+      if (last === 0) {
+        delete identities[f.name];
+        delete values[f.name];
+      } else {
+        var vals = values[f.name];
+        ids[f.i] = ids[last];
+        vals[f.i] = vals[last];
+        delete ids[last];
+        delete vals[last];
+      }
+      return true;
+    }
+
+    return Object.create(WeakMap.prototype, {
+      get___: { value: constFunc(get___) },
+      has___: { value: constFunc(has___) },
+      set___: { value: constFunc(set___) },
+      delete___: { value: constFunc(delete___) }
+    });
+  };
+  WeakMap.prototype = Object.create(Object.prototype, {
+    get: {
+      /**
+       * Return the value most recently associated with key, or
+       * opt_default if none.
+       */
+      value: function get(key, opt_default) {
+        return this.get___(key, opt_default);
+      },
+      writable: true,
+      configurable: true
+    },
+
+    has: {
+      /**
+       * Is there a value associated with key in this WeakMap?
+       */
+      value: function has(key) {
+        return this.has___(key);
+      },
+      writable: true,
+      configurable: true
+    },
+
+    set: {
+      /**
+       * Associate value with key in this WeakMap, overwriting any
+       * previous association if present.
+       */
+      value: function set(key, value) {
+        this.set___(key, value);
+      },
+      writable: true,
+      configurable: true
+    },
+
+    'delete': {
+      /**
+       * Remove any association for key in this WeakMap, returning
+       * whether there was one.
+       *
+       * <p>Note that the boolean return here does not work like the
+       * {@code delete} operator. The {@code delete} operator returns
+       * whether the deletion succeeds at bringing about a state in
+       * which the deleted property is absent. The {@code delete}
+       * operator therefore returns true if the property was already
+       * absent, whereas this {@code delete} method returns false if
+       * the association was already absent.
+       */
+      value: function remove(key) {
+        return this.delete___(key);
+      },
+      writable: true,
+      configurable: true
+    }
+  });
+
+})();
+// Copyright (C) 2011 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @fileoverview Exports "whitelist", a recursively defined JSON
+ * record enumerating all the naming paths in the ES5.1 spec, those
+ * de-facto extensions that we judge to be safe, and SES and Dr. SES
+ * extensions provided by the SES runtime.
+ *
+ * <p>Each JSON record enumerates the disposition of the properties on
+ * some corresponding primordial object, with the root record
+ * representing the global object. For each such record, the values
+ * associated with its property names can be
+ * <ul>
+ * <li>Another record, in which case this property is simply
+ *     whitelisted and that next record represents the disposition of
+ *     the object which is its value. For example, {@code "Object"}
+ *     leads to another record explaining what properties {@code
+ *     "Object"} may have and how each of such property, if present,
+ *     and its value should be tamed.
+ * <li>true, in which case this property is simply whitelisted. The
+ *     value associated with that property is still traversed and
+ *     tamed, but only according to the taming of the objects that
+ *     object inherits from. For example, {@code "Object.freeze"} leads
+ *     to true, meaning that the {@code "freeze"} property of {@code
+ *     Object} should be whitelisted and the value of the property (a
+ *     function) should be further tamed only according to the
+ *     markings of the other objects it inherits from, like {@code
+ *     "Function.prototype"} and {@code "Object.prototype").
+ * <li>"*", in which case this property on this object is whitelisted,
+ *     as is this property as inherited by all objects that inherit
+ *     from this object. The values associated with all such properties
+ *     are still traversed and tamed, but only according to the taming
+ *     of the objects that object inherits from. For example, {@code
+ *     "Object.prototype.constructor"} leads to "*", meaning that we
+ *     whitelist the {@code "constructor"} property on {@code
+ *     Object.prototype} and on every object that inherits from {@code
+ *     Object.prototype} that does not have a conflicting mark. Each
+ *     of these is tamed as if with true, so that the value of the
+ *     property is further tamed according to what other objects it
+ *     inherits from.
+ * <li>"skip", in which case this property on this object is simply
+ *     whitelisted, as is this property as inherited by all objects
+ *     that inherit from this object, but we avoid taming the value
+ *     associated with that property. For example, as of this writing
+ *     {@code "Function.prototype.caller"} leads to "skip" because
+ *     some current browser bugs prevent us from removing or even
+ *     traversing this property on some platforms of interest.
+ * </ul>
+ *
+ * The "skip" markings are workarounds for browser bugs or other
+ * temporary problems. For each of these, there should be an
+ * explanatory comment explaining why or a bug citation
+ * (TODO(erights)). Any of these whose comments say "fatal" need to be
+ * fixed before SES might be considered safe. Ideally, we can retire
+ * all "skip" entries by the time SES is ready for secure production
+ * use.
+ *
+ * The members of the whitelist are either
+ * <ul>
+ * <li>(uncommented) defined by the ES5.1 normative standard text,
+ * <li>(questionable) provides a source of non-determinism, in
+ *     violation of pure object-capability rules, but allowed anyway
+ *     since we've given up on restricting JavaScript to a
+ *     deterministic subset.
+ * <li>(ES5 Appendix B) common elements of de facto JavaScript
+ *     described by the non-normative Appendix B.
+ * <li>(Harmless whatwg) extensions documented at
+ *     <a href="http://wiki.whatwg.org/wiki/Web_ECMAScript"
+ *     >http://wiki.whatwg.org/wiki/Web_ECMAScript</a> that seem to be
+ *     harmless. Note that the RegExp constructor extensions on that
+ *     page are <b>not harmless</b> and so must not be whitelisted.
+ * <li>(ES-Harmony proposal) accepted as "proposal" status for
+ *     EcmaScript-Harmony.
+ * <li>(Marked as "skip") See above.
+ * </ul>
+ *
+ * <p>With the above encoding, there are some sensible whitelists we
+ * cannot express, such as marking a property both with "*" and a JSON
+ * record. This is an expedient decision based only on not having
+ * encountered such a need. Should we need this extra expressiveness,
+ * we'll need to refactor to enable a different encoding.
+ *
+ * <p>We factor out {@code true} and {@code "skip"} into the variables
+ * {@code t} and {@code s} just to get a bit better compression from
+ * simple minifiers.
+ */
+var whitelist;
+
+(function() {
+  "use strict";
+
+  var t = true;
+  var s = 'skip';
+  whitelist = {
+    cajaVM: {                        // Caja support
+      log: t,
+      def: t,
+      compile: t,
+      compileModule: t,              // experimental
+      eval: t,
+      Function: t
+    },
+    Q: {                             // Dr. SES support
+      get: t,
+      post: t,
+      put: t,
+      'delete': t,
+      when: t,
+      defer: t,
+      reject: t,
+      ref: t,
+      near: t,
+      defined: t,
+      run: t,
+      Promise: t,
+      isPromise: t,
+      def: t
+    },
+    WeakMap: {       // ES-Harmony proposal as currently implemented by FF6.0a1
+      prototype: {
+        // Note: coordinate this list with maintanence of es5shim.js
+        get: t,
+        set: t,
+        has: t,
+        'delete': t
+      }
+    },
+    Proxy: {                         // ES-Harmony proposal
+      create: t,
+      createFunction: t
+    },
+    escape: t,                       // ES5 Appendix B
+    unescape: t,                     // ES5 Appendix B
+    Object: {
+      getPropertyDescriptor: t,      // ES-Harmony proposal
+      getPropertyNames: t,           // ES-Harmony proposal
+      identical: t,                  // ES-Harmony proposal
+      prototype: {
+        constructor: '*',
+        toString: '*',
+        toLocaleString: '*',
+        valueOf: t,
+        hasOwnProperty: t,
+        isPrototypeOf: t,
+        propertyIsEnumerable: t
+      },
+      getPrototypeOf: t,
+      getOwnPropertyDescriptor: t,
+      getOwnPropertyNames: t,
+      create: t,
+      defineProperty: t,
+      defineProperties: t,
+      seal: t,
+      freeze: t,
+      preventExtensions: t,
+      isSealed: t,
+      isFrozen: t,
+      isExtensible: t,
+      keys: t
+    },
+    NaN: t,
+    Infinity: t,
+    undefined: t,
+    // eval: t,                      // Whitelisting under separate control
+                                     // by TAME_GLOBAL_EVAL in startSES.js
+    parseInt: t,
+    parseFloat: t,
+    isNaN: t,
+    isFinite: t,
+    decodeURI: t,
+    decodeURIComponent: t,
+    encodeURI: t,
+    encodeURIComponent: t,
+    Function: {
+      prototype: {
+        apply: t,
+        call: t,
+        bind: t,
+        prototype: '*',
+        length: '*',
+        caller: s,                 // when not poison, could be fatal
+        arguments: s,              // when not poison, could be fatal
+        arity: s,                  // non-std, deprecated in favor of length
+        name: s                    // non-std
+      }
+    },
+    Array: {
+      prototype: {
+        concat: t,
+        join: t,
+        pop: t,
+        push: t,
+        reverse: t,
+        shift: t,
+        slice: t,
+        sort: t,
+        splice: t,
+        unshift: t,
+        indexOf: t,
+        lastIndexOf: t,
+        every: t,
+        some: t,
+        forEach: t,
+        map: t,
+        filter: t,
+        reduce: t,
+        reduceRight: t,
+        length: s                    // can't be redefined on Mozilla
+      },
+      isArray: t
+    },
+    String: {
+      prototype: {
+        substr: t,                   // ES5 Appendix B
+        anchor: t,                   // Harmless whatwg
+        big: t,                      // Harmless whatwg
+        blink: t,                    // Harmless whatwg
+        bold: t,                     // Harmless whatwg
+        fixed: t,                    // Harmless whatwg
+        fontcolor: t,                // Harmless whatwg
+        fontsize: t,                 // Harmless whatwg
+        italics: t,                  // Harmless whatwg
+        link: t,                     // Harmless whatwg
+        small: t,                    // Harmless whatwg
+        strike: t,                   // Harmless whatwg
+        sub: t,                      // Harmless whatwg
+        sup: t,                      // Harmless whatwg
+        trimLeft: t,                 // non-standard
+        trimRight: t,                // non-standard
+        valueOf: t,
+        charAt: t,
+        charCodeAt: t,
+        concat: t,
+        indexOf: t,
+        lastIndexOf: t,
+        localeCompare: t,
+        match: t,
+        replace: t,
+        search: t,
+        slice: t,
+        split: t,
+        substring: t,
+        toLowerCase: t,
+        toLocaleLowerCase: t,
+        toUpperCase: t,
+        toLocaleUpperCase: t,
+        trim: t,
+        length: s                  // can't be redefined on Mozilla
+      },
+      fromCharCode: t
+    },
+    Boolean: {
+      prototype: {
+        valueOf: t
+      }
+    },
+    Number: {
+      prototype: {
+        valueOf: t,
+        toFixed: t,
+        toExponential: t,
+        toPrecision: t
+      },
+      MAX_VALUE: t,
+      MIN_VALUE: t,
+      NaN: t,
+      NEGATIVE_INFINITY: t,
+      POSITIVE_INFINITY: t
+    },
+    Math: {
+      E: t,
+      LN10: t,
+      LN2: t,
+      LOG2E: t,
+      LOG10E: t,
+      PI: t,
+      SQRT1_2: t,
+      SQRT2: t,
+
+      abs: t,
+      acos: t,
+      asin: t,
+      atan: t,
+      atan2: t,
+      ceil: t,
+      cos: t,
+      exp: t,
+      floor: t,
+      log: t,
+      max: t,
+      min: t,
+      pow: t,
+      random: t,                     // questionable
+      round: t,
+      sin: t,
+      sqrt: t,
+      tan: t
+    },
+    Date: {                          // no-arg Date constructor is questionable
+      prototype: {
+        // Note: coordinate this list with maintanence of es5shim.js
+        getYear: t,                  // ES5 Appendix B
+        setYear: t,                  // ES5 Appendix B
+        toGMTString: t,              // ES5 Appendix B
+        toDateString: t,
+        toTimeString: t,
+        toLocaleString: t,
+        toLocaleDateString: t,
+        toLocaleTimeString: t,
+        getTime: t,
+        getFullYear: t,
+        getUTCFullYear: t,
+        getMonth: t,
+        getUTCMonth: t,
+        getDate: t,
+        getUTCDate: t,
+        getDay: t,
+        getUTCDay: t,
+        getHours: t,
+        getUTCHours: t,
+        getMinutes: t,
+        getUTCMinutes: t,
+        getSeconds: t,
+        getUTCSeconds: t,
+        getMilliseconds: t,
+        getUTCMilliseconds: t,
+        getTimezoneOffset: t,
+        setTime: t,
+        setFullYear: t,
+        setUTCFullYear: t,
+        setMonth: t,
+        setUTCMonth: t,
+        setDate: t,
+        setUTCDate: t,
+        setHours: t,
+        setUTCHours: t,
+        setMinutes: t,
+        setUTCMinutes: t,
+        setSeconds: t,
+        setUTCSeconds: t,
+        setMilliseconds: t,
+        setUTCMilliseconds: t,
+        toUTCString: t,
+        toISOString: t,
+        toJSON: t
+      },
+      parse: t,
+      UTC: t,
+      now: t                         // questionable
+    },
+    RegExp: {
+      prototype: {
+        exec: t,
+        test: t,
+        source: s,
+        global: s,
+        ignoreCase: s,
+        multiline: s,
+        lastIndex: s,
+        sticky: s                    // non-std
+      }
+    },
+    Error: {
+      prototype: {
+        name: '*',
+        message: '*'
+      }
+    },
+    EvalError: {
+      prototype: t
+    },
+    RangeError: {
+      prototype: t
+    },
+    ReferenceError: {
+      prototype: t
+    },
+    SyntaxError: {
+      prototype: t
+    },
+    TypeError: {
+      prototype: t
+    },
+    URIError: {
+      prototype: t
+    },
+    JSON: {
+      parse: t,
+      stringify: t
+    }
+  };
+})();
+// Copyright (C) 2011 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @fileoverview export an "atLeastFreeVarNames" function for internal
+ * use by the SES-on-ES5 implementation, which enumerates at least the
+ * identifiers which occur freely in a source text string.
+ */
+
+
+/**
+ * Calling atLeastFreeVarNames on a {@code programSrc} string
+ * argument, the result should include at least all the free variable
+ * names of {@code programSrc} as own properties.
+ *
+ * <p>Assuming a programSrc that parses as a strict Program,
+ * atLeastFreeVarNames(programSrc) returns a Record whose enumerable
+ * own property names must include the names of all the free variables
+ * occuring in programSrc. It can include as many other strings as is
+ * convenient so long as it includes these. The value of each of these
+ * properties should be {@code true}.
+ *
+ * <p>TODO(erights): On platforms that support Proxies (currently only
+ * FF4 and later), we should stop using atLeastFreeVarNames, since a
+ * {@code with(aProxy) {...}} should reliably intercept all free
+ * variable accesses without needing any prior scan.
+ */
+var atLeastFreeVarNames;
+(function() {
+  "use strict";
+
+  /////////////// KLUDGE SWITCHES ///////////////
+
+  /**
+   * Currently we use this to limit the input text to ascii only
+   * without backslash-u escapes, in order to simply our identifier
+   * gathering.
+   *
+   * <p>This is only a temporary development hack. TODO(erights): fix.
+   */
+  function LIMIT_SRC(programSrc) {
+    if ((/[^\u0000-\u007f]/).test(programSrc)) {
+      throw new EvalError('Non-ascii text not yet supported');
+    }
+    if ((/\\u/).test(programSrc)) {
+      throw new EvalError('Backslash-u escape encoded text not yet supported');
+    }
+  }
+
+  /**
+   * Return a regexp that can be used repeatedly to scan for the next
+   * identifier.
+   *
+   * <p>The current implementation is safe only because of the above
+   * LIMIT_SRC. To do this right takes quite a lot of unicode
+   * machinery. See the "Identifier" production at
+   * http://es-lab.googlecode.com/svn/trunk/src/parser/es5parser.ojs
+   * which depends on
+   * http://es-lab.googlecode.com/svn/trunk/src/parser/unicode.js
+   *
+   * <p>This is only a temporary development hack. TODO(erights): fix.
+   */
+  function SHOULD_MATCH_IDENTIFIER() { return (/(\w|\$)+/g); }
+
+
+  //////////////// END KLUDGE SWITCHES ///////////
+
+  atLeastFreeVarNames = function atLeastFreeVarNames(programSrc) {
+    programSrc = String(programSrc);
+    LIMIT_SRC(programSrc);
+    // Now that we've temporarily limited our attention to ascii...
+    var regexp = SHOULD_MATCH_IDENTIFIER();
+    var result = Object.create(null);
+    var a;
+    while ((a = regexp.exec(programSrc))) {
+      // Note that we could have avoided the while loop by doing
+      // programSrc.match(regexp), except that then we'd need
+      // temporary storage proportional to the total number of
+      // apparent identifiers, rather than the total number of
+      // apparent unique identifiers.
+      var name = a[0];
+      result[name] = true;
+    }
+    return result;
+  };
+
+})();
+// Copyright (C) 2011 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @fileoverview Make this frame SES-safe or die trying.
+ */
+
+/**
+ * The global {@code eval} function available to script code, which
+ * may or not be made safe.
+ *
+ * <p>The original global binding of {@code eval} is not
+ * SES-safe. {@code cajaVM.eval} is a safe wrapper around this
+ * original eval, enforcing SES language restrictions.
+ *
+ * <p>If TAME_GLOBAL_EVAL is true, both the global {@code eval}
+ * variable, and the pseudo-global {@code "eval"} property of root,
+ * are set to the safe wrapper. If TAME_GLOBAL_EVAL is false, in order
+ * to work around a bug in the Chrome debugger, then the global {@code
+ * eval} is unaltered and no {@code "eval"} property is available on
+ * root. In either case, SES-evaled-code and SES-script-code can both
+ * access the safe eval wrapper as {@code cajaVM.eval}.
+ *
+ * <p>By making the safe eval available on root only when we also make
+ * it be the genuine global eval, we preserve the property that
+ * SES-evaled-code differs from SES-script-code only by having a
+ * subset of the same variables in globalish scope. This is a
+ * nice-to-have that makes explanation easier rather than a hard
+ * requirement. With this property, any SES-evaled-code that does not
+ * fail to access a global variable (or to test whether it could)
+ * should operate the same way when run as SES-script-code.
+ *
+ * <p>See doc-comment on cajaVM for the restriction on this API needed
+ * to operate under Caja translation on old browsers.
+ */
+var eval;
+
+/**
+ * The global {@code Function} constructor is always replaced with a
+ * safe wrapper, which is also made available as the {@code
+ * "Function"} pseudo-global on root.
+ *
+ * <p>Both the original Function constructor and this safe wrapper
+ * point at the original {@code Function.prototype}, so {@code
+ * instanceof} works fine with the wrapper. {@code
+ * Function.prototype.constructor} is set to point at the safe
+ * wrapper, so that only it, and not the unsafe original, is
+ * accessible.
+ *
+ * <p>See doc-comment on cajaVM for the restriction on this API needed
+ * to operate under Caja translation on old browsers.
+ */
+var Function;
+
+/**
+ * A new global exported by SES, intended to become a mostly
+ * compatible API between server-side Caja translation for older
+ * browsers and client-side SES verification for newer browsers.
+ *
+ * <p>Under server-side Caja translation for old pre-ES5 browsers, the
+ * synchronous interface of the evaluation APIs (currently {@code
+ * eval, Function, cajaVM.{compile, compileModule, eval, Function}})
+ * cannot reasonably be provided. Instead, under translation we expect
+ * <ul>
+ * <li>Not to have a binding for the pseudo-global {@code "eval"} on root,
+ *     just as we would not if TAME_GLOBAL_EVAL is false.
+ * <li>The global {@code eval} seen by scripts is either unaltered (to
+ *     work around the Chrome debugger bug if TAME_GLOBAL_EVAL is
+ *     false), or is replaced by a function that throws an appropriate
+ *     EvalError diagnostic (if TAME_GLOBAL_EVAL is true).
+ * <li>The global {@code Function} constructor, both as seen by script
+ *     code and evaled code, to throw an appropriate diagnostic.
+ * <li>The {@code Q} API to always be available, to handle
+ *     asyncronous, promise, and remote requests.
+ * <li>The evaluating methods on {@code cajaVM} -- currently {@code
+ *     compile, compileModule, eval, and Function} -- to be remote
+ *     promises for their normal interfaces, which therefore must be
+ *     invoked with {@code Q.post}.
+ * <li>Since {@code Q.post} can be used for asynchronously involing
+ *     non-promises, invocations like
+ *     {@code Q.post(cajaVM, 'eval', ['2+3'])}, for example,
+ *     will return a promise for a 5. This will work both under Caja
+ *     translation and (TODO(erights)) under SES verification when
+ *     {@code Q} is also installed, and so is the only portable
+ *     evaluating API that SES code should use during this transition
+ *     period.
+ * <li>TODO(erights): {code Q.post(cajaVM, 'compileModule',
+ *     [moduleSrc]} should eventually pre-load the transitive
+ *     synchronous dependencies of moduleSrc before resolving the
+ *     promise for its result. It currently does not, instead
+ *     requiring its client to do so manually.
+ * </ul>
+ */
+var cajaVM;
+
+/**
+ * <p>{@code startSES} should be called before any other potentially
+ * dangerous script is executed in this frame.
+ *
+ * <p>If {@code startSES} succeeds, the evaluation operations on
+ * {@code cajaVM}, the global {@code Function} contructor, and perhaps
+ * the {@code eval} function (see doc-comment on {@code eval} and
+ * {@code cajaVM}) will only load code according to the <i>loader
+ * isolation</i> rules of the object-capability model, suitable for
+ * loading untrusted code. If all other (trusted) code executed
+ * directly in this frame (i.e., other than through these safe
+ * evaluation operations) takes care to uphold object-capability
+ * rules, then untrusted code loaded via these safe evaluation
+ * operations will be constrained by those rules.
+ *
+ * <p>On a pre-ES5 platform, this script will fail cleanly, leaving
+ * the frame intact. Otherwise, if this script fails, it may leave
+ * this frame in an unusable state. All following description assumes
+ * this script succeeds and that the browser conforms to the ES5
+ * spec. The ES5 spec allows browsers to implement more than is
+ * specified as long as certain invariants are maintained. We further
+ * assume that these extensions are not maliciously designed to obey
+ * the letter of these invariants while subverting the intent of the
+ * spec. In other words, even on an ES5 conformant browser, we do not
+ * presume to defend ourselves from a browser that is out to get us.
+ *
+ * @param global ::Record(any) Assumed to be the real global object
+ *        for this frame. Since startSES will allow global variable
+ *        references that appear at the top level of the whitelist,
+ *        our safety depends on these variables being frozen as a side
+ *        effect of freezing the corresponding properties of
+ *        <tt>global</tt>. These properties are also duplicated onto a
+ *        the virtual global objects which are provided as the
+ *        <tt>this</tt> binding for the safe evaluation calls --
+ *        emulating the safe subset of the normal global object.
+ * @param whitelist ::Record(Permit) where Permit = true | "*" |
+ *        "skip" | Record(Permit).  Describes the subset of naming
+ *        paths starting from the root that should be accessible. The
+ *        <i>accessible primordials</i> are all values found by
+ *        navigating these paths starting from this root. All
+ *        non-whitelisted properties of accessible primordials are
+ *        deleted, and then the root and all accessible primordials
+ *        are frozen with the whitelisted properties frozen as data
+ *        properties. TODO(erights): fix the code and documentation to
+ *        also support confined-ES5, suitable for confining
+ *        potentially offensive code but not supporting defensive
+ *        code, where we skip this last freezing step.
+ * @param atLeastFreeVarNames ::F([string], Record(true))
+ *        Given the sourceText for a strict Program,
+ *        atLeastFreeVarNames(sourceText) returns a Record whose
+ *        enumerable own property names must include the names of all the
+ *        free variables occuring in sourceText. It can include as
+ *        many other strings as is convenient so long as it includes
+ *        these. The value of each of these properties should be
+ *        {@code true}. TODO(erights): On platforms with Proxies
+ *        (currently only Firefox 4 and after), use {@code
+ *        with(aProxy) {...}} to intercept free variables rather than
+ *        atLeastFreeVarNames.
+ */
+function startSES(global, whitelist, atLeastFreeVarNames) {
+  "use strict";
+
+
+  /////////////// KLUDGE SWITCHES ///////////////
+
+  /////////////////////////////////
+  // The following are only the minimal kludges needed for the current
+  // Firefox or the current Chrome Beta. At the time of
+  // this writing, these are Firefox 4.0 and Chrome 12.0.742.5 dev
+  // As these move forward, kludges can be removed until we simply
+  // rely on ES5.
+
+  /**
+   * Workaround for http://code.google.com/p/v8/issues/detail?id=1321
+   * and https://bugs.webkit.org/show_bug.cgi?id=58338
+   *
+   * <p>This switch simply reflects that not all almost-ES5 browsers
+   * yet implement strict mode.
+   *
+   * <p>This kludge is <b>not</b> safety preserving. By proceeding
+   * without a full strict mode implementation, many of the security
+   * properties SES relies on, like non-leakage of the global object,
+   * are lost.
+   *
+   * <p>See also https://bugzilla.mozilla.org/show_bug.cgi?id=482298
+   * TODO(erights): verify that all the open bugs this one depends do
+   * not matter for SES security.
+   */
+  //var REQUIRE_STRICT = true;
+  var REQUIRE_STRICT = false;
+
+  /**
+   * <p>TODO(erights): isolate and report this.
+   *
+   * <p>This switch represents some non-isolated, and thus, not yet
+   * reported bug on Chrome/v8 only, that results in
+   * "Uncaught TypeError: Cannot redefine property: defineProperty"
+   *
+   * <p>This kludge is safety preserving, since the EARLY_FREEZES
+   * still get frozen.
+   */
+  //var EARLY_FREEZES = [];
+  var EARLY_FREEZES = [Array.prototype.forEach];
+
+  /**
+   * <p>TODO(erights): isolate and report this.
+   *
+   * <p>This switch represents what looks like another manifestation of
+   * the same undiagnosed bug as that motivating EARLY_FREEZES. The
+   * symptom is again
+   * "TypeError: Cannot redefine property: defineProperty"
+   * with a similar stack.
+   *
+   * <p>This kludge is <b>not</b> safety preserving, since this kludge
+   * allows initialization to succeed even when we can't freeze all
+   * objects that SES relies on being frozen (like the primordials).
+   */
+  //var TOLERATE_FAILED_FREEZE = false;
+  var TOLERATE_FAILED_FREEZE = true;
+
+  /**
+   * <p>TODO(erights): isolate and report this.
+   *
+   * <p>Workaround for Chrome debugger's own use of 'eval'
+   *
+   * <p>This kludge is safety preserving but not semantics
+   * preserving. When TAME_GLOBAL_EVAL is false, no synchronous 'eval'
+   * is available as a pseudo-global to untrusted (eval) code, and the
+   * 'eval' available as a global to trusted (script) code is the
+   * original 'eval', and so is not safe.
+   */
+  //var TAME_GLOBAL_EVAL = true;
+  var TAME_GLOBAL_EVAL = false;
+
+
+  //////////////// END KLUDGE SWITCHES ///////////
+
+
+  var dirty = true;
+
+  var hop = Object.prototype.hasOwnProperty;
+
+  function fail(str) {
+    debugger;
+    throw new EvalError(str);
+  }
+
+  if (typeof WeakMap === 'undefined') {
+    fail('No built-in WeakMaps, so WeakMap.js must be loaded first');
+  }
+
+  if (REQUIRE_STRICT && (function() { return this; })()) {
+    fail('Requires at least ES5 support');
+  }
+
+  /**
+   * Code being eval'ed sees <tt>root</tt> as its <tt>this</tt>, as if
+   * <tt>root</tt> were the global object.
+   *
+   * <p>Root's properties are exactly the whitelisted global variable
+   * references. These properties, both as they appear on the global
+   * object and on this root object, are frozen and so cannot
+   * diverge. This preserves the illusion.
+   */
+  var root = Object.create(null);
+
+  /** Repair phase -- monkey patch safe replacements */
+  (function() {
+
+    /**
+     * The unsafe* variables hold precious values that must not escape
+     * to untrusted code. When {@code eval} is invoked via {@code
+     * unsafeEval}, this is a call to the indirect eval function, not
+     * the direct eval operator.
+     */
+    var unsafeEval = eval;
+    var UnsafeFunction = Function;
+
+    /**
+     * Fails if {@code programSrc} does not parse as a strict Program
+     * production.
+     *
+     * <p>Uses Ankur Taly's trick to cheaply check that a program
+     * parses using the platform's parser, as implicitly accessed by
+     * the original eval function, while nevertheless ensuring that no
+     * code from {@code programSrc} executes in the process.
+     *
+     * <p>TODO(erights): Switch to Crock's alternate suggestion of
+     * calling UnsafeFunction instead, since it will report early
+     * errors but will not execute regardless. Before doing this,
+     * investigate Jasvir's vague memory that on some browser the
+     * Function constructor will do some code execution, in which case
+     * Crock's alternative would not be safe. (If so, then we should
+     * also report the bug.)
+     */
+    function verifyStrictProgram(programSrc) {
+      try {
+        unsafeEval('"use strict"; ' +
+                   'throw "NotASyntaxError"; ' +
+                   programSrc);
+      } catch (ex) {
+        if (ex !== 'NotASyntaxError') {
+          throw ex;
+        }
+      }
+    }
+
+    /**
+     * Fails if {@code exprSource} does not parse as a strict
+     * Expression production.
+     *
+     * <p>To verify that exprSrc parses as a strict Expression, we
+     * verify that (when followed by ";") it parses as a strict
+     * Program, and that when surrounded with parens it still parses
+     * as a strict Program. We place a newline before the terminal
+     * token so that a "//" comment cannot suppress the close paren.
+     */
+    function verifyStrictExpression(exprSrc) {
+      verifyStrictProgram(exprSrc + ';');
+      verifyStrictProgram('( ' + exprSrc + '\n);');
+    }
+
+    /**
+     * For all the own properties of {@code from}, copy their
+     * descriptors to {@code virtualGlobal}, except that the property
+     * added to {@code virtualGlobal} is unconditionally
+     * non-enumerable and (for the moment) configurable.
+     *
+     * <p>By copying descriptors rather than values, any accessor
+     * properties of {@code env} become accessors of {@code
+     * virtualGlobal} with the same getter and setter. If these do not
+     * use their {@code this} value, then the original and any copied
+     * properties are effectively joined. (If the getter/setter do use
+     * their {@code this}, when compiled (verified untrusted) code
+     * accesses these with virtualGlobal as the base, their {@code
+     * this} will be bound to the virtualGlobal rather than {@code
+     * env}.)
+     *
+     * <p>We make these configurable so that {@code virtualGlobal} can
+     * be further configured before being frozen. We make these
+     * non-enumerable in order to emulate the normal behavior of
+     * built-in properties of typical global objects, such as the
+     * browser's {@code window} object.
+     */
+    function initGlobalProperties(from, virtualGlobal) {
+      Object.getOwnPropertyNames(from).forEach(function(name) {
+        var desc = Object.getOwnPropertyDescriptor(from, name);
+        desc.enumerable = false;
+        desc.configurable = true;
+        Object.defineProperty(virtualGlobal, name, desc);
+      });
+    }
+
+    /**
+     * Make a frozen virtual global object whose properties are the
+     * union of the whitelisted globals and the own properties of
+     * {@code env}.
+     *
+     * <p>If there is a collision, the property from {@code env}
+     * shadows the whitelisted global. We shadow by overwriting rather
+     * than inheritance so that shadowing makes the original binding
+     * inaccessible.
+     */
+    function makeVirtualGlobal(env) {
+      var virtualGlobal = Object.create(null);
+      initGlobalProperties(root, virtualGlobal);
+      initGlobalProperties(env, virtualGlobal);
+      return Object.freeze(virtualGlobal);
+    }
+
+    /**
+     * Make a frozen scope object which inherits from
+     * {@code virtualGlobal}, for use by {@code with} to prevent
+     * access to any {@code freeNames} other than those found on the.
+     * {@code virtualGlobal}.
+     */
+    function makeScopeObject(virtualGlobal, freeNames) {
+      var scopeObject = Object.create(virtualGlobal);
+      Object.keys(freeNames).forEach(function(name) {
+        if (!(name in virtualGlobal)) {
+          (function(name) {
+            Object.defineProperty(scopeObject, name, {
+              get: function() {
+                throw new ReferenceError('"' + name + '" not in scope');
+              },
+              set: function(ignored) {
+                throw new TypeError('Cannot set "' + name + '"');
+              }
+            });
+          })(name);
+        }
+      });
+      return Object.freeze(scopeObject);
+    }
+
+
+    /**
+     * Compile {@code exprSrc} as a strict expression into a function
+     * of an environment {@code env}, that when called evaluates
+     * {@code exprSrc} in a virtual global environment consisting only
+     * of the whitelisted globals and a snapshot of the own properties
+     * of {@code env}.
+     *
+     * <p>When SES {@code compile} is provided primitively, it should
+     * accept a Program and return a function that evaluates it to the
+     * Program's completion value. Unfortunately, this is not
+     * practical as a library without some non-standard support from
+     * the platform such as a parser API that provides an AST.
+     *
+     * <p>Thanks to Mike Samuel and Ankur Taly for this trick of using
+     * {@code with} together with RegExp matching to intercept free
+     * variable access without parsing.
+     *
+     * <p>TODO(erights): Switch to Erik Corry's suggestion that we
+     * bring each of these variables into scope by generating a
+     * shadowing declaration, rather than using "with".
+     *
+     * <p>TODO(erights): Find out if any platforms have any way to
+     * associate a file name and line number with eval'ed text, and
+     * arrange to pass these through compile and all its relevant
+     * callers.
+     */
+    function compile(exprSrc) {
+      if (dirty) { fail('Initial cleaning failed'); }
+      verifyStrictExpression(exprSrc);
+      var freeNames = atLeastFreeVarNames(exprSrc);
+
+      /**
+       * Notice that the source text placed around exprSrc
+       * <ul>
+       * <li>brings no variable names into scope, avoiding any
+       *     non-hygienic name capture issues, and
+       * <li>does not introduce any newlines preceding exprSrc, so
+       *     that all line number which a debugger might report are
+       *     accurate wrt the original source text. And except for the
+       *     first line, all the column numbers are accurate too.
+       */
+      var wrapperSrc =
+        '(function() { ' +
+        // non-strict code, where this === scopeObject
+        '  with (this) { ' +
+        '    return function() { ' +
+        '      "use strict"; ' +
+        '      return ( ' +
+        // strict code, where this === virtualGlobal
+        '        ' + exprSrc + '\n' +
+        '      );\n' +
+        '    };\n' +
+        '  }\n' +
+        '})';
+      var wrapper = unsafeEval(wrapperSrc);
+      return function(env) {
+        var virtualGlobal = makeVirtualGlobal(env);
+        var scopeObject = makeScopeObject(virtualGlobal, freeNames);
+        return wrapper.call(scopeObject).call(virtualGlobal);
+      };
+    }
+
+    var directivePattern = (/^['"](?:\w|\s)*['"]$/m);
+
+    var requirePattern = (/^(?:\w*\s*(?:\w|\$|\.)*\s*=\s*)?\s*require\s*\(\s*['"]((?:\w|\$|\.|\/)+)['"]\s*\)$/m);
+
+    /**
+     * As an experiment, recognize a stereotyped prelude of the
+     * CommonJS module system.
+     */
+    function getRequirements(modSrc) {
+      var result = [];
+      var stmts = modSrc.split(';');
+      var stmt;
+      var i = 0, ilen = stmts.length;
+      for (; i < ilen; i++) {
+        stmt = stmts[i].trim();
+        if (stmt !== '') {
+          if (!directivePattern.test(stmt)) { break; }
+        }
+      }
+      for (; i < ilen; i++) {
+        stmt = stmts[i].trim();
+        if (stmt !== '') {
+          var m = requirePattern.exec(stmt);
+          if (!m) { break; }
+          result.push(m[1]);
+        }
+      }
+      return Object.freeze(result);
+    }
+
+    /**
+     * A module source is actually any valid FunctionBody, and thus any valid
+     * Program.
+     *
+     * <p>In addition, in case the module source happens to begin with
+     * a streotyped prelude of the CommonJS module system, the
+     * function resulting from module compilation has an additional
+     * {@code "requirements"} property whose value is a list of the
+     * module names being required by that prelude. These requirements
+     * are the module's "immediate synchronous dependencies".
+     *
+     * <p>This {@code "requirements"} property is adequate to
+     * bootstrap support for a CommonJS module system, since a loader
+     * can first load and compile the transitive closure of an initial
+     * module's synchronous depencies before actually executing any of
+     * these module functions.
+     *
+     * <p>With a similarly lightweight RegExp, we should be able to
+     * similarly recognize the {@code "load"} syntax of <a href=
+     * "http://wiki.ecmascript.org/doku.php?id=strawman:simple_modules#syntax"
+     * >Sam and Dave's module proposal for ES-Harmony</a>. However,
+     * since browsers do not currently accept this syntax,
+     * {@code getRequirements} above would also have to extract these
+     * from the text to be compiled.
+     */
+    function compileModule(modSrc) {
+      var moduleMaker = compile('(function() {' + modSrc + '}).call(this)');
+      moduleMaker.requirements = getRequirements(modSrc);
+      Object.freeze(moduleMaker.prototype);
+      return Object.freeze(moduleMaker);
+    }
+
+    /**
+     * A safe form of the {@code Function} constructor, which
+     * constructs strict functions that can only refer freely to the
+     * whitelisted globals.
+     *
+     * <p>The returned function is strict whether or not it declares
+     * itself to be.
+     */
+    function FakeFunction(var_args) {
+      var params = [].slice.call(arguments, 0);
+      var body = params.pop();
+      body = String(body || '');
+      params = params.join(',');
+      var exprSrc = '(function(' + params + '\n){' + body + '})';
+      return compile(exprSrc)({});
+    }
+    FakeFunction.prototype = UnsafeFunction.prototype;
+    FakeFunction.prototype.constructor = FakeFunction;
+    global.Function = FakeFunction;
+
+    /**
+     * A safe form of the indirect {@code eval} function, which
+     * evaluates {@code src} as strict code that can only refer freely
+     * to the whitelisted globals.
+     *
+     * <p>Given our parserless methods of verifying untrusted sources,
+     * we unfortunately have no practical way to obtain the completion
+     * value of a safely evaluated Program. Instead, we adopt a
+     * compromise based on the following observation. All Expressions
+     * are valid Programs, and all Programs are valid
+     * FunctionBodys. If {@code src} parses as a strict expression,
+     * then we evaluate it as an expression it and correctly return its
+     * completion value, since that is simply the value of the
+     * expression.
+     *
+     * <p>Otherwise, we evaluate {@code src} as a FunctionBody and
+     * return what that would return from its implicit enclosing
+     * function. If {@code src} is simply a Program, then it would not
+     * have an explicit {@code return} statement, and so we fail to
+     * return its completion value. This is sufficient for using
+     * {@code eval} to emulate script tags, since script tags also
+     * lose the completion value.
+     *
+     * <p>When SES {@code eval} is provided primitively, it should
+     * accept a Program and evaluate it to the Program's completion
+     * value. Unfortunately, this is not practical as a library
+     * without some non-standard support from the platform such as an
+     * parser API that provides an AST.
+     */
+    function fakeEval(src) {
+      try {
+        verifyStrictExpression(src);
+      } catch (x) {
+        src = '(function() {' + src + '\n}).call(this)';
+      }
+      return compile(src)({});
+    }
+
+    if (TAME_GLOBAL_EVAL) {
+      //
+      global.eval = fakeEval;
+    }
+
+    var defended = WeakMap();
+    /**
+     * To define a defended object is to freeze it and all objects
+     * transitively reachable from it via transitive reflective
+     * property and prototype traversal.
+     */
+    function def(node) {
+      var defending = WeakMap();
+      var defendingList = [];
+      function recur(val) {
+        if (val !== Object(val) || defended.get(val) || defending.get(val)) {
+          return;
+        }
+        defending.set(val, true);
+        defendingList.push(val);
+        Object.freeze(val);
+        recur(Object.getPrototypeOf(val));
+        Object.getOwnPropertyNames(val).forEach(function(p) {
+          if (typeof val === 'function' &&
+              (p === 'caller' || p === 'arguments')) {
+            return;
+          }
+          var desc = Object.getOwnPropertyDescriptor(val, p);
+          try {
+            recur(desc.value);
+            recur(desc.get);
+            recur(desc.set);
+          } catch (err) {
+            if (TOLERATE_FAILED_FREEZE && err instanceof TypeError) {
+              cajaVM.log('still diagnosing(' + p + '): ' + err);
+            } else {
+              throw err;
+            }
+          }
+        });
+      }
+      recur(node);
+      defendingList.forEach(function(obj) {
+        defended.set(obj, true);
+      });
+      return node;
+    }
+
+    global.cajaVM = {
+      log: function(str) {
+        if (typeof console !== 'undefined' &&
+            typeof console.log === 'function') {
+          console.log(str);
+        }
+      },
+      def: def,
+      compile: compile,
+      compileModule: compileModule,
+      eval: fakeEval,
+      Function: FakeFunction
+    };
+
+  })();
+
+  var cantNeuter = [];
+
+  /**
+   * Read the current value of base[name], and freeze that property as
+   * a data property to ensure that all further reads of that same
+   * property from that base produce the same value.
+   *
+   * <p>The algorithms in startSES traverse the graph of primordials
+   * multiple times. These algorithms rely on all these traversals
+   * seeing the same graph. By freezing these as data properties the
+   * first time they are read, we ensure that all traversals see the
+   * same graph.
+   *
+   * <p>The frozen property should preserve the enumerability of the
+   * original property.
+   */
+  function read(base, name) {
+    var desc = Object.getOwnPropertyDescriptor(base, name);
+    if (desc && 'value' in desc && !desc.writable && !desc.configurable) {
+      return desc.value;
+    }
+
+    var result = base[name];
+    try {
+      Object.defineProperty(base, name, {
+        value: result, writable: false, configurable: false
+      });
+    } catch (ex) {
+      cantNeuter.push({base: base, name: name, err: ex});
+    }
+    return result;
+  }
+
+  /**
+   * Initialize accessible global variables and {@code root}.
+   *
+   * For each of the whitelisted globals, we {@code read} its value,
+   * freeze that global property as a data property, and mirror that
+   * property with a frozen data property of the same name and value
+   * on {@code root}, but always non-enumerable. We make these
+   * non-enumerable since ES5.1 specifies that all these properties
+   * are non-enumerable on the global object.
+   */
+  Object.keys(whitelist).forEach(function(name) {
+    var desc = Object.getOwnPropertyDescriptor(global, name);
+    if (desc) {
+      var permit = whitelist[name];
+      if (permit) {
+        var value = read(global, name);
+        Object.defineProperty(root, name, {
+          value: value,
+          writable: true,
+          enumerable: false,
+          configurable: false
+        });
+      }
+    }
+  });
+  if (TAME_GLOBAL_EVAL) {
+    Object.defineProperty(root, 'eval', {
+      value: cajaVM.eval,
+      writable: true,
+      enumerable: false,
+      configurable: false
+    });
+  }
+
+  /**
+   * The whiteTable should map from each path-accessible primordial
+   * object to the permit object that describes how it should be
+   * cleaned.
+   *
+   * <p>To ensure that each subsequent traversal obtains the same
+   * values, these paths become paths of frozen data properties. See
+   * the doc-comment on {@code read}.
+   *
+   * We initialize the whiteTable only so that {@code getPermit} can
+   * process "*" and "skip" inheritance using the whitelist, by
+   * walking actual superclass chains.
+   */
+  var whiteTable = WeakMap();
+  function register(value, permit) {
+    if (value !== Object(value)) { return; }
+    if (typeof permit !== 'object') {
+      return;
+    }
+    var oldPermit = whiteTable.get(value);
+    if (oldPermit) {
+      fail('primordial reachable through multiple paths');
+    }
+    whiteTable.set(value, permit);
+    Object.keys(permit).forEach(function(name) {
+      if (permit[name] !== 'skip') {
+        var sub = read(value, name);
+        register(sub, permit[name]);
+      }
+    });
+  }
+  register(root, whitelist);
+
+  /**
+   * Should the property names {@code name} be whitelisted on the
+   * {@code base} object, and if so, with what Permit?
+   *
+   * <p>If it should be permitted, return the Permit (where Permit =
+   * true | "*" | "skip" | Record(Permit)), all of which are
+   * truthy. If it should not be permitted, return false.
+   */
+  function getPermit(base, name) {
+    var permit = whiteTable.get(base);
+    if (permit) {
+      if (permit[name]) { return permit[name]; }
+    }
+    while (true) {
+      base = Object.getPrototypeOf(base);
+      if (base === null) { return false; }
+      permit = whiteTable.get(base);
+      if (permit && hop.call(permit, name)) {
+        var result = permit[name];
+        if (result === '*' || result === 'skip') {
+          return result;
+        } else {
+          return false;
+        }
+      }
+    }
+  }
+
+  var cleaning = WeakMap();
+
+  var skipped = [];
+  var goodDeletions = [];
+  var badDeletions = [];
+
+  /**
+   * Assumes all super objects are otherwise accessible and so will be
+   * independently cleaned.
+   */
+  function clean(value, prefix) {
+    if (value !== Object(value)) { return; }
+    if (cleaning.get(value)) { return; }
+    cleaning.set(value, true);
+    Object.getOwnPropertyNames(value).forEach(function(name) {
+      var path = prefix + (prefix ? '.' : '') + name;
+      var p = getPermit(value, name);
+      if (p) {
+        if (p === 'skip') {
+          skipped.push(path);
+        } else {
+          var sub = read(value, name);
+          clean(sub, path);
+        }
+      } else {
+        // Strict delete throws on failure, which we can't count on yet
+        var success;
+        try {
+          success = delete value[name];
+        } catch (x) {
+          success = false;
+        }
+        if (success) {
+          goodDeletions.push(path);
+        } else {
+          badDeletions.push(path);
+        }
+      }
+    });
+    if (-1 === EARLY_FREEZES.indexOf(value)) {
+      Object.freeze(value);
+    }
+  }
+  for (var i = 0, len = EARLY_FREEZES.length; i < len; i++) {
+    Object.freeze(EARLY_FREEZES[i]);
+  }
+  clean(root, '');
+
+  function reportDiagnosis(desc, problemList) {
+    if (problemList.length === 0) { return false; }
+    cajaVM.log(desc + ': ' + problemList.sort().join(' '));
+    return true;
+  }
+
+  //reportDiagnosis('Skipped', skipped);
+  reportDiagnosis('Deleted', goodDeletions);
+
+  if (cantNeuter.length >= 1) {
+    var complaint = cantNeuter.map(function(p) {
+      var desc = Object.getPropertyDescriptor(p.base, p.name);
+      if (!desc) {
+        return '  Missing ' + p.name;
+      }
+      return p.name + '(' + p.err + '): ' +
+        Object.getOwnPropertyNames(desc).map(function(attrName) {
+          var v = desc[attrName];
+          if (v === Object(v)) { v = 'a ' + typeof v; }
+          return attrName + ': ' + v;
+        }).join(', ');
+
+    });
+    reportDiagnosis('Cannot neuter', complaint);
+  }
+
+  if (!reportDiagnosis('Cannot delete', badDeletions)) {
+    // We succeeded. Enable safe Function, eval, and compile to work.
+    cajaVM.log('success');
+    dirty = false;
+  }
+}
+// Copyright (C) 2011 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @fileoverview Call startSES to turn this frame into a SES
+ * environment following object-capability rules.
+ */
+
+(function() {
+  "use strict";
+
+  startSES(window, whitelist, atLeastFreeVarNames);
+})();

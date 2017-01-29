@@ -1,0 +1,733 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>State Bundles for Persistence</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="index.html">e</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="ejbind.html" title="Back to: Binding E to Java"><img src="../images/prev.gif" width="64" height="32" alt="Back to: Binding E to Java" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="DeconstructingE.html" title="On to: Deconstructing E"><img src="../images/next.gif" width="64" height="32" alt="On to: Deconstructing E" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>State 
+              Bundles<br>
+              for Persistence</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <b>Last updated:</b><i> [98/05/18 Arturo]</i> 
+      <p><i>[98/05/18 Arturo added note on bundle/ingredient separation, finished 
+        formatting]</i> 
+      <p><i>This page was originally written by Arturo who is also the author 
+        of the original version of the subsystem with help of Scott Lewis.</i> 
+      <h2> Introduction</h2>
+      State serialization involves a number of support classes for helping the 
+      developer to save only the core semantic state of the application. Saving 
+      the core state minimizes the number of classes that need to be made serializable 
+      and upgradeable. 
+      <p>There are three levels for the support, the lowest one is a serialization 
+        stream based on Java serialization, then there is E Runtime support for 
+        the core classes and finally in the Pluribus runtime there is support 
+        for saving the una and the relationships between them. 
+      <h4> Related Documents</h4>
+      <ul>
+        <li> Java's <a href="http://www.javasoft.com/products/jdk/1.1/docs/guide/serialization/index.html">Object 
+          Serialization</a> Support.</li>
+      </ul>
+      <h2> Requirements</h2>
+      <h4> Java Serialization Stream</h4>
+      The requirements for the serialization stream are: 
+      <ul>
+        <li> Simple interface for usage (of the form writeObject/readObject).</li>
+        <li> Simple interface for defining programatically define how and what 
+          of an object is saved and read in (allowing objects to define their 
+          own writeObject/readObject methods).</li>
+        <li> Explicit means of declaring which classes are serializable.</li>
+        <li> Tools for establishing stream based policy for replacement of objects 
+          in the serialization stream (although this is something that can also 
+          be done with specialized encoding behaviors).</li>
+        <li> Policy and mechanism for dealing with different upgrade scenarios.</li>
+      </ul>
+      Java serialization met all of these requirements, performance has not been 
+      measured yet though, and there might be other issues, there have also been 
+      upgrades to it from the version we are using. 
+      <h4> E Runtime Support</h4>
+      Support was needed for the following core classes: 
+      <ul>
+        <li> Registrar.</li>
+        <li> SturdyRefs.</li>
+        <li> RtTethers, in particular EUniChannels.</li>
+      </ul>
+      <h4> Pluribus Runtime and Una</h4>
+      There were three basic requirements for saving the una, one of them as we 
+      move into the future is not applicable: 
+      <ul>
+        <li> Base serializable state bundle class. The state bundles are the objects 
+          used to initialize the ingredients that make up an unum.</li>
+        <li> Saving the inter-unum relationships without having to save the entire 
+          unum and its facets.</li>
+        <li> Preserving current interfaces that passed live strongly typed object 
+          references to establish inter-unum relationships. (this requirement 
+          is not as strong as we move forward)</li>
+      </ul>
+      <h2> Architecture</h2>
+      <i>Diagrams are strongly encouraged; a few diagrams can do wonders for clairifying 
+      an architecture. If you don't know how to add diagrams consult Lani and 
+      Amy.</i> 
+      <h3> Current Architecture Overview</h3>
+      <h4> Introduction</h4>
+      Our initial approach to persistence for MicroCosm was orthogonal persistence. 
+      Orthogonal persistence consists of establishing a boundary within a process 
+      (what we called a vat) and then saving everything within that boundary, 
+      including ongoing computation. This 'save everything' approach had several 
+      disadvantages: 
+      <ul>
+        <li> Every single object within the boundary was saved, resulting in large 
+          save files and slow checkpointing times.</li>
+        <li> Since all of the objects and computation were getting saved, any 
+          running bugs were also saved, any object leaks got preserved.</li>
+        <li> Upgrade was very difficult since if you wanted to change a single 
+          class A you needed to change every single class and instance of object 
+          that referred to A within the boundary. Any more ambitious changes were 
+          impossible.</li>
+      </ul>
+      The basic problem is that we committed to save too much so we decided to 
+      ask 'What is the least amount of information we can save while maintaining 
+      all meaningful state?' Just enough information to initialize the object. 
+      <p>In the case of the Registrar which has over 20 instance variables we 
+        only needed to save the Private/Public key pair. For una we just need 
+        to save, and maintain consistent the state bundles used at initialization. 
+      <p>Saving the minimal amount of information possible ('Principle of least 
+        commitment') makes upgrade much easier to manage. As I was testing startup 
+        behavior I kept modifying classes like the Registrar while maintaining 
+        the same save file because all it needed from it was the key pair, I could 
+        have rewritten the entire class and the save file remains the same. 
+      <p>When you serialize an object to disk you are committing for the foreseeable 
+        future to maintain it, to upgrade it and to upgrade any objects that refer 
+        to it. So it is very important that you evaluate carefully before you 
+        make a class Serializable, to ask yourself the question 'Am I ready to 
+        make that kind of commitment?' 
+      <p>For most objects we are just using plain Java serialization, the extra 
+        support we needed to provide was: 
+      <ul>
+        <li> E Runtime Java serialization support for Registrar, using SturdyRefs, 
+          publishing SturdyRefs and serialization delegation support (allowing 
+          an object to designate another to take its place in the stream).</li>
+        <li> StateOutput and StateInput streams that implement our serialization 
+          policy.</li>
+        <li> StateTimeMachine for save file management.</li>
+        <li> Pluribus runtime support classes for serializing una: SoulState, 
+          jCapabilityGroup and in particular capability recoupers for preserving 
+          inter-unum relationships.</li>
+      </ul>
+      Before using these tools it please familiarize yourself with Java's <a href="http://www.javasoft.com/products/jdk/1.1/docs/guide/serialization/index.html">Object 
+      Serialization</a> Support. 
+      <h3> Making a class serializable</h3>
+      <ul>
+        <ul>
+          <ul>
+            <div align=right><i>Do you, Programmer, take this Object to be part 
+              of the persistent state of your application, to have and to hold, 
+              through maintenance and iterations, for past and future versions, 
+              as long as the application shall live?</i></div>
+          </ul>
+        </ul>
+      </ul>
+      <div align=right><i>- Erm, can I get back to you on that?</i></div>
+      <p>When you are first choosing which objects are to be made Serializable 
+        you need to carefully evaluate what you will be saving. When you make 
+        a class Serializable you are committing to support: 
+      <ul>
+        <li> The instance variables, including all of its types.</li>
+        <li> The interface of that version of that class.</li>
+      </ul>
+      A pattern that we've found useful in changing MicroCosm into an application 
+      that is persisted using Serialization is to separate the state information 
+      from the actually running object with its methods (saving the state bundles 
+      vs. saving the ingredients) then use this state information to create a 
+      new instance of the class at startup. If the object you save has no methods, 
+      its one less thing to worry about and maintain. <br>
+      &nbsp; 
+      <h3> Questions to ask yourself as you are deciding whether to make a class 
+        serializable</h3>
+      <ul>
+        <li> <b>Do I really want to save this class?</b></li>
+        <p>When implementing serialization for cosm I made the base state bundle 
+          class Serializable, I walked through the code converting everything 
+          that seemed straightforward. When I got to the presentation state in 
+          the containership state bundle I found a class called DEStartupData, 
+          upon further examination it turned that this class ended up referring 
+          to another 10 classes that went all the way into the bottom of the system. 
+          It was a good time to stop and evaluate whether I wanted to make that 
+          commitment to all of those classes, after examining the code I realized 
+          that I could just save a little information and reconstruct everything 
+          at startup. <br>
+          &nbsp; 
+        <li> <b>Is the information to make this object saved elsewhere? If so 
+          is it easier to save this instance or recreate the object at startup?</b></li>
+      </ul>
+      <ul>
+        It turned out that all of the presentation state support classes (including 
+        DEStartupData) were instantiated from a String and a couple of other pieces 
+        of information, so I just saved that in the bundle and at instantiation 
+        time I recreated all of the objects. This way we could replace the Dynamics 
+        Engine and the save file would remain the same. This kind of strategy 
+        can also be leveraged for over the wire when trying to send the least 
+        amount of information possible.
+      </ul>
+      &nbsp; 
+      <ul>
+        <li> <b>Does it make sense to split the state into a separate class used 
+          for initialization and storage?</b></li>
+      </ul>
+      <ul>
+        Ingredients can be very complex objects with large interfaces and several 
+        instance variables, saving such an object would be making a very large 
+        commitment. Due to other reasons we already had such objects for MicroCosm. 
+        State bundles are basically structs (Java object with mutable public instance 
+        variables) that save all of the information needed to initialize an ingredient 
+        in an unum. Using this to save all the state in MicroCosm has yielded 
+        small save files as well as a clear target for maintenance. Making the 
+        object to be saved a separate entity helps the programmer be very conscious 
+        about deciding which information needs to be saved.
+      </ul>
+      <ul>
+        <li> <b>What is the least amount of information possible that I could 
+          save?</b></li>
+      </ul>
+      <ul>
+        The Registrar has 20 or so instance variables, including many support 
+        classes, as I analyzed its code it became clear that the only information 
+        that needed to be saved was the Private/Public key pair, and that the 
+        rest of the support objects got instantiated at startup based on that, 
+        so Eric created a separate method called '<tt>init(KeyPair pair)</tt>' 
+        that was called both from the constructor and the readObject method that 
+        instantiated all of the helper objects.
+      </ul>
+      <ul>
+        <li> <b>Should I provide custom serialization methods?</b></li>
+        <p>If you tag a class as Serializable Java will save all of the instance 
+          variables in it (except for the ones marked as transient). This automatic 
+          behavior is convenient for some classes but for others like the Registrar 
+          it makes sense to implement a writeObject and readObject methods to 
+          capture any special behavior including instantiating helper objects, 
+          or getting at any resources of the local session. 
+        <p>I got bit when using this a couple of times because I got used to the 
+          fact that most of my classes were being saved implicitly, so when I 
+          added an instance variable to a class that had custom serialization 
+          methods I got all sorts of null pointers because I didn't add the mechanism 
+          to save and read in that new instance variable.
+      </ul>
+      <ul>
+        <li> <b>Should I use transient?</b></li>
+      </ul>
+      <ul>
+        Instance variables marked as transient are not saved, and their classes 
+        do not need to be made Serializable. Be careful when using transient, 
+        anything marked transient is not copied by the Java serialization and 
+        our own comm system encoding. This bit me when developing because I made 
+        an instance variable transient so that it would not be saved on disk when 
+        it turned out that it needed to be sent over the wire. 
+        <p>(Btw, it would be nice to have something much more flexible than transient 
+          that depended on the Serializer being used, you can get some of this 
+          behavior by implementing writeObject/readObject and then checking the 
+          instanceof the serializer passed in).
+      </ul>
+      <ul>
+        <li> <b>Are there any instance variables that may cause a NotSerializableException 
+          depending on their value?</b></li>
+      </ul>
+      <ul>
+        Variables of type Object can cause a NotSerializableException exception 
+        depending on their value, when possible make sure that all the variables 
+        are strongly typed to Serializable classes.
+      </ul>
+      <h3> Once you're sure, really sure that you want to save it</h3>
+      <ol>
+        <li> Tag the class with the java.io.Serializable interface.</li>
+        <li> Write any custom serialization methods if applicable.</li>
+        <li> Make a commitment and seal it with a SerialVersionUID</li>
+      </ol>
+      The default Java serialization behavior is quite tolerant to changes, but 
+      if you remove an instance variable, or method (See <a href="http://www.javasoft.com/products/jdk/1.1/docs/guide/serialization/spec/version.doc.html#6519">Versioning 
+      of Serializable Objects</a>) you are going to get an InvalidClassException 
+      exception when trying to deserialize. The way you let Java know you really 
+      know what you are doing is by sealing the class with a final static variable 
+      named SerialVersionUID. 
+      <p>You get the value for that variable using a tool provided by JavaSoft, 
+        when you run that tool in your class you are establishing what you're 
+        committing to maintain. Any future versions of the class that have the 
+        same SerialVersionUID need to be able to support in read/write all of 
+        the variables and methods of the version of the class for which you computed 
+        it. 
+      <p>So when you've finished implementing and debugging your serializable 
+        class, you commit to that version using this. 
+      <p><i>Remember the principle of least commitment, the less you save, the 
+        less you have to maintain.</i> <br>
+        &nbsp; 
+      <h3> Other notes about Java Serialization</h3>
+      <ul>
+        <li> A class instantiated by deserialization will be completely empty.</li>
+      </ul>
+      No constructors or inlined initializers will be called, then the non-transient 
+      variables will be restored into it. If you implement writeObject and readObject 
+      you need to either read in all the variables yourself, or call defaultWrite/ReadObject. 
+      <ul>
+        <li> NotSerializableException is your friend.</li>
+      </ul>
+      When testing your serialization code every time you get one of this exceptions 
+      evaluate with care, before making that class serializable examine the chain 
+      of referring objects, and examine what that class refers to. You'll sometimes 
+      find that you are saving a lot of stuff that you did not intend to save. 
+      <ul>
+        <li> Making an application serializable</li>
+      </ul>
+      A useful pattern when writing the test programs and then in MicroCosm was 
+      to create a single Serializable object to hold onto all of the persistent 
+      application state (know as the SuperBundle). You write your application 
+      to start up and maintain the information in that object such that when you 
+      want to save out, you just save out that object, and to start up, you just 
+      read it in and you will have already written all of your init code to start 
+      from that information. 
+      <h2> E runtime serialization support</h2>
+      These sections describe the classes in the E runtime that have serialization 
+      support. The most important one for a networked E application is the Registrar 
+      since it is the source of a process' identity as well as a part of every 
+      SturdyRef published by that process. SturdyRef support is divided between 
+      the user of a SturdyRef and the publisher of a SturdyRef, finally there 
+      is a brief note on writing serialization support for a networked E application. 
+      <h3> The Registrar and Process ID</h3>
+      In E your process' identity is based on the Registrar's key pair. Any SturdyRef 
+      that you publish is a combination of that process' identity and a swiss 
+      number assigned to that object. So if you want to preserve process identity 
+      and any SturdyRef that you published the first thing you need to do is save 
+      the Registrar. 
+      <p>Registrar is Serializable, but due to its unique role in an E system 
+        it has special properties: 
+      <ul>
+        <li> There can only be one Registrar.</li>
+        <li> If there is no existing Registrar when reading an StateInputStream 
+          the Registrar coming in from the stream will establish itself as the 
+          one and true Registrar.</li>
+        <li> If there is an existing Registrar the incoming Registrar will verify 
+          that it has the same core information and then use the local one, if 
+          not it will throw an IOException letting you know that you can't have 
+          two different Registrars.</li>
+      </ul>
+      Due to the way MagicPowers instantiate objects it is advisable to have the 
+      Registrar be the first object that you write and read from your application's 
+      save file. 
+      <h3> SturdyRefs publishing and using</h3>
+      There are two sides to preserving SturdyRefs, one is when you are a client 
+      holding onto a SturdyRef and another is when you're a publishers, holding 
+      onto an RtForwardingSturdyRef. 
+      <h4> Using a SturdyRef</h4>
+      SturdyRefs are Serializable. The capability obtained from doing a followRef 
+      should be stored on a transient variable and reestablished at init. 
+      <p>If there is no existing Registrar when trying to read in a SturdyRef 
+        an IOException will be thrown on decode. 
+      <h4> Publisher using RtForwardingSturdyRef</h4>
+      Usually you publish a SturdyRef the following way: 
+      <p><tt>SturdyRef ref = myRegistrar.getSturdyRefMaker().makeSturdyRef(obj);</tt> 
+      <p>That SturdyRef is the unique network identifier of that object, it is 
+        a combination of the Registrar's public key and a swiss number assigned 
+        to that object. For Serialization we wanted to be able to keep the SturdyRef 
+        (that other processes might be saving) without having to serialize the 
+        object that it designates. This is the RtForwardingSturdyRef class. 
+      <p>You create and publish RtForwardingSturdyRef the following way: 
+      <p><tt>RtForwardingSturdyRef forwardingRef =</tt> <br>
+        <tt>&nbsp;&nbsp;&nbsp; myRegistrar.getSturdyRefMaker().makeForwardingSturdyRef(obj);</tt> 
+        <br>
+        <tt>&nbsp;&nbsp;&nbsp; SturdyRef ref = forwardingRef.getSturdyRef();</tt> 
+      <p>The RtForwardingSturdyRef is a Serializable object that you can put in 
+        your state bundle. At revival time you need to set a target for it using 
+        setTarget. A target can only be set once. At revival the SturdyRef will 
+        not be published until you set a target. (I could change this behavior 
+        to set up and publish a Channel at decode to be forwarded once a target 
+        is set). The RtForwardingSturdyRef will preserve the SturdyRef/Identity 
+        while allowing you upgrade and evolve its target separately. 
+      <p>For example, our identity infrastructure is based on a SturdyRef to the 
+        identity ingredient. We wanted to be able to keep the SturdyRef/identity 
+        without having to serialize the identity object. The state bundle for 
+        the identity ingredient looks as follows: 
+      <p><tt>public class istIdentity extends istBase {</tt> <br>
+        <tt>&nbsp;&nbsp;&nbsp; public RtForwardingSturdyRef myIdentityForwardRef;</tt> 
+        <br>
+        <tt>}</tt> 
+      <p>And the the (abriged) init method for the identity ingredient looks as 
+        follows: 
+      <p><tt>init(istIdentity identityState) {</tt> <br>
+        <tt>&nbsp; // Create identity</tt> <br>
+        <tt>&nbsp; eIdentity identity = new eIdentity(myIdentityOwner);</tt> 
+      <p><tt>&nbsp; if (null == identityState.myIdentityForwardRef) {</tt> <br>
+        <tt>&nbsp;&nbsp;&nbsp; // No pre-existing FowardingSturdyRef, make new 
+        one.</tt> <br>
+        <tt>&nbsp;&nbsp;&nbsp; identityState.myIdentityForwardRef =</tt> <br>
+        <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; myState.myRegistrar.getSturdyRefMaker().</tt> 
+        <br>
+        <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; makeForwardingSturdyRef(identity);</tt> 
+        <br>
+        <tt>&nbsp;&nbsp;&nbsp; } else {</tt> <br>
+        <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // Establish identity on existing SturdyRef</tt> 
+        <br>
+        <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; try {</tt> <br>
+        <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; identityState.myIdentityForwardRef.setTarget(identity);</tt> 
+        <br>
+        <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } catch (Exception ex) {</tt> <br>
+        <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ethrow new eeException("Identity 
+        ingredient not</tt> <br>
+        <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+        initialized: Conflict"+ex);</tt> <br>
+        <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt> <br>
+        <tt>&nbsp;&nbsp;&nbsp; }</tt> <br>
+        <tt>&nbsp; }</tt> <br>
+        <tt>}</tt> 
+      <p>An RtForwardingSturdyRef depends on the Registrar information to preserve 
+        the published SturdyRef's identity, hence when you serialize a RtForwardingSturdyRef 
+        instance you also serialize that process' one true Registrar. At deserialization 
+        the Registrar read in compares itself with an existing one and if the 
+        comparison fails the deserialization fails since the SturdyRef can't be 
+        preserved. 
+      <h4> Note on making a networked application serializable</h4>
+      Due to the importance of the Registrar to the system it is a good idea to 
+      save and read in the process' Registrar as the first thing in the Object 
+      stream. This should be done as a separate step since if you make it the 
+      first instance variable in your application's bundle there is no guarantee 
+      that it will be the first thing saved/read (as MikeS discovered with a Duplicate 
+      Registrar bug). 
+      <h2> State bundles and saving una</h2>
+      An unum is a distributed object composed of instances of objects called 
+      ingredients. An unum instance in a process is called a presence, the first 
+      (prime) presence of an unum is also its host. An unum instance/host presence 
+      is uniquely paired to the SoulState instance which is used to instantiate 
+      it. A SoulState is a class that keeps all of the state bundles used to instantiate 
+      the ingredients that make an unum's host presence. For state bundle persistence 
+      the SoulState is the unum's representation in the Object stream. 
+      <p>A SoulState is uniquely paired to an Unum instance. A SoulState keeps 
+        the state bundles used to initialize the host ingredients. It is these 
+        bundles that are saved for persistence, your ingredient must keep and 
+        update the state bundle given to it at initialization time. 
+      <h3> State bundles</h3>
+      State bundles are serializable struct like classes with a number of mutable 
+      public variables and no methods beyond constructors. These objects are used 
+      to initialize ingredients. Usually different ingredient implementations 
+      of the same kind (einterface) share the same state bundle class. Their class 
+      names are prefixed by 'ist'. 
+      <p><i>[98/05/18 Arturo added note on bundle/ingredient separation]</i> 
+      <p>The benefits of separating the state bundle from its ingredient are: 
+      <ul>
+        <li> You minimize the contract for upgrade, state bundles are very simple 
+          classes with no methids, this gives you freedom to change the ingredient 
+          as much as is necessary without worrying about its serialization issues.</li>
+        <li> You may use a single state bundle with more than one ingredient, 
+          and leverage the upgrade path there.</li>
+        <li> You encapsulate the upgradeable information in a separate easier 
+          to maintain class.</li>
+      </ul>
+      The cost of separating state like this is the class bloat. <i>[End]</i> 
+      <p>Example istDescription state bundle used to initialize the iiSimpleDescriber 
+        and iiDescribeWithLink ingredients: 
+      <p><tt>public class istDescriber extends istBase {</tt> <br>
+        <tt>&nbsp; /** A Unicode string representing the object description. */</tt> 
+        <br>
+        <tt>&nbsp; public String theDescription;</tt> 
+      <p><tt>&nbsp; /** a brief name, e.g. as used in labels */</tt> <br>
+        <tt>&nbsp; public String theShortDescription;</tt> <br>
+        <tt>}</tt> 
+      <p>Any state that you want persisted needs to be reflected, and updated 
+        in the state bundle used to instantiate the host ingredient. The instance 
+        variables in the state bundle have to be one of the following: 
+      <ul>
+        <li> Java primitive.</li>
+        <li> Java Serializable class.</li>
+        <li> Developer Serializable class.</li>
+        <li> Registrar, SturdyRef or RtForwardingSturdyRef.</li>
+        <li> For inter-unum relationships see <a href="#Inter-unum relationships and capability">capability 
+          recoupers</a>.</li>
+      </ul>
+      State bundles are also used to initialize client presences of an unum, they 
+      are returned by the getClientState() function implemented by ingredients. 
+      <p>Only return the host/initial state bundle if it contains non-mutable 
+        data. Otherwise instantiate and return 'client' version of the state bundle 
+        (usually the same class with less data). 
+      <h3> SoulState</h3>
+      The goal of the SoulState was to be able to save the least amount of information 
+      possible about an unum while retaining all of its meaningful state. To do 
+      this the <br>
+      SoulState saves three pieces of information: 
+      <ol>
+        <li> The unum's class name.</li>
+        <li> The state bundles used to instantiate it.</li>
+        <li> The capability group of capabilities made available by that unum.</li>
+      </ol>
+      This is intended to give a fair amount of flexibility when upgrading an 
+      unum, no description of which ingredient classes, or how many are supposed 
+      to make a presence is saved. The new version of the unum under that class 
+      name only needs to be able to instantiate itself from that set of ingredients. 
+      <p>The SoulState class serves a dual role: 
+      <ul>
+        <li> It is used to initialize a new unum.</li>
+      </ul>
+      The MCUnumFactory fills the SoulState with all the relevant state bundles. 
+      Then createUnum is called providing that SoulState instance as an argument, 
+      at that time that SoulState instance is bound to that unum instance. 
+      <ul>
+        <li> The SoulState stores and saves the state bundles and the class name 
+          of the unum.</li>
+      </ul>
+      It is used to serialize and then reinitialize that unum. The only thing 
+      saved of an unum is its SoulState which holds on to its initial state bundles, 
+      at deserialization time the SoulState will create a new instance of that 
+      unum class initializing it with the saved state bundles. 
+      <p>A SoulState also has a unique jCapabilityGroup instance. A jCapabiltyGroup 
+        is a hashtable used to export capabilities to that unum. It incorporates 
+        mechanism to allow the exported capabilities to get reconstructed at startup 
+        (see <a href="#Inter-unum relationships and capability">Inter-unum relationships 
+        and capability recouping</a>). 
+      <h4> Decoding behavior and transient capabilities.</h4>
+      Usually SoulStates will instantiate their corresponding una at decode. But 
+      there are certain special una that depend on special objects/capabilities 
+      created at startup before being instantiated. The two cases of this are 
+      the Realm and the Avatar. 
+      <p>To support these objects, SoulState has a function called instantiateOnReadObject 
+        that allows you control whether the unum is instantiate on decode: 
+      <p><tt>myRealmSoulState = new SoulState();</tt> <br>
+        <tt>myRealmSoulState.instantiateOnReadObject(false);</tt> 
+      <p>This way you can set any transient capabilities in the state bundle of 
+        that SoulState at startup. When you're done you call: 
+      <p><tt>Unum myRealm = myRealmSoulState.makeUnum();</tt> 
+      <p>Or <tt>createUnum</tt> using that SoulState. 
+      <h2> <a name="Inter-unum relationships and capability"></a>Inter-unum relationships 
+        and capability recouping</h2>
+      Since the SoulState is the only thing that gets saved of an unum we needed 
+      to establish a way to save inter-unum pointers without actually saving the 
+      una or the ingredients. This led to the implementation of the capability 
+      recouping pattern where intermediary objects are used to save the relationship 
+      in terms of the SoulState while providing straightforward reconstruction 
+      at startup. 
+      <h4> Assumptions</h4>
+      Right now only host presences are saved, and only inter-host relationships 
+      are saved this way. Otherwise SturdyRefs are used. Inter unum capabilities 
+      are expressed in terms of facets, which are strongly typed objects that 
+      wrap the ingredients directly. 
+      <h4> Publishing a capability</h4>
+      At init time you use the unum's jCapabilityGroup to establish the initial 
+      recoupable capability: 
+      <p><tt>init() {</tt> <br>
+        <tt>&nbsp; // I know this needs a more convenient get function...</tt> 
+        <br>
+        <tt>&nbsp; environment.soul.getSoulState().getCapabilityGroup.</tt> <br>
+        <tt>&nbsp;&nbsp;&nbsp; makeAndAddCapabilityOfType(target,</tt> <br>
+        <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "ec.cosm.objects.ukAddUnum$kind");</tt> 
+        <br>
+        <tt>}</tt> 
+      <p><tt>makeAndAddCapability</tt> of type will create a facet to the ingredient 
+        that is reestablished after revival. The string is the name of the einterface 
+        that the target object implements. An EStone of that type will be created. 
+        At decode a EUniChannel of that type will be created while the real capability 
+        is republished. 
+      <p>To send that recoupable capability to another unum you need to get it 
+        from the jCapabiltyGroup using: 
+      <p><tt>kind ukAddUnum cap = (kind ukAddUnum) capabilityGroup.getCapabilityOfType("ec.cosm.objects.ukAddUnum$kind");</tt> 
+        <br>
+        <tt>myFriend &lt;- haveCapability(cap);</tt> 
+      <p>We also use this to establish inter-object relationships in the MCUnumFactory, 
+        in this case we have the factory fetch the capability from the group and 
+        give it as an initialization parameters. 
+      <h4> Using, and saving a capability</h4>
+      You start by adding jRecoupableCapability instance variable to your state 
+      bundle: 
+      <p><tt>public class istContainable extends istBase {</tt> <br>
+        <tt>&nbsp; /** jRecoupableCapability for the container. */</tt> <br>
+        <tt>&nbsp; jRecoupableCapability rcContainer;</tt> <br>
+        <tt>}</tt> 
+      <p>Upon receipt of the real capability store in the jRecoupableCapability 
+        iv: 
+      <p><tt>method haveCapability(kind ukAddUnum cap) {</tt> <br>
+        <tt>&nbsp; myState.rcContainer.setCapability(cap);</tt> <br>
+        <tt>&nbsp; myContainer = cap;</tt> <br>
+        <tt>}</tt> 
+      <p>At init (either initial or from revival, it is the same) get the capability 
+        from the jRecoupableCapability: 
+      <p><tt>init(istContainable state) {</tt> <br>
+        <tt>&nbsp; if (null != state.rcContainer) {</tt> <br>
+        <tt>&nbsp;&nbsp;&nbsp; myContainer =</tt> <br>
+        <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (kind ukAddUnum)state.rcContainer.getCapability();</tt> 
+        <br>
+        <tt>&nbsp; }</tt> <br>
+        <tt>&nbsp; if (myContainer != null) {</tt> <br>
+        <tt>&nbsp;&nbsp;&nbsp; myContainer &lt;- addMe();</tt> <br>
+        <tt>&nbsp; }</tt> <br>
+        <tt>}</tt> 
+      <p>The reason for passing the transient capabilities and using the intermediary 
+        objects to reestablish the relationships was that this kind of serialization 
+        was retrofitted to our existing code base. In a more sensible future the 
+        object passed around as the capability should include all of the mechanisms 
+        for establishing and recuperating. 
+      <h2> Low level Serialization support</h2>
+      <h3> Design Objectives</h3>
+      To provide Object Output and Object Input streams that allows us to implement 
+      the following serializing policies: 
+      <ul>
+        <li> Proxies get written out as null.</li>
+        <li> Objects can designate a delegate for serialization. This delegate 
+          will replace the object in the output stream. This is used by Deflectors 
+          (to Channels and other RtTethers) to defer serialization to the real 
+          objects behind them.</li>
+      </ul>
+      These tools are used to build the higher level mechanisms for dealing with 
+      inter-unum relationships described later. 
+      <h3> StateOutputStream</h3>
+      extends <a href="http://www.javasoft.com/products/jdk/1.1/docs/api/java.io.ObjectInputStream.html#_top_">java.io.ObjectOutputStream</a> 
+      <p>Implements and enforces the encoding policy as outlined above. 
+      <h3> StateInputStream</h3>
+      extends <a href="http://www.javasoft.com/products/jdk/1.1/docs/api/java.io.ObjectInputStream.html#_top_">java.io.ObjectInputStream</a> 
+      <p>Adds support for deserializing Registrars and SturdyRefs, you need to 
+        instantiate it with a valid EEnvironment at instantiation time. 
+      <h3> RtDelegateToSerialize</h3>
+      Implemented by an object that defers serialization to another object, this 
+      interface needs to be used with care since it does not do any type checking 
+      on the object replacement. 
+      <p>Its principal use is in the RtDeflector base class, an RtDeflector is 
+        a strongly typed stub generated by ecomp that turns invocations into an 
+        generalized form (the RtTether interface), EUniChannel and Proxy instances 
+        usually have an RtDeflector instance in front providing the strong typing. 
+        When writing out an object stream we are not interested in saving (and 
+        hence comitting to) these intermediary objects so you need to establish 
+        which object a RtDeflector instance will serialize in its place. This 
+        is this is used internally by jCapabilityGroup and jRecoupableCapability. 
+      <h3> State Time Machine</h3>
+      The state time machine provides methods and mechanism for managing a save 
+      file for an application. It is a subclass of TimeMachine, so it leverages 
+      off of all of the existing mechanism for saving a temporary file, backup 
+      and etc. Now, with the introduction of state bundles, when TimeMachine.summon(Eenvironment) 
+      is called, a StateTimeMachine will be created and returned. This makes it 
+      so that all existing code that uses the TimeMachine does not have to be 
+      touched. 
+      <p>The StateTimeMachine save provides a notification architecture to help 
+        with serialization debugging, profiling, and ultimately this will be used 
+        for a user 'thermometer' UI to indicate save/restore progress. This notification 
+        is provided in the two classes: StateSerializer and StateUnserializer. 
+        When a TimeMachine is told to save a running microcosm, a StateSerializer 
+        instance is created, and it does the actual serialization of the state 
+        bundles to the StateOutputStream. During serialization of the state bundles, 
+        the StateOutputStream calls back on the StateSerializer before every object 
+        is serialized. The method called on the StateSerializer is 'objectToBeWritten'. 
+        If spam is turned on by putting: "Trace_ec.e.serialstate.StateSerializer=debug" 
+        in the props file, then spam that already exists in this method will be 
+        produced for every object that is serialized. This is useful for debugging, 
+        but use with caution as it will produce a lot of spam. 
+      <p>For restore, the same thing is done with the StateUnserializer. To trace 
+        on restore of state bundles objects, put "Trace_ec.e.serialstate.StateUnserializer=debug" 
+        in the props file. Again, much spam will result, so please use with caution. 
+      <h2> Proposed Architecture Overview</h2>
+      State bundle serialization seems to have worked well, the change to do now 
+      that legacy interfaces are not an issue is to remove the support for managing 
+      live object references and move to explicit serializable references (probably 
+      based on SturdyRefs or its descendent). 
+      <h4> Off the shelf alternatives</h4>
+      We used Java serialization at the core of the subsystem, if there is a performance 
+      issue we should explore alternatives. 
+      <h4> Other Design Objectives, Constraints and Assumptions</h4>
+      N/A 
+      <h2> Current implementation</h2>
+      <h4> Which directories on our tree does this subsystem cover?</h4>
+      ec4/javasrc/ec/e/serialstate - for the core serialization support <br>
+      ec4/javasrc/ec/pl/runtime - for jCapabilityGroup, Capabilty recoupers and 
+      istBase class. 
+      <h4> Is it JavaDoc'ed?</h4>
+      It is partially JavaDoc'ed, Arturo needs to finish the documentation and 
+      make sure it makes sense. 
+      <h4> Examples</h4>
+      ToDo: Yes, but they're not cleaned up or checked in. 
+      <h4> Testing and Debugging</h4>
+      Not beyond runing cosm, should have standalone test. 
+      <h2> Design Issues</h2>
+      <h4> Resolved Issues</h4>
+      <i>History of issues raised and resolved during initial design, or during 
+      design inspections. Can also include alternative designs, with the reasons 
+      why they were rejected</i> 
+      <h4> Open Issues</h4>
+      <i>This section of the document is used by the authors and moderator to 
+      store any incomplete information - issues identified during a design inspection 
+      but not yet resolved (the task list), notes that aren't ready to be put 
+      into the main text, etc.</i> 
+      <P ALIGN="left">&nbsp;
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="index.html">e</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="ejbind.html" title="Back to: Binding E to Java"><img src="../images/prev.gif" width="64" height="32" alt="Back to: Binding E to Java" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="DeconstructingE.html" title="On to: Deconstructing E"><img src="../images/next.gif" width="64" height="32" alt="On to: Deconstructing E" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

@@ -1,0 +1,766 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Primitive Expression Grammar</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">grammar</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="expr.html" title="Back to: Expression Grammar"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Expression Grammar" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="patterns.html" title="On to: Pattern Grammar"><img src="../../images/next.gif" width="64" height="32" alt="On to: Pattern Grammar" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Primitive<br>
+              Expressions </B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p>The primitive expressions have no parsing ambiguities that need to be
+        resolved by precedence and associativity. Instead, they form the &quot;atomic&quot;
+        expressions that <a href="expr.html">the rest of the expression grammar</a>
+        builds on.</p>
+      <h3><a name="paren"></a>Parenthesized Expression</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre>&quot;<b>(</b>&quot; <i>expr</i> &quot;<b>)</b>&quot;</pre>
+          </td>
+          <td valign="top">
+            <p>disambiguates grouping. Does <i>not</i> introduce a new scope.</p>
+          </td>
+          <td valign="top">
+            <pre>N/A</pre>
+          </td>
+        </tr>
+      </table>
+      <p>Although &quot;<tt>a + b * c + d</tt>&quot; parses as &quot;<tt>a
+        + (b * c) + d</tt>&quot;, you can obtain a different ordering by saying,
+        for example, &quot;<tt>(a + b) * (c + d)</tt>&quot;.</p>
+      <h3><a name="varName"></a>varName: Variable-Name Expression</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Example</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i>Identifier</i></pre>
+          </td>
+          <td valign="top">
+            <pre>foo</pre>
+          </td>
+          <td valign="top">
+            <p>The value of that variable</p>
+          </td>
+          <td valign="top">
+            <pre><b>kernel</b></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre>&quot;<b>_</b>&quot;</pre>
+          </td>
+          <td valign="top">
+            <pre>_</pre>
+          </td>
+          <td valign="top">
+            <p>meta variable for making regions and twisters</p>
+          </td>
+          <td valign="top">
+            <pre>ForAllX</pre>
+          </td>
+        </tr>
+      </table>
+      <p>A variable name as an expression yields the value of that variable. Which
+        variable? The variable of the same name whose definition is in scope.
+        The scope rules are explained <a href="../blocks/ifExpr.html">here</a>.
+        The syntax of an identifier is the same as in Java, except that the &quot;$&quot;
+        character isn't allowed, and names beginning with &quot;_&quot; are reserved
+        for compiler generated temporary variable names.</p>
+      <p>When the keyword &quot;_&quot; is used as an expression, it is just shorthand
+        for the variable name &quot;ForAllX&quot;. It is best thought of as a
+        blank to be filled in, making a region or a twister accepting candidates
+        for that blank. For example, &quot;<tt>def r := _ &gt;= 3</tt>&quot;
+        produces a region containing all integers greater than or equal to three.
+        Such a region can be used as a one argument function, and acts as if that
+        argument fills in the blank. For example, &quot;<tt>r(5)</tt>&quot;
+        yields true, as if we were evaluating &quot;<tt>5 &gt;= 3</tt>&quot;.</p>
+      <h3><a name="literal"></a>Literal Expression</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Example</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="../scalars/integer-ref.html">LiteralInteger</a></i>
+<i><a href="../scalars/float64-ref.html">LiteralFloat64</a></i>
+<i><a href="../scalars/char-ref.html">LiteralCharacter</a></i>
+<i><a href="../collect/String-ref.html">LiteralString</a></i></pre>
+          </td>
+          <td valign="top">
+            <pre>37
+3.14159
+'c'
+&quot;hello literal&quot;</pre>
+          </td>
+          <td valign="top">
+            <p>The described value</p>
+          </td>
+          <td valign="top">
+            <pre><b>kernel</b></pre>
+          </td>
+        </tr>
+      </table>
+      <P ALIGN="left">LiteralIntegers are precision-unlimited integers expressed
+        as a sequence of digits in base 10, 8, or 16, depending on whether it
+        begins with a non-zero digit, &quot;0&quot;, or &quot;0x&quot; respectively.
+        The syntax is just like Java's except that it may also contain embedded
+        &quot;_&quot;s which are ignored. This lets you write more readable large
+        integers like 31_536_000 (the number of seconds in a non-leap-year).
+      <P ALIGN="left">LiteralFloat64s are also just like Java's literal double
+        precision numbers, except that <i><b><font color="#009000">E</font></b></i> also allows and ignores embedded &quot;_&quot;s.
+      <P ALIGN="left"> LiteralCharacters are just like Java's literal unicode
+        characters.
+      <P ALIGN="left">LiteralStrings are just like Java literal unicode strings.
+      <h3><a name="quasiExpr"></a>Quasi-Literal Expression</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i>parserName`quasi`
+</i></pre>
+          </td>
+          <td valign="top">
+            <p><i>Almost</i> literal expression in an embedded grammar</p>
+          </td>
+          <td valign="top">
+            <pre>quasiParsers[&quot;<i>parserName</i>&quot;] \
+      valueMaker(&quot;<i>quasiString</i>&quot;) \
+      substitute([<i>arg</i>,..])</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i>`quasi`</i></pre>
+          </td>
+          <td valign="top">
+            <p>Defaults to the &quot;simple&quot; quasi-parser</p>
+          </td>
+          <td valign="top">
+            <pre>simple`<i>quasi`</i></pre>
+          </td>
+        </tr>
+      </table>
+      <P ALIGN="left">An expression describes both a computation to be executed,
+        and the value yielded by executing that computation. Of these two, the
+        notation of a normal expression is optimized more to make the nature of
+        the computation clear. Since a literal expression involves no computation,
+        its notation is instead optimized to describe the value of the expression.
+        A <i>quasi-literal expression</i> is one that does involve computation
+        to produce a value, and may produce a different value different times,
+        but whose notation is optimized to express the nature of the value produced
+        rather than the computation used to produce it.
+      <P ALIGN="left">To support quasi-literal expressions and quasi-literal patterns
+        (<font color="#FF0000">explained elsewhere***</font>), <i><b><font color="#009000">E</font></b></i>
+        introduces the notion of the pluggable parser. <font color="#ff0000">***more
+        to be said</font>.
+      <h3 ALIGN="left"><a name="uriLiteral"></a>URI-Literal Expression</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Example</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i>URILiteral</i></pre>
+          </td>
+          <td valign="top">
+            <pre>&lt;file:/autoexec.bat&gt;
+c:/autoexec.bat</pre>
+          </td>
+          <td valign="top">
+            <p>Retrieve using the URI protocol handler</p>
+          </td>
+          <td valign="top">
+            <pre>uriGetters[&quot;<i>file</i>&quot;][&quot;<i>/autoexec.bat</i>&quot;]
+<i>file</i>:<i>c</i>:<i>/autoexec.bat</i></pre>
+          </td>
+        </tr>
+      </table>
+      <p>Looks up the named protocol handler (the identifier to the left of the
+        colon) in the collection named &quot;uriGetters&quot; in the current scope,
+        and asks that to dereference the uri-body string (the string to the right
+        of the colon). Note that this string may contain a uri fragment specification
+        -- a &quot;#&quot; followed by more uri-body string. It is up to the protocol
+        handler to either interpret this as a fragment, or, if inappropriate,
+        throw an exception. In no case should the protocol handler interpret a
+        &quot;#&quot; and the following string as part of the main uri-body string.
+        Each protocol handler should document how it handles fragments.</p>
+      <p>If a single letter, &quot;a&quot; thru &quot;z&quot; or &quot;A&quot;
+        thru &quot;Z&quot; appears as a protocol handler, it is assumed to be
+        a drive letter, so an implicit &quot;file:&quot; is added to the left,
+        making the drive letter and the following colon the beginning of the uri-body
+        string. </p>
+      <p>See &quot;<a href="../io/uri-exprs.html">URI Expressions</a>&quot;.</p>
+      <h3><a name="listExpr"></a>List Expression</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Example</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre>&quot;<b>[</b>&quot; &quot;<b>]</b>&quot;
+&quot;<b>[</b>&quot;<i>expr,...</i>&quot;<b>]</b>&quot;</pre>
+          </td>
+          <td valign="top">
+            <pre>[]
+[1, 2, 4, 9]</pre>
+          </td>
+          <td valign="top">
+            <pre>An empty ConstList
+A ConstList of these values</pre>
+          </td>
+          <td valign="top">
+            <pre>ListMaker()
+ListMaker(<i>expr,...)</i></pre>
+          </td>
+        </tr>
+      </table>
+      <p>See <a href="../../javadoc/org/erights/e/elib/tables/ConstList.html">ConstList</a>.</p>
+      <h3><a name="mapExpr"></a>Map Expression</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre>&quot;<b>[</b>&quot;<i>(k</i> &quot;<b>=&gt;</b>&quot; <i>v),...</i>&quot;<b>]</b>&quot;</pre>
+          </td>
+          <td valign="top">
+            <p>A ConstMap of these pairs (where <i><tt>k</tt></i> is a key
+              expr and <tt><i>v</i></tt> is a value expr</p>
+          </td>
+          <td valign="top">
+            <pre><font color="#ff0000">MapMaker</font>([[<i>k</i>,<i>v</i>],...])</pre>
+          </td>
+        </tr>
+      </table>
+      <p>See <a href="../../elib/capability/ode/ode-capabilities.html#simple-money">ConstMap</a>.</p>
+      <h3><a name="nested"></a>Nested Block</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b><a href="../blocks/nestedExpr.html">{</a></b><i>
+    <i>nested-scope-expr</i>
+</i><b><a href="../blocks/nestedExpr.html">}</a></b></pre>
+          </td>
+          <td valign="top">
+            <p>All definitions within the curlies go out of scope at the close
+              curly </p>
+          </td>
+          <td valign="top">
+            <pre><b>kernel</b></pre>
+          </td>
+        </tr>
+      </table>
+      <p>&nbsp;</p>
+      <h3><a name="if"></a>The <i>if</i> Expressions</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b><a href="../blocks/ifExpr.html">if</a></b> (<i><i>cond</i>-expr</i>) {<i>
+<i>    then-expr</i>
+</i>} <b>else</b> {<i>
+    <i>else-expr</i>
+</i>}</pre>
+          </td>
+          <td valign="top">
+            <p>&nbsp;</p>
+          </td>
+          <td valign="top">
+            <pre><b>kernel</b></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b>if</b> (<i><i>cond</i>-expr</i>) {<i>
+<i>    then-expr</i>
+</i>}</pre>
+          </td>
+          <td valign="top">&nbsp; </td>
+          <td valign="top">
+            <pre><b>if</b> (<i><i>cond</i>-expr</i>) {<i>
+<i>    then-expr</i>
+</i>} <b>else</b> {
+    null
+}</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b>if</b> (<i><i>cond</i>-expr</i>) {<i>
+<i>    then-expr</i>
+</i>} <b>else</b> <b>if</b> ...</pre>
+          </td>
+          <td valign="top">&nbsp; </td>
+          <td valign="top">
+            <pre><b>if</b> (<i><i>cond</i>-expr</i>) {<i>
+<i>    then-expr</i>
+</i>} <b>else</b> {
+    <b>if</b> ...
+}</pre>
+          </td>
+        </tr>
+      </table>
+      <p>See &quot;<a href="../blocks/ifExpr.html">The <i>if</i> Expressions</a>&quot;.</p>
+      <h3><a name="switch"></a>The <i>switch</i> Expression</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b><a href="../blocks/switchExpr.html">switch</a></b> (<i>expr0</i>) {
+    match <i>patt1</i> {
+        <i>expr1</i>
+    }
+    ...
+}
+</pre>
+          </td>
+          <td valign="top">
+            <p>whichever pattern matches first, execute that body expression</p>
+          </td>
+          <td valign="top">
+            <pre>{
+    def <i>t</i> := <i>expr0</i>
+    if (<i>t</i> =~ <i>patt1</i>) {
+        <i>expr1</i>
+    } else if ...
+        ...
+    } else {
+        throw(***)
+    }
+}</pre>
+          </td>
+        </tr>
+      </table>
+      <p>&nbsp;</p>
+      <h3><a name="try"></a>The <i>try</i> Expressions</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b><a href="../blocks/tryExpr.html">try</a></b> {
+    <i>expr0</i>
+} <b>catch</b> <i>patt1</i> {
+    <i>expr1</i>
+}
+</pre>
+          </td>
+          <td valign="top">
+            <p>if expr0 throws a matching problem, do expr1 instead</p>
+          </td>
+          <td valign="top">
+            <pre><b>kernel</b></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b><a href="../blocks/tryExpr.html">try</a></b> {
+    <i>expr0</i>
+} <b>catch</b> <i>patt1</i> {
+    <i>expr1</i>
+} <b>catch</b> <i>patt2</i> {
+    <i>expr2</i>
+} ...
+</pre>
+          </td>
+          <td valign="top">
+            <p>do the first matching catch clause</p>
+          </td>
+          <td valign="top">
+            <pre>try {
+    <i>expr0</i>
+} catch <i>prob</i> {
+    if (<i>prob</i> =~ <i>patt1</i>) {
+        <i>expr1</i>
+    } else if (<i>prob</i> =~ <i>patt2</i>) {
+        <i>expr2</i>
+    } else if ...
+        ...
+    } else {
+        throw(<i>prob</i>)
+    }
+}</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b><a href="../blocks/tryExpr.html">try</a></b> {
+    <i>expr0</i>
+} <b>finally</b> {
+    <i>expr1</i>
+}
+</pre>
+          </td>
+          <td valign="top"> do expr1 on the way out</td>
+          <td valign="top">
+            <pre><b>kernel</b></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b><a href="../blocks/tryExpr.html">try</a></b> {
+    <i>expr0</i>
+} <b>catch</b> <i>patt1</i> {
+    <i>expr1</i>
+} <b>finally</b> {
+<i>    expr2
+</i>}
+</pre>
+          </td>
+          <td valign="top"> When combined, catch nests within finally</td>
+          <td valign="top">
+            <pre>try {
+    try {
+        <i>expr0</i>
+    } catch <i>patt1</i> {
+        <i>expr1</i>
+    }
+} finally {
+    <i>expr2</i>
+}
+</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b><a href="../blocks/tryExpr.html">try</a></b> {
+    <i>expr0</i>
+} <b>catch</b> <i>patt1</i> {
+    <i>expr1</i>
+} <b>catch</b> ...
+    ...
+} <b>finally</b> {
+<i>    exprn
+</i>}
+</pre>
+          </td>
+          <td valign="top"> Combined form also allows multiple catches</td>
+          <td valign="top">
+            <pre>try {
+    try {
+        <i>expr0</i>
+    } catch <i>patt1</i> {
+        <i>expr1</i>
+    } catch ...
+        ...
+    }
+} finally {
+    <i>exprn</i>
+}
+</pre>
+          </td>
+        </tr>
+      </table>
+      <h3>&nbsp;</h3>
+      <h3><a name="escape"></a>The <i>escape</i> Expression</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b><a href="../blocks/escapeExpr.html">escape</a></b> <i>hatch</i> {
+    <i>expr</i>
+}</pre>
+          </td>
+          <td valign="top"> If <i>hatch</i> is called during <i>expr</i>, complete
+            with <i>hatch</i>'s argument</td>
+          <td valign="top">
+            <pre><b>kernel</b></pre>
+          </td>
+        </tr>
+      </table>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <h3><a name="while"></a>The <i>while</i> Loop</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b><a href="../blocks/whileExpr.html">while</a></b> (<i>cond-expr</i>) {
+    <i>expr</i>
+}
+</pre>
+          </td>
+          <td valign="top"> While the condition is true, do the body</td>
+          <td valign="top">
+            <pre>escape break {
+    loop(thunk {
+        escape continue {
+            if (<i>cond</i>) {
+                <i>expr</i>
+            } else {
+                break()
+            }
+        }
+    }
+}</pre>
+          </td>
+        </tr>
+      </table>
+      <p>&nbsp;</p>
+      <h3><a name="for"></a>The <i>for</i> Loops</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b><a href="../blocks/forExpr.html">for</a></b> <i>vpatt</i> <b>in</b> <i>cexpr</i> {
+    <i>bexpr</i>
+}
+</pre>
+          </td>
+          <td valign="top"> Do <i>expr</i> repeatedly</td>
+          <td valign="top">
+            <pre>for _ =&gt; <i>vpatt</i> in <i>cexpr</i> {
+    <i>bexpr</i>
+}</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b><a href="../blocks/forKVExpr.html">for</a></b> <i>kpatt</i> <b>=&gt;</b> <i>vpatt</i> <b>in</b> <i>cexpr</i> {
+    <i>bexpr</i>
+}</pre>
+          </td>
+          <td valign="top"> Do <i>expr</i> until <i>hatch</i> is called</td>
+          <td valign="top">
+            <pre>escape break {
+
+    def <i>func</i>(<i>k,v</i>) {
+        escape continue {
+            if (<i>k</i> =~ <i>kpatt</i> &amp;&amp; \
+                <i>v</i> =~ <i>vpatt</i>) {
+                <i>bexpr</i>
+            }
+        }
+    }
+    <i>cexpr</i> iterate(<i>func</i>)
+}</pre>
+          </td>
+        </tr>
+      </table>
+      <p>&nbsp;</p>
+      <h2 ALIGN="left"><a name="defineObj"></a>Defining Objects</h2>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Grammar</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b><a href="../blocks/defFunc.html">def</a></b> <i>name</i>(<i>patterns</i>) {
+    <i>expr</i>
+}
+</pre>
+          </td>
+          <td valign="top">
+            <p>function definition</p>
+          </td>
+          <td valign="top">
+            <pre>def <i>name</i> {
+    to run(<i>patterns</i>) {
+        expr
+    }
+}</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b><a href="../blocks/defObject.html">def</a></b> <i>name</i> {
+    <i>method*</i>
+}
+</pre>
+          </td>
+          <td valign="top"> A purely methodical object</td>
+          <td valign="top">
+            <pre><b>kernel</b>
+</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b><a href="../blocks/defObject.html">def</a></b> <i>name</i> {
+    <i>method*</i>
+    <i>matcher</i>
+}</pre>
+          </td>
+          <td valign="top"> A partially methodical object</td>
+          <td valign="top">
+            <pre><b>kernel</b></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b><a href="../blocks/defObject.html">def</a></b> <i>name</i> {
+    <i>method*</i>
+    <i>matcher*</i>
+}</pre>
+          </td>
+          <td valign="top"> extended matcher clause</td>
+          <td valign="top">
+            <pre>***</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b><a href="../blocks/defPlumbing.html">def</a></b> <i>name</i> <b>match</b> <i>pattern</i> {
+    <i>expr</i>
+}
+</pre>
+          </td>
+          <td valign="top"> A non-methodical object</td>
+          <td valign="top">
+            <pre><b>kernel</b>
+</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><b><a href="../blocks/inheritance.html">class</a></b> <i>name</i>(<i>patterns</i>) {
+    <i>expr</i>
+}</pre>
+          </td>
+          <td valign="top"> Inheritance by delegation</td>
+          <td valign="top">
+            <pre>***</pre>
+          </td>
+        </tr>
+      </table>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">grammar</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="expr.html" title="Back to: Expression Grammar"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Expression Grammar" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="patterns.html" title="On to: Pattern Grammar"><img src="../../images/next.gif" width="64" height="32" alt="On to: Pattern Grammar" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

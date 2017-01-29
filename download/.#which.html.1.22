@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" -->
+
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html;CHARSET=iso-8859-1">
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>Which Version of E?</TITLE>
+<!-- #EndEditable --> 
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made href="mailto:markm@caplet.com" title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<P> 
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> 
+      <P> 
+      <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> 
+            <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" valign="center" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="index.html">download</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="mmlicense.html"><img src="../images/prev.gif" width="64" height="32" alt="Back to: E License + Download" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="0-8-4/index.html"><img src="../images/next.gif" width="64" height="32" alt="On to: E 0.8.4 Download and Install E" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table>
+          </TD>
+          <TD ALIGN="RIGHT"> 
+            <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>Which 
+              Version<br>
+              Do You Want?</b></FONT><!-- #EndEditable --></FONT> 
+          </TD>
+        </TR>
+      </TABLE>
+      <hr>
+      <!-- #BeginEditable "LongBody" --> 
+      <p>The current release of <b><i><font color="#009000">E</font></i></b> is 
+        <a href="0-8-9/index.html"><b>0.8.9</b></a>. However, this is an interim 
+        release that is known to have a crippling bug for certain uses. Therefore, 
+        you may instead want the stable <a href="0-8-4/index.html"><b>0.8.4</b></a> 
+        release, which does not exhibit this bug. The bug is that some distributed 
+        programs, such as Marc Stiegler's <a href="http://www.skyhunter.com/marcs/eDeskIndex.html">Securit-Edesk</a>, 
+        exhibit an dramatic slowdown or possibly a hang when engaging in distributed 
+        messaging. The slowdown is dramatic enough to render a normally speedy 
+        distributed application unusable. This bug will be fixed in the <b><i><font color="#009000">E</font></i></b> 
+        0.8.10 release, at which time we will retire both <b><i><font color="#009000">E</font></i></b> 
+        0.8.4 and <b><i><font color="#009000">E</font></i></b> 0.8.9.</p>
+      <p>Unfortunately, there has been a non-upwards-compatible syntactic change 
+        between <b><i><font color="#009000">E</font></i></b> 0.8.4 and the current 
+        <b><i><font color="#009000">E</font></i></b> 0.8.9.</p>
+      <p> 
+      <ul>
+        <li><b><a href="0-8-4/index.html"><i>E</i> 0.8.4</a></b>. Syntactically, 
+          <b><i><font color="#009000">E</font></i></b> 0.8.4 is a classic expression 
+          language, in which the value revealed by a function or method body is 
+          the value that the body evaluates to, as in this function for adding 
+          three numbers. 
+          <pre>
+            define add3(a, b, c) { a + b + c }</pre>
+        </li>
+        <li><b><i><font color="#009000">E</font></i> 0.8.5</b> (never released). 
+          From a security point of view, the above convention is fraught with 
+          danger, since the path of least resistance is to reveal objects even 
+          when the function is written only to cause side effects. Our first and 
+          never released alternative was to use a unary prefix &quot;<code>^</code>&quot; 
+          as a &quot;reveal&quot; operator, without which only <code>null</code> 
+          would be revealed. In <b><i><font color="#009000">E</font></i></b> 0.8.5, 
+          add3 would be written 
+          <pre>
+            define add3(a, b, c) { ^ a + b + c }<i><font color="#009000"> </font></i></pre>
+        </li>
+        <li> <b><a href="0-8-9/index.html">E 0.8.9</a></b>. The &quot;<code>^</code>&quot; 
+          proposal generated a lot of discussion, for which the major thread-roots 
+          are <a href="http://www.eros-os.org/%7Emajordomo/e-lang/0844.html">here</a>, 
+          <a href="http://www.eros-os.org/%7Emajordomo/e-lang/0895.html">here</a>, 
+          and <a href="http://www.eros-os.org/%7Emajordomo/e-lang/0969.html">here</a>. 
+          As a result of these discussions, functions and methods now have an 
+          optional return &quot;type&quot; (actually, a <a href="http://www.eros-os.org/%7Emajordomo/e-lang/0969.html">ValueGuard</a>). 
+          The &quot;<code>:any</code>&quot; ValueGuard means that any value may 
+          be returned. If the ValueGuard is left out, it default to &quot;<code>: 
+          void</code>&quot; which coerces all values to <code>null</code>. In 
+          <b><i><font color="#009000">E</font></i></b> 0.8.9 and all future versions 
+          of E, add3 is written 
+          <pre>
+            define add3(a, b, c) :any { a + b + c }</pre>
+          <p>See the thread rooted in the <a href="http://www.eros-os.org/%7Emajordomo/e-lang/1322.html">release 
+            notes</a>.</p>
+        </li>
+        <li>
+          <p><a href="stl-0-8-9-k/index.html"><b>E stl-0.8.9k</b></a> is still 
+            available for now, in case there's a problem with 0.8.9p. Once 0.8.9p 
+            or later seems sufficiently solid, we expect to take down 0.8.9k.</p>
+        </li>
+        <li> 
+          <p><b><a href="stl-0-8-9-p/index.html">E slt-0.8.9p</a></b> is an interim 
+            non-distributed version, released mainly to support E compilation 
+            work. It has several important language improvements, including the 
+            hosting of locally untrusted code. The build and install system have 
+            been overhauled in order to become more platform independent.</p>
+        </li>
+      </ul>
+      <p>So the price of developing with <b><i><font color="#009000">E</font></i></b> 
+        0.8.4 is that, once <b><i><font color="#009000">E</font></i></b> 0.8.10 
+        is released, you will have to edit your program to use the new syntax. 
+        If your current use of <b><i><font color="#009000">E</font></i></b> does 
+        not yet involve distributed (inter-Vat) messaging, then you should use 
+        the <b><i><font color="#009000">E</font></i></b> 0.8.9 or stl-0.8.9p release.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%">&nbsp;</TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> 
+      <hr>
+      <div align="center"> 
+        <table cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> 
+              <div align="left"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" valign="center" alt="ERights Home"></a></div>
+            </td>
+            <td> 
+              <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> 
+                    <div align="center"><font size="-1"><a href="../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../related.html">Related</a> 
+                      </font></div>
+                  </td>
+                </tr>
+                <tr> 
+                  <td> 
+                    <div align="center"><font size="-1"><a href="index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="../javadoc/index.html">API</a> &nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../donate.html">Donations</a></font></div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>  
+        <table width="100%" border="0" cellspacing="0" cellpadding="4">
+          <tr> 
+            <td><i><a href="mailto:webmaster@erights.org">webmaster@erights.org</a></i><br>
+              or <a href="http://www.blindpay.com/crit-me-now.cgi"><img src="../images/cmn.gif" width="98" height="21" border="0" align="middle" alt="Annotate this page"></a> 
+            </td>
+            <td> 
+              <div align="right"> 
+                <p><a href="http://www.privacy.org/ipc/"><img src="../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://mirrors.yahoo.com/eff/blueribbon.html"><img src="../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a><br>
+                  <a href="http://www.wired.com/wired/archive/8.04/joy.html">Joy 
+                  &amp; Fear</a> <i>vs.</i> <a href="http://www.reason.com/0006/co.vp.joy.html">Reason</a> 
+                  &amp; <a href="http://www.extropy.org/maxview.htm">More</a> 
+                </p>
+              </div>
+            </td>
+          </tr>
+        </table>
+        
+      </div>
+    </TD>
+    <TD WIDTH="10%" valign="bottom"><a href="http://lpf.ai.mit.edu/Patents/mutual-def.html"><img src="../images/liberty.jpg" width="77" height="115" border="1" align="middle"></a></TD>
+  </TR>
+</TABLE>
+</BODY>
+
+<!-- #EndTemplate --></HTML>

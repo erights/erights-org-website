@@ -1,0 +1,277 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Iterating by Key-Value Pairs</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">blocks</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="forExpr.html" title="Back to: The 'for' Loop"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: The 'for' Loop" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="defVar.html" title="On to: Defining Variables"><img src="../../images/next.gif" width="64" height="32" alt="On to: Defining Variables" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b>Iterating
+              by<br>
+              Key-Value Pairs</b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <blockquote>
+        <table cellspacing=0 cellpadding=0 border=0>
+          <tr>
+            <td><img alt="" src="images/spacer.gif" width=5 height=5></td>
+            <td><img alt="" src="images/spacer.gif" width=1 height=5></td>
+            <td bgcolor="#b0e0b0" colspan=5
+    ><img alt="" src="images/spacer.gif" width=1 height=5></td>
+          <tr>
+            <td><img alt="" src="images/spacer.gif" width=5 height=1></td>
+            <td><img alt="" src="images/spacer.gif" width=5 height=1
+    ><tt><b>for</b>&nbsp;</tt></td>
+            <td bgcolor="#b0e0b0"
+    ><img alt="" src="images/spacer.gif" width=5 height=1></td>
+            <td bgcolor="#80c080"
+    ><img alt="" src="images/spacer.gif" width=5 height=1
+    ><tt><var>key-pattern</var>&nbsp;=&gt;&nbsp;<var>value-pattern</var> <b>in</strong
+    ><img alt="" src="images/spacer.gif" width=5 height=1></tt></td>
+            <td bgcolor="#b0e0b0"
+    ><tt>&nbsp;<var>collection-expr</var>&nbsp;</tt></td>
+            <td bgcolor="#80c080"
+    ><img alt="" src="images/spacer.gif" width=5 height=1><tt>{<img alt="" src="images/spacer.gif" width=5 height=1></tt></td>
+            <td bgcolor="#b0e0b0"><img alt="" src="images/spacer.gif" width=5 height=1></td>
+          <tr>
+            <td bgcolor="#b0e0b0" colspan=3
+    ><img alt="" src="images/spacer.gif" width=1 height=5></td>
+            <td bgcolor="#80c080" colspan=3
+    ><img alt="" src="images/spacer.gif" width=1 height=5></td>
+            <td bgcolor="#b0e0b0" colspan=1
+    ><img alt="" src="images/spacer.gif" width=1 height=5></td>
+          <tr>
+            <td bgcolor="#b0e0b0"><img alt="" src="images/spacer.gif" width=5 height=1></td>
+            <td bgcolor="#80c080"
+    ><tt>&nbsp;&nbsp;&nbsp;&nbsp;</tt></td>
+            <td bgcolor="#80c080"><img alt="" src="images/spacer.gif" width=5 height=1></td>
+            <td bgcolor="#80c080" colspan=3><img alt="" src="images/spacer.gif" width=5 height=1
+    ><tt><var>body-expr</var></tt></td>
+            <td bgcolor="#b0e0b0"><img alt="" src="images/spacer.gif" width=5 height=1></td>
+          <tr>
+            <td bgcolor="#b0e0b0"><img alt="" src="images/spacer.gif" width=5 height=1></td>
+            <td bgcolor="#80c080" colspan=1
+    ><img alt="" src="images/spacer.gif" width=1 height=5></td>
+            <td bgcolor="#b0e0b0" colspan=5
+    ><img alt="" src="images/spacer.gif" width=1 height=5></td>
+          <tr>
+            <td bgcolor="#b0e0b0"><img alt="" src="images/spacer.gif" width=5 height=1></td>
+            <td bgcolor="#80c080"
+    ><img alt="" src="images/spacer.gif" width=5 height=1><tt>}</tt></td>
+            <td bgcolor="#b0e0b0"><img alt="" src="images/spacer.gif" width=5 height=1></td>
+            <td colspan=5><img alt="" src="images/spacer.gif"></td>
+          <tr>
+            <td bgcolor="#b0e0b0" colspan=3
+    ><img alt="" src="images/spacer.gif" width=1 height=5></td>
+            <td colspan=5><img alt="" src="images/spacer.gif"></td>
+        </table>
+      </blockquote>
+      <p>This version of the <tt><b>for</b></tt> construct loops
+        over an <i><b><font color="#009000">E</font></b></i> collection, matching both the <tt><var>key-pattern</var></tt>
+        and the <tt><var>value-pattern</var></tt> against successive key-value
+        pairs from the collection. Variables defined in either pattern are available
+        to the <tt><var>body-expr</var></tt>, which is evaluated once for
+        each matching key-value pair.
+      <p>Again, in common usage the <tt><var>key-pattern</var></tt> and <tt><var>value-pattern</var></tt>
+        can be just variable names, which will get bound to each of the key-value
+        pairs in the entire collection.
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+<font color="#808080">?</font> for key =&gt; value in [1, 3, 5, 100, 6] {
+<font color="#808080">&gt;</font>     println(`$key maps to $value`)
+<font color="#808080">&gt;</font> }
+<font color="#808080"># stdout: 0 maps to 1
+#         1 maps to 3
+#         2 maps to 5
+#         3 maps to 100
+#         4 maps to 6
+# </font></pre>
+      </blockquote>
+      <p>As we can see, the keys of a list are the indices into the list. More
+        interestingly, <i><b><font color="#009000">E</font></b></i>'s map collections are hash tables with arbitrary keys
+        and values. A map can also be constructed with square brackets, but instead
+        of writing single elements we write key-value pairs separated by <tt>=&gt;</tt>.
+        As a silly example, let's suppose we want to concatenate together all
+        the names of capital cities of states whose names include the letter "e":
+      <blockquote>
+        <pre><font color="#808080">?</font> def capitals := [
+<font color="#808080">&gt;</font>     "Pennsylvania" =&gt; "Philadelphia",
+<font color="#808080">&gt;</font>     "New York" =&gt; "Albany",
+<font color="#808080">&gt;</font>     "California" =&gt; "Sacramento"
+<font color="#808080">&gt;</font> ]
+<font color="#808080"># value: [&quot;Pennsylvania&quot; =&gt; &quot;Philadelphia&quot;, \
+#         &quot;New York&quot; =&gt; &quot;Albany&quot;, \
+#         &quot;California&quot; =&gt; &quot;Sacramento&quot;]</font>
+
+<font color="#808080">?</font> capitals["New York"]
+<font color="#808080"># value: "Albany"</font>
+
+<font color="#808080">?</font> var result := ""
+<font color="#808080"># value: ""</font>
+
+<font color="#808080">?</font> for state => city in capitals {
+<font color="#808080">&gt;</font>     if (state.includes("e")) {
+<font color="#808080">&gt;</font>         result += city + " "
+<font color="#808080">&gt;</font>     }
+<font color="#808080">&gt;</font> }
+
+<font color="#808080">?</font> result
+<font color="#808080"># value: &quot;Philadelphia Albany &quot;</font></pre>
+        </blockquote>
+        <p>But since the body of the loop is only executed if both pattern matches
+          succeed, we can move tests up into these patterns. Since the above loop
+          makes no other use of the "state" variable, it can be rewritten this
+          way:
+        <blockquote>
+
+        <pre><font color="#808080">?</font> var result := ""
+<font color="#808080"># value: ""</font>
+
+<font color="#808080"></font><font color="#808080">?</font> for `@{_}e@_` => city in capitals {
+<font color="#808080">&gt;</font>     result += city + " "
+<font color="#808080">&gt;</font> }</pre>
+        </blockquote>
+        <p>The <tt><var>key-pattern</var></tt> in this last example will only
+          match strings containing the letter "e".
+        <h2>Custom Collections</h2>
+        <p>Besides conventional collection classes (mutable and immutable arrays
+          and hashtables), a variety of other objects can also be treated as collections
+          of key-value pairs, and can be iterated over with a <tt><b>for</b></tt>
+          loop. In the Jabberwocky example, we saw that <i><b><font color="#009000">E</font></b></i> can treat a normal text
+          file (as well as a URL object) as a collection of <tt><var>line-number</var>&nbsp;=&gt;&nbsp;<var>line</var></tt>
+          pairs, and a directory as a collection of <tt><var>file-name</var>&nbsp;=&gt;&nbsp;<var>file</var></tt>
+          pairs. How can the <i><b><font color="#009000">E</font></b></i> programmer make new kinds of objects over which
+          the <tt><b>for</b></tt> loop can iterate?
+        <p>When the <tt><b>for</b></tt> loop iterates over a collection,
+          it calls its <tt>iterate(<var>assocFunc</var>)</tt> method, passing
+          in as <tt><var>assocFunc</var></tt> a function of two arguments.
+          To make new objects work with <tt><b>for</b></tt>, we
+          need to define an <tt>iterate</tt> method that applies this <tt><var>assocFunc</var></tt>
+          to all the things we wish to appear as key-value pairs in the collection.
+        <p>So, for example, let's say we get tired of using recursion to get to
+          all the files at the leaves of a directory tree. Rather, we'd like to
+          create an object that acts like a simple collection of these leaves.
+          We can accomplish this with the following function:
+
+      <blockquote>
+        <pre><font color="#808080">?</font> def leaves(filedir) :any {
+<font color="#808080">&gt;</font>     def leafCollection {
+<font color="#808080">&gt;</font>         to iterate(assocFunc) :void {
+<font color="#808080">&gt;</font>             if (filedir.isDirectory()) {
+<font color="#808080">&gt;</font>                 for sub in filedir {
+<font color="#808080">&gt;</font>                     leaves(sub).iterate(assocFunc)
+<font color="#808080">&gt;</font>                 }
+<font color="#808080">&gt;</font>             } else {
+<font color="#808080">&gt;</font>                 assocFunc(filedir.getName(), filedir)
+<font color="#808080">&gt;</font>             }
+<font color="#808080">&gt;</font>         }
+<font color="#808080"></font><font color="#808080">&gt;</font>     }
+<font color="#808080">&gt;</font> }
+<font color="#808080"># value: &lt;leaves&gt;</font></pre>
+        </blockquote>
+        <p>Now <tt>leaves(<var>filedir</var>)</tt> defines an object <tt>leafCollection</tt>
+          that acts like a collection of the leaves of the directory tree rooted
+          at <tt><var>filedir</var></tt>. Since this <tt><b>def</b></tt>
+          is the last thing to be evaluated in <tt>leaves</tt>, this object
+          is returned. Our definition of its <tt>iterate(<var>assocFunc</var>)</tt>
+          method makes this collection suitable for use in a <tt><b>for</b></tt>
+          loop.
+        <p>For example, I got curious about how many Java files I had in a particular
+          directory tree:
+        <blockquote>
+
+        <pre><font color="#808080">?</font> var count := 0
+<font color="#808080"># value: 0</font>
+
+<font
+color="#808080">?</font> for `@_.java` => _ in leaves(&lt;file:~/e/src&gt;) {
+<font color="#808080">&gt;</font>     count += 1
+<font color="#808080">&gt;</font> }
+
+<font color="#808080">?</font> count
+<font color="#808080"># example value: 942</font></pre>
+        </blockquote>
+
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">blocks</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="forExpr.html" title="Back to: The 'for' Loop"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: The 'for' Loop" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="defVar.html" title="On to: Defining Variables"><img src="../../images/next.gif" width="64" height="32" alt="On to: Defining Variables" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

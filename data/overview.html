@@ -1,0 +1,286 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Overview: Handling Symbolic Data</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="index.html">data</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="common-syntax/index.html" title="On to: Common Syntactic Element"><img src="../images/next.gif" width="64" height="32" alt="On to: Common Syntactic Element" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Overview:<br>
+              <font size="5">Handling Symbolic Data</font></B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <h1>Our Six Layer Model of Representations </h1>
+      <p>We present here a six layer conceptual framework for handling symbolic
+        data of various kinds, including XML, object serialization, programming
+        language text, <i><b><font color="#009000">E</font></b></i>'s own Term-tree
+        system, and more. As with the ISO seven layer protocol model, we propose
+        this model as a way to organize the issues, as shown in the table below,
+        in which the representations range from more concrete ones at the bottom
+        to more abstract ones at the top. Each individual data representation
+        system, like XML, will be shown as its own tower. Where possible, these
+        towers will be a subset of the model tower shown below. We will also explain
+        those ways in which a particular representation system does not fit this
+        model. Some representational systems, like relational databases, are so
+        far outside the model that it's not useful to try to shoehorn them in.</p>
+      <div align="center">
+        <table cellpadding="12" width="100%">
+          <tr>
+            <th colspan="4">The Six Layers of Representation</th>
+          </tr>
+          <tr align="center">
+            <th colspan="2">Abstracting Steps</th>
+            <th colspan="2">Rendering Steps</th>
+          </tr>
+          <tr align="center">
+            <td>&nbsp;</td>
+            <td colspan="2">object graphs<br>
+              eg, an <i><b><font color="#009000">E</font></b></i> heap.</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr align="center">
+            <td colspan="2">Loading, Instantiation</td>
+            <td colspan="2">Extraction, Traversal</td>
+          </tr>
+          <tr align="center">
+            <td>&nbsp;</td>
+            <td colspan="2">symbol graphs<br>
+              eg, semantic nets</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr align="center">
+            <td colspan="2">Tangling<br>
+              eg, shortening IDREFs,<br>
+              resolving scopes</td>
+            <td colspan="2">Untangling</td>
+          </tr>
+          <tr align="center">
+            <td>&nbsp;</td>
+            <td colspan="2">symbol trees<br>
+              eg, Abstract Syntax Trees, S-Expressions, Term Trees, <br>
+              XML DOM tree and infoset</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr align="center">
+            <td colspan="2">Parsing</td>
+            <td colspan="2">Flattening<br>
+              eg, pretty printing</td>
+          </tr>
+          <tr align="center">
+            <td>&nbsp;</td>
+            <td colspan="2">symbol sequences<br>
+              eg, Tokens</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr align="center">
+            <td colspan="2">Lexing</td>
+            <td colspan="2">Printing</td>
+          </tr>
+          <tr align="center">
+            <td>&nbsp;</td>
+            <td colspan="2">char sequences<br>
+              eg, Unicode, surface syntax</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr align="center">
+            <td colspan="2">Decoding<br>
+              eg, UTF8, decompression</td>
+            <td colspan="2">Encoding<br>
+              eg, UTF8, compression</td>
+          </tr>
+          <tr align="center">
+            <td>&nbsp;</td>
+            <td colspan="2">octet sequences<br>
+              eg, files</td>
+            <td>&nbsp;</td>
+          </tr>
+        </table>
+      </div>
+      <p>&nbsp;</p>
+      <p>Within each tower, the representation box at each layer stands for the
+        set of all possible things which can be said in the &quot;language&quot;
+        of that representation. For example, the 'char sequences' box in a given
+        layer might represent the set of all possible sequences of Unicode characters.
+        Any particular sequence of Unicode characters would be a member of this
+        set, or a &quot;sentence&quot; of this &quot;language&quot;.</p>
+      <div align="center"></div>
+      <h3><img src="images/transforms.gif" width="373" height="189" align="right">A
+        Taxonomy of Transformations</h3>
+      <p>A transformation is a mapping from instances in one representation to
+        instances of another representation. Those transformations that map from
+        lower level to higher level representations with a given tower are <i>abstractors</i>,
+        shown on the left in the above table. The transformations in the opposite
+        direction are <i>renderers</i>, shown on the right in the table.</p>
+      <p>Not shown in the above table are the transformations that operate within
+        a level. We distinguish two kinds. Transformations within a level within
+        one tower are <i>operators</i>. They map from members of a set to members
+        of the same set, so that one may speak about repeated application, closure
+        properties, and such. Transformations within a level but between towers
+        are <i>translators</i>. They map a sentence said in one language into
+        a corresponding sentence of another language, where these two languages
+        are at a similar conceptual level.</p>
+      <p>Actual transformations can often be described as compositions of these
+        transformational steps. For example, the front-end of a compiler can be
+        described (approximately) as the composition of a tower of abstractors,
+        reading UTF8 octets into Unicode characters, lexing these into tokens,
+        parsing these into an abstract syntax tree, and resolving scopes and types
+        into a graph representation of the program. Here the upward source-oriented-representation
+        tower stops. The backend of a compiler can be described as the composition
+        of renderers in a separate tower, rendering a flow graph into a sequence
+        of symbolic instructions, which could be rendered into an assembly language,
+        to be assembled into a linkable binary file. </p>
+      <p>The compiler as a whole is the composition of the the source-oriented
+        tower of abstractors, the translator from the source-oriented-graph to
+        the computation-oriented-graph, and the computation-oriented tower of
+        renderers. Note that even in our idealized story, some levels were skipped:
+        the compiler backend rendered the flow graph into an instruction sequence
+        in one step, without going through a tree representation. Actual compilers
+        also skip the assembly language step, going from symbolic instructions
+        to binary instructions in one step. Sometimes it will be useful to describe
+        such jumps as a composition of smaller steps, and sometimes it won't.</p>
+      <h3><img src="images/towers.gif" width="421" height="411" align="right">Hub
+        Towers and Spoke Towers</h3>
+      <p>x</p>
+      <h3>Abstracting Steps</h3>
+      <p>The <i>abstracting</i> steps on the left are relations providing upwards
+        transformations, in which data represented at a lower layer is mapped
+        into a representation at a higher layer. When the specification on an
+        abstracting step is deterministic, it forms a function -- a relation in
+        which each acceptable input is mapped to exactly one output. (Note that
+        one can have a deterministic implementation of a non-deterministic specification,
+        but it is the determinism of the specification that matters.) Those lower
+        layer representations that are acceptable as inputs to a given abstracting
+        step are <i>well formed</i> with respect to that abstracting step. The
+        set of well-formed inputs are the <i>domain</i> of the abstraction step.
+        For example, in a tower whose abstracting steps form a C parser, only
+        those character sequences that form a proper C token would be well formed
+        input to a C lexer.</p>
+      <p>The set higher-layer representations that an abstracting step may produce
+        are the <i>range</i> of the abstracting step. If a given abstracting step
+        may produce any possible representations at a higher level, (if its range
+        is the entire target representation), and if its specification is deterministic,
+        then it is <i>universal</i> with respect to that higher layer representation.
+        The domain of a universal abstracting step forms a language for writing
+        such higher level representations in the lower layer notation -- any higher
+        layer representation is representable at the lower layer. For example,
+        if we define a C language tower's symbol-tree layer as a C specific AST,
+        such that any possible AST configuration correponds to a valid C program,
+        and if all valid C programs can be written, then (ignoring implementation
+        limits like finite memory) a C parser would be universal within that tower.</p>
+      <p>If a given abstracting step maps only to a subset of the higher level
+        representation, then exactly those higher level representations within
+        this subset are <i>valid</i> with respect to that abstracting step, and
+        we have a <i>validating</i> abstracting step. From an abstracting step
+        one can derive a <i>validity checker</i> that checks whether a given higher
+        level representation is within the range of the abstraction step. For
+        example, if we instead define the symbol-tree layer of our C tower in
+        terms of a more generic AST representation scheme, such as S-Expressions,
+        then only those S-Expressions that a C parser may produce are <i>valid</i>
+        -- only these are abstractions of syntactically correct C program source.</p>
+      <p>Of course, these transformations compose. For the composition of a C
+        lexer and parser, the well formed character sequences are those that can
+        be lexed into proper tokens, and in which that token stream is itself
+        well formed with respect to the parser, ie, can be parsed according to
+        the language's grammar. Only these character sequences are in the domain
+        of the composite relation.</p>
+      <h3>Concretizing Steps</h3>
+      <p>The <i>concretizing</i> steps on the right are the inverses of the abstracting
+        steps. The inverse of a universal abstracting step is a <i>total </i>concretizing
+        step, and is able to concretize any possible instance of the given higher
+        level representation. When a concretizing step's specification is deterministic,
+        we say it is a <i>canonicalizing function</i>, and that each of its possible
+        outputs is <i>canonical</i>. For example, a deterministic C parser would
+        generally map C programs which differed only in their whitespace to the
+        same AST. A C pretty printer would then print that one AST in some one
+        way. By parsing and pretty printing C programs, we have abstracted away
+        from their whitespace differences, and made two programs that were otherwise
+        identical map to the identical output.</p>
+      <h3>Transformations within a Box</h3>
+      <p>&nbsp;</p>
+      <h3>Cross-Tower Transformations</h3>
+      <p>&nbsp;</p>
+      <h1>Match-Bind-Substitute Programming</h1>
+      <p>&nbsp;</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="index.html">data</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="common-syntax/index.html" title="On to: Common Syntactic Element"><img src="../images/next.gif" width="64" height="32" alt="On to: Common Syntactic Element" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

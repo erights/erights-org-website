@@ -1,0 +1,47 @@
+# 
+# A relic of when we last ran make under unix.  Kept around to help us
+# do so again.  However, currently "Makefile" is the only working
+# makefile, and only under cygwin on MSWindows.
+# 
+
+default: all
+
+TOP=../../..
+DIRS=images
+DOCS=
+PACKAGES=`(cd $(TOP)/src/jsrc; find org -type f) | grep -v CVS | sed 's@/[^/]*$$@@' | sort|uniq | sed 's@/@.@g'`
+
+include $(TOP)/src/build/makerules.mk
+
+SWING="$(TOP)/bindist/e/jars/swingall-1.0.3.jar"
+CRYPTIX="$(TOP)/bindist/e/jars/cryptix-2.0.2-patched.zip"
+JARS=${SWING}:${CRYPTIX}:${CLASSPATH}
+
+ifndef JAVADOC
+ifdef JAVA_HOME
+JAVADOC=$(JAVA_HOME)/bin/javadoc
+else
+JAVADOC="define JAVAC (or JAVA_HOME) in environment "
+endif
+endif
+
+javadocs:
+	-rm -rf javadoc
+	-mkdir javadoc
+	-$(JAVADOC) -sourcepath $(TOP)/src/jsrc -d javadoc $(PACKAGES)
+	for file in javadoc/*.html; do\
+		sed 's/<[Bb][Oo][Dd][Yy]/& bgcolor="#ffeedd"/' $$file >$$file.new;\
+		mv $$file.new $$file;\
+	done
+
+install: javadocs
+	$(INSTALL) -d $(TOP)/bindist
+	$(INSTALL) -d $(TOP)/bindist/e
+	$(INSTALL) -d $(TOP)/bindist/e/doc
+	$(INSTALL) -d $(TOP)/bindist/e/doc/javadoc
+	$(INSTALL) -m 0644 javadoc/* $(TOP)/bindist/e/doc/javadoc
+
+clean clobber: clobber-javadocs
+
+clobber-javadocs:
+	-rm -rf javadoc

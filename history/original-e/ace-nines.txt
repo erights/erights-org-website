@@ -1,0 +1,208 @@
+Originally from <http://thecan.org/in/communities.html>:
+
+
+*Communities.com*
+
+Communities.com was a Silicon Valley start-up established in 1994/5
+as '*Electric Communities*' by veterans of Lucasart's pioneering Habitat.
+
+EC came from building Worlds Away for Fujitsu/Compuserve with the
+noble intention of building a distributed, secure 'cyberspace
+architecture', with persistent identities and a contractually sound
+architecture. I.e. you would be able to spend real money, and
+servers would seamlessly interoperate from your 'house server'
+through to the giant mega-game server, or the 'Second Bank of
+Cayman' sever.
+
+EC's first product was called Microcosm / Habitats, and was to
+embody many of these features. Lurking on the *fuckedcompany*
+msg boards, seeking such a thing, I came upon this fine,
+anonymous write-up of Communities.com's fall.
+
+The legacy of Communities.com lives on in ERights.org <http://www.erights.org/>
+
+Founders:
+
+Douglas Crockford: CTO
+Randall F. Farmer: VP, Services
+Chip Morningstar: Chief Scientist
+
+
+Estimated VC: $50m+ (excluding Online @ $40m and The Palace $25m+)
+
+---
+
+"The Ace of Nines" on *fuckedcompany*.com msg boards <http://www.fuckedcompany.com/comments/index.cfm?newsid=4009683678&page=21&parentid=> writes:
+
+
+The True History, Part I 11/14/2000 01:06 AM EST
+
+
+I'll try to make this brief...
+
+I. High Hopes
+
+Once up on a time there were some Smart Guys (some of the smartest Guys I've
+ever worked with) who knew a lot about online communities. They had built the
+first graphical chat environment in the '80's, and had just built a modern
+successor for a huge Japanese zaibatsu. But they also knew a lot about
+cryptography and computer security, and they had a Vision of making online
+spaces into more than just chat rooms -- to make them the kind of digital
+environment where you could transact business and exchange digital assets
+securely, where you could have a persistent digital identity that was perfectly
+pseudonymous and unforgeable -- a real Global Cyberspace.
+
+So they brought together some other Smart Guys (and Gals, let's not forget) and
+started to work out how to actually build this world.
+
+They also hired some Suits, who had some marketing successes behind them, to
+actually run the company. The Suits were able to talk the talk (well. some of
+them, anyway) and seemed to understand the Vision and the message, and the Chief
+Suit was a wizard at talking money out of Investors. Soon the Smart Guys and
+Gals were busily hacking away, building their vision.
+
+And the Suits begat the Feature Creatures, who said "It must be buzzword-
+compliant! It must be 3D! It must have stereo MIDI and chrome and bells and
+whistles! It must have its own menus and interface widgets and it must not be
+like any other program anywhere!"
+
+The Smart Guys (and Gals) were troubled by this. The components of their vision
+were small and elegant, and mathematical and subtle, and took much thought, yet
+were still extensible enough to be deployed underneath a text MUD and still
+support the chrome and bells and whistles later. But the Features of the
+Creatures were big and flashy and expensive to develop.
+
+So the Feature Creatures begat the Other Guys (and Gals), who swarmed in great
+swarms and built the MIDI and the 3D and the interface widgets and the web site,
+while the Smart Guys built the really tricky parts underneath.
+
+And like a plague of locusts, the Feature Creatures and the Other Guys and Gals
+devoured great bales of $100 bills, and the Code, swollen with Features, grew
+slow and fragile and huge enough to block out the Vision. And when the Creatures
+and Suits had finished adding Features, and the Smart Guys and Other Guys had
+finished building them, the Code was too huge and slow and fragile for the
+machines of the time. It needed a huge 32MB of memory to run -- who could afford
+that much RAM? It needed 100MB of disk space to install -- who could afford so
+much space! And on the fastest processors of the day -- zipping along at speeds
+of up to 100 MHz! -- it ran like molasses. And the Code was put to death, and
+the Vision was hidden away, and was spoken of no more.
+
+And the Investors said, "This Company is Fucked!"
+
+The True History, Part II   11/14/2000 01:09 AM EST
+
+II. Desperate Measures
+
+And the Investors, who had dropped great bales of $100 bills on some other
+Fucked Companies, brought three of them together and said, "The Three shall
+become One." And from each they took some of the Suits and some of the Smart
+Guys and some of the Other Guys, and put the rest to death. And they gave the
+union a catchy ".com" name, and they saw that it was perhaps not Fucked.
+
+And one of those other Fucked Companies had, instead of a Vision, a Product. Its
+architecture was not elegant or subtle, but it had Paying Users. And the
+Investors saw that it was good. And the Suits said, "Let us share the Product
+with all, whether they can afford to pay or not!" And the Paying Users were a
+bit miffed at this, but the Chat Kiddies were thrilled, and they made use of the
+Product in great numbers, and paid for it not.
+
+But the Chief Suit, who was a wizard, cast his spell on more Investors, and
+brought forth great Rounds of Funding, unto the G-th or H-th generation. And the
+bales of $100 bills called forth more Feature Creatures, and more Other Guys,
+and Marketroids and Sales Drones and Producers and Creative Directors and Web
+Designers. And the worship of the Advertiser became the religion of all. And so
+the Smart Guys (who were now few in number, but loyal) brought forth the Ad
+Window. And the Chat Kiddies and the Paying Users said, "It is an Abomination".
+And the Suits and the Marketroids said, "But we need to make money or our
+Company will be Fucked." But the Chat Kiddies and the Paying Users heard them
+not. And they blocked up the great Ad Window. Meanwhile a great Market
+Correction fell upon the land, and slew a great many of the Advertisers and
+Investors, and the Wizard became caught up in a great custody battle, and was
+not seen much thereafter. And the bales of $100 bills were eaten away, and the
+other Suits said, "This Company is Fucked!"
+
+
+The True History, Part III  11/14/2000 01:12 AM EST
+
+III. Sorry, Charlie
+
+The other Suits saw that the Users were blocking up the Ad Window, and they
+said, "This is not good." And the Serpent was the most subtle of the Suits, and
+said, "We must give unto the Users a new Product that does not involve anything
+they can download and install and keep, but must run within their Browser!" And
+the Smart Guys said, "But client-side programming is still not quite ready for
+prime time, and the Browsers are many and varied, and Sun is still fucking with
+the Java spec. And the Browser Client will be no good." But the Suits wielded
+their whips of iron, and the Smart Guys (who now were a little too tired to have
+Vision and just wanted to get away with a little value for their long hard years
+of work) labored mightily and brought forth the Browser Client, and it was
+called TPV, and the Suits said, "It is good!"
+
+And the Users said, "It sucks ass!" and continued to use the C client and
+exchange it privily among themselves, and hack it to block up the Ad Window
+which was the Company's only hope of staying afloat.
+
+And the Suits said, "The Users are as children" (which was true) "and are easily
+led" (which was not). "Let us make for them a new Product, which will run on the
+Web Server instead of the Browser, and will run through their cache like water
+through their hands, and let it be called Passport." And the Smart Guys said,
+"That will take a year to build and another six months to QA." And the Suits
+said, "It shall be done in three months!" And the Smart Guys (who were now just
+a handful, and were quietly passing their resumes around to the Smart Guys who
+had left the Company when it was first Fucked) sweated and strained and
+endangered their romantic relationships and held out for large retention bonuses
+and in mere months brought forth the Passport.
+
+And the Suits said, "The Users must worship no other Product but Passport." And
+the previous Product was put to death, yea both TPV and the C client too. And
+the Other Guys and the Drones and the Producers and the Hangers-On and the
+Marketroids with them, cast out and put aside. And Suits said unto the Users,
+"Here is the Passport, which you must worship." And the Users said, "It sucks
+dead donkey ass!"
+
+And now all the world said, "This Company is Fucked!"
+
+And the Smart Guys said, "We told you so."
+
+
+The True History, Part IV   11/14/2000 01:21 AM EST
+
+IV. That Which Is Fucked, Bringeth Forth New Life
+
+But the prophets prophesied, saying, "In the belly of that which is Fucked,
+sleepeth the Code which was shunned. And look, 32MB is not really so big
+nowadays. And the disk footprint for most games is now far greater than 100MB,
+and we all have gigabyte hard disks anyway. And by golly at 500MHz this is
+actually pretty zippy for a 3D chat client."
+
+And the Smart Guys answered not, for they were a bit burnt out and bitter.
+
+And the prophets said, "When shall come forth a new Wizard to bewitch the
+Investors and bring forth great bales of $100 bills?"
+
+And they prophesied, "Lo, shall not a new Wizard come forth (a different Wizard,
+for the first one has never been seen again and probably won't be), and shall he
+not quietly drop a bale of $100 bills in front of the Suits of the Fucked
+Company, and shall they not give up their red-headed stepchild for a song? And
+shall the Wizard not found a new Company with a very different name, and hire
+much better Suits than before? And shall the Wizard not dangle a bale or two in
+front of the Smart Guys, and say, 'Hey, where's that smile?'" And shall not the
+Smart Guys kick themselves and fix up the Code, for the sake of the Vision?"
+
+For verily the Prophet of the Great Egress saith, "There is a Seeker born every
+minute."
+
+Here endeth the lesson.
+
+-- The Ace of Nines
+
+
+
+
+
+===========================================================================
+
+thecan.org <http://thecan.org/> acknowledges all respective copyrights and trademarks.
+
+
+

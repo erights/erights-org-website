@@ -1,0 +1,36 @@
+To: E-Dean Tribble <tribble@e-dean.com>
+Subject: escape
+
+In E:
+
+to foo(...) {
+   ...
+   escape bletch {
+      ...body...
+   }
+   ...
+}
+
+In Smalltalk:
+
+foo: ...
+    ...
+    escaper callCC: [:bletch |
+        ...body...
+    }
+    ...
+
+
+The generic escaper has a generic callCC method
+
+callCC: escapeClause
+    escapeClause value: [:result | ^result]
+
+
+
+
+----------------------------------------
+Text by me above is hereby placed in the public domain
+
+        Cheers,
+        --MarkM

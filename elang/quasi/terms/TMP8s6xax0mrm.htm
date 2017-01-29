@@ -1,0 +1,611 @@
+ 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML>
+<!-- #BeginTemplate "/Templates/pink.dwt" --> 
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html;CHARSET=iso-8859-1">
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>Term Trees: The Spec</TITLE>
+<!-- #EndEditable --> 
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made href="mailto:markm@caplet.com" title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<P> 
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> 
+      <P> 
+      <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> 
+            <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" valign="center" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elang</a>&nbsp;/&nbsp;<a href="../index.html">quasi</a>&nbsp;/&nbsp;<a href="index.html">terms</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../../images/prev-gray.gif" width="64" height="32"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="quasi-term-spec.html"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Quasi Term Trees: The Spec" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table>
+          </TD>
+          <TD ALIGN="RIGHT"> 
+            <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><B>Term 
+              Trees:<br>
+              <font size="5">The Spec</font></B><!-- #EndEditable --></FONT> 
+          </TD>
+        </TR>
+      </TABLE>
+      <hr>
+      <!-- #BeginEditable "LongBody" --> 
+      <P ALIGN="left">&nbsp;
+      <table cellpadding='5' border='1' bgcolor='#f5dcb3' width='100%'>
+        <tr align='left'> 
+          <td><strong> Character classes</strong></td>
+        </tr>
+        <tr> 
+          <td> 
+            <table border='0' bgcolor='#f5dcb3' cellpadding="12">
+              <tr valign='top'> 
+                <th align='left' colspan="2">Name</th>
+                <th align='center'>&nbsp;</th>
+                <th align='left'>Definition</th>
+                <th align='left'>Ascii subset</th>
+                <th align='right'>&nbsp;</th>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'> 
+                  <pre><a name='whitespace'></a></pre>
+                </td>
+                <td align='right'> 
+                  <pre>whitespace</pre>
+                </td>
+                <td align='center'> 
+                  <pre>::=</pre>
+                </td>
+                <td align='left'> 
+                  <pre><a href="http://java.sun.com/j2se/1.3/docs/api/java/lang/Character.html#isWhitespace(char)">isWhitespace</a></pre>
+                </td>
+                <td align='left'> 
+                  <pre>' ' | '\n' | '\t' | ...</pre>
+                </td>
+                <td align='left'> 
+                  <pre>#1</pre>
+                </td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'> 
+                  <pre><a name='digit10'></a></pre>
+                </td>
+                <td align='right'> 
+                  <pre><font>digit10</font></pre>
+                </td>
+                <td align='center'> 
+                  <pre><font> ::= </font></pre>
+                </td>
+                <td align='left'> 
+                  <pre><font><a href="http://java.sun.com/j2se/1.3/docs/api/java/lang/Character.html#isDigit(char)">isDigit</a></font></pre>
+                </td>
+                <td align='left'> 
+                  <pre><font>'0'..'9'</font></pre>
+                </td>
+                <td align='left'> 
+                  <pre>#2</pre>
+                </td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'> 
+                  <pre><a name='digit8'></a></pre>
+                </td>
+                <td align='right'> 
+                  <pre><font>digit8</font></pre>
+                </td>
+                <td align='center'> 
+                  <pre><font> ::= </font></pre>
+                </td>
+                <td align='left'>&nbsp;</td>
+                <td align='left'> 
+                  <pre><font>'0'..'7'</font></pre>
+                </td>
+                <td align='left'> 
+                  <pre>#2</pre>
+                </td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'> 
+                  <pre><a name='digit16'></a></pre>
+                </td>
+                <td align='right'> 
+                  <pre><font>digit16</font></pre>
+                </td>
+                <td align='center'> 
+                  <pre><font> ::= </font></pre>
+                </td>
+                <td align='left'>&nbsp;</td>
+                <td align='left'> 
+                  <pre><font>'0'..'9' | 'a'..'f' | 'A'..'F'</font></pre>
+                </td>
+                <td align='left'> 
+                  <pre>#2</pre>
+                </td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'> 
+                  <pre><a name='segStart'></a></pre>
+                </td>
+                <td align='right'> 
+                  <pre>segStart</pre>
+                </td>
+                <td align='center'> 
+                  <pre>::=</pre>
+                </td>
+                <td align='left'> 
+                  <pre><a href="http://java.sun.com/j2se/1.3/docs/api/java/lang/Character.html#isJavaIdentifierStart(char)">isJavaIdentifierStart</a>
+</pre>
+                </td>
+                <td align='left'> 
+                  <pre>'a'..'z' | 'A'..'Z' | '_' | '$'</pre>
+                </td>
+                <td align='left'> 
+                  <pre>#3</pre>
+                </td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'> 
+                  <pre><a name='segPart'></a></pre>
+                </td>
+                <td align='right'> 
+                  <pre>segPart</pre>
+                </td>
+                <td align='center'> 
+                  <pre>::=</pre>
+                </td>
+                <td align='left'> 
+                  <pre><a href="http://java.sun.com/j2se/1.3/docs/api/java/lang/Character.html#isJavaIdentifierPart(char)">isJavaIdentifierPart</a>
+| '.' | <a href="http://www.w3.org/TR/1999/REC-xml-names-19990114/#NT-NCNameChar">XML-NCNameChar</a></pre>
+                </td>
+                <td align='left'> 
+                  <pre><a href="#segStart">segStart</a> | <a href="#digit10">digit10</a> | '.' | '-'</pre>
+                </td>
+                <td align='left'> 
+                  <pre>#4</pre>
+                </td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'> 
+                  <pre><a name='uric'></a></pre>
+                </td>
+                <td align='right'> 
+                  <pre><font>uric</font></pre>
+                </td>
+                <td align='center'> 
+                  <pre><font> ::= </font></pre>
+                </td>
+                <td align='left'> 
+                  <pre><a href="http://www.ics.uci.edu/pub/ietf/uri/rfc2396.txt">IETF-URICs</a>
+| '\\' | '|' | '#'</pre>
+                </td>
+                <td align='left'> 
+                  <pre><a href="#segPart">segPart</a>
+| anyof(&quot;;/?:@&amp;=+,!~*'()%\\|#&quot;)</pre>
+                </td>
+                <td align='left'> 
+                  <pre>#5</pre>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <p>&nbsp;</p><table cellpadding='5' border='1' bgcolor='#80ffff' width='100%'>
+        <tr>
+          <td>
+            <pre>x</pre>
+          </td>
+        </tr>
+      </table>
+      <p>&nbsp;</p>
+      <table cellpadding='5' border='1' bgcolor='#f5dcb3' width='100%'>
+        <tr align='left'> 
+          <td><strong> Token Types</strong> (The bold names are the token types. 
+            The others are supporting productions.)</td>
+        </tr>
+        <tr> 
+          <td> 
+            <table border='0' bgcolor='#f5dcb3' cellpadding="12">
+              <tr valign='top'> 
+                <th align='left' colspan="2">Name</th>
+                <th align='center'>&nbsp;</th>
+                <th align='left'>Definition</th>
+                <th align='left'>Purpose</th>
+                <th align='right'>&nbsp;</th>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'> 
+                  <pre><a name='integer'></a></pre>
+                </td>
+                <td align='right'> 
+                  <pre><font><b>integer</b></font></pre>
+                </td>
+                <td align='center'> 
+                  <pre><font> ::= </font></pre>
+                </td>
+                <td align='left'> 
+                  <pre>  '-'? '0' 'x' <a href="#digit16">digit16</a>+
+| '-'? '0'     <a href="#digit8">digit8</a>*
+| '-'?         <a href="#digit10">digit10</a>+</pre>
+                </td>
+                <td align='left'>Precision unlimited integer</td>
+                <td align='left'> 
+                  <pre>#6</pre>
+                </td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'> 
+                  <pre><a name='wholePart'></a></pre>
+                </td>
+                <td align='right'> 
+                  <pre>wholePart</pre>
+                </td>
+                <td align='center'> 
+                  <pre>::=</pre>
+                </td>
+                <td align='left'> 
+                  <pre>'-'? <a href="#digit10">digit10</a>+</pre>
+                </td>
+                <td align='left'>&nbsp;</td>
+                <td align='left'> 
+                  <pre>#7</pre>
+                </td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'> 
+                  <pre><a name='fraction'></a></pre>
+                </td>
+                <td align='right'> 
+                  <pre>fraction</pre>
+                </td>
+                <td align='center'> 
+                  <pre>::=</pre>
+                </td>
+                <td align='left'> 
+                  <pre>'.' <a href="#digit10">digit10</a>*</pre>
+                </td>
+                <td align='left'>&nbsp;</td>
+                <td align='left'> 
+                  <pre>#8</pre>
+                </td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'> 
+                  <pre><a name='exponent'></a></pre>
+                </td>
+                <td align='right'> 
+                  <pre><font>exponent</font></pre>
+                </td>
+                <td align='center'> 
+                  <pre><font> ::= </font></pre>
+                </td>
+                <td align='left'> 
+                  <pre><font>('e' | 'E') '-'? <a href="#digit10">digit10</a>+</font></pre>
+                </td>
+                <td align='left'>&nbsp;</td>
+                <td align='left'> 
+                  <pre>#9</pre>
+                </td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'> 
+                  <pre><a name='float64'></a></pre>
+                </td>
+                <td align='right'> 
+                  <pre><b>float64</b></pre>
+                </td>
+                <td align='center'> 
+                  <pre>::=</pre>
+                </td>
+                <td align='left'> 
+                  <pre>  wholePart fraction exponent?
+| wholePart fraction? exponent</pre>
+                </td>
+                <td align='left'>Real numbers representable in IEEE double precision.</td>
+                <td align='left'> 
+                  <pre>#7</pre>
+                </td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'> 
+                  <pre><a name='charConst'></a></pre>
+                </td>
+                <td align='right'> 
+                  <pre>charConst</pre>
+                </td>
+                <td align='center'> 
+                  <pre>::=</pre>
+                </td>
+                <td align='left' colspan="2"> 
+                  <pre>  '\\' anyof(&quot;btnfr\&quot;'\\\n&quot;)
+| '\\' <a href="#digit10">digit10</a>+     <font face="Times New Roman, Times, serif"># not yet implemented</font>
+| '\\' 'u' digit16+ <font face="Times New Roman, Times, serif"># not yet implemented</font>
+| any-printing-char-but-backslash-and-the-quotes</pre>
+                </td>
+                <td align='left'> 
+                  <pre>#8</pre>
+                </td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'> 
+                  <pre>&nbsp;</pre>
+                </td>
+                <td align='right'> 
+                  <pre><font><b>char</b></font></pre>
+                </td>
+                <td align='center'> 
+                  <pre><font> ::= </font></pre>
+                </td>
+                <td align='left'> 
+                  <pre><font>'\'' (charConst | '&quot;') '\''</font></pre>
+                </td>
+                <td align='left'>Symbols, including all Java and <i><b><font color="#009000">E</font></b></i> 
+                  identifier and fully qualified names, XML-NS tags, and resolved 
+                  XML-NS tags.</td>
+                <td align='left'> 
+                  <pre>#9</pre>
+                </td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'> 
+                  <pre><a name='float64'></a></pre>
+                </td>
+                <td align='right'> 
+                  <pre><b>float64</b></pre>
+                </td>
+                <td align='center'> 
+                  <pre>::=</pre>
+                </td>
+                <td align='left'> 
+                  <pre>  wholePart fraction exponent?
+| wholePart fraction? exponent</pre>
+                </td>
+                <td align='left'>Real numbers representable in IEEE double precision.</td>
+                <td align='left'> 
+                  <pre>#7</pre>
+                </td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'> 
+                  <pre><a name='segment'></a></pre>
+                </td>
+                <td align='right'> 
+                  <pre>segment</pre>
+                </td>
+                <td align='center'> 
+                  <pre>::=</pre>
+                </td>
+                <td align='left'> 
+                  <pre><a href="#segStart">segStart</a> <a href="#segPart">segPart</a>*
+| '.' <a href="#segStart">segStart</a> <a href="#segPart">segPart</a>*
+| '&lt;' <a href="#uric">uric</a>* '&gt;'</pre>
+                </td>
+                <td align='left'>&nbsp;</td>
+                <td align='left'> 
+                  <pre>#8</pre>
+                </td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'> 
+                  <pre><a name='tag'></a></pre>
+                </td>
+                <td align='right'> 
+                  <pre><font><b>tag</b></font></pre>
+                </td>
+                <td align='center'> 
+                  <pre><font> ::= </font></pre>
+                </td>
+                <td align='left'> 
+                  <pre><font><a href="#segment">segment</a> (':' <a href="#segment">segment</a>)*</font></pre>
+                </td>
+                <td align='left'>Symbols, including all Java and <i><b><font color="#009000">E</font></b></i> 
+                  identifier and fully qualified names, XML-NS tags, and resolved 
+                  XML-NS tags.</td>
+                <td align='left'> 
+                  <pre>#9</pre>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <p>&nbsp;</p>
+      <table cellpadding='5' border='1' bgcolor='#f5dcb3' width='100%'>
+        <tr align='left'> 
+          <td><strong> Term Tree Kernel Grammar</strong></td>
+        </tr>
+        <tr> 
+          <td> 
+            <table border='0' bgcolor='#f5dcb3' cellpadding="6">
+              <tr valign='top'> 
+                <td align='right'><a name='NT-NSAttName'></a></td>
+                <td align='right'><font>PrefixedAttName</font></td>
+                <td align='center'><font> ::= </font></td>
+                <td align='left'><font>'xmlns:' <a href='#NT-NCName'>NCName</a></font></td>
+                <td align='center'><font> [ </font></td>
+                <td align='left'><font>NSC: <a href='#xmlReserved'>Leading 
+                  "XML"</a> ]</font></td>
+                <td align='right'># [1]</td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'><a name='NT-PrefixedAttName'></a></td>
+                <td align='right'>&nbsp;</td>
+                <td align='center'>&nbsp;</td>
+                <td align='left'>&nbsp;</td>
+                <td align='center'>&nbsp;</td>
+                <td align='left'>&nbsp;</td>
+                <td align='right'># [2]&nbsp;</td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'><a name='NT-DefaultAttName'></a></td>
+                <td align='right'>&nbsp;</td>
+                <td align='center'>&nbsp;</td>
+                <td align='left'>&nbsp;</td>
+                <td align='center'>&nbsp;</td>
+                <td align='left'>&nbsp;</td>
+                <td align='right'># [3]&nbsp;</td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'><a name='NT-NCName'></a></td>
+                <td align='right'>&nbsp;</td>
+                <td align='center'>&nbsp;</td>
+                <td align='left'>&nbsp;</td>
+                <td align='center'>&nbsp;</td>
+                <td align='left'>&nbsp;</td>
+                <td align='right'># [4]&nbsp;</td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'><a name='NT-NCNameChar'></a></td>
+                <td align='right'><font>NCName</font></td>
+                <td align='center'><font> ::= </font></td>
+                <td align='left'><font>(<a href='http://www.w3.org/TR/REC-xml#NT-Letter'>Letter</a> 
+                  |&nbsp;'_') (<a href='#NT-NCNameChar'>NCNameChar</a>)*</font></td>
+                <td align='center'><font> /* </font></td>
+                <td align='left'><font>An XML <a href='http://www.w3.org/TR/REC-xml#NT-Name'>Name</a>, 
+                  minus the ":" */</font></td>
+                <td align='right'># [5]&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <p>&nbsp;</p>
+      <table cellpadding='5' border='1' bgcolor='#f5dcb3' width='100%'>
+        <tr align='left'> 
+          <td><strong> Syntactic Shorthands</strong></td>
+        </tr>
+        <tr> 
+          <td> 
+            <table border='0' bgcolor='#f5dcb3' cellpadding="6">
+              <tr valign='top'> 
+                <td align='right'><a name='NT-NSAttName'></a></td>
+                <td align='right'><font>PrefixedAttName</font></td>
+                <td align='center'><font> ::= </font></td>
+                <td align='left'><font>'xmlns:' <a href='#NT-NCName'>NCName</a></font></td>
+                <td align='center'><font> [ </font></td>
+                <td align='left'><font>NSC: <a href='#xmlReserved'>Leading 
+                  "XML"</a> ]</font></td>
+                <td align='right'># [1]</td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'><a name='NT-PrefixedAttName'></a></td>
+                <td align='right'>&nbsp;</td>
+                <td align='center'>&nbsp;</td>
+                <td align='left'>&nbsp;</td>
+                <td align='center'>&nbsp;</td>
+                <td align='left'>&nbsp;</td>
+                <td align='right'># [2]&nbsp;</td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'><a name='NT-DefaultAttName'></a></td>
+                <td align='right'>&nbsp;</td>
+                <td align='center'>&nbsp;</td>
+                <td align='left'>&nbsp;</td>
+                <td align='center'>&nbsp;</td>
+                <td align='left'>&nbsp;</td>
+                <td align='right'># [3]&nbsp;</td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'><a name='NT-NCName'></a></td>
+                <td align='right'>&nbsp;</td>
+                <td align='center'>&nbsp;</td>
+                <td align='left'>&nbsp;</td>
+                <td align='center'>&nbsp;</td>
+                <td align='left'>&nbsp;</td>
+                <td align='right'># [4]&nbsp;</td>
+              </tr>
+              <tr valign='top'> 
+                <td align='right'><a name='NT-NCNameChar'></a></td>
+                <td align='right'><font>NCName</font></td>
+                <td align='center'><font> ::= </font></td>
+                <td align='left'><font>(<a href='http://www.w3.org/TR/REC-xml#NT-Letter'>Letter</a> 
+                  |&nbsp;'_') (<a href='#NT-NCNameChar'>NCNameChar</a>)*</font></td>
+                <td align='center'><font> /* </font></td>
+                <td align='left'><font>An XML <a href='http://www.w3.org/TR/REC-xml#NT-Name'>Name</a>, 
+                  minus the ":" */</font></td>
+                <td align='right'># [5]&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <p>&nbsp;</p>
+      <P ALIGN="left">&nbsp; 
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%">&nbsp;</TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> 
+      <hr>
+      <div align="center"> 
+        <table cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> 
+              <div align="left"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" valign="center" alt="ERights Home"></a></div>
+            </td>
+            <td> 
+              <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> 
+                    <div align="center"><font size="-1"><a href="../../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../index.html">E 
+                      Language</a> &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div>
+                  </td>
+                </tr>
+                <tr> 
+                  <td> 
+                    <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> 
+                      &nbsp;&nbsp; <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+        <table width="100%" border="0" cellspacing="0" cellpadding="4">
+          <tr> 
+            <td><i><a href="mailto:webmaster@erights.org">webmaster@erights.org</a></i> 
+              <br>
+              or <a href="https://bugs.sieve.net/bugs/?func=addbug&group_id=16380"><i>report 
+              bug</i></a><br>
+              or <a href="http://www.blindpay.com/crit-me-now.cgi"><img src="../../../images/cmn.gif" width="98" height="21" border="0" align="middle" alt="Annotate this page"></a> 
+            </td>
+            <td> 
+              <div align="right"> 
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a> <a href="http://www.stoppoliceware.org/"><img src="../../../images/stoppoliceware_gray_88x32.gif" width="88" height="32" border="0"></a> 
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </TD>
+    <TD WIDTH="10%" valign="bottom">&nbsp;</TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate -->
+</HTML>

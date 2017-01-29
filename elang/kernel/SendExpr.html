@@ -1,0 +1,306 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>Eventual Send Expression</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">kernel</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="CallExpr.html" title="Back to: Immediate Call Expression"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Immediate Call Expression" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="ObjectExpr.html" title="On to: Object Expression"><img src="../../images/next.gif" width="64" height="32" alt="On to: Object Expression" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Eventual 
+              Send Expression</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <p>Ask the <i>recipient</i> to <i>eventually</i> perform the action named 
+        <i>verb</i> as parameterized by the <i>argumens</i>, but not now. Queues 
+        a pending delivery of this message to this recipient to happen in the 
+        recipient's vat, and in its own turn. 
+      <blockquote> 
+        <table cellpadding="6">
+          <tr> 
+            <td valign="top"> 
+              <div align="right"> 
+                <pre>BNF:</pre>
+              </div>
+            </td>
+            <td> 
+              <pre><i>eExpr</i> &quot;<b>&lt;-</b>&quot; Verb [&quot;<b>(</b>&quot; <i>eExpr</i> (&quot;<b>,</b>&quot; <i>eExpr</i>)* &quot;<b>)</b>&quot;]</pre>
+            </td>
+          </tr>
+          <tr> 
+            <td valign="top"> 
+              <div align="right"> 
+                <pre>XML DTD:</pre>
+              </div>
+            </td>
+            <td> 
+              <pre>&lt;!ELEMENT sendExpr (%eExpr;, Verb, (%eExpr;)*)&gt;</pre>
+            </td>
+          </tr>
+          <tr> 
+            <td valign="top"> 
+              <div align="right"> 
+                <pre>Java:</pre>
+              </div>
+            </td>
+            <td> 
+              <pre>E.send(<i>jExpr</i>, &quot;<i>verb</i>&quot;, <i>jExpr</i>...)</pre>
+            </td>
+          </tr>
+          <tr> 
+            <td valign="top"> 
+              <div align="right"> 
+                <pre>Example:</pre>
+              </div>
+            </td>
+            <td> 
+              <pre>observer &lt;- noticeChange(delta)</pre>
+            </td>
+          </tr>
+          <tr> 
+            <td valign="top"> 
+              <div align="right"> 
+                <pre>in Kernel-E:</pre>
+              </div>
+            </td>
+            <td> 
+              <pre><i>same</i></pre>
+            </td>
+          </tr>
+          <tr> 
+            <td valign="top"> 
+              <div align="right"> 
+                <pre>in XML:</pre>
+              </div>
+            </td>
+            <td> 
+              <pre>&lt;sendExpr&gt;
+    &lt;Noun&gt;observer&lt;/Noun&gt;
+    &lt;Verb&gt;noticeChange&lt;/Verb&gt;
+    &lt;Noun&gt;delta&lt;/Noun&gt;
+&lt;/callExpr&gt;
+</pre>
+            </td>
+          </tr>
+          <tr> 
+            <td valign="top"> 
+              <div align="right"> 
+                <pre>in Java:</pre>
+              </div>
+            </td>
+            <td> 
+              <pre>E.send(observer, &quot;noticeChange&quot;, delta)</pre>
+            </td>
+          </tr>
+        </table>
+      </blockquote>
+      <p></p>
+      <p>The reference to the recipient is the value of the expression on the 
+        left and the arguments are the values of the expressions between the parens. 
+        As is typical in E, expressions are evaluated left to right, and variables 
+        defined on the left are visible on the right. The reference to the recipient 
+        attempts to convey the message to the recipient. If it succeeds, the message 
+        is delivered to the recipient in its own turn. The send expression itself 
+        always immediately evaluates to a value -- it never performs a non-local 
+        exit. The value of the send expression is a reference to the result of 
+        the eventual delivery. 
+      <h2>Partially Ordered Fail-Stop Delivery</h2>
+      <p>Successive messages sent on the same reference must be delivered in the 
+        order sent. Since distributed systems do not allow for reliable message 
+        delivery channels, an EVENTUAL reference instead must be fail-stop: reliable 
+        up to the first failure to deliver, and it must never deliver any more 
+        messages. Therefore, a successful delivery demonstrates that earlier messages 
+        sent on the same reference must have been delivered. A failed reference 
+        must eventually become BROKEN. <br>
+        <i> See also <a href="../../elib/concurrency/partial-order.html#full-order">Two 
+        Party Full Order</a>.</i>
+      <p>When a reference is included within an argument of a send, we say the 
+        reference has been <i>forked</i>, and that what is received is not the 
+        sent reference but a <i>fork</i> of the sent reference. Messages sent 
+        on a reference before it is forked must be delivered to the recipient 
+        prior to message sent of the reference after the fork of course, but also 
+        prior to messages sent on that fork of the reference. Messages sent on 
+        the original reference after the fork, and messages sent of the fork, 
+        represent two separate full orders. These messages may be delivered in 
+        any interleaving of these orders. <br>
+        <i>See also <a href="../../elib/concurrency/partial-order.html#tree-order">Three 
+        Party Tree Order</a>.</i>
+      <p>Given two references, x and y, that designate the same recipient, &quot;<tt>E 
+        join(x, y)</tt>&quot; returns a new reference that also designates that 
+        recipient. Messages sent on either x or y prior to the join must be delivered 
+        prior to messages sent on the joined reference. The joined reference itself 
+        is simultaneously a fork of x and y -- if messages are sent on all following 
+        the join, these messages may be delivered in any interleaving of their 
+        respective orders. <br>
+        <i>See also <a href="../../elib/equality/after-both.html">Four Party Partial 
+        Order</a>.</i>
+      <p>Of course, if a reference should fail prior to a fork or join, the fork 
+        or join of the reference is born failed, it may not deliver any messages, 
+        and it must eventually become BROKEN. 
+      <h2>Delivery by Reference Type</h2>
+      <p>To understand the behavior of send in detail, it's useful to break it 
+        down according to the type of reference to the recipient.</p>
+      <p> 
+      <ul>
+        <li> 
+          <p>NEAR. If the reference is NEAR, then the recipient is in the same 
+            vat as the sender, and the reference is reliable up to crash/revival. 
+            A send queues the pending delivery in this vat's pending delivery 
+            queue, which won't get serviced until the current turn is done. The 
+            send evaluates to a promise for the outcome of the delivery. The delivery 
+            can only exit by evaluating to a result, in which case this becomes 
+            the resolution of the promise, or by throwing a problem, in which 
+            case the promise becomes BROKEN with this problem. 
+          <p> The holder of the promise, if he sees it become BROKEN, cannot assume 
+            the recipient threw, as the recipient may instead have returned a 
+            BROKEN reference as its normal result. Similarly, if the promise remains 
+            EVENTUAL, the holder of the promise cannot assume that delivery hasn't 
+            happened yet, as the recipient may have returned an EVENTUAL reference 
+            as its normal result. This ambiguity is intentional -- it allows better 
+            abstraction of the recipient's duties. </p>
+        </li>
+        <li> 
+          <p>BROKEN. If the reference is BROKEN, it will not deliver any messages, 
+            and the problem associated with the reference attempts to explain 
+            why not. A send to a broken reference evaluates to a reference broken 
+            with the same problem -- which can often be the same reference.</p>
+        </li>
+        <li> 
+          <p>Far reference (EVENTUAL, Resolved). A Far reference is a reference 
+            to a specific recipient in a foreign vat. If a far reference succeeds 
+            at delivering the message, the message is queued in the foreign vat 
+            for eventual delivery to the recipient. Although this delivery may 
+            happen while the sending turn is still in progress, because the two 
+            vats have no synchronous access to each other, these are still isolated 
+            transactions. Side effects in the receiving turn can have no effect 
+            on the sending turn.</p>
+          <p>A send on a Far reference immediately evaluates to a promise for 
+            the outcome of the delivery. All the outcomes explained for NEAR reference 
+            are possible. In addition, if the promise becomes BROKEN with a PartitionException, 
+            then either </p>
+          <p> 
+          <ol>
+            <li> 
+              <p>The inter-vat connection failed, preventing the delivery of the 
+                message.</p>
+            </li>
+            <li> 
+              <p>The inter-vat connection failed, preventing the promise from 
+                resolving to the actual outcome.</p>
+            </li>
+            <li> 
+              <p>The outcome of the delivery was indeed either a reference broken 
+                by a PartitionException or a throw of a PartitionException.</p>
+            </li>
+          </ol>
+          <p>This ambiguity is intentional. It is a fundamental constraint of 
+            distributed systems that cases #1 and #2 cannot be distinguished. 
+            Case #3 may result from the recipient in turn experiencing a communications 
+            problem in its own subcontracting of parts of the job. This protocol 
+            allows such problem reports to propogate to interested parties.</p>
+        </li>
+        <li> 
+          <p>Promise (EVENTUAL, Unresolved). A promise doesn't yet know who the 
+            recipient is, but is nevertheless a conveyance for sending messages 
+            to whoever it turns out to be. Messages sent on a promise queue up 
+            in the promise itself until the promise is resolved -- until a reference 
+            to the recipient is determined. At this point, the messages are resent 
+            on this reference, which may recursively be any of these cases. It 
+            is equivalent for a promise to become broken and for it to resolve 
+            to a broken reference. Promises come in two flavors: </p>
+          <p> 
+          <ol>
+            <li> 
+              <p>A LocalPromise has both the Ref end (the tail of the arrow) and 
+                the Resolver end (the head of the arror) in the same vat, so it 
+                is reliable up to crash/revive.</p>
+            </li>
+            <li> 
+              <p>A FarPromise spans vats, and so is reliable only up to partition.</p>
+            </li>
+          </ol>
+          <p></p>
+        </li>
+      </ul>
+      <p>&nbsp; </p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">kernel</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="CallExpr.html" title="Back to: Immediate Call Expression"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Immediate Call Expression" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="ObjectExpr.html" title="On to: Object Expression"><img src="../../images/next.gif" width="64" height="32" alt="On to: Object Expression" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

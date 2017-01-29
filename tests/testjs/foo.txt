@@ -1,0 +1,6 @@
+<FilesMatch "\.js$">
+  Header set Access-Control-Allow-Origin "*"
+</FilesMatch>
+<FilesMatch "\.json$">
+  Header set Access-Control-Allow-Origin "*"
+</FilesMatch>

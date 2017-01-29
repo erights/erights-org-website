@@ -1,0 +1,388 @@
+# E Configuration File (or E Configuration Template File)
+
+# Copyright 2002 Combex, Inc. under the terms of the MIT X license
+# found at http://www.opensource.org/licenses/mit-license.html ................
+
+# If you are looking at eprops-template.txt, then you are looking at a
+# template to be used to construct eprops.txt.  In this case, for
+# several property definitions, you should instead see text of the
+# form, for example,
+#
+#     e.version=$<<e.version>>
+#
+# but with curly brackets instead of angle brackets.
+#
+# In the comment preceding that line, you should see an example of a
+# possible value of this property, such as "0.8.9".  Were this
+# property to have this value in the eprops.txt file, it would appear
+# as
+#
+#     e.version=0.8.9
+#
+# The eprops.txt file is written in a restricted form of Java's
+# Properties file save/load syntax.  If you are looking at an
+# eprops.txt file, all property definitions should already have the
+# above form.  You may create an eprops.txt file manually by copying
+# the eprops-template.txt file and replacing the
+# dollar-double-curly-bracket form with the Java property definition.
+#
+# NEW (as of 0.8.14b): To ease manual installation, some of the
+# entries in the eprops-template.txt file list the default value as
+# their value rather than a dollar-double-curly form.  After copying
+# eprops-template.txt to eprops.txt, you don't need to edit these, but
+# you may.
+#
+# Notice that there are no quotes around the value.  This is correct
+# even if the property value contains spaces, since the Java property
+# syntax reads all text from the "=" till the end of the line.
+#
+# When a property value is a file or directory path name, it should be
+# absolute and use forward slashes ("/"), regardless of the local
+# platform's convention.  If it's a non-top-level directory, a
+# terminal slash is optional.  Note: On MSWindows, you must specify
+# drives the MSWindows/Java way ("c:...") rather than the Cygwin way
+# ("//c/...").
+#
+# When a property value is a pathlist (a list of paths, sometimes also
+# confusingly refered to as a "path", as in the PATH or CLASSPATH
+# variables), then the entries should be separated by a semicolon
+# (";"), independent of platform.  (As opposed to the Java convention,
+# which is either ";" or ":" depending on platform.)
+#
+# All these property definitions get loaded into an E process'
+# System.properties, so long as they don't override an already present
+# property.  This is so command-line property settings (using
+# arguments of the form "-D<name>=<value>) will take precedence over
+# property settings in eprops.txt.
+#
+# The eprops.txt file should serve as a record of everywhere (outside
+# of the install directory itself) that installation placed files and
+# registry entries, so that a future uninstaller will know (fingers
+# crossed) what files and registry entries to remove.
+#
+# @author Mark S. Miller
+
+
+################# In-Pocket E Shorthands & Features #################
+# All the e.enable.* properties, and their documentation, has been
+# moved to
+# src/bin/resources/org/erights/e/elang/syntax/version-props-default.txt
+# which is accessible at runtime within E as
+# <resource:org/erights/e/elang/syntax/version-props-default.txt>.getText()
+#####################################################################
+
+
+# What version of E is this?
+#
+# For example, "0.8.9".
+
+e.version=0.8.30d
+
+# What subdirectory name is used for files specific to this OS?
+#
+# One of "win32", "linux-motif", "linux-gtk", "mac", "freebsd", "aix-motif",
+#        "hpux-motif", "solaris-motif", "qnx", or, for any other OS, "posix".
+
+e.osdir=win32
+
+
+# What subdirectory name is used for files specific to this hardware
+# architecture (instruction set)?
+#
+# One of "x86", "ppc", "sparc", "hp9000", "arm", or, for any other hardware
+#        platform, "unknown".
+
+e.machdir=x86
+
+
+# Where is E installed?  If this file is eprops.txt (as opposed to
+# eprops-template.txt) then this eprops.txt file should be in this
+# directory.
+#
+# For example, "c:/Program Files/erights.org/"
+
+e.home=c:/Program Files/erights.org
+
+
+# What is the absolute path of the Java executable command?  This must
+# be a Java compatible with Sun's JDK >= 1.3.  On MSWindows, if you
+# wish to suppress the MSDOS console window, use a javaw.exe command
+# rather than a java.exe command.
+#
+# For example, "d:/jdk1.3/bin/java.exe"
+
+e.javacmd=c:/j2sdk1.4.2/bin/java.exe
+
+
+# When E shortcuts are launched from the desktop, where should their
+# current directory be?  Under *nix currently, this option does
+# nothing.  On MSWindows, this option affects only newly generated
+# shortcuts.  After changing this option, rerun the setup.e-awt
+# command to generate new shortcuts.
+#
+# For example: "c:/WINDOWS/Desktop" or "".
+
+e.launch.dir=c:/Documents and Settings/MILLERM1/Desktop
+
+
+# Where does trace data go?  This directory will accumulate
+# debugging information provided by running E programs in order to
+# facilitate a post-mortem analysis of problems.  The trace system
+# treats the directory as a large circular buffer giving a finite
+# window into the past in exchange for a finite memory burden.
+#
+# For example: "c:/WINDOWS/temp/etrace" or "".
+
+TraceLog_dir=c:/Documents and Settings/MILLERM1/Local Settings/Temp/etrace
+
+# Other trace switches
+
+# TraceLog_causality=debug
+
+
+# If this property is set, JDK1.3's EventDispatchThread's
+# handleException(Throwable) will delegate exception reporting
+# to a newly made instance of this class name.
+
+sun.awt.exception.handler=org.erights.e.ui.awt.AWTProblemHandler
+
+
+# Where are copies of the "rune" bash script placed?  Since E scripts (*.e and
+# *.e-* files) normally begin with the line "#!/usr/bin/env rune", an E script
+# won't be considered an executable file unless /usr/bin/env can find the
+# bash script "rune" on the PATH.  On MSWindows, this option is only
+# relevant to Cygwin users.  The "rune" bash script should be placed
+# somewhere on the PATH visible from a shell.  (On MSWindows, this
+# means the Cygwin shell, not the MSDOS shell).
+#
+# For example: "c:/WINDOWS/;/home/markm/bin"
+
+e.put.bash.pathlist=c:/WINDOWS
+
+
+# Where are copies of the shortcuts placed?
+#
+# For example: "c:/WINDOWS/Desktop;c:/WINDOWS/Start Menu/Programs/erights.org".
+
+e.put.shortcut.pathlist=c:/Documents and Settings/MILLERM1/Desktop;c:/Documents and Settings/MILLERM1/Start Menu/Programs/erights.org
+
+
+# Which of .e, .e-awt, .e-swt, .emaker, .caplet, .updoc, .vat,
+# and .cap should be associated with icons, registry types, mime types,
+# launching programs, and other right button menu commands?  Currently, this
+# definition does nothing, and setup.e-awt simply grabs whatever
+# extensions it likes (which are these 9).
+
+e.extensionslist=.e;.e-awt;.e-swt;.emaker;.caplet;.updoc;.vat;.cap
+
+
+# Name of vendor providing this E implementation
+
+e.vendor=ERights.org
+
+
+# URL of vendor's website
+
+e.vendor.url=http://www.erights.org/
+
+
+
+################## Other Switches #####################
+
+
+# One of "report", "prompt", or "gui" (the default). <p>
+#
+# When E fails to launch, or when the top level E script (the *.e or *.e-*
+# file) throws a problem, how should the E interpreter report the problem
+# before exiting with a non-zero error code?
+#
+# When this property is set to "report" (or when the property is
+# absent), then E prints a problem report on stderr and exits
+# immediately. <p>
+#
+# When set to "prompt", E still prints the problem report on stderr,
+# but it then also prompts for a character to be typed in before the
+# process is dismissed, and then blocks waiting for that
+# character. <p>
+#
+# When set to "gui", E will pop up a window at least reporting the
+# error and waiting to be dismissed.  Later versions of E may provide
+# support for diagnostics and debugging starting from this window.
+# Note: "gui" is not yet implemented.  If used, it will prompt
+# instead.
+
+e.onErrorExit=gui
+
+
+# Was the program as a whole launched from the gui, in which case
+# there's not necessarily a console -- a visible place where stdout
+# and stderr go, nor is there necessarily a way to receive keystrokes
+# via stdin. Further, if there is a console, it probably doesn't last
+# beyond successful program termination.
+#
+# This defaults to false, but shortcuts for each window system should
+# provide an argument of the form "-De.gui-launch=true".
+
+e.gui-launch=false
+
+
+# How should the process exit on success, when e.gui-launch is true?
+# The fault is "ignore", meaning exit silently and immediately. But
+# command-line-only programs, like updoc, may want to set it instead
+# to "prompt". As with e.onErrorExit, this will prompt for a character
+# to be typed in, and then blocks waiting for that character.
+
+e.onOkGuiExit=ignore
+
+
+# One of "platform" (the default), "none", or a look and feel class
+# name. <p>
+#
+# When set to "platform" (or when the property is absent), the look
+# and feel is set to the default for the platform according to
+# "UIManager getSystemLookAndFeelClassName()".  <p>
+#
+# When set to "none", this advises code that there may not be an
+# available graphical display device, and that they should try, if
+# possible, to avoid any operations which would fail in a pure
+# character/teletype environment, such as a telnet session. <p>
+#
+# When set to a look and feel class name, it sets this to be the
+# initial look and feel for this E process.
+
+e.swingLnF=platform
+
+
+# Currently does nothing.
+#
+# A placeholder for the new safej API taming.  For classes for which
+# there are no corresponding taming files, this switch says how they
+# should be made available to E.  If "true", then these classes will
+# be importable as "<unsafe:...>".  If "false", then untamed classes
+# will not be available at all.  Defaults to "false".
+
+e.safej.allow-untamed-classes=false
+
+
+# When true, the E parser outputs volunimous debugging info.  Defaults
+# to false.
+
+e.interp.parseSpam=false
+
+
+# In an interactive interpreter, when this is set to true, the
+# expansion to Kernel-E of the entered expression is echoed along with
+# the value it evaluates to.  Defaults to false.
+
+e.interp.expand=false
+
+
+# In an interactive interpreter, when this is set to true, the
+# further expansion to an internal form is echoed. This is for
+# debugging the transformation to an implementation-dependent optimized
+# internal form (Transformed-E), and probably serves no function for normal
+# use. The output is implementation dependent. Defaults to false.
+
+e.interp.show-transformed=false
+
+
+# Says whether E should print, as a diagnostic on stderr, the total
+# post-initialization time to interpret the E program.  Defaults to
+# false.
+
+e.interp.print-timing=false
+
+
+################# Configuring a Vat's network presence #################
+
+
+# e.VLSPath is an optional semicolon-separated list of TCP/IP
+# addresses of VLSs this vat should register with.  Defaults to "" --
+# the null list.  Doesn't actually mean anything until the VLS is
+# revived.
+
+# e.VLSPath=
+
+
+# e.SearchPath is an optional semicolon-separated list of TCP/IP
+# addresses for others to look for me.  Defaults to the VLSPath.  Once
+# a vat knows its own ListenAddressPath, this should be added to the front
+# of the search path.
+
+# e.SearchPath=
+
+
+# e.ListenAddressPath is the optional TCP/IP addresses at which this
+# vat should create the sockets it listens to.  For each element, if
+# an IP address isn't given, the socket defaults to listening on all
+# IP addresses of this host.  If an IP address is given, it must be
+# one of the IP addresses of this host.  If the TCP port isn't given,
+# it defaults to 0.  A TCP port of 0 instructs the OS to pick any free
+# TCP port.
+
+# e.ListenAddressPath=
+
+
+
+# Is a Java public instance or static variable named 'foo' bound to E
+# methods foo/0 and (if not final) foo/1, for the getter and setter
+# respectively? This binding is hereby deprecated, and we expect to
+# set this property to false by default in a future release.
+# This is a per-jvm scoped setting.
+
+e.safej.bind-var-to-varName=false
+
+
+# Is a Java public instance or static variable named 'foo' bound to E
+# methods getFoo/0 and (if not final) setFoo/1, for the getter and setter
+# respectively? This binding is new as of 0.8.20, but is expected to
+# become the new standard way for E to operate.
+# This is a per-jvm scoped setting.
+
+e.safej.bind-var-to-propName=true
+
+
+# When true, problem reports by default show the Java stack trace.
+# (Once E is compiled, there will only be one stack trace
+# to report, the Java stack trace, which will be reported if either
+# this or e.interp.show-e-stack is set.)  Defaults to false.
+
+e.interp.show-j-stack=false
+
+
+# When true, problem reports by default show the E stack
+# trace. Defaults to true.
+
+e.interp.show-e-stack=true
+
+
+################ New as of 0.8.24a #######################
+
+# XXX kludge: This shouldn't be an eprops switch, but just a command-line
+# option to updoc.e
+
+updoc.verbose=false
+
+
+################ Discontinued Switches ####################
+
+# e.interp.interactive, since it shouldn't be determined by a property
+# and no longer is.
+
+# e.interp.verbose has been renamed e.interp.show-j-stack in order
+# to have the Java-written repls correspond more closely to the
+# E-written repls.
+
+# e.ListenAddress is no longer supported.  Use e.ListenAddressPath (as
+# explained above) instead.
+
+#### Discontinued as of 0.8.24d ####
+
+# e.vendor.url.bug is now retired because the email address it named receives
+# too much spam to be useful.
+
+#### Discontinued as of 0.8.26b ####
+
+# e.persist.useJOSS is now retired along with all support for JOSS-based
+# persistence. E's persistence now relies on Data-E serialization.
+

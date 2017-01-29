@@ -1,0 +1,668 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>ENative: Compiling Variables</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">e-impls</a>&nbsp;/&nbsp;<a href="index.html">e-on-c</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="fatpointers.html" title="Back to: Fat Pointers"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Fat Pointers" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="objectcases.html" title="On to: ENative: Compiling Objects"><img src="../../images/next.gif" width="64" height="32" alt="On to: ENative: Compiling Objects" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>
+              Compiling Variables</b></FONT><b></b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <h1><a name="scoping"></a>Scope Analysis</h1>
+      <p>To compile E variable usage into C++ using ENative, the E compiler must
+        determine which of the several kinds of variable it is dealing with. But
+        before we can make these distinctions, we first need to introduce a few
+        definitions.
+      <p>
+      <ul>
+        <li>
+          <p>An <i><b>allocation-contour</b></i> is a coarsening of the normal
+            notion of a scope-contour in order to aggregate variable introduction
+            as much as possible without changing the semantics. In Kernel-E, an
+            allocation-contour is the scope contour around a method, matcher,
+            or loop. Given unique variable naming, the declaration of any non-outer-variable
+            (ie, any variable within a scope box) may be moved to the closest
+            enclosing allocation-contour without changing its semantics.</p>
+        </li>
+        <li>
+          <p>A <i><b>lexical-composite</b></i> is a group of objects defined in
+            the same allocation-contour. It is a special case of the <i>composite</i>
+            defined <a href="../elib/capability/ode/ode-objects.html#facets">here</a>.</p>
+        </li>
+        <li>
+          <p>Similarly, the objects defined within a lexical composite are deemed
+            <b><i>lexical-facets</i></b>. The objects defined <i>directly</i>
+            within a lexical composite (ie, not nested within an inner allocation
+            contour) are <b><i>direct-lexical-facets</i></b> of the lexical composite.</p>
+        </li>
+        <li>
+          <p>A <b><i>frame</i></b> is the state of a lexical-composite. It's the
+            union of the non-outer-variables used freely by any of the lexical-facets
+            of a lexical-composite. From directly within an object (ie, not within
+            a nested object) the frame holding the state of this object is the
+            <b><i>object-frame</i></b>.</p>
+        </li>
+      </ul>
+      <p>An example facet/composite is:</p>
+      <blockquote>
+        <pre>def getterSetterPair(var value) :any {
+    def getter()    :any { value }
+    def setter(newValue) { value := newValue }
+    [getter, setter]
+}</pre>
+      </blockquote>
+      <p>
+      <p>The <tt>getterSetterPair</tt> function defines an allocation-contour,
+        as do the two nested functions. Since <tt>getter</tt> and <tt>setter</tt>
+        are both defined directly within this allocation-contour (not within a
+        nested contour), they jointly form a lexical-composite, of which they
+        are the two direct-lexical-facets. The variables defined within this allocation-contour
+        are &quot;<tt>value</tt>&quot;, &quot;<tt>getter</tt>&quot;, and
+        &quot;<tt>setter</tt>&quot;. However, only &quot;<tt>value</tt>&quot;
+        is used freely by any of the lexical-facets, so the lexical-composite's
+        frame holds just this one variable.</p>
+      <p>We now distinguish along several dimensions of kinds of variables usage.
+        First, according to where the variable may live: </p>
+      <ul>
+        <li>
+          <p>A <i><b>Local</b></i> is a variable defined in some allocation-contour,
+            whose current use is directly within this object or top-level expression
+            (ie, not within a nested object definition), and one that either hasn't
+            been optimized into a FastField (see below), or is final (so it doesn't
+            matter if it is also a FastField). Local variables are implemented
+            directly as C++ local Fat Pointer variables. &quot;<tt>getter</tt>&quot;,
+            &quot;<tt>setter</tt>&quot;, and &quot;<tt>newValue</tt>&quot;
+            above are Locals.</p>
+        </li>
+        <li>
+          <p>A <i><b>Field</b></i> is a state variable of a lexical-composite,
+            so it lives in the frame of that lexical-composite. It is used freely
+            by at least one lexical-facet of that composite. Fields are implemented
+            by indexing into the frame containing that field. From directly within
+            an object, a field of this object's object-frame is an <b><i>instance-variable</i></b>.
+            &quot;<tt>value</tt>&quot; is a Field of the above lexical composite.
+            From directly within <tt>getter</tt> or <tt>setter</tt>, &quot;<tt>value</tt>&quot;
+            is an instance-variable.</p>
+        </li>
+        <li>
+          <p>An <i><b>Outer</b></i> variable is one whose defining occurence is
+            outside any scope box, and is therefore considered to be part of the
+            outer scope. Since this scope may be outside the control of the compiler,
+            we don't optimize this case at all, but rather fall back on the pure
+            naive computational model: Outer variables are implemented by explicitly
+            calling the Scope-object which is the outer scope of the top-level
+            expression being evaluated. &quot;<tt>any</tt>&quot; above is
+            an outer-variable.</p>
+          <p>Our one (transparent) optimization of outer variables is that, within
+            an object definition, we obtain access to the outer scope from the
+            enclosing object's Script rather than its state-array, even though
+            the outer scope is concenptually part of the object's state rather
+            than its behavior. This optimization places a severe limit on separate
+            compilation, as a Script would then be specific to the outer scope
+            in which the top-level expression was evaluated. For various reasons,
+            we were planning to make compilation this specific and this late anyway,
+            so this is fine.</p>
+        </li>
+      </ul>
+      <hr>
+      <h1><a name="deslotify"></a>Deslotifying</h1>
+      <p>For Locals and Fields, an earlier phase of compilation is the <i>deslotifying</i>
+        source-to-source transformation. In the output of this transformation,
+        all non-outer-variables are declared only &quot;<tt>:settable</tt>&quot;
+        or &quot;<tt>:final</tt>&quot;, to indicate whether or not they're
+        mutable. From a lambda-calculus perspective, a &quot;<tt>:final</tt>&quot;
+        variable is a pure lambda binding, while a &quot;:settable&quot; variable
+        is a Scheme-like lexically shared mutable location. The transformation
+        cases:</p>
+      <table border="1" cellpadding="12" align="center">
+        <tr>
+          <th>Before</th>
+          <th>After</th>
+        </tr>
+        <tr>
+          <td>
+            <pre>a :final
+a
+<s><font color="#ff0000">a := v</font></s>
+&amp;a</pre>
+          </td>
+          <td>
+            <pre><i>same</i></pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre>a :final(vg)
+a
+<s><font color="#ff0000">a := v</font></s>
+&amp;a</pre>
+          </td>
+          <td>
+            <pre>x :final ? vg.coerce(x) =~ a :final
+a
+<s><font color="#ff0000">a := v</font></s>
+&amp;a</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre>a :settable
+a
+a := v
+&amp;a</pre>
+          </td>
+          <td>
+            <pre><i>same</i></pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre>a :settable(vg)
+a
+a := v
+&amp;a</pre>
+          </td>
+          <td>
+            <pre>x :final ? vg.coerce(x) =~ a :settable
+a
+a := vg.coerce(v)
+SettableSlot(&amp;a, vg)</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre>a :slotMaker
+a
+a := v
+&amp;a</pre>
+          </td>
+          <td>
+            <pre>x :final ? slotMaker.makeSlot(x) =~ a_Slot :final
+a_Slot.getValue
+a_Slot.setValue(v); v
+a_Slot</pre>
+          </td>
+        </tr>
+      </table>
+      <p>Each box consists of four lines, corresponding to the four variable usage
+        constructs below: definition, access, assignment, and slot-access.</p>
+      <p>XXX Note: the above <i>after</i> code needs a way to deal with coercion
+        failure. This probably requires a change to the coercion protocol.</p>
+      <p> Should we build a compiler capable of aggresive inlining of both code
+        <i>and data</i>, we may no longer need to deslotify as aggresively or
+        at all. Rather, many of the cases that follow could have been generated
+        by inlining Slots. Put another way, deslotifying, and the other optimizations
+        below, can be seen as special-cases for Slots of various general purpose
+        optimizations. </p>
+      <hr>
+      <h1><a name="allocType"></a>Allocation Type</h1>
+      <p>Following this transformation, our variable usages may now be further
+        classified according to where their storage is allocated.
+      <ul>
+        <li>
+          <p>A <i><b>Boxed</b></i> variable needs separately allocated storage
+            for one mutable Fat Pointer. The compiler generates code to access
+            and assign to this variable by directly accessing and assigning to
+            this separately allocated storage. We refer to this separate storage
+            as a <b><i>Box</i></b>. An example would be a mutable variable (one
+            declared &quot;<tt>:settable</tt>&quot; after deslotifying) that
+            is used by both a direct and an indirect lexical-facet of its defining
+            lexical-composite. Another example would be a mutable Local for which
+            there exists a slot-access expression. <i>(Are there any other cases?)</i></p>
+          <p>As we will see below, a Box can also serve as the state for two primitive
+            kinds of Slots: a settable Slot, when a pointer to a Box is paired
+            with a SettableBoxScript, and a final Slot, when a pointer to a Box
+            is paired with a FinalBoxScript.</p>
+        </li>
+        <li>
+          <p>A <b>Fast</b> variable is one for whom the compiler was able to determine
+            that a Box was necessary. The variable's value may be stored where
+            the reference to the Box would have been stored, and it is accessed
+            and assigned by C++-level access and assignment to this location.</p>
+        </li>
+      </ul>
+      <p>Crossing these, we get the following five kinds of variable usage:</p>
+      <table cellpadding="6" align="center" border="1">
+        <tr>
+          <th>
+            <div align="center"></div>
+          </th>
+          <th>
+            <div align="center">Fast</div>
+          </th>
+          <th>Boxed</th>
+        </tr>
+        <tr>
+          <th>
+            <div align="center">Locals</div>
+          </th>
+          <td>
+            <div align="center"><a href="#FastLocals">FastLocals</a></div>
+          </td>
+          <td>
+            <div align="center"><a href="#BoxedLocals">BoxedLocals</a></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <div align="center">Fields</div>
+          </th>
+          <td>
+            <div align="center"><a href="#FastFields">FastFields</a></div>
+          </td>
+          <td>
+            <div align="center"><a href="#BoxedFields">BoxedFields</a></div>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <div align="center">Outers</div>
+          </th>
+          <td colspan="2">
+            <div align="center"><a href="#Outers">Outers</a></div>
+          </td>
+        </tr>
+      </table>
+      <p>&nbsp; </p>
+      <hr>
+      <h1><a name="usage"></a>Variable Usage Constructs</h1>
+      <p>Deslotified Kernel-E has four constructs for using variables:
+      <ul>
+        <li>
+          <p><i><b>Variable Definition</b></i>. The defining occurence of a variable
+            occurs only in a FinalPattern or a VarPattern:</p>
+          <table cellpadding="6">
+            <tr>
+              <td>FinalPattern:</td>
+              <td>
+                <pre><i>varName</i> :<i>ValueGuardExpr</i> </pre>
+              </td>
+            </tr>
+            <tr>
+              <td>VarPattern:</td>
+              <td>
+                <pre>var <i>varName</i> :<i>SlotGuardExpr</i></pre>
+              </td>
+            </tr>
+          </table>
+          <p>In both cases, when this pattern is matched against a specimen, the
+            match always succeeds and the specimen becomes the initial value of
+            the variable. The difference between &quot;:settable&quot; and &quot;:final&quot;
+            only affects the other variable usage constructs.</p>
+        </li>
+        <li>
+          <p><i><b>Variable access</b></i>. This is simply the use occurence of
+            a variable name as an expression (for language history weenies, an
+            &quot;rValue&quot;). For example, &quot;<tt>a</tt>&quot; in &quot;<tt>a
+            + b</tt>&quot; is an access to the variable named &quot;<tt>a</tt>&quot;.</p>
+        </li>
+        <li>
+          <p><i><b>Variable assignment</b></i>. A use occurence of a variable
+            on the left side of an assignment expression. The assignment expression
+            as a whole has the value the expression on the right evaluates to,
+            but we don't bother to show this in the implementation sketch below.
+            This detail can often be optimized out anyway, as an E compiler should
+            notice that most assignments are evaluated only for effect. It is
+            a static error to assign to a value declared &quot;<tt>:final</tt>&quot;.
+            Such programs must be rejected at compile time.</p>
+        </li>
+        <li>
+          <p><i><b>Slot access</b></i>. The &quot;<tt>&amp;<i>name</i></tt>&quot;
+            expression evaluates to a Slot for accessing or modifying the value
+            of variable &quot;<tt><i>name</i></tt>&quot;. If the variable
+            is declared &quot;<tt>:settable</tt>&quot;, the returned Slot
+            object will respond to both <tt>getValue</tt> and <tt>setValue(newValue)</tt>
+            by accessing and modifying the value of the variable. If the variable
+            is declared &quot;<tt>:final</tt>&quot;, the Slot object will
+            only respond to <tt>getValue</tt>.</p>
+        </li>
+      </ul>
+      <div align="center"></div>
+      <hr>
+      <h1 align="center"><a name="cases"></a>The Cases</h1>
+      <p>Each case has four rows, corresponding to the four variable usage constructs.
+        The upper left box will show all the variable decalarions that this case
+        applies to -- one per line. Other row-entries for that case either contain
+        the same number of lines, meaning they apply to variables with the respective
+        declarations, or they are a single line, meaning they apply to all of
+        that case's possible variables.</p>
+      <h1><a name="FastLocals"></a>FastLocals</h1>
+      <p>A C++ local Fat Pointer variable is used to hold the value of the variable.</p>
+      <blockquote>
+        <table cellpadding="12">
+          <tr>
+            <th>E</th>
+            <th>C++</th>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>name</i> :settable
+<i>name</i> :final
+</pre>
+            </td>
+            <td>
+              <pre>Ref <i>name</i> = <i>specimen</i></pre>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>name</i></pre>
+            </td>
+            <td>
+              <pre><i>name</i></pre>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>name</i> := <i>newValue</i>
+<font class="comment" color="#ff0000"><s># not applicable</s></font></pre>
+            </td>
+            <td>
+              <pre><i>name</i> = <i>newValue</i>;
+<font class="comment"><s><font color="#ff">//not applicable</font></s></font></pre>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <pre>&amp;<i>name</i></pre>
+            </td>
+            <td>
+              <pre><font class="comment"><s><font color="#ff">//not applicable -- would be Boxed</font></s></font>
+new FinalSlot(<i>name</i>)</pre>
+            </td>
+          </tr>
+        </table>
+      </blockquote>
+      <p>
+      <h1><a name="BoxedLocals"></a>BoxedLocals</h1>
+      <p>A C++ local thin-pointer points at storage for the Fat Pointer holding
+        the variable's value. We need not consider BoxedLocals declared &quot;<tt>:final</tt>&quot;,
+        as final local variable usage will always be FastLocal usage.
+      <blockquote>
+        <table cellpadding="12">
+          <tr>
+            <th>E</th>
+            <th>C++</th>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>name</i> :settable</pre>
+            </td>
+            <td>
+              <pre>Ref * <i>namePtr</i> = new Ref(<i>specimen</i>);</pre>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>name</i></pre>
+            </td>
+            <td>
+              <pre>*<i>namePtr</i></pre>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>name</i> := <i>newValue</i></pre>
+            </td>
+            <td>
+              <pre>*<i>namePtr</i> = <i>newValue</i>;</pre>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <pre>&amp;<i>name</i></pre>
+            </td>
+            <td>
+              <pre>Ref(SettableBoxScript, <i>namePtr</i>)</pre>
+            </td>
+          </tr>
+        </table>
+      </blockquote>
+      <h1><a name="FastFields"></a>FastFields</h1>
+      <p>An element of a state-array holds the current value of the variable.
+        The state array itself is accessed by a C++ local thin pointer variable,
+        here named &quot;<tt>frame</tt>&quot;. When the frame is our object-frame
+        (the frame holding the instance variables for the current object), it
+        is initialized as</p>
+      <p>
+      <blockquote>
+        <pre>Ref *<i>frame</i> = self.myData.word.myField;</pre>
+      </blockquote>
+      <p>otherwise it is initialized at the time the frame is allocated:</p>
+      <p>
+      <blockquote>
+        <pre>Ref *<i>frame</i> = new Ref[<i>numVars</i>];</pre>
+      </blockquote>
+      <p></p>
+      <blockquote>
+        <table cellpadding="12">
+          <tr>
+            <th>E</th>
+            <th>C++</th>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>name</i> :settable
+<i>name</i> :final</pre>
+            </td>
+            <td>
+              <pre><i>frame</i>[<i>index</i>] = <i>specimen</i></pre>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>name</i></pre>
+            </td>
+            <td>
+              <pre><i>frame</i>[<i>index</i>]</pre>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>name</i> := <i>newValue</i>
+<font class="comment" color="#ff0000"><s># not applicable</s></font></pre>
+            </td>
+            <td>
+              <pre><i>frame</i>[<i>index</i>] = <i>newValue</i>;
+<font class="comment"><s><font color="#ff">//not applicable</font></s></font></pre>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <pre>&amp;<i>name</i></pre>
+            </td>
+            <td>
+              <pre>Ref(SettableBoxScript, &amp;<i>frame</i>[<i>index</i>])
+Ref(FinalBoxScript, &amp;<i>frame</i>[<i>index</i>])</pre>
+            </td>
+          </tr>
+        </table>
+      </blockquote>
+      <p>Note that &quot;<tt>&amp;<i>name</i></tt>&quot; on a FastField variable
+        returns a Slot object that points directly <i>into</i> the middle of the
+        frame in order to point at the variable's storage. This technique requires
+        a garbage collector able to handle pointers into the middle of allocated
+        blocks. When using a more limited garbage collector, an explicit FramedFieldSlot
+        object should be allocated that points to the frame as a whole as well.</p>
+      <h1><a name="BoxedFields"></a>BoxedFields</h1>
+      <p>The state-array contains a reference to an arbitrary object expected
+        to exhibit Slot behavior.&nbsp; Access or assignment is by explicit message
+        send to this Slot object. We need not consider BoxedFields declared &quot;<tt>:final</tt>&quot;,
+        as final field variable usage will always be FastField usage. </p>
+      <blockquote>
+        <table cellpadding="12">
+          <tr>
+            <th>E</th>
+            <th>C++</th>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>name</i> :settable</pre>
+            </td>
+            <td>
+              <pre><i>frame</i>[<i>index</i>] = Ref(SettableBoxScript, new Ref(<i>specimen</i>));</pre>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>name</i></pre>
+            </td>
+            <td>
+              <pre><i>frame</i>[<i>index</i>].myData.word-&gt;myBox</pre>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>name</i> := <i>newValue</i>
+</pre>
+            </td>
+            <td>
+              <pre><i>frame</i>[<i>index</i>].myData.word-&gt;myBox = newValue;
+</pre>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <pre>&amp;name</pre>
+            </td>
+            <td>
+              <pre><i>frame</i>[<i>index</i>]</pre>
+            </td>
+          </tr>
+        </table>
+      </blockquote>
+      <h1><a name="Outers"></a>Outers</h1>
+      <p>Variable usage is by explicitly messaging a scope object that represents
+        the top level scope of the lexically enclosing top level expression. This
+        scope object is accessed through the C++ local Fat Pointer variable &quot;<tt>Outers</tt>&quot;.
+        Within an object expression, <tt>Outers</tt> is initialized by </p>
+      <p>
+      <blockquote>
+        <pre>Ref Outers = self.myScript->myOuters;</pre>
+      </blockquote>
+      <blockquote>
+        <table cellpadding="12">
+          <tr>
+            <th>E</th>
+            <th>C++</th>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>name</i> :<i>slotMakerExpr</i></pre>
+            </td>
+            <td>
+              <pre>Ref <i>initSlot</i> = <i>slotMaker</i>.call(&amp;DoMakeSlot, <i>specimen</i>);
+<font class="comment">//check for null
+</font>Outers.call(&amp;DoDefineSlot, Ref("<i>name</i>"), <i>initSlot</i>);</pre>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>name</i></pre>
+            </td>
+            <td>
+              <pre>Outers.call(&amp;DoGet, Ref("<i>name</i>"))</pre>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>name</i> := <i>newValue</i></pre>
+            </td>
+            <td>
+              <pre>Outers.call(&amp;DoPut, Ref("<i>name</i>"), <i>newValue</i>);</pre>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <pre>&amp;<i>name</i></pre>
+            </td>
+            <td>
+              <pre>Outers.call(&amp;DoGetSlot, Ref("<i>name</i>"))</pre>
+            </td>
+          </tr>
+        </table>
+      </blockquote>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">e-impls</a>&nbsp;/&nbsp;<a href="index.html">e-on-c</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="fatpointers.html" title="Back to: Fat Pointers"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Fat Pointers" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="objectcases.html" title="On to: ENative: Compiling Objects"><img src="../../images/next.gif" width="64" height="32" alt="On to: ENative: Compiling Objects" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

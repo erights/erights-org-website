@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd"> <!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Equality in E</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="../distrib/index.html" title="Back to: Distributed Programming"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Distributed Programming" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><a href="grant-matcher/index.html" title="1st child: Grant Matcher Puzzle"><img src="../../images/first.gif" width="32" height="64" alt="1st child: Grant Matcher Puzzle" border="0"></a><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="../legacy/index.html" title="On to: Living with a Legacy"><img src="../../images/next.gif" width="64" height="32" alt="On to: Living with a Legacy" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Equality
+              in <i><b><font color="#009000">E</font></b></i></B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p ALIGN="left">A surprising number of seemingly separate issues in the
+        design of <i><b><font color="#009000">E</font></b></i> all come together
+        in the definition of the equality operations -- security, the reference
+        taxonomy, partial order constraints, the object-passing taxonomy, and
+        the collection classes. <i><b><font color="#009000">E</font></b></i> has
+        two equality operations, the predicate <b><i>same</i></b> and the function
+        <b><i>join</i></b>.
+      <ul>
+        <li>In the <i><b><font color="#009000">E</font></b></i> language, one
+          tests if two references, x and y, are the same with &quot;<tt>x&nbsp;==&nbsp;y</tt>&quot;.
+          The Java/ELib programmer instead says &quot;<tt>E.same(x,&nbsp;y)</tt>&quot;.
+          Both are spoken as &quot;Is x the same as y?&quot;.</li>
+        <li>In the <i><b><font color="#009000">E</font></b></i> language, one
+          forms the join of x and y with &quot; <tt>def&nbsp;z&nbsp;:=&nbsp;E.join(x,&nbsp;y)</tt>&quot;,
+          which is spoken as &quot;z is a vow for the join of x and y.&quot; </li>
+      </ul>
+      <p>This Chapter uses the notation of the <i><b><font color="#009000">E</font></b></i>
+        language, but the Java/ELib programmer should find everything easy to
+        translate.</p>
+      <table cellpadding="12">
+        <tr>
+          <td><a href="grant-matcher/index.html">The Grant Matcher Puzzle</a></td>
+          <td>Defines the security problem <i><b><font color="#009000">E</font></b></i>'s
+            equality operations need to solve.</td>
+        </tr>
+        <tr>
+          <td><a href="after-both.html">4-Party Partial Orders</a></td>
+          <td>Defines the concurrency problem <i><b><font color="#009000">E</font></b></i>'s
+            equality operators need to solve.</td>
+        </tr>
+        <tr>
+          <td><a href="same-object.html">Object Sameness</a></td>
+          <td>When are two objects the same? </td>
+        </tr>
+        <tr>
+          <td><a href="same-ref.html">Reference Sameness</a></td>
+          <td>When are two references the same? Reference sameness and object
+            sameness are mutually recursive definitions, but the base cases are
+            mostly in object sameness, which should therefore be read first.</td>
+        </tr>
+        <tr>
+          <td><a href="passing-rules.html">Argument Passing Rules</a></td>
+          <td>When a reference of a given kind is passed by an invoation of a
+            given kind, what kind of reference is received?</td>
+        </tr>
+        <tr>
+          <td><a href="join.html">Joining References</a></td>
+          <td>Eventual mutual acceptability</td>
+        </tr>
+      </table>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="../distrib/index.html" title="Back to: Distributed Programming"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Distributed Programming" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><a href="grant-matcher/index.html" title="1st child: Grant Matcher Puzzle"><img src="../../images/first.gif" width="32" height="64" alt="1st child: Grant Matcher Puzzle" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="../legacy/index.html" title="On to: Living with a Legacy"><img src="../../images/next.gif" width="64" height="32" alt="On to: Living with a Legacy" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

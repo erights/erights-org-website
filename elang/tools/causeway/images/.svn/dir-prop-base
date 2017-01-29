@@ -1,0 +1,13 @@
+K 10
+svn:ignore
+V 52
+*.tar.gz
+*.zip
+*.jar
+*.sdr
+*.pdf
+*.db
+javadoc
+*.eps
+
+END

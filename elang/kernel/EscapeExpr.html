@@ -1,0 +1,458 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Escape Expression</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">kernel</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="IfExpr.html" title="Back to: If Expression"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: If Expression" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="CatchExpr.html" title="On to: Catch Expression"><img src="../../images/next.gif" width="64" height="32" alt="On to: Catch Expression" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Escape
+              Expression</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p>Arrange for a kind of non-local exit called an <i><a href="../../elib/concurrency/msg-passing.html#escape">escape</a></i>.
+        For C-ers, the escape expression is a generalization of <tt>break</tt>,
+        <tt>continue</tt>, <tt>return</tt> and <tt>setjmp</tt>/<tt>longjmp</tt>.
+        For Schemers, this is like a dynamic-extent call/cc, except that any finally
+        clauses of intervening <a href="FinallyExpr.html">try-finally expressions</a>
+        are executed on the way out. It creates an <i>ejector</i> function, binds
+        it to <i>pattern</i>, and evaluates the contained <i>eExpr</i>. If the
+        ejector function is called during execution of the contained expression,
+        the stack is unwound to the escape expression, and the escape expression
+        as a whole <i><a href="../../elib/concurrency/msg-passing.html#success">succeeds</a></i>,
+        evaluating to the ejector function's argument. Otherwise, the escape expression
+        evaluates to the outcome of the contained expression.
+      <blockquote>
+        <table cellpadding="6">
+          <tr>
+            <td valign="top">
+              <div align="right">
+                <pre>BNF:</pre>
+              </div>
+            </td>
+            <td>
+              <pre>"<b>escape</b>" <i>pattern</i> "<b>{</b>" <i>eExpr</i> "<b>}</b>"</pre>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <div align="right">
+                <pre>XML DTD:</pre>
+              </div>
+            </td>
+            <td>
+              <pre>&lt;!ELEMENT escapeExpr (%pattern;, %eExpr;)&gt;</pre>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <div align="right">
+                <pre>Java:</pre>
+              </div>
+            </td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <div align="right">
+                <pre>Example:</pre>
+              </div>
+            </td>
+            <td>
+              <pre>escape __break {
+    ...
+    if (flag) {
+        break value
+    }
+}</pre>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <div align="right">
+                <pre>in Kernel-E:</pre>
+              </div>
+            </td>
+            <td>
+              <pre>escape __break :any {
+    ...
+    if (flag) {
+        __break.run(value)
+    } else {
+        null
+    }
+}</pre>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <div align="right">
+                <pre>in XML:</pre>
+              </div>
+            </td>
+            <td>
+              <pre>&lt;escapeExpr&gt;
+    &lt;finalPattern&gt;
+        &lt;Noun&gt;__break&lt;/Noun&gt;
+        &lt;Noun&gt;any&lt;/Noun&gt;
+    &lt;/finalPattern&gt;
+    &lt;seqExpr&gt;
+        ...
+        &lt;ifExpr&gt;
+            &lt;Noun&gt;flag&lt;/Noun&gt;
+            &lt;callExpr verb=&quot;run&quot;/&gt;
+                &lt;Noun&gt;__break&lt;/Noun&gt;
+                &lt;Verb&gt;run&lt;/Verb&gt;
+                &lt;Noun&gt;value&lt;/Noun&gt;
+            &lt;/callExpr&gt;
+            &lt;Noun&gt;null&lt;/Noun&gt;
+        &lt;/ifExpr&gt;
+    &lt;/seqExpr&gt;
+&lt;/escapeExpr&gt;</pre>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <div align="right">
+                <pre>in Java:</pre>
+              </div>
+            </td>
+            <td>
+              <pre>Object result_8;
+final Object __break = new Ejector();
+try {
+    ...
+    if (E.toBoolean(flag)) {
+        E.call(__break, &quot;run&quot;, value);
+    }
+} catch (Throwable th) {
+    result_8 = __break.result(th);
+} finally {
+    __break.disable();
+}</pre>
+            </td>
+          </tr>
+        </table>
+      </blockquote>
+      <p></p>
+      <p>When the escape expression is evaluated, it will first generate a new
+        primitive <i>ejector</i> function. The escape expression will then match
+        the only reference to this ejector against the <i>pattern</i>. If this
+        match fails or escapes, then the ejector is disabled and the same non-local
+        exit happens as if the corresponding &quot;def <i>pattern</i> := ejector&quot;
+        had exited non-locally instead.
+      <p>(By &quot;<i>ejector function</i>&quot;, we mean that an ejector is an
+        object whose major behaviors are defined by its &quot;<tt>run</tt>&quot;
+        methods. An ejector has both zero-argument and one-argument &quot;<tt>run</tt>&quot;
+        methods. When we refer to &quot;<i>calling the ejector function</i>&quot;,
+        we mean specifically calling it <i>as</i> a function, ie, invoking its
+        one of its &quot;<tt>run</tt>&quot; methods.)
+      <p>If the match <a href="../../elib/concurrency/msg-passing.html#success">succeeds</a>,
+        then the contained expression is evaluated. If, during this evaluation,
+        the <tt>run/0</tt> or <tt>run/1</tt> method of the ejector is called,
+        then a non-local exit is initiated, which we call an <i><a href="../../elib/concurrency/msg-passing.html#escape">escape</a></i>.
+        The other form of non-local exit in <i><b><font color="#009000">E</font></b></i>
+        is the <i><a href="../../elib/concurrency/msg-passing.html#failure">failure</a></i>,
+        caused by throwing a problem. Note that <a href="FinallyExpr.html">try-finally</a>
+        expressions may intervene and substitute a different non-local exit (ie,
+        a finally-clause which fails, or escapes using a different ejector function)
+        In this case, the ejector remains valid and we continue processing as
+        if we simply had an instance of the substituted non-local exit.
+      <p>The contained expression may then exit in one of three ways:
+      <p>
+      <ul>
+        <li>A successful completion. In this case, the value of the escape expression
+          is the value of the contained expression.</li>
+        <li>An escape using the ejector created by this escape expression. If
+          <tt>run/1</tt> is called, then the escape expression evaluates normally
+          to the argument of the run message. If <tt>run/0</tt> is called, then
+          the escape expression evaluates normally to <tt>null</tt>. Ie, &quot;<tt>run()</tt>&quot;
+          is equivalent to &quot;<tt>run(null)</tt>&quot;.</li>
+        <li>Any other non-local exit (whether it is an escape or a failure, and
+          whether or not a substitution for an ejection using our ejector). The
+          escape expression as a whole performs the same non-local exit.</li>
+      </ul>
+      <p>In all cases, the ejector is disabled when the escape expression exits.
+        Once an ejector is disabled, it is forever disabled, and the run methods
+        on a disabled ejector will simply throw an informative <font color="#FF0000">(XXX
+        to be specified)</font> exception. It should not be possible for an ejection
+        with ejector x to happen unless the escape expression that created x is
+        higher on the <a href="CallExpr.html">call stack</a>. In particular, it
+        should not be possible for the top-level expression of a turn to exit
+        with an ejection.
+      <p>The escape expression is all in one scope box, so the variables defined
+        in the pattern are visible in the contained expression, but no variables
+        defined in the escape expression are visible it the succeeding scope.
+      <hr>
+      <h1>Examples</h1>
+      <h3>The Simple Case</h3>
+      <p>This is the basic example, showing that &quot;<tt>escape</tt>&quot; binds
+        the variable &quot;<tt>x</tt>&quot; to an ejector function. The variable
+        name &quot;<tt>x</tt>&quot; is <i>visible</i> from its defining occurence
+        left-to-right until the end of the escape expression that defines it --
+        normal lexical scoping. Like all variables in <i><b><font color="#009000">E</font></b></i>,
+        &quot;<tt>x</tt>&quot; is a normal lexical variable. Like all values in
+        <i><b><font color="#009000">E</font></b></i>, the ejector is first-class.
+        Therefore, &quot;<tt>x</tt>&quot; can be passed, returned, captured in
+        closures, stored in data structures, etc. However, the ejector &quot;<tt>x</tt>&quot;
+        is bound to is only enabled <i>during</i> the execution of this same escape
+        expression -- meaning its special power is only of dynamic extent. Afterwards,
+        it is disabled.</p>
+      <p>What is an ejector's special power? To unwind the stack to cause early
+        termination of the escape expression that created it, and to cause that
+        escape expression to evaluate to the value provided as argument to the
+        ejector. Since &quot;<tt>x</tt>&quot; initially holds the only reference
+        to the ejector and there are no magic construct for obtaining an already-created
+        ejector, this power follows normal capability discipline.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+? escape x {
+&gt;     print(&quot;foo&quot;)
+&gt;     x(3)
+&gt;     print(&quot;bar&quot;)
+&gt;     7
+&gt; }
+# value: 3
+
+# stdout: foo</pre>
+      </blockquote>
+      <p>Above we see that the first print happened, but not the second, since
+        the call to the ejector stopped all further processing. The escape expression
+        as a whole evaluated to <tt>3</tt>, not <tt>7</tt>, since that was the
+        ejector's argument.</p>
+      <blockquote>
+        <pre>? escape x {
+&gt;     print(&quot;foo&quot;)
+&gt;     x()
+&gt;     print(&quot;bar&quot;)
+&gt;     7
+&gt; } == null
+# value: true
+
+# stdout: foo</pre>
+      </blockquote>
+      <p>&quot;<tt>x()</tt>&quot; is equivalent to &quot;<tt>x(null)</tt>&quot;.</p>
+      <h3>The Special Keyword Shorthands</h3>
+      <p>In order to support the expectations from the C syntactic tradition,
+        <i><b><font color="#009000">E</font></b></i> provides the keywords &quot;<tt>break</tt>&quot;,
+        &quot;<tt>continue</tt>&quot;, and &quot;<tt>return</tt>&quot; as syntactic
+        shorthands for invoking functions bound to variables named &quot;<tt>__break</tt>&quot;,
+        &quot;<tt>__continue</tt>&quot;, and &quot;<tt>__return</tt>&quot;. These
+        invocations can be written in a C-like syntax, but expand to the corresponding
+        function call. For example, &quot;<tt>return 3</tt>&quot; as an expression
+        expands to &quot;<tt>__return(3)</tt>&quot;, and &quot;<tt>return</tt>&quot;
+        expands to &quot;<tt>__return()</tt>&quot;. </p>
+      <p>The keywords are, of course, reserved. The variable names are not reserved,
+        but &quot;<tt>__break</tt>&quot; and &quot;<tt>__continue</tt>&quot; are
+        implicitly bound by <tt>escape</tt> expressions generated by expansion
+        of the synyactic loop shorthands (&quot;<tt>for</tt>&quot; and &quot;<tt>while</tt>&quot;).
+        We reserve the right to introduce an expansion that generates an &quot;<tt>escape&nbsp;__return&nbsp;{..</tt>&quot;
+        as well.</p>
+      <blockquote>
+        <pre>? escape __return {
+&gt;     return 3
+&gt; }
+# value: 3</pre>
+      </blockquote>
+      <h3>Invoking a Disabled Ejector</h3>
+      <p>This demontrates the dynamic extent of ejectors.</p>
+      <blockquote>
+        <pre>? var x1 := null
+&gt; escape x2 {
+&gt;    x1 := x2
+&gt; }
+&gt; x1(3)
+# problem: Failed: Ejector must be enabled</pre>
+      </blockquote>
+      <h3>The <a href="CatchExpr.html"><tt>try-catch</tt></a> Expression Only
+        Catches <a href="../../elib/concurrency/msg-passing.html#failure">Failure</a></h3>
+      <p>Both failures and escapes are forms of non-local exit that causes the
+        stack to unwind. Both failures and escapes must unwind try-catches, since
+        these are also dynamic extent. In the Java implementation of <i><b><font color="#009000">E</font></b></i>,
+        they are even both implemented by throwing Java Throwables, and can therefore
+        both be caught only by Java try-catches. But in the <i><b><font color="#009000">E</font></b></i>
+        language, they are quite distinct. While unwinding, matching catch clauses
+        will catch failures, whereas catch clauses cannot catch escapes.
+      <blockquote>
+        <pre>? escape x {
+&gt;     try {
+&gt;         x(3)
+&gt;     } catch problem {
+&gt;         print(`oops: $problem`)
+&gt;         7
+&gt;     }
+&gt; }
+# value: 3</pre>
+      </blockquote>
+      <p>
+      <p><a href="http://bugs.sieve.net/bugs/?func=detailbug&bug_id=125558&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" align="right" border="0"></a>Implementations
+        of <i><b><font color="#009000">E</font></b></i> prior to 0.8.21d would
+        confuse escapes for failures on occasion, and for the above code would
+        print the &quot;<tt>oops...</tt>&quot; and return the <tt>7</tt>.
+      <h3>Try-Finally Catches All</h3>
+      <p>Unlike the try-catch expression, which only catches failure, the try-finally
+        expression catches all three kinds of completion: success, failure, and
+        escape.
+      <blockquote>
+        <pre>? escape x {
+&gt;     try {
+&gt;         x(3)
+&gt;     } finally {
+&gt;         print(&quot;foo&quot;)
+&gt;     }
+&gt; }
+# stdout: foo
+
+# value: 3</pre>
+      </blockquote>
+      <p>Above, the finally clause printed &quot;foo&quot; during the stack unwinding
+        caused by the escape. Since the above finally clause succeeded, the original
+        escape then continued to unwind.
+      <h3>Masking Previous Non-Local Exits</h3>
+      <p>If the finally clause itself does a non-local exit, this replaces the
+        current exit as the cause for further stack unwinding.
+      <blockquote>
+        <pre>? escape x {
+&gt;     try {
+&gt;         x(3)
+&gt;     } finally {
+&gt;         throw(&quot;foo&quot;)
+&gt;     }
+&gt; }
+# problem: foo</pre>
+      </blockquote>
+      <p>The <tt>throw(&quot;foo&quot;)</tt> causes the <tt>x(3)</tt> to be forgotten.</p>
+      <h3>Ejectors Aren't Use-Once</h3>
+      <p>When a finally clause is executed while unwinding an escape, the escape
+        isn't done yet, so the ejector is still enabled. The ejector isn't disabled
+        by calling it, only by exit from its escape expression. If it gets reused
+        while it's still alive, this is simply another case of a new non-local
+        exit replacing the current one.
+      <blockquote>
+        <pre>? escape x {
+&gt;     try {
+&gt;         x(3)
+&gt;     } finally {
+&gt;         x(4)
+&gt;     }
+&gt; }
+# value: 4</pre>
+      </blockquote>
+      <p>The <tt>x(4)</tt> causes the <tt>x(3)</tt> to be forgotten.
+      <h3>Match Failure</h3>
+      <p>A corner case that's particularly easy for an implementor to miss is,
+        what happens if the pattern at the head of the escape expression fails
+        to match?
+      <blockquote>
+        <pre>? var x1 := null
+&gt; def stealer(x2) :boolean {
+&gt;     x1 := x2
+&gt;     false
+&gt; }
+&gt; try {
+&gt;     escape x3 ? stealer(x3) { 7 }
+&gt; } catch p {
+&gt;     stderr.print(`oops: $p`)
+&gt;     9
+&gt; }
+&gt; x1(3)
+# stderr: oops: problem: such-that expression was false
+
+# problem: Failed: Ejector must be enabled
+</pre>
+      </blockquote>
+      <p>Above, the pattern reads &quot;bind to x3 <a href="SuchThatPattern.html">such
+        that</a> stealer(x3) is true&quot;. We wrote stealer to squirrel away
+        the ejector and then always cause the pattern to fail. This failure causes
+        a problem to thrown, and the surrounding try-catcher catches this problem
+        and prints it. However, we still have ahold of the ejector in the x1 variable,
+        and the escape expression was mostly skipped. Clearly, even in this case,
+        when we leave the escape expression the ejector must be disabled. The
+        above code shows that it is.
+      <p><a href="http://bugs.sieve.net/bugs/?func=detailbug&bug_id=125559&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" align="right" border="0"></a>This
+        didn't work correctly prior to <i><b><font color="#009000">E</font></b></i>
+        0.8.21e
+      <blockquote></blockquote>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">kernel</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="IfExpr.html" title="Back to: If Expression"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: If Expression" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="CatchExpr.html" title="On to: Catch Expression"><img src="../../images/next.gif" width="64" height="32" alt="On to: Catch Expression" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

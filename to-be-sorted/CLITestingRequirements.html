@@ -1,0 +1,886 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="Version" content="8.0.3410">
+<meta name="Date" content="10/11/96">
+<meta name="Template"
+content="E:\Program Files\Microsoft Office\Office\html.dot">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>CLITestingRequirements</title>
+</head>
+
+<BODY BGCOLOR="#ffeedd" TEXT="#000000" LINK="#0000FF"
+vlink="#800080">
+
+<h1 align="center">Testing Requirements for Neocosm Command Line
+Interface And World Objects<br>
+<font color="#FF0000">DRAFT</font></h1>
+<p> <i> Original version 98/06/25 by marick.<br>
+  Updated 98/06/30 by marick to include paul's comments. Changes tagged with the 
+  date.<br>
+  Updated 98/07/09 by marick and claire. Claire's comments in italics; marick's 
+  replies in [[[ braces.<br>
+  Further updated 98/07/10 by marick and claire. Claire's further comments in 
+  italics; marick's replies in [[[ braces. One requirement requires further discussion. 
+  It is tagged with PENDING. Two new minor requirements added at end. Tagged with 
+  date 98/07/10, also with PENDING until Claire responds to them.<br>
+</i>
+</p>
+
+<p>Note: I'll abbreviate &quot;command line interface&quot; as
+CLI.</p>
+
+<h2>Table of Contents</h2>
+
+<p><a href="#users">Users - who is supported, who we don't care
+about.</a></p>
+
+<p><a href="#functions">Functions - what must be provided.</a></p>
+
+<h2><a name="users">Users</a></h2>
+
+<h3>users to support</h3>
+
+<p><font color="#008000"><b>Testers who are writing load test
+scripts</b></font>. Load test scripts are characterized by
+longish sequences of fairly simple activities that are repeated
+essentially forever. Multiple scripts are run simultaneously.</p>
+
+<ul>
+    <li>by &quot;longish&quot;, I mean 15-20 steps such as
+        &quot;pick up an object&quot;, &quot;dance&quot;,
+        &quot;emote&quot;. </li>
+    <li>by &quot;fairly simple&quot;, I mean that things such as
+        precise placement in particular locations are not
+        important. Timing is not important.</li>
+    <li>Scripts have little control flow. There are three main
+        types:</li>
+    <li><ul>
+            <li>the outer loop, which is just a &quot;while(true)
+                {}&quot; There are probably setup commands before
+                the loop.</li>
+            <li><u>if</u> (<i>expected result happens</i>) <i>check
+                it and continue</i> <br>
+                <u>else</u> <i>handle error (probably by
+                quitting).</i></li>
+            <li><u>if</u> (<i>first expected result happens</i>) <i>check
+                it and continue</i> <br>
+                <u>else if </u>(<i>second expected result happens</i>)
+                <i>check it and continue <br>
+                </i><u>else</u> <i>handle error (probably by
+                quitting).</i></li>
+            <li>Quite often no checking is done in <i>check it
+                and continue.</i></li>
+            <li>The load tester doesn't care much whether the
+                scripts are written in the command language or in
+                some other, external language (e.g., perl or
+                expect).</li>
+        </ul>
+    </li>
+</ul>
+
+<p>Click here for a sample load-test script. (missing)</p>
+
+<p><font color="#008000"><b>Testers writing smoke test scripts. </b></font>These
+will be essentially the same as load test scripts, except:</p>
+
+<ul>
+    <li>they won't be run in a loop.</li>
+    <li>they may do more result checking.</li>
+</ul>
+
+<p><font color="#008000"><b>(MAYBE) Testers writing functional
+tests of world objects. </b></font>These tests will probably do
+more result checking, but are likely to use the same commands as
+other tests. This is a &quot;maybe&quot; because I'm skeptical
+that we'll have a lot of automated tests - probably most will be
+manual (except for the smoke tests). </p>
+
+<p><font color="#008000"><b>(MAYBE) Testers writing manual tests
+of the product. </b></font>These would be used only for tests
+that couldn't easily be executed through the GUI. The only
+example I can think of would be tests that require pixel-perfect
+positioning (&quot;click on the very edge of the floor&quot;).</p>
+
+<p><font color="#008000"><b>(MAYBE) Testers setting up manual
+tests. </b></font>For a given manual test, it might be convenient
+to create 87 different objects and scatter them around the room
+or do similar things. Note that such a test could still be done
+without looping constructs. I don't know how much this will be
+needed vs. just creating them manually and saving the world state
+(across releases, mind you).</p>
+
+<h3>users to ignore (tentative)</h3>
+
+<p><font color="#FF0000"><b>White-box testers.</b></font> It <u>may</u>
+be feasible, in some cases, to aid white box testing if the CLI
+supports the calling of arbitrary Java functions and stashing
+their results in variables. There are two types of testing:
+throw-away, one-shot tests and repeatable, automated tests. </p>
+
+<p>Throw away tests. A CLI has these advantages over coding the
+tests in Java:</p>
+
+<ol>
+    <li>As you futz with a test, you don't have to pay the
+        recompile/relink cost.</li>
+    <li>It's easier to try things out: simple things are easier
+        to do.</li>
+</ol>
+
+<p>However, can such tests not be run with the debugger? (I don't
+know.)</p>
+
+<p>Repeatable tests. The CLI advantage is smaller here, because
+the tests are more complicated and you're spending much less of
+their lifetime futzing with them (and more documenting,
+rerunning, configuration managing, etc.) In order to write
+repeatable tests that are actually maintainable and maintained,
+the CLI must be a full-featured programming language. In
+particular, it needs the equivalent of include files or
+libraries, full control flow, functions, etc. I have my doubts
+the advantages <u>to white box testing alone</u> justify such a
+full-featured language. (Note that I'm not ruling out some
+combination of a CLI and external language like Perl, though that
+seems less plausible than for the simple load testing above.)</p>
+
+<p><font color="#FF0000"><b>Non-testers. </b></font><u>This</u>
+requirements document does not address the needs of people like
+ordinary users wanting an adventure-style interface, people
+writing bots, hub administrators writing administrative scripts.
+Serving those people might well cause the CLI to be bigger.</p>
+
+<h2><a name="functions">Functions</a></h2>
+
+<p>Each requirement is named. <font color="#008000">Green</font>
+names denotes requirements that must be met. Black means the
+requirements may be met (are desirable, but not essential).
+Requirements are also tagged with either &quot;MUST&quot; or
+&quot;Should&quot;, respectively.</p>
+
+<p><font color="#008000"><u>Actions.</u></font> Every action that
+can be performed through the GUI can be performed through the
+command line, <u>unless</u> those actions affect nothing but GUI
+state. <font color="#008000">(MUST)</font></p>
+
+<ul>
+    <li><ul>
+            <li>All world object user-visible methods can be
+                called through the GUI. </li>
+            <li>This includes world objects normally controlled
+                via their own popup window, such as the catalog,
+                pocket, address book, and inventory. (98/06/30 -
+                added address book because it's an important
+                case)</li>
+            <li>It also includes the watermark.</li>
+            <li>It need not include anything that launches a
+                browser.</li>
+            <li>There is no need (and no desire) to control
+                things like window placement. There is no desire
+                to put up a particular menu on, say, an avatar.
+                If a particular avatar operation (say) is
+                selected, it matters not whether the menu
+                corresponding to that operation appears on the
+                screen.</li>
+        </ul>
+    </li>
+</ul>
+
+<p><i>All of the features here present no problem.
+Implementation of the external windows will have to include a
+command syntax which allows selections to be made for the
+individual elements which are defined within that page. This is a
+good general approach to take with each window in any case since
+it allows the writing and testing of the back-end without having
+a window present. It should be noted that this is NOT a function
+of the CLI but of the UI presenter interface for each specific UI
+Presenter.</i></p>
+
+<p><i>It should be noted with respect to verbs as commands.
+These are not in the code. These are in a resource file which map
+command ids to verb strings. If you want to use verb strings in
+this you'll have to one...look at the resource file mappings or
+query the object to see what the actual command string is. The
+unum AND the CLI doesn't &quot;know&quot; them until runtime when
+they are bound in. I will resist ANY attempt to change this! I
+can add support for the command ids as a scripting nicety. [ctg
+080798]</i></p>
+
+<p>[[[ I assume that a test will be able to do something like </p>
+
+<pre>
+
+	pickup rock
+	moveto door
+
+</pre>
+
+<p>It doesn't matter to me if &quot;pickup&quot; and
+&quot;moveto&quot; are defined in the code or a resource file.
+Either way, if a verb changes, we'd have to go and fix all the
+tests that use it. So I hope verbs don't change. </p>
+
+<p>There should be no more reason for a test to look up command
+ids than for a user to do so. A test is just an automated user.
+]]] </p>
+
+<p><i>These are defined in the resource file and will change iff
+someone edits the file to change them. They are only used by CLI
+and should probably be renamed to reflect this. Internally they
+are only used to &quot;find&quot; the correct responder to
+forward the command to just as &quot;slots&quot; are used to find
+the correct responder in the GUI. [ctg 090798]</i></p>
+
+<p><font color="#008000"><u>Mechanism</u></font><u>.</u> The
+command to perform an action should not refer to what's visible
+through the GUI. <font color="#008000">(MUST)</font></p>
+
+<ul>
+    <li><ul>
+            <li>No use of pixel coordinates if a name can be
+                used. (Use of pixel coordinates when there is no
+                other way to specify a location is fine.)</li>
+            <li>No references to menus in commands.</li>
+            <li>No need to refer to a list item by its position
+                in the list.</li>
+            <li>When referring to an object by its name, note
+                that names may contain spaces.</li>
+        </ul>
+    </li>
+</ul>
+
+<p><i>This would be almost impossible to do any other way. The
+UI Framework is the only thing which will know about menus. I'm
+removing the notion of slot from the view of the unum. You don't
+have to specify anything except a verb or command-id.[ctg 080798]</i></p>
+
+<p><font color="#008000"><u>Locations</u></font><u>.</u> There
+must be a way to populate a room with objects that don't overlap
+- are clearly separable visually. <font color="#008000">(MUST)</font></p>
+
+<ul>
+    <li><ul>
+            <li>I don't care if it's done by specifying absolute
+                coordinates (though the 3D coordinates are pretty
+                hard to use) or by some sort of
+                collision-avoidance &quot;putat&quot;.</li>
+            <li>But remember that some testers <u>may</u> want to
+                use pixel-perfect coordinates anyway, for other
+                purposes.</li>
+            <li>If it's done by coordinates, it would be awfully
+                nice to be able to find the coordinates of a
+                point in the GUI in some way easier than putting
+                an object there and then opening the property
+                sheet to see where it is.</li>
+        </ul>
+    </li>
+</ul>
+
+<p><i>I don't believe this has anything to do with a command
+line interface. This is a function of defining a region NOT
+issuing commands. If you want to in real time add and move things
+around in a 3D coordinate space you'll need to do something on
+the region end of things. I believe trying to get the &quot;no
+overlap&quot; to happen other than programmatically won't work.
+So item one is probably a non-starter. The command line interface
+will accept 3d points as part of a command. Item 3, adding GUI
+support will extend the GUI interface delivery by not less than a
+week, possibly more.[ctg 080798]</i></p>
+
+<p>[[[As long as there's a &quot;putat 3,5,6&quot;, that's OK. </p>
+
+<p>Definitely not worth adding a week just to make a tester's
+life easier. ]]] </p>
+
+<p><i>Not a problem. There may be a better interface for placing
+objects in a scene, if that happens then you should get the
+feature there.[ctg 090798]</i></p>
+
+<p><font color="#008000"><u>Completion</u></font><u>.</u> All
+operations should indicate completion. Completion of operation A
+should not be signalled until any possible following operation B
+that can depend on operation A could complete successfully. <font
+color="#008000">(MUST)</font></p>
+
+<ul>
+    <li><ul>
+            <li>For example, the &quot;put down&quot; operation
+                should not signal successful completion until a
+                &quot;pick up&quot; operation on the same object
+                can be started.</li>
+            <li>If some operations, like bowing, can be followed
+                at any point by any operation, it's acceptable to
+                indicate completion as soon as the operation
+                starts. </li>
+        </ul>
+        <p><i>These seem contradictory. Either we have a notion
+        of &quot;next operation&quot; or not. Unfortunately it
+        also seems highly subjective. I don't think this is a
+        function of the CLI in any case. It is the responsibility
+        of any unum to notify completion of a command with either
+        success or failure and a reason for failure. Both the GUI
+        and CLI require this (see the exception handling
+        document) I've already talked to RobJ about the need to
+        modify the way changes get notified back upwards.
+        Unfortunately, ONLY the unum knows whether a task is
+        &quot;complete&quot; or not. If we state that the unum
+        must send a &quot;complete or fail&quot; before any other
+        command is accepted we have completed destroyed
+        asynchonous processing.</i></p>
+        <p>[[[ The reason we need a next operation is because
+        scripts look like this: </p>
+        <pre>
+	send command:  pickup rock
+	expect response:  &quot;putat success&quot;
+	send command:  putat table
+</pre>
+        <p>We must be able to delay the &quot;putat&quot; until
+        the pickup finishes. Otherwise scripts will break all
+        over the place. I don't think this breaks asynchronous
+        processing because we don't care if the unum will accept
+        a new command before a previous one completes. That's
+        fine. We just need a way to avoid *sending* that new
+        command. Or am I mistaken? </p>
+        <p>The distinction between commands that must tell the
+        truth about completion and commands that can pretend
+        isn't subjective. It's based on whether any other command
+        in a script would break if the previous command said it
+        was finished before it really was. In the case of
+        &quot;pickup&quot;, a following &quot;putat&quot; would
+        break. In the case of bowing, no command that follows a
+        bow could fail if issued before the bowing finished. </p>
+        <p>This is just a way to add some leeway to the unum
+        implementation, by saying &quot;getting completion
+        exactly right isn't that important for some
+        commands&quot;. Of course, it's possible that later
+        changes - like a new command - might mean that bowing
+        subsequently has to get completion right. In the grand
+        scheme of things, I don't think that's that big a risk.
+        ]]] </p>
+    </li>
+</ul>
+
+<p><i>OK. I think I understand where you're putting the delay.
+You want the script to wait until a response happens. That seems
+quite reasonable. I guess I was worried of a kind deadlock
+occuring as in the case you described below. If the unum won't
+accept any commands until this one completes there would be no
+way to use the GUI to pickup the rock, since you're no longer
+accepting commands. At the &quot;scripting level&quot;, I remove
+all objections. [ctg 090798]</i></p>
+
+<p><u>Result distinctiveness.</u> Each command's result must be
+distinct in this sense: suppose you have a command C. Some
+substring of the result message is always present. That substring
+is never present in any command K. (Should)</p>
+
+<ul>
+    <li><ul>
+            <li>The fewer user-friendly but parser-unfriendly
+                messages, the better. For example, two messages
+                &quot;there are five objects&quot; and
+                &quot;there is one object&quot; makes it
+                complicated because we can't just grep for
+                &quot;there are&quot;.</li>
+            <li>Computerish messages like: &quot;putat success:
+                ...&quot; will make us smile.</li>
+        </ul>
+    </li>
+</ul>
+
+<p><i>I think we'll need two result syntaxes. The first will
+probably be extremely computerish...namely command_id,
+message_id. where command_id is the &quot;verb string&quot; and
+message_id is the &quot;message string&quot;. You'll have to
+watch your constants but I don't think that's impossible. The
+second message will be &quot;verb string&quot; + &quot;message
+string&quot; where these are user-friendly. You can specify on
+the commandline which kind of output you want. Terse or verbose.
+[ctg 080798]</i></p>
+
+<p>[[[ I don't understand. Can you give examples of the two
+syntaxes for something like &quot;pickup rock&quot;? ]]] </p>
+
+<p><i>OK here are the possible return types. Keep in mind that
+the verb is completely removed from the responder...it doesn't
+know it or care. Also keep in mind that the GUI will need to
+report success and failure and it also doesn't use the verb. I
+could modify this but here are the possible return types.</i></p>
+
+<p><i>The first is what the unum will actually return to the ui
+framework</i></p>
+
+<p align="left"><i><b>ID = ErrorCode or COMMAND:PUTAT =
+ERROR:NOERR</b></i></p>
+
+<p><i>This is what the ui framework will output in console mode
+with terse setting</i></p>
+
+<p><i><b>verb string: = terse message string or putat =
+success or putat = access denied</b></i></p>
+
+<p><i>This is what the ui framework will output in console mode
+with verbose setting. It is also suitable for a user level error
+dialog in the gui.</i></p>
+
+<p><i><b>verb string = verbose message string or The
+&lt;object name&gt; is now located in the region at
+&lt;x,y,z&gt;. or You cannot put &lt;object name&gt; in the
+region at &lt;x,y,z&gt;: access denied.</b></i><i>[ctg
+090798]</i></p>
+
+<p><i></i>&nbsp;</p>
+
+<p><u>Result destination.</u> Results can be logged either via
+the trace system or via some other mechanism. (MAY)</p>
+
+<ul>
+    <li><ul>
+            <li>We leave open the possibility that the CLI may be
+                a user interface, and that the results the tests
+                work with are also what a user using the product
+                in &quot;console mode&quot; sees.</li>
+        </ul>
+    </li>
+</ul>
+
+<p><i>Not a problem.[ctg 080798]</i></p>
+
+<p><font color="#008000"><u>Failures.</u></font> Operation
+completion messages should distinguish unambiguously between
+success and failure. Any information presented through the GUI
+about the cause of the failure should also be presented via the
+CLI (not necessarily in exactly the same form). If, however, the
+GUI indicates failure by doing nothing, the CLI should still
+issue an explicit &quot;you failed&quot; message. <font
+color="#008000">(MUST)</font></p>
+
+<p><i>Not a problem.[ctg 080798]</i></p>
+
+<p><font color="#008000"><u>Lists.</u></font> Whenever a list is
+printed, it should have a distinct terminator so that's easy to
+collect all and only the list elements. <font color="#008000">(MUST)</font></p>
+
+<p><i>Not a problem.[ctg 080798]</i></p>
+
+<p><font color="#008000"><u>GUI.</u></font> When the console is
+active, it must still be possible to issue commands through the
+GUI, even if a script is running. There need be no special effort
+to deal gracefully with cases where the GUI and script issue
+commands simultaneously.<font color="#008000">(MUST - PENDING FINAL RESOLUTION)</font>
+(98/06/30 - changed to MUST)</p>
+
+<p><i>If by console you mean running the gui with a log window.
+This is not a problem. If you mean running a script and running
+the gui simultaneously and keeping the GUI responsivie....add at
+least 1 week to each the CLI and the GUI deliverables or about
+two extra week. Sorry but this isn't even remotely
+&quot;free&quot;.[ctg 080798]</i></p>
+
+<p>[[[ Ouch. What does &quot;responsive&quot; mean? This
+requirement is mainly used to do things like free stuck scripts.
+For example, the script might get out of synch and not
+&quot;realize&quot; that the rock is still in the avatar's hand,
+so you use the GUI to point at the floor and select the
+&quot;put&quot; menu item. It's OK if response isn't snappy (a
+couple of seconds). Is that possible without a week? </p>
+
+<p>The other part of this is that it's useful to watch what's
+happening on the GUI as the script is running. Is that also
+expensive? </p>
+
+<p>To clarify: We're not looking for any addition to existing
+behavior. Have you seen the existing scripts? Might help. Paul
+should be able to show you. ]]] </p>
+
+<p><i>OK. Let's clear this up. The GUI is also a console. The
+console is NOT a GUI. Put another way there is only one ui
+framework bound to a process at a time. The GUI supports console
+commands through its log (console) window. To bind two frameworks
+is problematic. The extra work on the GUI comes in because there
+is currently no way to launch the GUI through a script and then
+continue processing commands through that script. That will have
+to be added to the GUI startup. I suspect there will be some
+problems which are related to how things get loaded (meaning what
+thread etc.) I'm assuming it will take a week to fix all of the
+problems related to this. Now launching the gui and then using
+its command line to startup a script is fairly straight forward.
+There are still going to be coordination issues. Generally, a
+process is either batch or interactive, we're going to have to
+make sure we are able to do both simulataneously. That means
+keeping the threading and event processing happy. I'm assuming
+two weeks between the GUI, CLI and whatever external script
+processor we use to keep everybody happy and deadlock free.[ctg
+090798]</i></p>
+<p>
+[[[bem 100798:
+<pre>
+I'm not clear enough on the implementation to follow that.  Let me
+give some specific scenarios of how I am almost certain testers will
+use a text interface to Neocosm to build tests.  I'll talk about both
+E (internal scripting language) and Perl (an external one).  Perhaps
+this will force us to decide between the two.
+
+First, suppose we're using E.
+
+1. I'm creating a test.
+   - I start Neocosm with an avatar and open the log window.
+   - I type various commands in the log window, putting the
+     avatar through its paces once, seeing if what I plan to do
+     with the script makes sense.
+   - In my trusty editor, I create a script file, "foobar.e".
+   - In the log window, I run the script with "#include foobar.e"
+     or whatever.
+        - I need to watch the graphical image of the avatar as
+          it follows the script.  Not being able to do that will
+          make tests significantly harder to write and probably lead
+          to missed bugs.
+        - I don't care if I can't type in the log window until
+          the script finishes.
+        - I'd like it if the mouse and keyboard are active during
+          the script.  So, for example, if I forgot to have the
+          avatar put down the table and the script is hung, I can
+          make the avatar put down the table.  HOWEVER, I can
+          live without this.
+
+2. I'm running that test.
+   - I need to start Neocosm from the command line in some way
+     that says "start, using this avatar, and running this script".
+     Basically, as soon as the avatar appears in the starting region,
+     it starts to run the script.  This is necessary for a nightly
+     build smoke test.
+   - I also need a way to log results from the test.  That could be
+     by spilling the log window's contents to disk, having E manage
+     its own file for results, or having E write to standard output.
+
+(In r167, you also need to use the GUI sometimes in finished tests.
+But that's because some commands are available only from the GUI and
+some commands report success too soon.  I hope we won't need to do
+that in Neocosm.)
+
+Now, suppose we're using Perl.  The essential difference here is that
+Perl drives Neocosm through standard input and waits for expected
+results by scanning standard output.  So, to be explicit, here's the
+testing process with Perl.  Steps the same as above are tagged with
+"@" instead of "-".
+
+1. I'm creating a test.
+   @ I start Neocosm with an avatar and open the log window.
+   @ I type various commands in the log window, putting the
+     avatar through its paces once, seeing if what I plan to do
+     with the script makes sense.
+   @ In my trusty editor, I create a script file, "foobar.pl".
+   - I run the perl script.  It execs Neocosm, wires up standard
+     input and output, stuffs commands into standard input and
+     reads standard output.
+        @ I need to watch the graphical image of the avatar as
+          it follows the script.  Not being able to do that will
+          make tests significantly harder to write and probably lead
+          to missed bugs.
+        - The log window is irrelevant.
+        @ I'd like it if the mouse and keyboard are active during
+          the script.  So, for example, if I forgot to have the
+          avatar put down the table and the script is hung, I can
+          make the avatar put down the table.  HOWEVER, I can
+          live without this. (But note that people coding up bots
+          probably can't.)
+
+2. I'm running that test.
+   @ I need to start Neocosm from the command line in some way
+     that says "start, using this avatar, and running this script".
+     Basically, as soon as the avatar appears in the starting region,
+     it starts to run the script.  This is necessary for a nightly
+     build smoke test.
+   - Results are logged by Perl, which prints failure messages to
+     standard output or a file.
+
+=====================
+
+So:  what of the above can be supported without the two weeks of work?
+
+</pre>
+]]]
+<p></p>
+
+<p><font color="#008000"><u>Multiple processes.</u></font> It
+must be possible to run multiple scripted processes on the same
+machine. (We expect that multiple instances of the product will
+be able to run on the same machine, and that multiple scripted
+processes will necessarily follow from that. But we thought it
+best to be explicit.) <font color="#008000">(MUST)</font>
+(98/06/30 - added)</p>
+
+<p><u>Non-GUI.</u> If it would save space or time, it is
+desirable to be able to run scripts without a GUI being started.
+This will allow more clients to be run on one machine. (Should)
+(98/06/30 - added justification)</p>
+
+<p><i>I would say this should be the preferred mode of operation
+for long or unattended scripts[ctg 080798]</i></p>
+
+<p><u>Avatar creation.</u> It is desirable to be able to create
+an avatar via the script. It would be nicest if that avatar were
+created if it existed, reused if not. (Should)</p>
+
+<p><font color="#008000"><u>Help</u></font><u>.</u> The list of
+all possible commands should be readily accessible from one
+place. It's most desirable if they're available via the CLI,
+rather than on a web page or buried in source somewhere. <font
+color="#008000">(MUST)</font> </p>
+
+<ul>
+    <li><ul>
+            <li>I'm indifferent about whether there's a single
+                help command that lists everything or per-object
+                help.</li>
+            <li>If per-object, I don't care if it shows currently
+                active commands or also includes commands that
+                might not be active at that moment. (E.g., it
+                doesn't have to correspond to a menu.)</li>
+        </ul>
+    </li>
+</ul>
+
+<p><i>Help other than on a per object, what can you do now -will
+require additional work. Markm may be able to help with this
+one.[ctg 080798]</i></p>
+
+<p>[[[ All I want to do is avoid the situation we seemed to be in
+last year, where there was no one place where you could find all
+the commands you needed to write a script. A web page that people
+updated would be OK. So would per-unum files, as long as there
+was a simple way to find the right file. </p>
+
+<p>I don't know if CLI users other than testers would want more.
+]]] </p>
+
+<p><i>The menus.text file will tell you all the commands and
+there verb matching. The commands that an object can recieve at
+any one point and time is always changing. I would use the
+menus.text file to keep abreast of the new commands as they come
+into being. There is probably an eay way to turn this into
+javadoc. As I've already mentioned, verbs are largely a CLI
+command set the GUI eqivalent to menu items. If you need to know
+what an object can handle at a specific moment when you're
+running, you can either issue a help command to that object or
+use the return messages and what they imply to determine if a
+command is now available. [ctg 090798]</i></p>
+
+<p><u>Name ambiguity.</u> If two different objects have the same
+name, it would be nice - but not essential - that there be a way
+to distinguish between them (&quot;Table (1)&quot; and
+&quot;Table (2)&quot;). If there's no way to disambiguate
+objects, it would be better for the CLI to fail than to just pick
+one of the synonymous objects. (Should)</p>
+
+<p><i>Name ambiguity has been fixed in the redesign of the
+console. Every object will be given a unique name for the time it
+remains within a region. If you move to a different region you
+are not guarenteed that the name of conflicting objects will be
+the same. In most cases this is not a problem, since only objects
+not people are likely to have a conflict. If an avatar carries an
+object from one region to the next you can query the avatar to
+find out what the name is of the currently held object. You will
+also be able to tell the &quot;name&quot; of an object by mousing
+over it in the GUI if you set the appropriate variable.[ctg
+080798]</i></p>
+
+<p>[[[ OK by me. I suspect that our workaround to the
+changing-name problem will be for each script to use only one of
+each type of object and to have a setup step in which those
+objects are given a name unique to this script (by changing the
+name in the catalog before creating them, for example). The
+latter will be useful because it will allow us to run multiple
+scripts at the same time, which is what load testing is all
+about.]]] </p>
+
+<p><font color="#008000"><u>Queries</u></font><u>.</u> There
+should be a way to ask an object to display all user-relevant
+state. <font color="#008000">(MUST)</font></p>
+
+<ul>
+    <li><ul>
+            <li>Example: ask a region to display its contents
+                (all named objects).</li>
+            <li>Example: ask a table to display its contents.</li>
+            <li>&quot;Content&quot; displays need not be
+                recursive.</li>
+            <li>Generally, too much information is better than
+                too little.</li>
+            <li>An object may have a single query or several
+                specialized queries. For example, an avatar might
+                have a &quot;contents&quot; query and an
+                &quot;appearance&quot; query that gives its
+                location, orientation, mood, etc.</li>
+        </ul>
+    </li>
+</ul>
+
+<p><i>Already been added to the new design. All obects will be
+expected to support:</i></p>
+
+<ol>
+    <li><i>help or commands(a list of current commands)</i></li>
+    <li><i>location the 3d coordinate location and container</i></li>
+    <li><i>describe a full description of an object</i></li>
+    <li><i>contents the items which are currently contained by
+        it.</i></li>
+</ol>
+
+<p><i>There is no notion of a specialized query. Objects either
+have a command and an expected behavior or not. The only meta
+command is help. [ctg 080798]</i></p>
+
+<p>[[[ I think we really need a more generic &quot;state&quot;
+command, something like </p>
+
+<pre>
+	vendo state
+</pre>
+
+<p>which dumps out all the state in a list. It's too awkward to
+do things like figure out if a vendo is empty by trying to get
+something out of it. </p>
+
+<p>To a first approximation, the &quot;state&quot; would be a
+toString of the state bundle. </p>
+
+<p>I realize this is more of a unum issue than a CLI issue (as
+are lots of these requirements, as you point out). ]]] </p>
+
+<p><i>I don't think this is a problem. The hub operators will
+need a status command that essentially performs the same
+function. [ctg 090798]</i></p>
+
+<p><u>Tracing.</u> It is desirable to be able to control the
+Trace system from the CLI. (Should, possibly a MUST.)</p>
+
+<p><i>Not a problem.[ctg 080798]</i></p>
+
+<p><font color="#008000"><u>Connection failures</u></font><u>.</u>
+It must be possible to name an object and kill the connection to
+that object (and to all objects hosted on the same agency). It
+must be possible to kill all connections to all other agencies. <font
+color="#008000">(MUST)</font></p>
+
+<ul>
+    <li><ul>
+            <li>Note that we want this to be trivially easy for
+                the tester to do manually - no setup required.</li>
+            <li>It is essential that we be able to do this before
+                an operation has completed. That is, start a
+                transition, then kill the connection to the
+                remote host before the transition completes. This
+                type of testing will be less important than in
+                Microcosm (given more white box testing in
+                Neocosm), but still important. </li>
+            <li>Note that the previous case implies you'll be
+                able to kill a connection to an object you can't
+                see through the GUI (namely the region you
+                haven't gone to yet). This will also be true (I
+                think) of things like avatars in the address
+                book, on the other end of a telepathy connection.</li>
+            <li>Note that this requirement, together with the
+                Completion requirement, implies that the script
+                writer will sometimes choose to have commands
+                block until completion and sometimes not. The
+                likely implementation is a non-blocking version
+                of all commands and a generic &quot;wait until X
+                happens&quot; command, but we don't much care.
+                (98/06/30 - added) </li>
+        </ul>
+    </li>
+</ul>
+
+<p><i>I don't think this is really a CLI problem. It's unclear
+to me _HOW_ you're going to kill a connection to an object which
+is &quot;no where&quot;. I don't think you will suceed in all
+cases. Something somewhere needs to have hold of it. On a region
+transition the UI must &quot;let go&quot; anything it's holding
+on to or risk memory failures. I don't know how you'll find the
+object. Either way, it sound like you need an UNUM level command
+which allows una to kill all connections or kill some
+connections. All the CLI can do is hand off the command. All of
+the above, especially the &quot;wait until x&quot; seem to be
+inviting dead-locks and memory problems. I don't know how this is
+going to implemented but I would allow at least two plus weeks to
+get this close to right.[ctg 080798]</i></p>
+
+<p>[[[ Yes, I expect most of this is done outside the CLI. But
+the totality of the system needs to support it. </p>
+
+<p>Example: Bill will have a DataComm interface that allows you
+to kill a connection. We need higher-level objects to invoke that
+interface, all the way up to an unum object. So,
+programmatically, you could take an unum and call a &quot;kill
+this unum's connection&quot; method. All the CLI has to do is
+pass the command onto the unum. </p>
+
+<p>I also don't think the &quot;kill the connection to a region
+before you get to that region&quot; issue is a CLI issue. I don't
+know the plumbing well enough to know if it's possible or how
+it's possible, but I'm envisioning something like </p>
+
+<pre>
+	ref = portal.getRef();
+	while (! ref.hasConnection) ; // spin
+        ref.killConnection();
+</pre>
+
+<p>This is the first requirement that implies a built-in
+scripting language like E. I should separate out this particular
+bullet point - it's not a MUST. We should do it only if it's
+fairly tractable (less than a week total for everyone involved?).
+I mention it because it would be nice it this ability weren't
+precluded. It targets what's historically been a
+failure-sensitive area. </p>
+
+<p>The last bullet - &quot;wait until X&quot; - is badly
+expressed. This will be done on top of the CLI, either in Perl or
+E or whatever. All I mean is that we'll have a test support
+library somewhere that contains definitions like this: </p>
+
+<pre>
+void putat (x) {
+  sendCommand(&quot;putat &quot; + x);
+  expect(&quot;putat succeeded&quot;);
+}
+
+void putat_nonblocking (x) {
+  sendCommand(&quot;putat &quot; + x);
+}
+</pre>
+
+<p>]]] </p>
+
+<p><i>I still disavow all knowledge![ctg 090798]</i></p>
+
+<p><font color="#008000"><u>Noninterleaving.</u></font> It is OK
+for text to appear asynchronously in the CLI. For example,
+&quot;Fred is now on-line&quot; messages due to the address book,
+as well as word balloons. However, these messages should never
+appear in the middle of another message. It would be bad if
+&quot;Fred is no on-line&quot; appears in the middle of a listing
+of the region's contents. <font color="#008000">(MUST)</font></p>
+
+<p><i>Not a problem</i></p>
+
+<p><font color="#008000"><u>Echoing.</u></font>
+If results of script commands go to standard output, you
+must be able to echo commands there too (so that you can tell what
+caused a particular result).  This would be off by default.  (This
+has historically been very useful in Perl scripts.)
+(98/07/10)
+<font color="#008000">(MUST - PENDING CLAIRE'S REVIEW)</font></p>
+
+<p><font color="#008000"><u>Comments.</u></font>
+There needs to be a way to put unexecuted comments in a
+script.  When executed commands are saved to a log, these are too.
+(98/07/10)
+<font color="#008000">(MUST - PENDING CLAIRE'S REVIEW)</font></p>
+
+
+</body>
+</html>

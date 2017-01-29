@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0048)http://www.waterlang.org/doc/water_security.html -->
+<HTML><HEAD><TITLE>Water Security Architecture</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<META content="MSHTML 6.00.2800.1106" name=GENERATOR></HEAD>
+<BODY>
+<DIV align=center>
+<H1>Water Security Architecture</H1></DIV>
+<P>Whenever parties interact with one another via computer systems and 
+communication networks -- as when a consumer buys a product from a vendor using 
+a desktop computer, the Internet, and a web server, or when participants in an 
+Internet-enabled conference exchange confidential information -- it's important 
+to ensure that the interaction doesn't make any of the parties vulnerable to 
+injury from mistaken or aggressive acts. Clear Methods believes that a security 
+architecture should be designed to be programmer-friendly, so that the secure 
+way to write a program is also the easy way to write it. If security is an 
+annoyance, it will be neglected, and if it's an obstacle to enabling the 
+interaction patterns favored by the programmer or required by an application, it 
+will likely be compromised. 
+<H3>Status quo</H3>
+<P>Conventional security architectures start with the paradigm of a 
+<I>principal</I> (user) who asks a system (application, operating system, etc.) 
+to perform some action on their behalf. Having established the security of the 
+communication channel (<I>privacy</I>) and the identity of the principal 
+(<I>authentication</I>), the system then decides based on its prior knowledge of 
+the principal whether the request should be granted (<I>authorization</I>). 
+<P>Principal-based frameworks assume that a system is a monolithic entity, and 
+that once a principal is authenticated the entire system carries the entire 
+authority of that principal. This neglects the fact that real systems are made 
+up of many small pieces, of varying reliability and trustworthiness, that 
+delegate work to one another. The risk is that an unreliable piece may use 
+authority that it doesn't need to do something, either unintentionally or 
+intentionally, that it shouldn't do. 
+<P>Some security frameworks allow for a module (such as an file I/O system) to 
+have restrictions placed on its authority. For example, modules from vendors A 
+and B may together form an application in which vendor A's module can perform 
+network I/O but not access the window system, while vendor's B's module can 
+access the window system but not the network. To establish such security 
+policies and arrange to have them enforced is a complex, error-prone process not 
+integrated with system design and assembly. The temptation on the programmer's 
+part is to make the modules as large as possible in order to avoid having to 
+describe the security structure, but such over-authorized modules invite 
+security errors and therefore attacks. 
+<H3>Water's solution</H3>
+<P>Water accomplishes its security goals by taking the principal of 
+minimally-authorized system components to its extreme by running each object in 
+its own protection domain. Each object possesses certain rights, and can only 
+obtain new rights through a small number of highly controlled operations. An 
+object is similar to an operating system protection domain (process or address 
+space), and a right in Water corresponds to an operating system resource such as 
+a network connection or an open-file handle. 
+<P>With object-oriented security, the notion of principal goes away except in 
+rare "login" situations, and is replaced by objects that have certain particular 
+rights that may have ultimately come from principals through a chain of 
+object-to-object delegation. 
+<P>Like Java, Water establishes a "virtual operating system" so that multiple 
+objects can live in the same address space as provided by the underlying 
+operating system. However, Water establishes strict inter-object isolation by 
+ensuring that all language primitives and API's enforce strict and appropriate 
+right transfer rules. This makes the analogy to a secure operating system exact 
+and eliminates the threat posed by the use of a shared address space. Water also 
+reduces run-time security overhead relative to Java because there is rarely any 
+need to consult a security policy to ensure that the running module has some 
+particular right: either it possesses a right or it doesn't, and this is 
+immediately knowable. 
+<P>For example, an object cannot open a file unless it possesses a right, in the 
+form of a reference to a particular directory object, that denotes the ability 
+to open files in a particular directory or file system. An object will not have 
+this right unless the right has been explicitly transferred to the object. This 
+rights transfer may happen when a module is linked into a running system (in the 
+same way that rights in Java are connected with classes and mediated by the 
+class loader), but it is also easy in Water to grant rights only to individual 
+objects or to restrict rights before granting them (e.g. to limit access to a 
+particular subdirectory). The patterns of rights transfer are the same as any 
+other kind of object construction and transfer in the language, making security 
+a natural side effect of object-oriented design, not an add-on feature that 
+programmers are likely to neglect. 
+<P>An object's methods specify a set of rights, but when a reference the object 
+is given out, some restriction or <I>encapsulation</I> may be necessary. Water 
+generalizes the private/package/public method set distinction made by Java with 
+a <I>view</I> feature allowing as many different encapsulations of an object as 
+are needed for different clients of the object. 
+<P>Water's approach to security borrows from a long tradition of secure systems 
+research. It is similar in spirit to <A 
+href="http://www.agorics.com/Library/keykosindex.html">KeyKOS</A>, which was 
+designed for an Orange Book B2 security rating (corresponding to <A 
+href="http://www.sans.org/infosecFAQ/securitybasics/criteria.htm">Common 
+Criteria</A> EAL5). Also in the same spirit are the Actors languages of Hewitt 
+et al. [C. Hewitt, Viewing control structures as patterns of passing messages, 
+<I>Journal of Artificial Intelligence,</I> 8-3:323-364, 1977] and the currently 
+active <A href="http://www.erights.org/">E programming language</A> project. 
+</P></BODY></HTML>

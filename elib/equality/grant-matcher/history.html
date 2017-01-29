@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Puzzle History</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">equality</a>&nbsp;/&nbsp;<a href="index.html">grant-matcher</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="distrib-grant.html" title="On to: Matching Distributed Grants"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Matching Distributed Grants" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>History
+              of the<br>
+              Grant Matcher</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <p>Ages ago, motivated by implementation issues, Lisp introduced one of 
+        the most puzzling constructs in all of computer science, the <i>EQ</i> 
+        operation. Implementationally, it simply meant <i>Are these two values 
+        the same pointer (or memory address)?</i> Seemingly innocent at the time, 
+        when computer scientists later wished to give languages semantics--to 
+        say what the constructs <i>meant </i>independent of implementation--this 
+        construct proved surprisingly elusive. For Lisp, an adequate meaning was 
+        eventually pinned down, but then along came dynamic object systems. The 
+        first object system was Simula-67, but for us the story begins in 1972 
+        with independent inventions of three dynamic object systems--Smalltalk, 
+        <a href="http://biobio.cs.uiuc.edu/Papers/Semantics.html">Actors</a>, 
+        and <a href="http://cap-lore.com/CapTheory/OperatingSystems.html">KeyKOS</a>. 
+        The latter two being foundational models of both object computation and 
+        capability computation. </p>
+      <p></p>
+      <p><a href="http://biobio.cs.uiuc.edu/Papers/Semantics.html">Actor semantics</a>, 
+        from Carl Hewitt and his group at MIT, is a foundational theory of computation 
+        (in the sense that Turing or Von Neumann Machines are). It is a pure theory 
+        of object computation and a pure theory of capability computation. In 
+        Actor semantics, a reference to an actor enables one to send messages 
+        to the actor, and the meaning of the reference is <i>only</i> the behavior 
+        one can cause in response to messages. If two references are behaviorally 
+        identical, they are indistinguishable. Since behavior is only solicited 
+        in response to messages, a reference to a <i>transparent forwarder</i> 
+        should seem identical to a direct reference. A transparent forwarder is 
+        simply an object that forwards all messages it receives to another object.</p>
+      <p>As a result of this transparency, many concurrent programming abstractions 
+        were first invented in Actor languages. In less pure form, many have made 
+        it into more familiar languages. <a href="http://lcs.www.media.mit.edu/people/lieber/Lieberary/AI/PIKRL/PIKRL.html">Futures 
+        and Lazy Evaluation</a> work perfectly in this context, in which the intermediate 
+        object embodying the computation could seem identical to the non-yet computed 
+        result. The intermediate object simply forwards all messages whether accumulated 
+        in while the computation is in progress or arriving afterwards. Extreme 
+        in this regard is the <a href="../../../history/joule/index.html">Joule 
+        Channel</a>. Combining the power of Actors with support for the patterns 
+        explored by <a href="http://www.c-lab.de/~mary/pj.html">Concurrent Logic 
+        Languages</a>, and <a href="http://sunsite.ust.hk/dblp/db/conf/cp/index.html">Concurrent 
+        Constraint Languages</a>, Joule Channels require that transparent forwarders 
+        be fully transparent.</p>
+      <p>Whereas Actors came out of a symbolic-computation A.I. tradition, with 
+        its emphasis on extreme flexibility, <a href="http://cap-lore.com/CapTheory/OperatingSystems.html">KeyKOS</a> 
+        is an operating system, most infuenced by Hydra and Algol '68, whose emphasis 
+        was extreme flexibility <i>within </i>the constraints of extreme security. 
+        (Not coincidentally, both were heavily influenced by the Lambda Calculus, 
+        but that's another story.) The Joule design effort sought to reconcile 
+        these traditions and build a single system with the best of both worlds. 
+      </p>
+      <p>The primary designers of Joule are E-Dean Tribble, Norm Hardy, and myself 
+        (with significant contributions by Pavel Curtis and Chip Morningstar). 
+        Dean and I came from the Actor / Concurrent Logic Programming tradition, 
+        and were among the founders of the Vulcan Project at Xerox PARC. Norm 
+        Hardy was the chief architect of KeyKOS. Despite the difference in goals 
+        and starting points, the philosophy of computation arrived at by the two 
+        groups was amazingly similar. Indeed, Norm, Dean, and I saw eye to eye 
+        on almost everything. Many of the lessons we learned from Norm seemed 
+        to not only help us &quot;think KeyKOS&quot; better, but also to &quot;think 
+        Actors&quot; better than any lessons available from that tradition.</p>
+      <p>The one persistent source of disagreement was the question of <i>EQ</i>. 
+        Actors didn't have EQ, and Joule's ambitions of flexibility demanded that 
+        Joule not have it either. KeyKOS&nbsp;does have EQ (called <a href="http://www.webcom.com/agorics/KeyKos/Gnosis/43.html#(compare-keys)-returns-in-c">DISCRIM</a>), 
+        and is implicitly or explicitly the basis for several of its impressive 
+        security patterns, such as the Factory. Early on, Dean showed how the 
+        Factory could be done without EQ. Several years of argument ensued, were 
+        Norm would propose problems he thought required an EQ primitive, and Dean 
+        would then show how to solve the problem in Joule without any such primitive. 
+        I participated on both sides, with a preference for no EQ if it wasn't 
+        crucial.</p>
+      <p>Then, while writing the Escrow Exchange Agent as part of the <a href="http://www.sun.com/960201/cover/webmart.html">WebMart 
+        </a>system of capability-secure distributed electronic commerce (a collaboration 
+        between Agorics and Sun Labs), I ran into a problem that seemed to be 
+        insoluble without an EQ primitive. Fortunately for the project, the distributed 
+        capability system we had built (orginally known as Corbamite, later attached 
+        to Tcl and renamed Tclio), did provide for distributed EQ. However, the 
+        problem became another challenge in the controversy. Norm boiled the logic 
+        of the problem down to the <a href="index.html">Grant Matcher Puzzle</a>. 
+      </p>
+      <p>Surprisingly, once we understood one clear example of the problem, we 
+        realized that instances of this problem were common. Deciding how to deal 
+        with this issue has repeatedly had a big effect on the system we built 
+        at <a href="http://thecan.org/in/communities.html">Communities.com</a>. E has <a href="../../../elang/same-ref.html">two 
+        EQ constructs</a>: the synchronous &quot;<tt>==</tt>&quot; and the 
+        asynchronous &quot;<tt>join</tt>&quot;. The latter sacrifices full 
+        transparency. Instead, we are left with <i>cooperatively-transparent forwardability</i>, 
+        which preserves most of the practical benefits of transparent forwardability.</p>
+      <p>The controversy remains, but the cost of foregoing EQ is finally understood, 
+        and seen to be a fundamental cost. The controversy over the cost of having 
+        EQ vs the cost of not having EQ remains. For this cake, having and eating 
+        are now known to be mutually exclusive.</p>
+      <hr>
+      <h2>It's not so simple</h2>
+      <p>The thread rooted <a href="http://www.eros-os.org/pipermail/e-lang/2001-May/005280.html">here</a> 
+        tells of Dean demonstrating that the Grant Matcher puzzle can be solved 
+        with Sealer/Unsealer pairs without EQ. Indeed, an EQ adequate to do grant 
+        matching can be built purely out of Sealer/Unsealer pairs (and plausibly 
+        out of other rights amplification primitives, like sibling communication). 
+        In Logical Secrets, we had shown that Sealer/Unsealer pairs could be built 
+        (awkwardly) out of EQ. So a capability system enhanced with either of 
+        these primitives is adequate to build the other. My remaining hypothesis 
+        is that in a pure capability system without either, one cannot build either. 
+        Dean (and everyone else of course) is hereby challenged to demonstrate 
+        otherwise.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">equality</a>&nbsp;/&nbsp;<a href="index.html">grant-matcher</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="distrib-grant.html" title="On to: Matching Distributed Grants"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Matching Distributed Grants" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

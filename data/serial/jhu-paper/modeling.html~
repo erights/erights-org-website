@@ -1,0 +1,1214 @@
+ 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML>
+<!-- #BeginTemplate "/Templates/pink.dwt" --> 
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>Modeling Conventional Serialization</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made href="mailto:markm@caplet.com" title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<P> 
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> 
+      <P> 
+      <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> 
+            <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">data</a>&nbsp;/&nbsp;<a href="../index.html">serial</a>&nbsp;/&nbsp;<a href="index.html">jhu-paper</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="intro.html" title="Back to: Introduction - Safe Serialization"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Introduction - Safe Serialization" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="subgraph-security.html" title="On to: Security within the Subgraph"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Security within the Subgraph" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table>
+          </TD>
+          <TD ALIGN="RIGHT"> 
+            <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b>Modeling 
+              Conventional Serialization</b><!-- #EndEditable --></FONT> 
+          </TD>
+        </TR>
+      </TABLE>
+      <hr>
+      <!-- #BeginEditable "LongBody" --> 
+      <h1><a name="realism"></a>Literal Realism</h1>
+      <p>Within the overall notion of serialization, there are many variations. 
+        One extreme we might call <i>literal realism</i>, expressed well by the 
+        following quote from an explanation of serialization in Mozart [<a href="acks-n-refs.html#Duchier98">Duchier98</a>]:</p>
+      <blockquote> 
+        <p>Let x be the original data structure and y be a clone of x. Then the 
+          graphs reachable from x and y must be graph isomorphic with respect 
+          to their roots x and y. Moreover, the [mutable] cells reachable from 
+          x must all be different from the [mutable] cells reachable from y.</p>
+      </blockquote>
+      <p>In this system, the subgraph to be depicted would be all objects reachable 
+        from rootObj. The frame would still cut off incoming non-root references 
+        on the left as shown, but would not cut off any outgoing references on 
+        the right. There would be one entry -- the root -- and no exits. Since 
+        no exits are allowed, only a subgraph containing no authority-conveying 
+        references (in their terminology, &quot;Local Operations&quot;) may be 
+        serialized. Likewise, the reconstructed graph is born with no authority. 
+        (The <a href="intro.html#ser-example">previously shown example</a>, with 
+        no customization of the Serializer or Unserializer, implements literal 
+        realism over transparent objects.)</p>
+      <p>The quoted text continues:</p>
+      <blockquote> 
+        <p> Finally, if we redirect all external links into the graph rooted by 
+          x to the respective nodes of the graph rooted by y, no difference must 
+          be observable when the VM proceeds.</p>
+      </blockquote>
+      <p></p>
+      <p>If the hypothetical redirection described above were to actually be performed, 
+        then we have a perfect reincarnation in addition to perfect replication.</p>
+      <p></p>
+      <p>Literal realism makes for a very clean spec, but lacks the flexibility 
+        needed for many uses of serialization. (This is not to say that the actual 
+        support for serialization in Mozart itself is limited in this manner, 
+        just that these are the limits implied by the cited spec.)</p>
+      <h1><a name="impressionists"></a>Society of Impressionists</h1>
+      <p>In many object serialization systems including JOSS, there's enough flexibility 
+        that a Serializer can compute just about any function from an object argument 
+        to bits, and the Unserializer can compute just about any function from 
+        bits to a resulting object. The reconstructed subgraph <i>can</i> be arbitrarily 
+        different than the original. This makes any general specification mostly 
+        vacuous. Rather, the framework provides guidance and tools that encourage 
+        a certain style of use. Most of all, we assume that the Serializer and 
+        Unserializer are each designed to the intention that the reconstructed 
+        graph be somehow meaningfully similar to the original, but with differences 
+        as needed in order to satisfy other goals. These differences are the result 
+        of the structured mixing of four sources of intention: in dominance order, 
+        that of the Unserializer, the reconstructed objects from root to leaf, 
+        the Serializer, and the original objects from root to leaf. </p>
+      <p>In other words, the Unserializer can build whatever new objects it likes 
+        (subject to the limits of what objects it <i>can</i> build), but it normally 
+        chooses to build along the lines of its interpretation of the intentions 
+        of the Serializer, as recorded in the depiction. The Serializer can paint 
+        whatever depiction it wishes (subject to the limits of what knowledge 
+        it can gain), but it normally chooses to depict along the lines of each 
+        original object's expressed intentions, of how and whether it would like 
+        to be portrayed. Each object can portray that its alleged instance variables 
+        -- the set of references the Serializer should further traverse from there 
+        -- is any set of references it likes (subject to the limits of what references 
+        it can produce). The subgraph the Serializer is able to perceive is therefore 
+        not the real subgraph of objects in memory, but rather a kind of story 
+        spun by the objects being traversed.</p>
+      <p align="right"><i>Modern civilization has given man undreamt of powers 
+        largely because, without understanding it, he has developed methods of 
+        utilizing more knowledge and resources than any one mind is aware of.<br>
+        </i>--Friedrich Hayek [Hayek78]</p>
+      <p>When all these expressions of intent reflect the code written by one 
+        programmer all at once, then they are all aspects one one underlying intent, 
+        and architecture for composing intentions may not matter so much. When 
+        they are written by different programmers at different times in different 
+        companies, all with little knowledge of each other's specifics, then architecture 
+        should be well adapted to the expected locality of knowledge -- demanding 
+        from each component the expression of intent which that component is in 
+        a better position to contribute, and composing these together into a result 
+        which successfully utilized more knowledge than any one component plausibly 
+        has. JOSS does quite well at this. The Data-E architecture presented below 
+        does similarly well for similar reasons -- partially as a result of thinking 
+        about and learning from JOSS.</p>
+      <p>We need not only to compose diverse knowledge, but also diverse (and 
+        possibly hostile) interests. For our purposes, assume that all of the 
+        following are potentially mutually suspicious of each other:</p>
+      <ul>
+        <li>The Serializer</li>
+        <li>The Unserializer</li>
+        <li>Each original object</li>
+        <li>Each reconstructed object</li>
+        <li>Each object outside the original subgraph that points into the subgraph</li>
+        <li>Each object outside the original subgraph that's pointed to by the 
+          subgraph </li>
+        <li>Each object outside the reconstructed subgraph that points into the 
+          subgraph</li>
+        <li>Each object outside the reconstructed subgraph that's pointed to by 
+          the subgraph</li>
+      </ul>
+      <p>When all these objects simply provide a literally accurate report (the 
+        default behavior), the result must either be a failure (if an encapsulated 
+        object is encountered, as in our <a href="intro.html#ser-example">earlier 
+        example</a>) or be according to Literal Realism. Given this, we can first 
+        explain the effects of each kind of non-literal reporting in terms of 
+        how it causes the result to deviate from Literal Realism, assuming everyone 
+        else is still reporting accurately. From there, it should be clear which 
+        interactions we need to examine.</p>
+      <h1><a name="as-eval"></a>Unserialization as Expression Evaluation</h1>
+      <p>Our model starts with the perspective suggested by Jonathan Rees has 
+        suggested [ref Rees]: that unserialization can be thought of, or actually 
+        implemented as, expression evaluation. A depiction is an expression in 
+        some programming language, the unserializer is the <tt>eval</tt> function, 
+        the exit references to be reconnected are free variable references, the 
+        values to reconnect them to comes from the scope (ie, environment) provided 
+        to <tt>eval</tt>, and the root of the reconstructed object subgraph is 
+        the value the expression evaluates to. Serialization is the logically 
+        inverse process, in which an uneval function is applied to a root and 
+        a scope, and writes out an expression that, were it evaluated in that 
+        scope, would reconstruct the subgraph. </p>
+      <p>Data-E is the subset of <i><b><font color="#009000">E</font></b></i> 
+        used for depicting a subgraph as an expression. Ignoring precedence, it 
+        consists of the following productions:</p>
+      <div align="center">
+        <table cellpadding="12">
+          <tr valign="top"> 
+            <th colspan="2">Fundamental Data-E Constructs</th>
+          </tr>
+          <tr valign="top"> 
+            <td> 
+              <div align="right"><tt>expr ::=</tt></div>
+            </td>
+            <td><tt>literal | varName | tempName | call | define | defrec</tt></td>
+          </tr>
+          <tr valign="top"> 
+            <td> 
+              <div align="right"><tt>literal ::=</tt></div>
+            </td>
+            <td> 
+              <p><tt>LiteralInt | LiteralFloat64 | LiteralChar | LiteralString<br>
+                <font face="Times New Roman, Times, serif"># Each written as they 
+                are in Java.<br>
+                # Examples: </font>37, 42.3, 'c', &quot;what me worry&quot;</tt></p>
+            </td>
+          </tr>
+          <tr valign="top"> 
+            <td> 
+              <div align="right"><tt>varName ::=</tt></div>
+            </td>
+            <td><tt>Identifier <font face="Times New Roman, Times, serif"># but 
+              not of the form &quot;<b>t_</b>&quot;Digit*<br>
+              # These variable names are only used freely.<br>
+              # Example: </font>foo</tt></td>
+          </tr>
+          <tr valign="top"> 
+            <td> 
+              <div align="right"><tt>tempName ::=</tt></div>
+            </td>
+            <td><tt>&quot;<b>t_</b>&quot;Digit* <font face="Times New Roman, Times, serif"><br>
+              # These variable names are never used freely.<br>
+              # Example: </font>t_12</tt></td>
+          </tr>
+          <tr valign="top"> 
+            <td> 
+              <div align="right"><tt>call ::=</tt></div>
+            </td>
+            <td><tt>expr &quot;.&quot; Identifier &quot;(&quot; exprs &quot;)&quot;<br>
+              <font face="Times New Roman, Times, serif"># Example: </font>__makeMap.fromColumns(t_12, 
+              __makeList.run(&quot;foo&quot;, 49))</tt></td>
+          </tr>
+          <tr valign="top"> 
+            <td> 
+              <div align="right"><tt>define ::=</tt></div>
+            </td>
+            <td><tt>&quot;def&quot; tempName &quot;:=&quot; expr<br>
+              <font face="Times New Roman, Times, serif"># Where expr does not 
+              refer to tempName<br>
+              # Example: </font>def t_12 := makePoint.run(3, 5)</tt></td>
+          </tr>
+          <tr valign="top"> 
+            <td> 
+              <div align="right"><tt>defrec ::=</tt></div>
+            </td>
+            <td><tt>&quot;def&quot; tempName &quot;:=&quot; expr<br>
+              <font face="Times New Roman, Times, serif"># Where expr may refer 
+              to tempName<br>
+              # Example: </font>def t_0 := __makeList.run(1, t_0, 3)</tt></td>
+          </tr>
+          <tr valign="top"> 
+            <td> 
+              <div align="right"><tt>exprs ::=</tt></div>
+            </td>
+            <td><tt>(expr (&quot;,&quot; expr)*)?</tt></td>
+          </tr>
+          <tr valign="top"> 
+            <th colspan="2">Syntactic Shorthands</th>
+          </tr>
+          <tr valign="top"> 
+            <td colspan="2"> 
+              <p><tt>expr &quot;(&quot; exprs &quot;)&quot;</tt> <i>&nbsp;&nbsp;expands 
+                to&nbsp;&nbsp;</i> <tt>expr &quot;.run(&quot; exprs &quot;)&quot;</tt></p>
+              <p>If the message name is left out, it defaults to &quot;<tt>run</tt>&quot;. 
+                For example,<br>
+                <tt>__makeList(&quot;foo&quot;, 49)</tt> <i>expands to</i> <tt>__makeList.run(&quot;foo&quot;, 
+                49)</tt>.</p>
+            </td>
+          </tr>
+          <tr valign="top"> 
+            <td colspan="2"> 
+              <p>&quot;[&quot; exprs &quot;]&quot; <i>&nbsp;&nbsp;expands to&nbsp;&nbsp;</i> 
+                &quot;__makeList.run(&quot; exprs &quot;)&quot;</p>
+              <p>Square brackets can be used to express lists. For example,<br>
+                <tt>[&quot;foo&quot;, 49]</tt> <i>expands to</i> <tt>__makeList.run(&quot;foo&quot;, 
+                49)</tt>.</p>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <p>For those familiar with Java, this is mostly familiar, but with a few 
+        important differences:</p>
+      <ul>
+        <li> 
+          <p>In <i><b><font color="#009000">E</font></b></i>, a variable definition 
+            is an expression. Like assignment, the value of a definition expression 
+            is the value of the right hand side.</p>
+        </li>
+        <li> 
+          <p><tt>null</tt>, <tt>false</tt>, and <tt>true</tt> are not keywords 
+            in <i><b><font color="#009000">E</font></b></i>, but rather are unshadowable 
+            variable names in <i><b><font color="#009000">E</font></b></i>'s universal 
+            scope. This means an expression can count on them having their normal 
+            values, so we don't need to arrange for these to be literals. Likewise 
+            for <tt>Infinity</tt> and <tt>NaN</tt>, which hold these floating 
+            point values that can't be written as literals.</p>
+        </li>
+        <li> 
+          <p>In <i><b><font color="#009000">E</font></b></i>, a variable is in 
+            scope starting from its defining occurrence, left-to-right, until 
+            the close-curly that closes the scope box in which it's defined, and 
+            not counting regions of nested scope boxes where it's shadowed by 
+            a definition of the same name. Ignoring <tt>defrec</tt> for a moment, 
+            this is a straightforward generalization of Java's behavior. In Data-E, 
+            there are constructs that introduce scope boxes, so every variable 
+            definition is in scope from its defining occurrence until the end 
+            of the top-level expression as a whole. </p>
+        </li>
+        <li> 
+          <p>Using only the <tt>literal</tt>, <tt>varName</tt>, and <tt>call</tt> 
+            productions, one can write Data-E programs that will evaluate to tree 
+            structures. </p>
+        </li>
+        <li> 
+          <p>With the addition of the <tt>tempName</tt> and <tt>define</tt> productions, 
+            Data-E can be used to represent DAGs. For those values that are multiply 
+            referenced, write out the sub-expression for calculating this value 
+            at the first position it needs to appear, as the right hand size of 
+            a <tt>define</tt>, capturing its value in a temp variable. Everywhere 
+            else this value is needed, use <tt>tempName</tt> to use this captured 
+            value.</p>
+        </li>
+        <li> 
+          <p>With the addition of <tt>defrec</tt>, Data-E can be used to represent 
+            graphs. When the name being defined on the left is used on the right, 
+            <i><b><font color="#009000">E</font></b></i> still holds strictly 
+            to the left-to-right rule. But what value does the name on the right 
+            evaluate to, before its actual value has been determined? The answer 
+            is an <i>unresolved promise</i>, similar to a logic variable or a 
+            future. A unresolved promise is an object reference for which it hasn't 
+            yet been determined what object the reference designates. For every 
+            unresolved promise, there's a Resolver which is used to determine 
+            what object the promise designates. Once a promise is resolved, it 
+            becomes like any normal reference to the object it designates. </p>
+          <p>The <tt>defrec</tt> expression evaluates by defining a promise/Resolver 
+            pair, defining the promise to be the value of tempName, evaluating 
+            the right hand expression in the scope of this definition, and resolving 
+            the promise to the value of the right hand side. This value is also 
+            the value of the <tt>defrec</tt> expression as a whole.</p>
+        </li>
+      </ul>
+      <p>Data-E is a true subset of <i><b><font color="#009000">E</font></b></i>, 
+        both syntactically and semantically. Every Data-E expression is a valid 
+        <i><b><font color="#009000">E</font></b></i> program <i>with the same 
+        meaning</i>. Since <i><b><font color="#009000">E</font></b></i> is a secure 
+        object-capability language, the security issues surrounding evaluation 
+        of <i><b><font color="#009000">E</font></b></i> programs are already well 
+        understood. By using a subset of <i><b><font color="#009000">E</font></b></i> 
+        in this way, we get to leverage this understanding.</p>
+      <p></p>
+      <p>Data-E has several concrete representations, including:</p>
+      <ul>
+        <li><b>Data-E source. </b><i><b><font color="#009000">E</font></b></i> 
+          source code expressed in the Data-E subset of <i><b><font color="#009000">E</font></b></i>. 
+        <li><b>Data-E AST</b>. A Kernel-E AST in the subset of Kernel-E obtained 
+          by expanding Data-E source, using the normal <i><b><font color="#009000">E</font></b></i> 
+          to Kernel-E expansion. 
+        <li><b>DataECode assembly</b>. Source code for the DataECode assembly 
+          language. 
+        <li><b>DataECode bytecodes</b>. A sequence of DataECode instruction set 
+          bytecodes. 
+        <li><b>Delimited Subgraph</b>. And finally, the point of the exercise, 
+          a subgraph of an object graph. 
+      </ul>
+      <p>DataECode is the instruction set for a very simple stack machine, with 
+        the conventional correspondence to the expression language. Because it 
+        is designed to be compact, fast to generate, and fast to process, <i>DataECode 
+        bytecodes</i> is our default representation for depicting subgraphs. Below, 
+        we will see how to convert from any of these representations to any other. 
+        Since we can easily convert from DataECode to something readable, our 
+        choice of an efficient binary default need not have a cost in debuggability.</p>
+      <p>We may eventually have XML, Term-tree, and perhaps S-Expression representations 
+        as well. </p>
+      <h2></h2>
+      <h2>Recognizer and Builders</h2>
+      <p>Serialization is depicting a subgraph by conversion to any of the other 
+        representations. Unserialization is reconstructing a subgraph from any 
+        of the other representations. Given so many representations, and conversions 
+        possible in all directions, we could end up with an explosive number of 
+        converters. We avoid this with the same trick used by many compilers: 
+        create a reusable API which sits between multiple front ends and multiple 
+        back ends [ref gcc]. A front-end <i>recognizes</i> patterns in the input 
+        representation, and reports by calling this API. From here on, we refer 
+        to such a front-end as a <i>recognizer</i>. A backend implements this 
+        API. In response to being called, it <i>builds</i> an output representation. 
+        From here on, we refer to such a back-end as a <i>builder</i>. Our reusable 
+        API is what Data-E builders have in common, so it defines the interface 
+        type <tt>DataEBuilder</tt>.</p>
+      <div align="center"> 
+        <table cellpadding="12">
+          <tr> 
+            <th colspan="3">Some Common Names</th>
+            <th rowspan="2">Module Name</th>
+          </tr>
+          <tr> 
+            <td>&nbsp;</td>
+            <th>recognizing</th>
+            <th>building</th>
+          </tr>
+          <tr> 
+            <th> 
+              <div align="right">Data-E source</div>
+            </th>
+            <td>parsing</td>
+            <td>pretty-printing</td>
+            <td><tt>deSrcKit</tt></td>
+          </tr>
+          <tr> 
+            <th> 
+              <div align="right">Data-E AST</div>
+            </th>
+            <td>visiting</td>
+            <td>expansion</td>
+            <td><tt>deASTKit</tt></td>
+          </tr>
+          <tr> 
+            <th> 
+              <div align="right">DataECode assembly</div>
+            </th>
+            <td>assembling</td>
+            <td>disassembling</td>
+            <td><tt>deAssemblyKit</tt></td>
+          </tr>
+          <tr> 
+            <th> 
+              <div align="right">DataECode bytecodes</div>
+            </th>
+            <td>dispatching</td>
+            <td>generating</td>
+            <td><tt>deBytecodeKit</tt></td>
+          </tr>
+          <tr> 
+            <th> 
+              <div align="right"><i>Delimited Subgraph</i></div>
+            </th>
+            <td> 
+              <p><i>traversing<br>
+                unevaluating </i></p>
+            </td>
+            <td><i>constructing<br>
+              evaluating </i></td>
+            <td><tt>deSubgraphKit</tt></td>
+          </tr>
+        </table>
+      </div>
+      <p>The first four rows are forms of depiction -- they are all statically 
+        represent objects without giving life to those objects. The difference 
+        between these and the subgraph row is the difference between a picture 
+        of a building and a building.</p>
+      <p>The module for each row provides both a recognizer and a builder for 
+        that representation. With the <tt>DataEBuilder</tt> API in the middle, 
+        we can convert from any of these representations to any other by composing 
+        any recognizer with any builder. This provides some novel flexibility. 
+        For example, sometimes the need for serialization and for unserialization 
+        are not separated in space or time, as when we only want a deep-copy-with-differences 
+        operation. In this case we can cut out the middle-man, and hook a subgraph 
+        recognizer directly to a subgraph builder, without ever creating an intermediate 
+        depiction.</p>
+      <p>All but the subgraph row are just straightforwards engineering, and operate 
+        in a canonical way with no policy choices. All expression of policy and 
+        mixing of intent occurs on the subgraph row, mostly during recognition.</p>
+      <p><tt>DataEBuilder</tt> is actually a parameterized type defined by the 
+        following <i><b><font color="#009000">E</font></b></i> code:</p>
+      <blockquote> 
+        <pre>def DataEBuilderOf(Node :Guard, Root :Guard) :Guard {
+    interface DataEBuilder {
+ 
+        to getNodeType() :Guard
+        to getRootType() :Guard
+ 
+        to buildLiteral(value :(int | float64 | char | String)) :Node
+        to buildImport(varName :String) :Node
+        to buildIbid(tempIndex :int) :Node
+        to buildCall(rec :Node, verb :String, args :Node[]) :Node
+ 
+        to buildDefine(rValue :Node) :[Node, int]
+        to buildPromise() :int
+        to buildDefrec(resolverIndex :int, rValue :Node) :Node
+ 
+        to buildRoot(top :Node) :Root
+    }
+}</pre>
+      </blockquote>
+      <p><tt>Node</tt> and <tt>Root</tt> are type parameters of the function <tt>DataEBuilderOf</tt>. 
+        When this function is called with two actual type arguments, it returns 
+        a <tt>DataEBuilder</tt> type defined in terms of those types arguments. 
+        (For present purposes, treat &quot;<tt>Guard</tt>&quot; as synonymous 
+        with &quot;Type&quot;.)</p>
+      <p><tt>DataEBuilder</tt> must deal well both with sequences-based and with 
+        tree-based representations. Were we only building sequences, the Nodes 
+        returned by the build methods might not matter, but the sequence of calls 
+        would matter. In particular, to easily generate instructions for a stack 
+        machine, these methods must be called in postfix order (reverse polish). 
+        When generating a tree, the sequence might not matter, but the returned 
+        and argument Nodes would. To build a node of an AST, one would first build 
+        the children. The Nodes returned from those build calls would be the arguments 
+        to the call to build their parent. Therefore, since this interface can 
+        be used to generate either a tree or a sequence, its clients must obey 
+        both constraints, and the builder can make use of either regularity.</p>
+      <p> The allowed sequences of calls are described by the following grammar: 
+      </p>
+      <div align="center">
+        <table cellpadding="12">
+          <tr valign="top"> 
+            <th colspan="2">Grammar of Valid Sequences of Data-E Building Calls</th>
+          </tr>
+          <tr valign="top"> 
+            <td> 
+              <div align="right"><tt>start ::=</tt></div>
+            </td>
+            <td><tt>expr0 buildRoot(node0)</tt></td>
+          </tr>
+          <tr valign="top"> 
+            <td> 
+              <div align="right"><tt>expr ::=</tt></div>
+            </td>
+            <td><tt>literal | varName | tempName | call | define | defrec</tt></td>
+          </tr>
+          <tr valign="top"> 
+            <td> 
+              <div align="right"><tt>literal ::=</tt></div>
+            </td>
+            <td> 
+              <p><tt>buildLiteral(value :(int | float64 | char | String))</tt></p>
+            </td>
+          </tr>
+          <tr valign="top"> 
+            <td> 
+              <div align="right"><tt>varName ::=</tt></div>
+            </td>
+            <td><tt>buildImport(varName :String)</tt></td>
+          </tr>
+          <tr valign="top"> 
+            <td> 
+              <div align="right"><tt>tempName ::=</tt></div>
+            </td>
+            <td><tt>buildIbid(tempIndex :int)</tt></td>
+          </tr>
+          <tr valign="top"> 
+            <td> 
+              <div align="right"><tt>call ::=</tt></div>
+            </td>
+            <td> 
+              <p><tt>expr0 expr1..exprN <br>
+                buildCall(node0, verb :String, [node1..nodeN])</tt></p>
+            </td>
+          </tr>
+          <tr valign="top"> 
+            <td> 
+              <div align="right"><tt>define ::=</tt></div>
+            </td>
+            <td><tt>expr0 buildDefine(node0)</tt></td>
+          </tr>
+          <tr valign="top"> 
+            <td> 
+              <div align="right"><tt>defrec ::=</tt></div>
+            </td>
+            <td><tt>promise0 expr1 buildDefrec(resolver0 :int, node1)</tt></td>
+          </tr>
+          <tr valign="top"> 
+            <td> 
+              <div align="right"><tt>promise ::=</tt></div>
+            </td>
+            <td><tt>buildPromise()</tt></td>
+          </tr>
+        </table>
+      </div>
+      <p>Where nodeN is the value returned by exprN, and <tt>resolverN</tt> is 
+        one more than the integer returned by <tt>promiseN</tt>. In other words, 
+        if promise0 is from a buildPromise() which returned a 37, then resolver0 
+        would be 38. The 37'th temporary variable will hold a promise, and the 
+        38th will hold the corresponding Resolver. </p>
+      <p> Rather than burdening each individual builder with the task of checking 
+        that it's input corresponds to this grammar, we expect instead to create 
+        a generic validating wrapping builder that both does this checking and 
+        forwards these calls to its wrapped builder. Each the other builders are 
+        then free to assume without checking that its input is according to this 
+        grammar. 
+      <p> This kind of <i>event-based</i> interface for generating or consuming 
+        trees is in a tradition most prominently represented by SAX -- the (allegedly) 
+        Simple API for XML [ref <a href="http://www.saxproject.org/?selected=event">SAX 
+        events</a>]. However, SAX, and most of the APIs that call themselves event-based 
+        provide only the sequence (both entry and exit events, allowing both prefix 
+        and postfix processing), but not the construction arguments. To build 
+        a tree from SAX events, you must keep track of the stack yourself. A closer 
+        precedent is provided by parser generators such as yacc [ref], in which 
+        the (building) actions happen in postfix order, and each action is provided 
+        with the &quot;semantic value&quot; (our &quot;Node&quot;) returned by 
+        the actions associated with its child productions. A yacc generated parser 
+        falls exactly into our notion of a recognizer calling a builder. 
+      <p>The semantics of Data-E are defined by the semantics of its evaluation 
+        as an <i><b><font color="#009000">E</font></b></i> program, so we could 
+        unserialize by converting to a representation already understood by <i><b><font color="#009000">E</font></b></i> 
+        (Data-E Source or Data-E AST) and using the actual <i><b><font color="#009000">E</font></b></i> 
+        evaluator. However, this is inefficient both as an implementation and 
+        as an explanation. Instead, here is the Data-E evaluator as a builder, 
+        implementing exactly this subset of the <i><b><font color="#009000">E</font></b></i> 
+        semantics:</p>
+      <blockquote> 
+        <pre>def deSubgraphKit {
+
+    /**
+     * Evaluates a Data-E tree in a scope to a value.
+     * <p>
+     * This <i>is</i> Data-E Unserialization. It is also a subset of E
+     * evaluation.
+     */
+    def makeBuilder(scope) :near {
+
+        # The index of the next temp variable
+        var nextTemp := 0
+
+        # The frame of temp variables
+        def temps := [].diverge()
+
+        def deSubgraphBuilder implements DEBuilderOf(any, any) {
+
+            to getNodeType() :near { any }
+            to getRootType() :near { any }
+
+            to buildLiteral(value) :any {
+                value
+            }
+
+            to buildImport(varName :String) :any {
+                scope[varName]
+            }
+
+            to buildIbid(tempIndex :int) :any {
+                temps[tempIndex]
+            }
+
+            to buildCall(rec :any, verb :String, args :any[]) :any {
+                E.call(rec, verb, args)
+            }
+
+            to buildDefine(rValue :any) :[any, int] {
+                def tempIndex := nextTemp
+                nextTemp += 1
+                temps[tempIndex] := rValue
+                [rValue, tempIndex]
+            }
+
+            to buildPromise() :int {
+                def promIndex := nextTemp
+                nextTemp += 2
+                def [prom,res] := Ref.promise()
+                temps[promIndex] := prom
+                temps[promIndex+1] := res
+                promIndex
+            }
+
+            to buildDefrec(resIndex :int, rValue :any) :any {
+                temps[resIndex].resolve(rValue)
+                rValue
+            }
+
+            to buildRoot(root :any) :any {
+                root
+            }
+        }
+    }
+}
+</pre>
+      </blockquote>
+      <p>xx</p>
+      <hr>
+      <p><font color="#FF0000">*** need rewrite below this line</font></p>
+      <p>&nbsp;</p>
+      <p>Fortunately, JOSS turns out to be an excellent place to start in designing 
+        an architecture for flexibly combining all these sources of intent in 
+        a security-compatible manner. Our journey will begin by presenting an 
+        idealized model of JOSS.</p>
+      <h1></h1>
+      <h1><a name="joss"></a>Idealizing JOSS Serialization</h1>
+      <p>JOSS has many customization hooks -- too many to analyze. We believe 
+        the idealized subset of these hooks presented by the following model are 
+        adequate for all the customizability we care about.</p>
+      <h2> <a name="transparency"></a>Transparency</h2>
+      <p>Encapsulation gives an object the ability to hide its internal state 
+        from others; but an object can chose to make its state visible, and many 
+        do. Scalars, Strings, Arrays, record-like objects (like an &lt;x,y&gt; 
+        Point) make all their state visible to their clients. We say an object 
+        is <i>Transparent</i> if it divulges it internal state to its clients 
+        through the standard means (eg, a state-query API of some sort) that others 
+        can generally be assumed to understand. </p>
+      <p>In JOSS, implementing <i>Serializable</i> declares that one's state should 
+        be divulged to all Serializers, independent of whether one is transparent 
+        in general. We can say that such an object is <i>transparent to all Serializers</i>. 
+        To be transparent to all Serializers without being transparent in general 
+        makes sense only if all Serializers are only wielded by objects that are 
+        universally more trusted than are normal clients. While this may make 
+        sense for supporting applets, since we are trying to support mutual suspicion, 
+        our idealized model instead only distinguishes <i>transparent</i> and 
+        <i>opaque</i>. </p>
+      <p>Should a Serializer's be faced with serializing an opaque object, the 
+        serialization attempt instead aborts with an exception, as shown in the 
+        earlier example. The model so far is literal realism in which only transitively 
+        transparent subgraphs can be serialized.</p>
+      <p>The next section, <a href="subgraph-security.html">Security within the 
+        Subgraph</a>, shows a pattern for <i>selective transparency</i> -- enabling 
+        an object to be effectively transparent to some (including some Serializers) 
+        and opaque to others.</p>
+      <h3><a name="noauditor-disclaimer"></a>Disclaimer: <i><b><font color="#009000">E</font></b></i> 
+        Objects Cannot Yet Be Made Transparent</h3>
+      <p>Objects written in <i><b><font color="#009000">E</font></b></i> are opaque 
+        by default. Eventually, one will be able to declare an <i><b><font color="#009000">E</font></b></i> 
+        object to be transparent using the <tt>Transparent</tt> <a href="../../../elang/kernel/auditors/index.html">auditor</a> 
+        (or any other auditor that implies <tt>Transparent</tt>, like <tt>PassByCopy</tt>). 
+        This is not yet supported, but the discussion will proceed as if it is. 
+        Instead, for now, as need transparent objects, we will use Java objects 
+        known by the <i><b><font color="#009000">E</font></b></i> implementation 
+        to be transparent.</p>
+      <p></p>
+      <h2><a name="uneval"></a>Subgraph Depiction as an <i><b><font color="#009000">E</font></b></i> 
+        Expression</h2>
+      <p>For concreteness, let's assume that the serialized form is an expression 
+        written in a simple subset of the <i><b><font color="#009000">E</font></b></i> 
+        language. In this idealization, unserialization would be <tt>eval</tt>, 
+        so serialization can be thought of as <tt>uneval</tt> -- given a subgraph, 
+        calculate that expression that, when evaled (in the <tt>safeScope</tt>), 
+        will produce a new graph that's similar to the original in the desired 
+        way [ref Rees]. [ref Mozart serialized form as functor] While JOSS serialization 
+        isn't actually like <tt>uneval</tt>, this perspective gives us a natural 
+        notation for describing what gets depicted.</p>
+      <p>The cases for <tt>uneval</tt>:</p>
+      <ul>
+        <li> 
+          <p><tt>uneval(scalar)</tt> =&gt; literal expression or &quot;<tt>true</tt>&quot;, 
+            :&quot;<tt>false</tt>&quot;, or &quot;<tt>null</tt>&quot;.</p>
+          <p>The scalars in <i><b><font color="#009000">E</font></b></i> are <tt>int</tt> 
+            (unlimited precision), <tt>float64</tt> (IEEE double precision), <tt>char</tt> 
+            (unicode), <tt>boolean</tt>, and <tt>null</tt>.</p>
+          <p>For example, <tt>uneval(3)</tt> =&gt; <tt>&quot;3&quot;</tt></p>
+        </li>
+        <li> 
+          <p>To avoid infinite regress concerns, Strings, ConstLists (immutable 
+            lists), and ConstMaps (immutable hashtables) are separate cases that 
+            uneval to the corresponding literal <i><b><font color="#009000">E</font></b></i> 
+            syntax: </p>
+          <ul>
+            <li><tt>uneval(&quot;foo&quot;) =&gt; &quot;\&quot;foo\&quot;&quot;</tt></li>
+            <li><tt>uneval([1, 2]) =&gt; &quot;[1, 2]&quot;</tt></li>
+            <li><tt>uneval([&quot;foo&quot; =&gt; 3]) =&gt; &quot;[\&quot;foo\&quot; 
+              =&gt; 3]&quot;</tt></li>
+          </ul>
+          &nbsp; </li>
+        <li> 
+          <pre>uneval(firstRef) =&gt; uneval(getBehavior(firstRef)) + 
+                       &quot;.instantiate(&quot; + uneval(getState(firstRef)) + &quot;)&quot;</pre>
+          <p>Where firstRef is the first occurrence of this reference in the traversal 
+            order, and where it doesn't fall into one of the other special cases 
+            enumerated in this list (above or below). </p>
+          <p>A non-scalar object is a combination of state and behavior. In a 
+            conventional object language like Smalltalk or Java, the behavior 
+            corresponds to a class, and the state of an object consists of a map 
+            from the name of each instance variable to the corresponding value 
+            of that variable. (The obvious optimization -- based on knowing that 
+            all instances of the same behavior will have the same instance variable 
+            layout -- is left as an exercise for the reader.) </p>
+          <p>In <i><b><font color="#009000">E</font></b></i>, the behavior corresponds 
+            more closely to a lambda expression, but for present purposes these 
+            can be mapped to Java classes with no loss, so we proceed assuming 
+            this mapping. The state of an <i><b><font color="#009000">E</font></b></i> 
+            object is based on its <i>free variables</i> -- variable names used 
+            within the behavior but defined in the scope enclosing the behavior. 
+            This is the lambda-equivalent of instance variables. This state is 
+            a mapping from the name or mangled name of each of free variable to 
+            the corresponding <i>state</i> of that variable. When the variable 
+            is defined to be final (using &quot;<tt>def</tt>&quot;), then the 
+            association is from the name to the value. When the variable is potentially 
+            mutable (defined using &quot;<tt>var</tt>&quot;), then, since it may 
+            be shared, the association is from a mangle of the variable name to 
+            the Slot object containing the current value of the variable.</p>
+          <p>For each transparent non-scalar, assume we can extract (via a <tt>getBehavior</tt> 
+            function) an object representing its behavior (in Java, an object 
+            corresponding to its class) and (via a <tt>getState</tt> function) 
+            a ConstMap mapping instance variable names to values or Slots.</p>
+          <p>Assume the behavior object so obtained, when asked to <tt>instantiate</tt> 
+            using such a state-map as argument, will produce a new instance of 
+            that behavior with that state. </p>
+          <p>To accommadate schema evolution, about which more below, if the state 
+            maps from names unused by the behavior, those associations are ignored. 
+            If the state is missing some needed associations, by default a behavior 
+            will complain by throwing an exception (which will terminate unserialization). 
+            But a clever behavior may have means to cope with this situation.</p>
+        </li>
+        <li> 
+          <p><tt>uneval(secondRef)</tt> =&gt; <i><tt>varName</tt></i></p>
+          <p> The second time we uneval a reference, we make up a unique variable 
+            name, go back to the expression used to uneval it the first time, 
+            change that one from &quot;<tt><i>...expr...</i></tt>&quot; to &quot;<tt>def<i>&nbsp;varName</i><i>&nbsp;</i>:=<i>&nbsp;</i>(<i>...expr...</i>)</tt>&quot;, 
+            and finally uneval this and further occurrences as &quot;<i><tt>varName</tt></i>&quot;. 
+            This encodes both shared structures and cycles.</p>
+        </li>
+        <li> 
+          <p><tt>uneval(slot) =&gt; &quot;settable.makeSlot(&quot; + uneval(slot.getValue()) 
+            + &quot;)&quot;</tt></p>
+          <p>Slots have no literal <i><b><font color="#009000">E</font></b></i> 
+            syntax, but the built-in Slot data types are also handled specially 
+            to avoid infinite regress. </p>
+        </li>
+        <li> 
+          <p><tt>uneval(behavior) =&gt; &lt;import:<i>fully-qualified-name</i>&gt;</tt> 
+          </p>
+          <p>Following JOSS, in order to accommodate schema evolution, covered 
+            below, we don't actually serialize the behavior itself. Rather, we 
+            serialize a expression containing an identifier that corresponds to 
+            the behavior. We ignore here JOSS's serialVersionUID, and assume the 
+            fully qualified name is used instead. Therefore, the expression we 
+            serialize is simply one that imports this behavior from the <tt>import__uriGetter</tt>. 
+            Crucially, only <a href="../../../elib/legacy/taming.html">safe</a> 
+            classes may be imported by the <tt>import__uriGetter</tt>, so the 
+            result of evaling / unserializing such an expression will be born 
+            with any authority. (This restriction is essential, but is not yet 
+            implemented.) If the evaling / unserializing environment cannot find 
+            a behavior of the specified name, unserialization fails.</p>
+          <p>(In Java, the identity of a class corresponds to a pair of a fully 
+            qualified name and a ClassLoader. However, JOSS serializes the class's 
+            identifier but not its ClassLoader. This may be fine when the identifier 
+            is a serialVersionUID, but when it's a fully qualified name, our idealization 
+            of JOSS is failing to represent different behaviors by different expressions. 
+            We could repair this by explicitly representing the Loader as well. 
+            In fact, the <tt>import__uriGetter</tt> is a Loader, very much like 
+            a ClassLoader. Once we've presented the Gordian Scalpel, we will have 
+            enough machinery to consider serializing Loaders as well.) </p>
+          <p><i><b><font color="#009000">E</font></b></i>'s syntax discourages 
+            but does not prohibit the creation of anonymous behavior definitions 
+            -- the moral equivalent of Java's anonymous inner classes, Scheme's 
+            anonymous closures, or Smalltalk's BlockClosures. No system we are 
+            aware of supports the schema evolution of any such anonymous objects. 
+            (Unfortunately, JOSS acts incoherently in this case, rather than rejecting 
+            it.) We believe that such support is absent because it's a bad idea: 
+            since any name automatically assigned doesn't have any programmer-aware 
+            stability across program versions. In order to support schema evolution, 
+            anonymous behaviors should not be considered to have a fully qualified 
+            name valid for use in serialization. Any behavior defined within an 
+            anonymous behavior also has no valid fully qualified name, since an 
+            invalid name is on its name-path. Attempting to serialize a behavior 
+            without a valid fully qualified name must cause serialization to fail.</p>
+        </li>
+      </ul>
+      <p>Putting together some of these elements into a silly example, if <tt>p</tt> 
+        is a point created by the following code in module <tt>foo.bar</tt>:</p>
+      <blockquote> 
+        <pre>var count :int := 0
+def makePoint(x :int, y :int) :any {
+    count += 1
+    def point implements Transparent {
+        <font face="Times New Roman, Times, serif"># ... required self revelation ...</font>
+        to getX()     :int { x }
+        to getY()     :int { y }
+ 
+        /** How many points have been created? */
+        to getCount() :int { count }
+    }
+}
+def p := makePoint(3, 4)</pre>
+      </blockquote>
+      <p>then <tt>uneval(p)</tt> would yield the string:</p>
+      <blockquote> 
+        <pre>&lt;import:foo.bar$makePoint__C$point__C&gt;.instatiate([
+    &quot;x&quot;           =&gt; 3,
+    &quot;y&quot;           =&gt; 4,
+    &quot;count__Slot&quot; =&gt; settable.makeSlot(1)
+])</pre>
+      </blockquote>
+      <p>Given the decision to save data but not code, it seems a bit ironic that 
+        the <tt>eval</tt> technique saves the data by turning it into code.</p>
+      <p>(This is based on the mapping: <i><b><font color="#009000">E</font></b></i> 
+        module =&gt; top level Java class. <i><b><font color="#009000">E</font></b></i> 
+        behavior (ie, object definition expression) =&gt; Java nested class. Since 
+        nothing in <i><b><font color="#009000">E</font></b></i> maps onto static 
+        methods of these nested classes, we are free to specify that each of these 
+        nested classes has the static <tt>instantiate</tt> method assumed above.)</p>
+      <p>(The above point definition, by implementing the self revelation methods 
+        that <tt>Transparent</tt> audits for, may pass the <tt>Transparent</tt> 
+        auditor and may therefore make instances which pass the <tt>Transparent</tt> 
+        guard. However, because these points contain mutable state -- the <tt>count</tt> 
+        variable -- they cannot be made to pass the <tt>PassByCopy</tt> or <tt>Selfless</tt> 
+        auditors.)</p>
+      <h2><a name="replacement"></a>Replacement</h2>
+      <p>JOSS serialization has many customization hooks, but that provided by 
+        the <tt>replaceObject</tt> method seems to be universal. All the other 
+        serialization-customizations that concern us can be expressed, perhaps 
+        at a loss in efficiency, by overriding only this one method. Since <i><b><font color="#009000">E</font></b></i> 
+        cannot subclass Java, and since composition is generally cleaner than 
+        inheritance anyway, we provide this one hook by allowing one to parameterize 
+        a serializer with a replace function that serves effectively as an override 
+        to this one method.</p>
+      <p>In the <a href="intro.html#ser-example">example shown earlier</a>, we 
+        specified the null customization by providing the identity function as 
+        the replace function. What if we provide a different function?</p>
+      <blockquote> 
+        <pre>? def ser__uriGetter := &lt;import:org.erights.e.elib.serial.*&gt;
+# value: &lt;import:org.erights.e.elib.serial.*&gt;</pre>
+      </blockquote>
+      <blockquote> 
+        <pre>
+? def makeSerializer := &lt;ser:Serializer&gt;
+# value: &lt;import:org.erights.e.elib.serial.Serializer&gt;</pre>
+      </blockquote>
+      We define the replace function to be one that replaces an integer with the 
+      next higher integer, but acts otherwise as an identity function. 
+      <blockquote> 
+        <pre>
+? def sillyReplacer(obj) :any {
+&gt;     if (obj =~ i :int) {
+&gt;         i + 1
+&gt;     } else {
+&gt;         obj
+&gt;     }
+&gt; }
+# value: &lt;sillyReplacer&gt;</pre>
+      </blockquote>
+      <blockquote> 
+        <pre>
+? def sillySerializer := makeSerializer(sillyReplacer)
+# value: &lt;Serializer&gt;</pre>
+      </blockquote>
+      <blockquote> 
+        <pre>
+? def desc := sillySerializer.record([1, 2, 'c', "foo"]); desc.size()
+# value: 515</pre>
+      </blockquote>
+      We still need an identity function to waive our ability to customize unserialization. 
+      <blockquote> 
+        <pre>
+? def identity(obj) :any {
+&gt;     obj
+&gt; }
+# value: &lt;identity&gt;</pre>
+      </blockquote>
+      <blockquote> 
+        <pre>
+? def simpleUnserializer := &lt;ser:Unserializer&gt;(identity)
+# value: &lt;Unserializer&gt;</pre>
+      </blockquote>
+      <blockquote> 
+        <pre>
+? def recon := simpleUnserializer.play(desc)
+# value: [2, 3, 'c', "foo"]</pre>
+      </blockquote>
+      <p>As we see, the reconstruction is just like the original except that each 
+        integer, no matter where it may appear, has been replaced by its successor.</p>
+      <p>This is specified as a mostly trivial variation of our earlier model 
+        of serialization. </p>
+      <p>As a first approximation, whereas previously the serialization cases 
+        may have looked like:</p>
+      <blockquote> 
+        <pre>def uneval(ref) :any {
+    switch (ref) {
+        <font face="Times New Roman, Times, serif"># ... the above cases using </font>ref<font face="Times New Roman, Times, serif"> ...</font>
+    }
+}</pre>
+      </blockquote>
+      <p>we would instead have</p>
+      <blockquote> 
+        <pre>def uneval(originalRef) :any {
+    def ref := replace(originalRef)
+    switch (ref) {
+        <font face="Times New Roman, Times, serif"># ... the above cases using </font>ref<font face="Times New Roman, Times, serif"> ...</font>
+    }
+}</pre>
+      </blockquote>
+      <p>We now need to adjust this to form broader equivalence classes for our 
+        notion of &quot;having already serialized&quot; a reference. In a call 
+        to uneval(A1), uneval will call its replace function which, let's say, 
+        returns ARep, which then gets serialized as expression AData. The Serializer 
+        then remembers both A1 and ARep as having been seen, and as having produced 
+        expression AData. If either are seen again, then a variable is generated 
+        as before, but this variable is associated with both references. If A1 
+        is novel but ARep has already been seen, then A1 is added to the equivalence 
+        pool for the ARep, and a variable reference is generated.</p>
+      <p><font color="#FF0000">(*** In the case of a previously seen variable, 
+        is replace called? Should it be? Replace is called when the original is 
+        already transparent. Should it be?)</font></p>
+      <p>A Serializer can thereby be cutomized to serialize graphs containing 
+        opaque objects, so long as the replacement for these objects is transparent. 
+        We will make much use of this ability. Traversal proceeds using the fields 
+        of the transparent replacement. </p>
+      <p></p>
+      <p>By the above steps, the Serializer traverses a virtual graph of transparent 
+        replacements. This graph is never represented as an actual graph of objects, 
+        and often it cannot be. If replacement ARep's instance variable myB points 
+        at original B1, and if the replacement for B1 is BRep, then in the virtual 
+        replacement graph ARep's myB points at BRep, even though myB may be of 
+        a type incompatible with BRep. It's fine for a painter to depict a scene 
+        that's not literally possible, so long as its meant for viewers who know 
+        how to interpret this depiction -- so long as corresponding unserializers 
+        are customized to reconstruct a possible graph.</p>
+      <h1>Idealizing JOSS Unserialization</h1>
+      <p>Given our model of depictions as <i><b><font color="#009000">E</font></b></i> 
+        language expressions, and given that <i><b><font color="#009000">E</font></b></i> 
+        expressions have no implicit authority beyond the scope they're evaluated 
+        in, and given that uneval produced expressions that assumed only the safeScope 
+        (which conveys essentially no authority); we could, with no loss of security, 
+        unserialize by using actual <i><b><font color="#009000">E</font></b></i> 
+        evaluation.</p>
+      <blockquote> 
+        <pre>def unserialize(src) :any {
+    eParser.parse(src).eval(safeScope)
+}</pre>
+      </blockquote>
+      <p>The <i><b><font color="#009000">E</font></b></i> parser conveys no authority 
+        and so is generally available. The <tt>safeScope</tt> is itself accessible 
+        in the <tt>safeScope</tt> as &quot;<tt>safeScope</tt>&quot;. And the parser 
+        produces a Kernel-E AST which responds to an <tt>eval</tt> message taking 
+        a scope as an argument.</p>
+      <p>This <tt>eval</tt> technique must be enhanced in order to model JOSS's 
+        hooks for customizing unserialization. JOSS's ability to customize unserialization 
+        is, unfortunately, terribly broken in the presence of cycles. By contrast, 
+        the <tt>eval</tt> technique gets cycles right, and once enhanced to model 
+        JOSS's customization, continues to get cycles right.</p>
+      <p>Consider the <i><b><font color="#009000">E</font></b></i> expression</p>
+      <blockquote> 
+        <pre>def x := [1, x, 3]</pre>
+      </blockquote>
+      <p>This defines x to be the infinite list [1, [1, [1, ..., 3], 3], 3]. Our 
+        uneval algorithm, when presented with this list, generates exactly the 
+        above expression (but for the name <tt>x</tt>). Therefore, if unserialization 
+        is eval, unserialization will perfectly replicate the original.</p>
+      <p>***</p>
+      <p>This technique would get right something that JOSS itself gets terribly 
+        wrong: the treatment of cycles. On the other hand, this technique fails 
+        to model </p>
+      <p>JOSS's unserialization algorithm has similar customization hooks to those 
+        provided during serialization. An individual object's depiction is read, 
+        schema-evolved, used to instantiate an <i>evolved object</i> according 
+        to that depiction. That object is asked for its <i>nominated resolution</i>. 
+        The Unserializer then calls its own <tt>resolveObject</tt> function with 
+        this nominated resolution to obtain the <i>appointed resolution</i>. The 
+        reconstructed subgraph consists of these appointed resolutions.</p>
+      <h2>Cycles <i>vs.</i> Resolution</h2>
+      <p>Unfortunately, this simple story faces a terribly hard problem. When 
+        the depicted XRep's myY points at the depicted YRep, then we must initialize 
+        the evolvedX's myY to point at the appointed resolution of Y, YRes. So 
+        long as there are no cycles, JOSS does exactly this, as it should, by 
+        instantiating and resolving objects in child-to-parent order. But when 
+        there are cycles, JOSS fails in unacceptable ways:</p>
+      <blockquote> 
+        <p>Note - The <tt>readResolve</tt> method is not invoked on the object 
+          until the object is fully constructed, so any references to this object 
+          in its object graph will not be updated to the new object nominated 
+          by <tt>readResolve</tt>. [...] Therefore in cases where an object being 
+          serialized nominates a replacement object whose object graph has a reference 
+          to the original object, deserialization will result in an incorrect 
+          graph of objects. [<a href="http://robocode.alphaworks.ibm.com/docs/jdk1.3/guide/serialization/spec/input.doc6.html#5903">ref 
+          JOSS3.6</a>]</p>
+      </blockquote>
+      <p>When building a system for the coexistence of mutually suspicious objects, 
+        any spec that says &quot;under these conditions an incorrect result will 
+        be returned&quot; must be read as an opportunity for an adversary. Were 
+        they to purposely induce an incorrect result, how might they disrupt the 
+        assumptions of others in ways they might exploit? These issues are usually 
+        hard enough to think about that it's better to fix the spec to remove 
+        the opportunity.</p>
+      <p>Unfortunately, the above problem seems unavoidable in Java, since a Java 
+        reference cannot exist prior to the existence of the object it designates. 
+        If evolvedX is to be initialized with YRes, and evolvedY is to be initialized 
+        with XRes, and if a fully initialized evolvedX is going to participate 
+        in the calculation of XRes, and if a fully initialized evolvedY is going 
+        to participate in the calculation of YRes, there would seem to be no order 
+        that would satisfy all these constraints.</p>
+      <p>Our idealization mostly solves the problem by using <i><b><font color="#009000">E</font></b></i>'s 
+        <a href="../../../elib/concurrency/refmech.html">promises</a> to cheat 
+        on the notion of &quot;fully initialized&quot;. <i><b><font color="#009000">E</font></b></i>'s 
+        promises -- like logic variables in logic programming languages, or futures 
+        [ref Actors], or Channels [ref Joule] -- are references which exist, can 
+        be passed around, and can be held before it's determined which object 
+        they designate. Until their target object is determined, we say that the 
+        promise is <i>unresolved</i>. Once the target is determined, the promise 
+        is <i>fulfilled</i> and is then equivalent to any normal reference to 
+        that target.</p>
+      <p>When the unserializer, walking from child-to-parent, encounters a depicted 
+        reference to an ancestor of the current object, it creates a promise to 
+        represent that reference, and uses that promise to initialize that field 
+        of the evolved object. Later, when the appointed resolution of the ancestor 
+        is produced, the promise is resolved to this appointed resolution. Unfortunately, 
+        if the field being initialized is declared to require a non-promise type, 
+        which can happen in either Java or <i><b><font color="#009000">E</font></b></i>, 
+        then unserialization will still fail inappropriately with a thrown exception. 
+        But this algorithm will never silently return an incorrect graph, which 
+        is the important property for security. The remaining problem simply gives 
+        an adversary an opportunity to mount a denial of service attack, which 
+        <i><b><font color="#009000">E</font></b></i> generally does not claim 
+        to defend against.</p>
+      <h2>Implementation Disclaimer</h2>
+      <p>The above promise-based architecture isn't currently implemented by <i><b><font color="#009000">E</font></b></i>'s 
+        unserialization logic; and it will be hard to do so while we sit on top 
+        of JOSS. We currently use the abstract class <a href="http://www.erights.org/javadoc/org/erights/e/elib/ref/StemCell.html">StemCell</a>, 
+        and its concrete subclasses <a href="http://www.erights.org/javadoc/org/erights/e/elib/serial/RemoteCall.html">RemoteCall</a> 
+        and <a href="http://www.erights.org/javadoc/org/erights/e/elib/serial/RemoteDelivery.html">RemoteDelivery</a>, 
+        to implement an approximation of this architecture. But we still have 
+        not prevented the possibility of an incorrect graph being silently returned.</p>
+      <p>Worse, in our experience such incorrect graphs rarely happen by accident, 
+        so it's easy for a programmer to forget the possible opportunity they 
+        provide to an adversary.</p>
+      <p><font color="#FF0000">***************** rewrite needed below this line 
+        ***************</font></p>
+      <h2>The Evolved Graph</h2>
+      <p>The Unserializer reconstructs a new object graph by a process of travesing 
+        the depiction. For each depicted object, the Unserializer first constructs 
+        a live object as literally as possible according to the depiction. The 
+        Unserializer is also parameterized by a Loader. For each depicted object, 
+        it looks up a corresponding behavior according to the fully qualified 
+        behavior name. If these is no such behavior, then unserialization aborts 
+        with an exception. If the object behavior looked up needs to be instantiated 
+        with state of the same layout and types as the depicted state, then the 
+        behavior is so instatiated. If the layouts are different, then the support 
+        for schema evolution is brought to bear, mostly by giving the new behavior 
+        a chance to convert the old state into a new instance. </p>
+      <p>In either case, this new object is an node of the virtual evolved graph. 
+        Like the virtual replacement graph, it need not be represented as an actual 
+        object graph. Unlike the virtual replacement graph, because the nodes 
+        are actual objects that must often be initialized at the moment of construction 
+        to point at what they point to, in the presence of cycles we cannot ignore 
+        the representability of the evolved graph. However, since this issue can 
+        be made to have no effect other than inappropriate failure to unserialize, 
+        we do ignore it for the remainder of this paper. <font color="#FF0000">(*** 
+        Need we explain the use of promises to avoid the incorrect-graph problem 
+        of [<a href="http://robocode.alphaworks.ibm.com/docs/jdk1.3/guide/serialization/spec/input.doc6.html#5903">JOSS3.6</a>]?)</font></p>
+      <p>As mentioned in the Introduction, this paper also ignores the mechanics 
+        of schema evolution, and does not examine their possible security problems. 
+        Unlike the failed cycle problem, this issue must be addressed before one 
+        has a viable system.</p>
+      <h2>Nominated Resolutions</h2>
+      <p>The Java Object Serialization Specification [ref] states:</p>
+      <blockquote> 
+        <p>[...] the <tt>readResolve</tt> method allows a class to replace/resolve 
+          the object read from the stream before it is returned to the caller. 
+          By implementing the <tt>readResolve</tt> method, a class can directly 
+          control the types and instances of its own instances being deserialized. 
+          The method is defined as follows:</p>
+        <blockquote> 
+          <pre>ANY-ACCESS-MODIFIER Object readResolve() throws ObjectStreamException;</pre>
+        </blockquote>
+        <p> The <tt>readResolve</tt> method is called when <tt>ObjectInputStream</tt> 
+          has read an object from the stream and is preparing to return it to 
+          the caller. <tt>ObjectInputStream</tt> checks whether the class of the 
+          object defines the <tt>readResolve</tt> method. If the method is defined, 
+          the <tt>readResolve</tt> method is called to allow the object in the 
+          stream to designate the object to be returned. [...]</p>
+      </blockquote>
+      <p>Since this object serves only as a suggestion to the Unserializer, we 
+        refer to it as the <i>nominated resolution</i>. If an evolved object has 
+        no <tt>readResolve</tt> method, then we take it to implicitly be nominating 
+        itself as its resolution.</p>
+      <h2>Appointed Resolutions</h2>
+      <p>An <tt>ObjectInputStream</tt> may override the <tt>resolveObject</tt> 
+        method:</p>
+      <blockquote> 
+        <pre>protected Object resolveObject(Object obj) throws IOException;</pre>
+      </blockquote>
+      <p>Instead, we say that an Unserializer is parameterized by a <tt>readResolve</tt> 
+        function with this signature. This is called for each nominated resolution, 
+        and the object it returns is the appointed resolution.</p>
+      <h2>The Reconstructed Subgraph</h2>
+      <p>Finally, the Unserializer returns the reconstructed subgraph whose nodes 
+        are the appointed resolutions from the previous steps, initialized to 
+        point at each other according to the reference topology of the virtual 
+        evolved graph. If these connections are not compatible with the reconstructed 
+        objects, then we properly have a failure to unserialize.</p>
+      <h1>What's Missing From This Picture?</h1>
+      <p>The edges of the picture -- the entries and exits. As with literal realism, 
+        this model returns one entry -- the root -- thereby giving it a new identity, 
+        and makes no arrangements for exits. The traversal is virtual, but the 
+        virtual traversal must be complete. Nevertheless, this architecture for 
+        mapping from actual to virtual provides what we need to deal securely 
+        with entries and exits.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%">&nbsp;</TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> 
+      <hr>
+      <div align="center"> 
+        <table cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> 
+              <div align="left"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a></div>
+            </td>
+            <td> 
+              <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> 
+                    <div align="center"><font size="-1"><a href="../../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E 
+                      Language</a> &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div>
+                  </td>
+                </tr>
+                <tr> 
+                  <td> 
+                    <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> 
+                      &nbsp;&nbsp; <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <table width="100%" border="0" cellspacing="0" cellpadding="4">
+        <tr> 
+          <td><i><a href="mailto:webmaster@erights.org">webmaster@erights.org</a></i> 
+            <br>
+            or <a href="http://bugs.sieve.net/bugs/?func=addbug&amp;group_id=16380"><i>report 
+            bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+            html</a>)<br>
+            or <a href="http://www.blindpay.com/crit-me-now.cgi"><img src="../../../images/cmn.gif" width="98" height="21" border="0" align="middle" alt="Annotate this page"></a> 
+          </td>
+          <td> 
+            <div align="right"> 
+              <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a> <a href="http://www.stoppoliceware.org/"><img src="../../../images/stoppoliceware_gray_88x32.gif" width="88" height="32" border="0" alt="Stop Policeware Campaign"></a> 
+            </div>
+          </td>
+        </tr>
+      </table>
+    </TD>
+    <TD WIDTH="10%" valign="bottom">&nbsp;</TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate -->
+</HTML>

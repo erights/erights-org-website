@@ -1,0 +1,1448 @@
+Beyond the reference-state-based causality
+rules mentioned above, the novelty of this dissertation lies, not in
+individual novel inventions, but rather in providing a simple
+integrated framework incorporating these prior techniques, and in
+linguistic support.
+
+reify the
+occurrence of network failure in a fashion that permits sensible and
+consistent application-level recovery. In the E programming system,
+these are coupled to language constructs that enable
+programmers to 
+anticipate and plan for reference failure
+at the syntactic locus where a computational
+dependency on remote behavior is introduced, and simultaneously
+remind the programmer of the loci where interleavings of execution may
+occur.
+\shapsays{When review, also edit conclusions.}
+
+
+\section{Reference States and Transitions}
+\label{sec:refstates}
+
+
+At this point, we have presented the rationale for several
+distinctions between reference states, for the message delivery
+properties associated with each state, for transitions between
+states. This section brings these together, so that we can see the
+complete picture. Here, we wish to reiterate that concurrency control
+in E, like access control, emerges from attenuating the authority
+provided by composition. In particular, the E's concurrency control
+emerges from limiting the message delivery properties provided by a
+passed reference, according to its state.
+
+
+% This diagram is explained, and these states and transitions rules are
+% summarized in Section~\ref{sec:refstates}.
+
+% Figure~\ref{fig:refstates} depicts states and transitions 
+% \subsection{Reference States}
+% \section{Transition Rules}
+\begin{itemize}
+
+\item x
+
+\end{itemize}
+
+\section{Argument Passing Rules}
+
+\begin{description}
+
+\item[x] x
+
+\end{description}
+
+
+
+
+
+
+These have the following attributes:
+
+\begin{description}
+
+\item[Resolved \emph{vs.} Unresolved:] A reference whose target is
+  known is \emph{resolved}. Otherwise, it is an \emph{unresolved
+  promise}.
+
+\item[Local \emph{vs.} Vat-crossing:] An intra-vat reference is
+  \emph{local}. Otherwise, it is a \emph{vat-crossing reference}.
+
+\item[Near:] A local resolved reference is a \emph{near
+  references}. Near references convey both immediate calls and
+  eventual sends. Only near references convey immediate calls.
+
+\item[Far:] A vat-crossing resolved reference is a \emph{far
+  reference}.
+
+\item[Eventual:] Promises and far references are \emph{eventual
+  references}. Eventual references convey only eventual sends.
+
+\item[Broken:] Various problems will cause a reference to become
+  \emph{broken}. Broken references convey neither immediate calls nor
+  eventual sends. Rather than designate a target, a broken reference
+  holds the exception describing the problem.
+
+\end{description}
+
+Because near references convey immediate calls, they provide
+synchronous access to the object they designate.
+
+
+
+In the context of group membership systems, the various message
+delivery orders are usually associated with reliable multicast
+communications. In this context, all mutually reachable participants
+eventually see all messages, but they may be delivered to these
+particpants in different orders. One of the main uses of more
+constrained delivery orders is fault tolerant fashion replication of
+computation \cite{birman:vsync, amir:thesis, lamport:paxos,
+castro:bft}. For general purpose computation, \order{AGREED} is the
+minimum required. \order{AGREED} order guarantees that all mutually
+reachable participants see messages in the same order. When the
+computation to be replicated has certain regular properties, such as
+associativity or commutativity of the effects of messages, weaker
+orders such as \order{CAUSAL}, \order{FIFO}, or \order{UNORDERED} can
+be used. 
+
+Note that \order{CAUSAL} order is quite distinct from Lamport's
+characterization, using the ``happened before'' relationship, of the
+partial causal order of events in a distributed system \markmsays{need
+cite}. Lamport's partial causal order is descriptive: it is a way to
+describe \emph{any} realizable causal computational sequence, as are
+the Hewitt and Baker's ``ordering laws'' \cite{hewitt+baker78}. These
+two papers were both published in 1978, and seem to be independent
+rediscoveries of the same insight. Lamport's linear order of events
+within a process corresponds to Hewitt and Baker's ``activation
+order''. Lamport's order between sending events and delivery events
+corresponds approximately to Hewitt and Baker's ``arrival order''.
+Returning to our example, of message~\code{o()} is delivered to Carol
+before message~\code{x()}, then there is still a partial causal order
+among all the events consisting of the sending of each of these
+message and the delivery of each of these messages. By contrast,
+\order{CAUSAL} order is prescriptive. Our example violates this
+prescription. 
+
+
+E's promises, explained in chapter~\pref{chap:con-promise-pipeline}
+provide a ``softer'' means of buffering messages---once a promise is
+unblocked, it monotonically stays unblocked. \emph{Datalock}, the
+deadlock-like danger produced by this buffering, is explained in
+section~\pref{sec:datalock}. Because promises only buffer until they
+are resolved, and resolution is monotonic, datalocks occur as
+deterministically as other bugs.
+
+Of course, sometimes conditional buffering is called for, as when a
+subsystem's invariants cannot be
+
+since messages in E are first class, 
+
+
+
+@TECHREPORT{Bell:model:vol3,
+author={D. E. Bell},
+title={{Secure Computer Systems: A Refinement of the Mathematical Model}},
+vol=3,
+number={ESD-TR-73-278},
+institution={ESD/AFSD},
+address={Hanscom AFB, Bedford, MA, USA},
+month=apr,
+year=1974
+}
+
+@TECHREPORT{Bell:model:vol1,
+author={D. E. Bell},
+title={{Secure Computer Systems: Mathematical Foundations}},
+vol=1,
+number={ESD-TR-73-278},
+institution={ESD/AFSD},
+address={Hanscom AFB, Bedford, MA, USA},
+month=apr,
+year=1974
+}
+
+@TECHREPORT{Bell:model:vol2,
+author={D. E. Bell},
+title={{Secure Computer Systems: A Mathematical Model}},
+vol=2,
+number={ESD-TR-73-278},
+institution={ESD/AFSD},
+address={Hanscom AFB, Bedford, MA, USA},
+month=apr,
+year=1974
+}
+
+\section{Related Reading}
+
+The contrast between these two notions of naming, as represented by
+the \code{cp} and \code{cat} examples above, reappears in different
+guises throughout much of computer science. In the von Neumann model
+of computation, all programs share an address space, and addresses are
+bit patterns that can be calculated just as any other number. Such
+addresses are like the file name strings of our \code{cp} story. In
+Church's lambda calculus \cite{Church41}, all interaction is local,
+and functions can only operate on what is passed to them. Such opaque
+first-class functions are like the descriptors of our \code{cat}
+story. Programming language implementations demonstrate how easily
+Church's style may be built on the von Neumann address spaces. Many
+languages mostly use Church's style in the small, but fall back on
+widely shared name spaces for global variables, the name space of
+module imports, and access to the external file system. Many operating
+systems use a shared hierarchical global name space for naming files
+and other resources, and employ descriptors only for local and
+ephemeral access. Like von Neumann addresses, filenames are generally
+assumed to be guessable, calculable, or enumerable, so access control
+is provided by other means. The Domain Name System provides the
+ultimate global name space---one shared across the Internet.
+
+
+\shapsays{Every one of the following should have double quotes around
+  titles and italicize the journal or conference proceedings
+  name. Page numbers are mandatory where missing.}
+
+\shapsays{The first citation is wrong, and so is the version in the
+  bibliography. First, WTF is ``TGC''? The correct citation for such
+  things cites the CONFERENCE appearance, and then (as a note in the
+  .bib entry) says ``appears in...'' or ``published as'' However, the
+  note}
+
+\shapsays{Every single acronym for a conference or a journal in your
+  bibliography requires full expansion except where it is part of a
+  proper name. E.g. TGC, ASIAN, ICLP, MOZ. }
+
+@PHDTHESIS{Karger:Thesis,
+author={Paul Karger},
+title={{Improving Security and Performance for Capability Systems}},
+note={Technical Report No. 149},
+institution={University of Cambridge Computer Laboratory},
+school={University of Cambridge},
+month=oct,
+year=1988
+}
+
+@proceedings{DBLP:conf/tgc/2005,
+  editor    = {Rocco De Nicola and
+               Davide Sangiorgi},
+  title     = {{Trustworthy Global Computing, International Symposium, TGC
+               2005, Edinburgh, UK, April 7-9, 2005, Revised Selected Papers}},
+  booktitle = {Trustworthy Global Computing},
+  publisher = {Springer},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {3705},
+  year      = {2005},
+  isbn      = {3-540-30007-4},
+}
+
+@inproceedings{janus,
+author = {Vijay Saraswat and Ken Kahn and Jacob Levy},
+title = {Janus: A step towards distributed constraint programming},
+booktitle = {North American Conference on Logic Programming},
+year = 1990,
+pages = {431--446},
+publisher = {MIT Press},
+}
+
+@article{hansen,
+author = {Per Brinch Hansen},
+title = {Java's insecure parallelism},
+journal = {ACM SIGPLAN Notices},
+volume = 34,
+number = 4,
+year = 1999,
+month = apr,
+pages = {38--45},
+}
+
+@article{BalSteinerTanenbaum:89,
+author = {Henri E. Bal and Jennifer G. Steiner and Andrew S. Tanenbaum},
+title = {Programming Languages for Distributed Computing Systems},
+journal = acmcs,
+volume = 21,
+number = 3,
+year = 1989,
+month = sep,
+pages = {261--322},
+}
+
+@article{birrell,
+author = {Andrew D. Birrell and Bruce Jay Nelson},
+title = {Implementing Remote Procedure Calls},
+journal = tocs,
+volume = 2,
+number = 1,
+year = 1984,
+month = feb,
+pages = {39--59},
+}
+
+@article{halstead,
+author = {Robert H. Halstead, Jr.},
+title = {MultiLisp: A Language for Concurrent Symbolic Computation},
+journal = toplas,
+volume = 7,
+number = 4,
+year = 1985,
+month = oct,
+pages = {501--538},
+}
+
+@phdthesis{emeraldthesis,
+author = {Eric Jul},
+title = {Object Mobility in a Distributed Object-Oriented System},
+school = {Univ. of Washington},
+year = 1988,
+number = {UW Technical Report 88-12-6},
+address = {Seattle, Wash.},
+}
+
+@article{emerald,
+author = {Eric Jul and Henry Levy and Norman Hutchinson and Andrew Black},
+title = {Fine-grained Mobility in the Emerald System},
+journal = tocs,
+volume = 6,
+number = 1,
+year = 1988,
+month = feb,
+pages = {109--133},
+}
+
+@incollection{hoare,
+  crossref = {turingaward},
+  author = {Charles Antony Richard Hoare},
+  title = {The Emperor's Old Clothes},
+  editor = {Robert L. Ashenhurst and Susan Graham},
+  booktitle = "{ACM} {Turing Award} Lectures: The First Twenty Years",
+  publisher = {ACM Press},
+  year = 1987,
+  note = {1980 Turing Award Lecture},
+}
+
+@book{levy1984book,
+author = {Henry M. Levy},
+title = {Capability-Based Computer Systems},
+publisher = {Digital Press},
+year = 1984,
+note = {Available for download from the author.},
+address = {Bedford, MA},
+}
+
+@book{javaspec,
+author = {James Gosling and Bill Joy and Guy Steele},
+title = "The {Java} Language Specification",
+publisher = {Addison-Wesley},
+year = 1996,
+note = "Available at {\tt www.javasoft.com}",
+}
+
+@manual{rmispec,
+author = "{Sun Microsystems}",
+title = "The {Remote Method Invocation} Specification",
+year = 1997,
+note = "Available at {\tt www.javasoft.com}",
+}
+
+@inproceedings{derlang,
+author = "Claes Wikstr{\"o}m",
+title = "Distributed Programming in {Erlang}",
+booktitle = "\textup{the} 1st International Symposium on Parallel
+                  Symbolic Computation 
+\textup{(}PASCO 94\textup{)}",
+publisher = {World Scientific},
+address = {Singapore},
+year = 1994,
+month = sep,
+pages = {412--421},
+}
+
+@book{erlang,
+author = "Joe Armstrong and Mike Williams and Claes Wikstr{\{o}m and
+                  Robert Virding", 
+title = "Concurrent Programming in {Erlang}",
+publisher = {Prentice-Hall},
+address = {Englewood Cliffs, NJ},
+year = 1996,
+}
+
+@article{monitor2,
+  author = {Charles Antony Richard Hoare},
+  title = {Monitors: An Operating System Structuring Concept},
+  journal = cacm,
+  year = 1974,
+  month = oct,
+  pages = {549--557},
+  number = 10,
+  volume = 17,
+}
+
+@article{ngc98,
+author = {Seif Haridi and Peter Van Roy and Per Brand and Christian Schulte},
+title = {Programming Languages for Distributed Applications},
+journal = {New Generation Computing},
+month = {May},
+year = {1998},
+volume = {16},
+number = {3},
+pages = {223--261},
+}
+
+@misc{joell2,
+author = {Joe Armstrong},
+title = {Concurrency Oriented programming in Erlang},
+month = nov,
+year = 2002,
+note = {Invited talk, Lightweight Languages Workshop 2002},
+address = {MIT, Cambridge MA},
+}
+
+@misc{hoperlang,
+author = {Joe Armstrong},
+title = {Higher-order Processes in Erlang},
+month = jan,
+year = 1997,
+note = {Unpublished talk},
+}
+
+@book{lea,
+author = {Doug Lea},
+title = {Concurrent Programming in Java},
+year = 1997,
+publisher = {Addison-Wesley},
+}
+
+@book{lea2,
+author = {Doug Lea},
+title = "Concurrent Programming in {Java}, \textup{2nd edition}",
+publisher = {Addison-Wesley},
+year = 2000,
+}
+
+@phdthesis{armstrongthesis,
+author = {Joe Armstrong},
+title = {Making Reliable Distributed Systems in the Presence of
+                  Software Errors}, 
+school = {Royal Institute of Technology (KTH), Stockholm},
+year = 2003,
+month = dec,
+}
+
+@misc{boebert03comments,
+  author={Earl Boebert},
+  title={Comments on Capability Myths Demolished},
+  url={www.eros-os.org/pipermail/cap-talk/2003-March/001133.html}
+}
+
+@Article{DeMLipPer79,
+  author =      {DeMillo and Lipton and Perlis},
+  title =       {Social Processes and Proofs of Theorems and Programs},
+  journal =     {CACM: Communications of the ACM},
+  volume =      {22},
+  year =        {1979},
+}
+
+@InProceedings{Gray85,
+  author =      {Jim Gray},
+  title =       {Why do computers stop and what can be done about it?},
+  booktitle =   {Proceedings of the 5th Symposium on Reliability in
+                 Distributed Software and Database Systems},
+  pages =       {3--11},
+  publisher =   {IEEE Computer Society Press},
+  month =       jun,
+  year =        {1985},
+  note =        {IEEE Computer Society Press, catalog number
+                 86CH2260--8 1986 Tech Report 85.7, PN87614. jun.'85},
+  note =        {Tandem},
+}
+
+@PhdThesis{Four98c,
+  author =      "C{\'e}dric Fournet",
+  title =       {The Join-Calculus: a Calculus for Distributed Mobile
+                 Programming},
+  school =      {Ecole Polytechnique},
+  type =        "Ph.{D}. Thesis",
+  number =      {INRIA TU-0556},
+  year =        {1998},
+  URL =         {www.research.microsoft.com/~fournet/biblio.htm},
+}
+
+@Article{journals/cacm/Karp03a,
+  title =       "{E}-speak e-xplained",
+  author =      {Alan H. Karp},
+  journal =     {Commun. ACM},
+  year =        {2003},
+  number =      {7},
+  volume =      {46},
+  bibdate =     {2006-02-09},
+  bibsource =   {DBLP,
+                 dblp.uni-trier.de/db/journals/cacm/cacm46.html#Karp03a},
+  pages =       {112--118},
+  URL =         {doi.acm.org/10.1145/792704.792708},
+}
+
+@Article{journals/cacm/Karp03b,
+  title =       "Enforce {POLA} on processes to control viruses",
+  author =      "Alan H. Karp",
+  journal =     {Commun. ACM},
+  year =        {2003},
+  number =      {12},
+  volume =      {46},
+  bibdate =     {2006-02-09},
+  bibsource =   {DBLP,
+                 dblp.uni-trier.de/db/journals/cacm/cacm46.html#Karp03b},
+  pages =       {27--29},
+  URL =         {doi.acm.org/10.1145/953460.953480},
+}
+
+
+
+@PhdThesis{joethesis,
+author = {Joe Armstrong},
+title = {Making reliable distributed systems in the presence of
+                  software errors}, 
+school = {Royal Institute of Technology (KTH)},
+year = 2003,
+month = nov,
+address = {Kista, Sweden},
+}
+
+
+
+@article{bal:survey,
+ author = {Henri E. Bal and Jennifer G. Steiner and Andrew S. Tanenbaum},
+ title = {Programming languages for distributed computing systems},
+ journal = {ACM Comput. Surv.},
+ volume = {21},
+ number = {3},
+ year = {1989},
+ issn = {0360-0300},
+ pages = {261--322},
+ doi = {doi.acm.org/10.1145/72551.72552},
+ publisher = {ACM Press},
+ address = {New York, NY, USA},
+ }
+
+@article{karp2003split,
+  author = {A. H. Karp and R. Gupta and G. J. Rozas and A. Banerji},
+  title = {Using Split Capabilities for Access Control},
+  journal = {IEEE Software},
+  volume=20,
+  number=1,
+  month=jan,
+  year=2003,
+  pages={42--49}
+}
+
+@article{pose86password,
+ author = {M. Anderson and R. Pose and C. S. Wallace},
+ title = {A Password Capability System},
+ journal = {The Computer Journal},
+ volume = 29,
+ number = 1,
+ year = 1996,
+ pages = {1--8}
+}
+
+@article{algol60def,
+author = {Peter Naur and John W. Backus and Friedrich L. Bauer and
+                  Julien Green and C. Katz and John L. McCarthy and
+                  Alan J. Perlis and Heinz Rutishauser and Klaus
+                  Samelson and Bernard Vauquois and Joseph Henry
+                  Wegstein and Adriaan van Wijngaarden and Michael
+                  Woodger}, 
+title = {Revised Report on the Algorithmic Language ALGOL 60},
+journal = cacm,
+year = 1963,
+volume = 6,
+number = 1,
+pages = {1--17},
+}
+
+@InProceedings{S&P97*204,
+  author =      {G. Necula and P. Lee},
+  title =       {{Research on Proof-Carrying Code for Untrusted-Code
+                 Security}},
+  pages =       {204--204},
+  booktitle =   {Proceedings of the 1997 Conference on Security and
+                 Privacy ({S}&{P}-97)},
+  month =       may # "~4--7",
+  publisher =   {IEEE Press},
+  address =     {Los Alamitos},
+  year =        {1997},
+}
+
+
+@book{concurrentml,
+author = {John H. Reppy},
+title = {Concurrent Programming in ML},
+publisher = {Cambridge University Press},
+address = {Cambridge, UK},
+year = 1999,
+}
+
+@inproceedings{needhamlauer78,
+author = {Hugh C. Lauer and Roger M. Needham},
+title = {On the Duality of Operating System Structures},
+booktitle = {Second International Symposium on Operating Systems, IRIA},
+month = oct,
+year = 1978,
+note = "Reprinted in {\em Operating Systems Review}, 13(2), April
+                  1979, pp. 3--19.",
+} 
+
+
+
+Programmers conventionally reason about correctness implicitly
+assuming all other programs behave correctly. It is not clear how this
+contributes to robustness in the face of imperfection.  
+
+
+In part~\ref{part:compose} we explain programs as plans executed by
+objects. When programmers formulate plans, they make assumption about
+the situations in which objects will follow their plans. Conflicting
+assumptions lead to corrupted executions. 
+
+
+
+
+assumption lead to fragile composition, in which corrupted behavior
+violates further assumption
+. We explain how programmers use conventional object design principles
+to organize assumptions so accidental conflicts are less likely. By
+extending these principles into defensive correctness, we
+
+
+
+Conventional software engineering helps programmers incrementally
+approach correctness by minimizing bugs---accidental program
+misbehaviors.  However, conventional correctness only demands that a
+component behave correctly when no other component misbehaves. Despite
+much progress, accidental misbehavior will remain common for the
+foreseeable future; and not all misbehavior is accidental.
+Conventional correctness reasoning does not help us reason about
+limiting the damage that misbehaving components can cause.
+
+Access control provides a framework for composing possibly misbehaving
+components, for limiting the damage they can cause, and for reasoning
+about these limits. However, conventional access control reasoning
+considers only the damage that would occur if all components might
+misbehave. It does not help us reason about building helpful
+components to limit the damage other components might do.
+
+
+
+
+Conventional software engineering practice helps reduce the likelihood
+of bugs---of accidental program misbehavior. However, we should expect
+bugs to remain quite common for the foreseeable future; and not all
+misbehavior is accidental. By practicing defensive consistency and
+least authority simultaneously at mutiple scales of composition, from
+organizations down through individual objects, we substantially reduce
+the damage most misbehavior, whether 
+
+
+
+In part~\ref{part:compose} we first explain how conventional good
+object design principles help object programmers structure
+assumptions, under local, sequential, and cooperative conditions, so
+that objects executing separately formulated plans are more likely to
+compose successfully; without conflicting assumptions. 
+
+
+References convey messages by which composed objects interact.
+Messages carry references by which objects are composed.  An object
+composes other objects by sending messages, carrying references
+enabling them to interact. Whether by accident or malice, if
+interacting objects behave in ways that violate each other's
+assumptions, their interaction can corrupt each other's continued
+execution, potentially corrupting other objects with which these are
+composed. When such corruption spreads too easily, composition is not
+robust.
+
+
+A message carries references composing other objects. A reference
+conveys messages by which composed objects interact. An object reacts
+to a message by following a plan expressed as a program.  Programmers
+write programs, making assumptions about the runtime situations of
+objects which will follow these plans. An object's situation is rooted
+in its position within the reference graph. To minimize assumptions
+between separately formulated plans, programmers abstract plans into
+purposes. By following its plan, an object should serve its purpose,
+assuming that certain other objects serve their purpose.
+
+If an object's situation violates its programmer's assumptions, its
+plan-following behavior will be corrupt---it will violate its
+programmer's purposes. Corrupt objects likely violate assumptions of
+other objects with which they are composed, potentially spreading
+corruption. 
+
+
+
+
+
+But sometimes, plans don't go according to purpose. 
+
+ based on assumptions about the runtime situation of
+the objects which will be following these plans.
+
+
+Programmers write programs, expressing plans for objects to follow.
+Whether through accident or malice, the resulting interactions may
+instead violate assumptions on which
+
+
+\markmsays{Unwritten. Just notes for now.}
+
+
+
+Programmers conventionally reason about correctness as if all programs
+are benign. Security theorists conventionally reason about access
+control as if all programs are hostile.
+
+
+
+Our enhanced reference graph consists of references in different
+states, where their message delivery abilities depends on their
+state. \emph{Near} references provide intra-vat synchronous access,
+allowing the composition of meaningful units of operation. Only
+\emph{eventual references} convey messages between event-loops, and
+deliver messages only in separately scheduled turns, providing
+temporal separation of plans. \emph{Promises} pipeline messages
+towards their likely destinations, compensating for
+latency. \emph{Broken references} safely abstract partition, and
+\emph{offline capabilities} abstract the right to reconnect.
+
+
+multiplicative reduction in systemic vulnerability
+
+
+ E, a
+distributed persistent object-capability programming language, extends
+the concept of the object-reference graph in order to provide the
+distributed access-control and concurrency-control needed for
+practical secure global computing.
+
+By restricting causality to flow only along the graph, E turns the
+reference graph into an access graph able to support fine-grained
+least authority. By restricting the ordering of these causal
+influences, E provides deadlock-free concurrency-control, able to
+maintain consistency in concurrent stateful systems.  
+
+
+
+We can now explain precisely how Java fails to be an object-capability
+language: It violates loader isolation by honoring non-innocuous magic
+names. Until Java 1.2, it was awkward but possible to use Java
+\cls{ClassLoader}s to provide loader isolation. The J-Kernel, covered
+in related work section~\ref{sec:j-kernel}, leveraged this to build a
+coarse-grain object-capability system on Java. The loader would be the
+class ClassLoader. Each state map would be represented by a different
+instance of ClassLoader, which would use the map to resolve
+imports. Each classfile loading would combine classfile code with a
+ClassLoader's state.
+
+In the J-Kernel, as in Java, classes can have mutable static
+variables. Therefore, as object creation primitives, constructor calls
+violate the ``by endowment'' restrictions: The instances they make
+have access beyond that provided by the construction arguments. But we
+can instead model static state as instance state of the class itself,
+and model constructor calls as messages to the class. Modeled this
+way, constructor calls obey the ``by introduction'' restrictions. In
+the J-Kernel, the object creation primitive obeying the ``by
+endowment'' restriction is ClassLoader creation. Each new ClassLoader
+resolves imports only according to the mapping provided by its
+creator. In the J-Kernel, by design, capability reasoning applied only
+to a rather coarse-grained composite: a ClassLoader together with all
+classes loaded by that loader and all instances of those classes.
+
+Unfortunately, starting in Java 1.2, in order to resolve conflicts
+with their own security model, ClassLoaders no longer provide this
+flexibility. Instead, if a class file imports a system class name, the
+ClassLoader's creator can no longer redirect the import. The Java 1.2
+ClassLoader honors magic names, so the J-Kernel no longer runs. Short
+of inspecting or transforming classfiles before loading them, it
+cannot be fixed.
+
+
+\section{Safe Linking, Modules, and Imports}
+
+
+
+\markmsays{Just notes from here}
+
+The expression \code{["x" => x, "y" => y]} builds a map of index
+\code{=>} reference associations. All ``linking'' happens only by
+virtue of these associations---only connectivity begets connectivity.
+
+\markmsays{part~\ref{part:robust}.}
+
+\markmsays{Where should this go? Needs heavy revision.}
+
+If Alice creates module Bob by importing data (such as a functor file)
+describing Bob's behavior, then Alice's importing context must
+explicitly provide bindings for all the free variables in this functor
+file, where these values must already be accessible to Alice. The
+imported Bob module must not be able to magically come into existence
+with authorities not granted by its importer. \markmsays{Where should
+this discussion of module import go?}
+  
+
+Bob attaches meaning to the arriving reference-to-Carol not
+based on any notion of who Carol actually is (what could this mean
+anyway?), but rather on the knowledge that someone with a reference to
+Bob (such as Alice) chose to tell Bob about Carol as the i'th argument
+of a \meth{foo} message to him.
+
+
+
+\markmsays{Explain assumptions, invariants, and invariant suspension
+  blocks (citing bitc). Immediate-calls turn lexical
+  assumption-suspension blocks into dynamically-scoped blocks. So,
+  while assumptions are suspended, eventual-sends are safer than
+  immediate-calls: They contain the dynamic scope of assumption
+  suspension.}
+
+\section{Remaining Hazards in our Framework}
+
+\markmsays{Need transition} 
+
+\markmsays{The following are just notes.}
+
+\begin{description}
+\item[Mutable State Hazards] Not purely functional or monadic, as
+  these aren't expressive enough. However, we encourage programming in
+  a mostly-functional style. For example, the clients of a DeepFrozen
+  object are automatically insulated from each other, and therefore
+  insulated from each other's misbehavior. Once we determine that a
+  DeepFrozen object is cooperatively consistent, we know it to be
+  defensively consistent without further case analysis.
+
+  But even if the remaining mutable state is rare, that's where all
+  the hard issues arise, so that's where we focus our efforts.
+
+\item[Remaining Lost Progress Hazards] Besides deadlock, there are
+  other kinds of bugs which can prevent a program from making
+  progress. While E doesn't have classic deadlock, it still has these
+  vulnerabilities, some of which resemble deadlock.
+
+  \begin{description}
+  \item[Livelock---infinite loops steal the vat's thread] An infinite
+    loop prevents this vat incarnation from ever again making
+    progress, just as it would prevent a conventional thread from
+    making progress. As with conventional threads, it does not prevent
+    other vats (threads) from making progress. Unfortunately, since
+    each E object is in only one vat, livelocking a vat does lock up
+    all objects within a vat. (This would be analogous to livelocking
+    a thread that holds a synchronized lock on several objects.)
+
+    Fortunately, for a persistent vat, this locks up only the vat
+    incarnation, not the vat itself. By killing the livelocked
+    incarnation, the vat can roll back to its last checkpoint, be
+    reincarnated, and proceed from there. Unfortunately, this doesn't
+    guarantee that it won't livelock again.
+
+    Turing's halting problem demonstrates the ultimate unsolvability
+    of this problem.
+  \item[Resource Exhaustion] \markmsays{say something}
+  \item[Gridlock---messages need space to move] Technically, this
+    looks like a classic deadlock, but it's caused specifically by
+    lack of outgoing buffers. The distinction between deadlock and
+    gridlock?  If more buffer space would have caused you not to have
+    locked up yet, then it's gridlock rather than deadlock.
+  \item[Pre-emptive Termination] \markmsays{say something}
+  \item[Datalock---recursive data definition with no bottom] This also
+    includes when-catches that are "waiting" (posted as callbacks for)
+    promises that the other would resolve.
+  \item[Lost Signal---overslept, forgot to set the alarm] If you have
+    a when-catch "waiting" (posted as a callback) for a promise to be
+    resolved, but in the code that's supposed to resolve it, you
+    forget to call "resolve" in all applicable cases. Of course,
+    actual lost signal bugs may be arbitrarily more complicated than
+    this.
+  \end{description}
+
+\item[Type Mismatch] Static vs. Dynamic type safety. Why dynamic type
+  mismatches still fail safe, even without guards. How guards
+  help. Point about coverage. Why Fred's static checks are important:
+  the surprises they protect against don't fail safe.
+\item[CPOF size and corruption] 
+\item[aliasing] Raises many assumption violation hazards including
+  recursive entry hazards: including both plan interleaving and
+  infinite recursion. Somehow mostly avoidable in practice, but how is
+  mysterious. Similar to Datalock mystery: may be the same mystery.
+\end{description}
+
+In Figure~\ref{ecode:makeCounterPair} we see the objects and
+relationships resulting from each call to \code{makeCounterPair}. The
+stacking represents that a new triple is created by each call. Each
+triple is visualized as a single composite. This view shows that
+\code{makeCounterPair} is in scope of all objects within the
+composite, and so any of them \emph{might} reference it.
+
+\markmsays{Where should the following text go?}
+
+E's computational model extends across the network.  An eventual
+reference in a vat can refer to an object in a vat on another machine;
+eventual-sends to that reference are sent across an encrypted,
+authenticated link and posted as pending deliveries for the target
+object on the remote vat.
+
+
+
+In the sequential program
+%
+\begin{ecode}
+bob.foo(carol)
+joe.zap()
+\# bob.foo(carol) \(\prec\) joe.zap()
+\end{ecode}
+%
+we don't know that the \code{zap()} message will actually be delivered
+to Joe, for example because Bob's \meth{foo} may throw an
+exception. However, we do know that this code would only cause the
+\code{zap()} message to be delivered to Joe after the \code{foo()}
+message was already delivered to Bob. We also know that (a single
+execution of) this code will cause each of these messages to be
+delivered to their recipients at most once. Sequential programmers
+rely on such guarantees without thinking about them. Unfortunately, it
+would require simulating globally synchronous time to preserve these
+guarantees, which we can't afford to do
+\cite{smith94security}. Unfortunately, any weakening of these
+guarantees creates hazards, since more ordering possibilities create
+more cases to worry about, and since some of these new cases are
+easily overlooked by formerly sequential programmers. \order{E-ORDER}
+is such a weaker order, so to program robustly with it we must
+understand its hazards. For this purpose, we introduce the $\prec$
+operator to mean that the delivery of \code{zap()} to the object
+designated by \var{joe} won't happen until and unless
+\code{foo(carol)} has already been delivered to the object designated
+by \var{bob}. Each sub-expression stands for a pending delivery---a
+delivery of a message to a recipient that is supposed to happen at
+some future time, and that must happen at most once. The expression as
+a whole is a \emph{fail-stop message ordering constraint}.
+
+\begin{ecode}
+bob <- foo(carol)
+joe <- zap()
+\# bob.foo(carol) \(\not\prec\) joe.zap()
+\end{ecode}
+%
+\begin{ecode}
+bob <- foo(carol)
+bob <- zap()
+\# bob.foo(carol) \(\prec\) bob.zap()
+\end{ecode}
+%
+\begin{ecode}
+bob <- foo(carol)
+bob.zap()
+\# if (Ref.isNear(bob)) \{ bob.zap() \(\prec\) bob.foo(carol) \}
+\end{ecode}
+%
+
+
+\begin{shapdropenv}
+\section{Elements of Robustness}
+
+\markmsays{Just notes}
+
+We divide the notion of spec (whether formal or informal) into
+purposes and hazards.
+
+A robust component generally fulfills its purposes.
+
+When a robust component fails to fulfil it purposes, it generally
+fails safe.
+
+Can avoid or cope with hazards, with only a reasonable case analysis
+burden.
+
+Consistency is correspondence of plan assumptions to runtime reality.
+
+Continued proper functioning.
+
+Inconsistency is corruption.
+
+Containing corruption contagion.
+
+Example: i+j
+
+Spec says modular signed arithmetic addition. Likely purpose in actual
+programs is integer addition.
+
+Realizable machines can't provide integer arithmetic, only some
+limited approximation.
+
+The difference between likely purpose and what's implementable
+creates hazards.
+
+Eye of the beholder: hazards depend on purposes and assumptions.
+
+A hazard is a case that's likely to cause the violation of an
+assumption.
+\end{shapdropenv}
+
+
+In just the way that we learn not to touch a hot stove without any
+longer needing to think about it, programmers learn, by being burnt,
+what kinds of cases should be expected to be hazardous, and to stay
+away from them.
+
+In the object model of computation, references combine designation and
+access in just the way suggested by the \fname{cat} example above. In
+the initial conditions of Figure~\ref{fig:granovetter-peek}, let's say
+object Alice holds a reference to object Bob in her instance variable
+\var{bob}, and holds a reference to object Carol in her instance
+variable \var{carol}. When Alice then executes \code{bob.foo(carol)},
+she invokes Bob, passing as an argument, not the name \code{"carol"},
+but rather what \code{"carol"} evaluates to in her name space---a
+reference to Carol. When Bob receives the \meth{foo} message, he
+doesn't know or care what variable name Alice used to refer to the
+argument. 
+
+In the extreme case, one object may actively intend to disrupt the plans
+of another.  This leads us to examine plan coordination in the
+presence of malicious behavior.  The topic is of interest both because
+large and distributed systems in practice need to handle potentially
+malicious components, and because analysis of the malicious case can
+help uncover hazards that are already present in the non-malicious case.
+
+By access control paradigm we mean an access control model plus a way
+of thinking---a sense of what the model means, or could mean, to its
+practitioners, and of how its elements should be used.
+
+\emph{Note: missing: avoiding explosive case analysis}
+
+\shapsays{There is a gap here that needs to be filled. In the
+  paragraph above, you are talking about composition and safety. In
+  the paragraph below you begin to talk about object programming. No
+  transitional connection is apparent. I \emph{think} what you are
+  trying to say here is that object programming is currently the best
+  compositional paradigm we have, but the lead sentence doesn't work
+  that way.}
+
+\shapsays{What is meant by ``benign conditions''? Why is it relevant,
+  and does addressing the problem of benign conditions satisfy the
+  thesis objective?}
+
+\shapsays{To my mind, the transition into the reference graph
+  discussion is the place to frame the claim. The essential claim of
+  the E work is that causality is intrinsically tied to the (extended)
+  reference graph, so if you can get the right kinds of framing and
+  encapsulation here, you have a basis for containing and managing
+  issues. I'm not sure that I am capturing this correctly, so feel
+  free to substitute, but \emph{say} it. It could be simply that the
+  following paragraph needs to be split into two, the first of which
+  provides transition and the second of which describes how the thesis
+  relates to the reference graph. Not sure.}
+
+\shapsays{WHAT IS THE CLAIM THAT THIS THESIS SUBSTANTIATES?}
+
+\shapsays{Ah. Actually, you answer much of this in your
+  ``organization'' section. Perhaps what is needed is to first state
+  what the parts of the problem are without reference to the
+  organization of the thesis, and briefly mention how the parts of the
+  thesis. Then in the ``organization'' section, describe how the parts
+  of the thesis relate to the parts of the problem.}
+
+\shapsays{Do you want to say something to the effect that ``defensive
+  consistency'' involves encapsulation of control flow as dependencies
+  as well as interface/implementation dependencies? This seems novel,
+  but I'm not sure you have supporting text for it ready to hand.}
+
+
+% ------
+
+Plan Coordination =
+    plan composition (realize cooperative opportunities)
+    + plan separation (avoid destructive interference)
+
+Programmers express plans for machines to run
+    Plan must handle all relevant contingencies
+    Danger: explosive case analysis
+
+OO works ``in the small''---local, sequential, benign
+    Abstraction reduces relevant cases
+
+Can we support plan coordination at Internet scale?
+    asynchronous, distributed, possibly malicious
+    Existing separate solutions don’t compose well
+
+Plan Coordination Challenges
+    for Internet-scale distributed computing
+
+Extend virtues of oo-languages
+    among mutually defensive objects
+    on mutually defensive machines
+    without undue vulnerability.
+
+Let objects interact asynchronously
+    in partially predictable order
+    with distant machines
+    that may not be reachable.
+
+Novelty mostly in integration, linguistic support
+
+
+\chapter{Introduction}
+
+Programmers write programs, expressing plans for machines to
+execute. When we compose programs, so they may cooperate, they may
+instead interfere with each other in unanticipated ways. \emph{Plan
+coordination} is the art of simultaneously enabling plans to
+cooperate, while avoiding hazards of destructive plan
+interference.
+
+Our premise is that lambda abstraction and object programming, by
+their impressive plan coordination successes in the small, have the
+seeds for coordinating plans in the large. As Alan Kay has urged
+\cite{kay:ma}, our emphasis is less on the objects and more on the
+interstitial fabric which connects them: the dynamic reference graph
+carrying the messages by which their plans interact.
+
+Encapsulation separates objects so their plans can avoid disrupting
+each other's assumptions. Objects compose plans by message passing
+while respecting each other's separation. However, when client objects
+request service from provider objects, their continued proper
+functioning is often vulnerable to their provider's misbehavior. When
+providers are also vulnerable to their clients, corruption is
+potentially contagious over the reachable graph in both directions,
+severely limiting the scale of systems we can compose.
+
+Reduced vulnerability helps contain corruption. In this dissertation,
+we draw attention to a specific composable standard of robustness:
+when a provider is \emph{defensively consistent}, none of its clients
+can corrupt it or cause it to give incorrect service to any of its
+well-behaved clients, thus protecting its clients from each
+other. When a system is composed of defensively consistent
+abstractions, to a good approximation, corruption is contagious only
+upstream. (Further vulnerability reduction beyond this standard is, of
+course, valuable and often needed.)
+
+In Internet-scale computing, machines proceed concurrently, interact
+across barriers of large latencies and partial failure, and must cope
+with each other's misbehavior. Each dimension presents new plan
+coordination challenges.
+
+This dissertation explains how, by changing only a few concepts of
+conventional sequential object programming, the E language addresses
+these joint challenges.
+
+The fundamental constraint we face as programmers is complexity. It
+might seem that we could successfully formulate plans only for systems
+we can understand. Instead, every day, programmers successfully
+contribute code towards working systems too complex for anyone to
+understand \emph{as a whole}. We make use of modularity and
+abstraction mechanisms to construct systems whose component plans we
+can understand piecemeal, and whose compositions we can understand
+without fully understanding each plan being composed.
+%
+\begin{quote}
+Programmers are not to be measured by their ingenuity and their logic
+but by the completeness of their case analysis.
+\begin{flushright}
+---Alan Perlis
+\end{flushright}
+\end{quote}
+%
+In the human world, when you plan for yourself, you make assumptions
+about future situations in which your plan will unfold. Occasionally,
+someone else's plan may interfere with yours, invalidating the
+assumptions on which your plan is based. To plan successfully, you
+need some sense of which assumptions are usually safe from such
+disruption. You do not need to anticipate every possible contingency,
+however. If someone does something you did not expect, you will
+probably be better able to figure out how to cope at that time anyway.
+
+To formulate plans for machines to execute, programmers must also make
+assumptions. When separately formulated plans are composed,
+conflicting assumptions can cause the run-time situation to become
+\emph{inconsistent} with a given plan's assumptions, leading it
+awry. By dividing the state of a computational system into separately
+encapsulated objects, and by giving objects limited access to each
+other, we limit outside interference and extend the range of
+assumptions our programs may safely rely upon.\footnote{
+%
+This view of encapsulation and composition parallels Hayek's
+explanation of how property rights protect human plans from
+interference and how trade brings about their cooperative alignment
+\cite{Hayek:1945:UKS}. See \cite{miller:agoric,tulloh:abstraction} for
+more.
+%
+} Beyond these assumptions, correct programs must handle all relevant
+contingencies. By abstraction, we limit one object's need for
+knowledge of others, reducing the number of cases which are
+relevant. However, even under sequential and benign conditions, the
+remaining case analysis can still be quite painful.
+
+Under concurrency, an object's own plans may destructively interfere
+with each other. In distributed programming, asynchrony and partial
+failure limit an object's local knowledge of relevant facts,
+increasing the number of relevant cases it must consider. In secure
+programming, we carefully distinguish those objects whose good
+behavior we rely on from those we don't, but we seek to cooperate with
+both. Confidentiality further constrains local knowledge; deceit and
+malice are further sources of possible plan interference. Each of
+these dimensions threatens an explosion of new cases we must
+consider. To succeed, we must find ways of reducing the size of the
+resulting case analysis.
+
+Access control systems must be evaluated in part on how well they
+enable one to distribute the access rights needed for cooperation,
+while simultaneously limiting the propagation of rights which would
+create vulnerabilities.
+
+But access control per se is about what objects can cause what effects
+on what other objects. It abstracts away from the detailed temporal
+reasoning about the timing of these effects needed for preserving
+consistency. Concurrency control per se is about controlling when
+effects may happen to what, but abstracts away from the issue of what
+objects can cause these effects.
+
+The key insight of the object-capability model of access
+control is that the update rules of the original capability model of
+computation [DVH] are identical to those of the object reference
+graph. By restricting causal influence to flow only along the graph,
+the reference graph becomes the access graph.
+
+If a snapshot of the reference graph is thought of as a ``space'',
+``what object'' is a position in that space. Access control reasons
+about the flow of causality on graphs mostly spatially. Except for
+revocation, most reasoning about time is in terms of the closure of
+potential authority, which is a monotonic abstraction of time. Part 1
+of this thesis, Paradigm Regained, presents the object capability
+model which abstracts away from concurrency control issues by
+specifying only that a sent message is received and processed after it
+is sent, but not otherwise constraining temporal relations. By itself,
+it does not provide adequate temporal controls for maintaining
+consistency. All actual capability systems, therefore, augment the
+general model with some concurrency control discipline for so
+constraining temporal relationships.
+
+Under shared-state concurrency---conventional multi-threading---we
+have shown by example that defensive consistency is unreasonably
+difficult. We have explained how an alternate concurrency-control
+discipline, communicating event-loops, supports creating defensively
+consistent objects in the face of concurrency and distribution. Our
+enhanced reference graph consists of references in different states,
+where their message delivery abilities depends on their state. Only
+\emph{eventual references} convey messages between event-loops, and
+deliver messages only in separately scheduled turns, providing
+temporal separation of plans. \emph{Promises} pipeline messages
+towards their likely destinations, compensating for
+latency. \emph{Broken references} safely abstract partition, and
+\emph{offline capabilities} abstract the ability to reconnect.
+
+The most distinctly novel contribution of this author is the invention
+of the distinct reference states and the transitions among them
+explained in this thesis. With these rules, E bridges the gap between
+the network-as-metaphor view of the early Smalltalk and the
+network-transparency ambitions of Actors. In E, the local case is
+strictly easier than the network case, so the guarantees provided by
+near references are a strict superset of the guarantees provided by
+other reference states. When programming for known-local objects, a
+programmer can do it the easy way. Otherwise, the programmer must
+address the inherent problems of networks.  Once the programmer has
+done so, the same code will painlessly also handle the local case
+without requiring any further case analysis.
+
+With this augmented reference graph, the evolution of potential
+temporal causal influences---the subject of concurrency
+control---fits well within the object-capability model for controling
+authority.
+
+% ---------------
+
+When programmers compose programs so that they may cooperate, they may
+instead interfere with each other in unanticipated ways. This
+disseration presents a framework---a computational model and a set of
+design rules---for the construction of composable components, and for
+their composition. We show how to use this framework to enable those
+interactions between components needed for the cooperation programmers
+intend, while simultaneously minimizing the cases of destructive
+interference programmers must guard against. Starting from sequential
+single-machine programming under benign conditions, we proceed to show
+how to handle concurrent, distributed, and potentially misbehaving
+components within the same overall framework. We present the E
+language as an embodiment of this framework, and illustrate these
+points with examples in E.
+
+When programmers write programs, they express static plans for
+machines to execute. As with any plans, the correctness of a program
+depends on assumptions about the dynamic situations in which the plan
+will unfold---i.e., the runtime situations in which the program will
+execute. When interacting programs embody conflicting assumptions, the
+runtime situation can become inconsistent with a given plan's
+assumptions, leading it awry. \emph{Plan coordination} is the art of
+simultaneously enabling plans to cooperate, while avoiding hazards of
+destructive plan interference.
+
+Within a single machine, under sequential and benign conditions, Part
+I of this dissertation explains the success of object programming in
+plan coordination terms. Encapsulation separates objects so their
+plans can avoid disrupting each other's assumptions. Objects compose
+plans by passing messages, where these messages ideally abstract
+\emph{what} service is being requested from \emph{how} the provider
+provides the service and \emph{why} the requestor desires the service
+\cite{tulloh:abstraction}. Crucially, when messages between objects
+are limited to flow only only along the reference graph, we can use
+the limited potential connectivity of the graph to reduce the cases of
+interaction we need consider.
+
+But when client objects request service from provider objects, their
+continued proper functioning is often vulnerable to their provider's
+misbehavior. When providers are also vulnerable to their clients,
+corruption is potentially contagious over the reachable graph in both
+directions, severely limiting the scale of systems we can compose.
+
+Reduced vulnerability helps contain corruption. In Part I, we draw
+attention to a specific composable standard of robustness: when a
+provider is \emph{defensively consistent}, none of its clients can
+corrupt it or cause it to give incorrect service to any of its
+well-behaved clients, thus protecting its clients from each
+other. When a system is composed of defensively consistent
+abstractions, to a good approximation, corruption is contagious only
+upstream. (Further vulnerability reduction beyond this standard is, of
+course, valuable and often needed.)
+
+To support the creation of defensively consistent objects, we start by
+restricting all inter-object causality to be conveyed only by messages
+sent on references. With this restriction, we obtain the
+object-capability access control framework. The object-capability
+model has been thought unable to enforce various access control
+policies. In Part II, we show how these policies may be easily
+expressed and enforced using abstraction, and explain why this means
+of enforcement was widely overlooked by the prior literature.
+
+In Part III, we stretch the reference graph between machines,
+leveraging the above strengths for internet-scale distributed
+programming. Separate machines proceed concurrently, interact across
+barriers of large latencies and partial failure, and must cope with
+each other's misbehavior. Each dimension presents new plan
+coordination challenges. Part III starts by illustrating the
+difficulty of defensive consistency using the traditional shared-state
+concurrency control discipline (also known as shared-memory
+multithreading with fine-grained locking). 
+
+The most distinctly novel contribution of this author is the invention
+of the distinct reference states and the transitions among them
+explained in this dissertation. Our enhanced reference graph consists
+of references in different states, where their causal message delivery
+properties depend on their state. Our alternative concurrency control
+discipline---communicating event loops with promise
+pipelining---emerges from these rules, supports defensive consistency
+while dealing with many of the problems of distribution: concurrency,
+partial failure, latency, and misbehaving machines.
+
+With this augmented reference graph, the evolution of potential
+temporal causal influences---the subject of concurrency control---fits
+well within the object-capability model for controling authority.
+
+% -------------
+
+Software systems are composed of separately written programs. Each
+program relies on certain assumptions about the runtime situations in
+which it will execute. Beyond these assumptions, correct programs must
+handle all relevant contingencies. When programs are composed,
+conflicting assumptions can cause the runtime situation to become
+inconsistent with the assumptions on which a given component relies,
+leading it astray. Both the need to reconcile assumptions, and the
+need to handle all relevant contingencies beyond the allowed
+assumptions, threatens an explosive case analysis. 
+
+% -------------
+
+
+
+
+\emph{Canonical introduction:}
+
+\begin{enumerate}
+\item What is the problem?
+\item What is the approach to solution?
+\item What did we do here (in this thesis)? What did we show? What is
+  the contribution here?
+\item Organization of the document to follow. 
+\end{enumerate}
+
+\section{Problem Statement}
+\emph{Three sentence version of the problem:}
+
+
+  How to go about writing software so that separately written
+  components can be successfully composed together to create ever
+  greater functionality
+
+  We need both a framework and a set of design rules for enabling the
+  interaction between the components that is needed for the
+  cooperation we intend while minimizing the hazard of interactions
+  that cause destructive interference.
+
+  \emph{Don't we also need a means to capture/reflect what the
+    contract is? Auditors?}
+
+  Most current approaches to expressing ??? rely on ACLs and SMMFGL.
+  These approaches fail to exploit a fundamental property of
+  object-based systems: the consequences of computation are
+  intrinsicly limited by the reachability properties embedded in the
+  object reference graph. By failing to exploit this intrinsic
+  limitation, these approaches ... \emph{what happens: lack of
+    naturalness, scalability, complexity}. 
+
+  A program is a statically formulated plan (that is formulated ahead
+  of time) that depends on a set of assumptions about the (dynamic)
+  run-time environment in which the plan will unfold (i.e. the program
+  will execute). Inconsistency is any violation of the assumptions on
+  which the plan was predicated.  Correct composition of components
+  requires communication (... to establish liveness) while avoiding
+  those interactions that cause inconsistency (by violating safety).
+  \emph{Something about negotiation to check assumptions is getting
+    lost here.} \emph{Issue: need to avoid inconsistency in two
+    phases: negotiation and runtime.}
+
+
+  We want to enable liveness while preserving safety.
+
+  \emph{Work in the notion of (de)compositional consistency and
+    limiting the scope (magnitude?) of reliance.}
+
+  This is already hard to do, so we want means to express it directly
+  within the programming system.
+
+
+\section{Solution}
+\emph{Three sentence version of the solution:}
+
+  Missing link is to focus on the reference graph as the means by
+  which objects interact with each other (causality). From the
+  capability literature it is well known (\emph{Really? According to
+    whom?}) that if the reference graph is the exclusive means of
+  causality, then the limited connectivity of the reference graph is
+  the (\emph{You mean ``THE.'' Nice theology. Stick to science.}) way
+  to express access control.
+
+  \emph{Our rework:} In object-based systems, the object reference
+  graph imposes limits on the effects of program behavior. If
+  exploited properly, restrictions on the evolution of the reference
+  graph can be used to enforce encapsulation and to organize and
+  control the flow of communication in a distributed system. This
+  control can be used to enforce both access control and
+  consistency---access control by limiting the authority of entities
+  in the distributed system, and consistency by maintaining the
+  relationship between message arrival order and causality.
+
+  The E programming system differs from previous work by exploiting
+  this \emph{... say something about how.}
+
+
+\emph{Contribution of this thesis:}
+section{Contribution of This Dissertation}
+
+The main contribution of this dissertation is to show how consistency
+emerges from referential causality, and how this fact can be embedded
+in a programming language and communication substrate in a way that
+makes maintainance of consistency natural.
+
+
+\section{Organization of the Dissertation}
+
+The following chapters are organized as follows:
+

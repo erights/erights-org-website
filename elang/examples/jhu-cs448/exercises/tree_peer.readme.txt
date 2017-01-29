@@ -1,0 +1,38 @@
+
+# Copyright 2004 Pavan Piratla, Nilo Rivera and Sandeep Ranade under the terms 
+# of the MIT X license
+# found at http://www.opensource.org/licenses/mit-license.html ................
+
+# The above copyright notice was added by Mark S. Miller after obtaining
+# verbal permission from the three authors to do so.
+
+To start supervisor, type:
+  rune tree_sup.e
+
+Then to initialize the tree, type:
+  rune tree_peer.e NodeName
+
+For example, a 7 node tree could be initialize as follows:
+
+rune tree_peer.e A
+rune tree_peer.e B
+rune tree_peer.e C
+rune tree_peer.e D
+rune tree_peer.e E
+rune tree_peer.e F
+rune tree_peer.e G
+
+Then, on a separate cigwin console, you may connect
+to any of the nodes and start a broadcast/leave. The 
+node file names end with assinged nave above.
+
+introducer.onTheAir()
+def uriA := <file:tree-peer-A.cap>.getText()
+def pA := introducer.sturdyFromURI(uriA).getRcvr()
+def uriC := <file:tree-peer-C.cap>.getText()
+def pC := introducer.sturdyFromURI(uriC).getRcvr()
+
+pA <- Broadcast("Johns", null)
+pC <- Broadcast("Hopkins", null)
+pC <- Leave()
+pA <- Broadcast("University", null)

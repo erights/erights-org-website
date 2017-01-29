@@ -1,0 +1,765 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Kernel Reference</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">kernel</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../images/prev-gray.gif" width="64" height="32"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" -->x<!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="IntegerLiteral.html"><img src="../../images/next.gif" width="64" height="32" alt="On to: Integer Literal Expression" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>Kernel
+              E Reference</b></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <P ALIGN="left"><i>(The old PDF document, <a href="../elangmanual.pdf">The
+        Kernel-E Language Reference Manual</a>, is now out of date, but still
+        contains information we have not yet migrated to these pages. It is deprecated
+        but useful.)</i>
+      <P ALIGN="left">The E language is specified in layers. At the bottom is
+        the E kernel language. The kernel language is a subset of the regular
+        E language -- every program written in Kernel E is also a valid E program
+        with the same meaning. The remainder of E's grammar outside the kernel
+        subset is E's sugar (see <a href="../grammar/index.html">The E Language
+        Grammer</a>). The semantics of the sugar is defined by canonical expansion
+        to Kernel <i><b><font color="#009000">E</font></b></i>. This expansion happens during parsing -- E parse trees only
+        contain nodes defined by Kernel E -- so only these are executed by the
+        virtual machine.
+      <P ALIGN="left">To give a semantics of Kernel E it suffices to write an
+        executable specification of the virtual machine as an interpreter of such
+        parse trees. Following a venerable tail-biting tradition, this chapter
+        presents such an interpreter written in the full E language. (An interpreter
+        written in the same language it interprets is called a Meta-Interpreter.)
+      <P ALIGN="left">Unfortunately, this does cause some circular-definition
+        ambiguity. In Brian Smith's terminology[?], the interpreter absorbs some
+        issues by mapping them onto the same issues in the language in which the
+        interpreter is written. When these are the same languages, this leaves
+        some issues unresolved. For the moment, we resolve these ambiguities only
+        informally in the text. (The bootstrap E interpreter is essentially a
+        transliteration into Java of the interpreter presented here. Since Java's
+        definition does not depend on E, and the source to this bootstrap interpreter
+        is <a href="../../download/index.html">available</a>, this should adequately
+        resolve these circular ambiguities for present engineering purposes.)
+      <P ALIGN="left">Since this chapter is not concerned about surface syntax,
+        the BNF statements of the kernel productions leave out non-structural
+        grammatical detail, such as issues of precedence and associativity. See
+        <a href="../grammar/index.html">The E Language Grammar</a> for these.
+      <h1 ALIGN="left"><a name="quick-ref"></a>E Kernel Language Quick Reference
+        Card</h1>
+      <P ALIGN="left">In the pseudo-BNF used here, Terminals (tokens emitted by
+        the lexer) are either quoted bold-faced strings, or are names that begin
+        with an upper-case letter. Non-terminals (forms defined by this grammar)
+        are names that begin with a lower-case letter. Square brackets around
+        a form means the appearance of the form is optional. An asterisk suffix
+        means zero or more repetitions of that form, and a plus sign suffix means
+        one or more repetitions.
+      <p ALIGN="left">Since we define our semantics in terms of parse trees (technically,
+        abstract syntax trees), we need to be concrete about their form. As explained
+        <a href="../grammar/quasi-xml.html">here</a>, E is moving towards using
+        <a href="http://www.docuverse.com/smldev/index.html">Minimal-XML</a> <a href="../../javadoc/org/capml/dom/package-summary.html">DOM
+        trees</a> as its normal parse tree representation, including for E itself.
+        <a href="kernel-e-0.8.9e.dtd">The Kernel-E DTD</a> is the current draft
+        XML DTD for representing Kernel-E programs. Each of the following pages
+        displays the part of this DTD that pertains to it. </p>
+      <p ALIGN="left">Productions beginning with an upper-case letter correspond
+        to terminals in the grammer, and to Minimal-XML <i>elements</i> containing
+        character data. Productions beginning with a lower-case letter correspond
+        to non-terminals, and to Minimal-XML elements containing other elements.</p>
+      <table cellpadding="6">
+        <tr>
+          <th colspan="2">
+            <pre><i>eExpr</i>: any of the following</pre>
+          </th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i>literalExpr</i>:</pre>
+          </td>
+          <td>
+            <pre><a href="IntegerLiteral.html">Integer</a> | <a href="Float64Literal.html">Float64</a> | <a href="CharLiteral.html">Char</a> | <a href="StringLiteral.html">String</a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><a href="NounExpr.html">Noun</a>:</pre>
+          </td>
+          <td>
+            <pre>Identifier<i></i></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="AssignExpr.html">assignExpr</a></i>:</pre>
+          </td>
+          <td>
+            <pre>Noun &quot;<b>:=</b>&quot; <i>eExpr</i></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="SeqExpr.html">seqExpr</a></i>:</pre>
+          </td>
+          <td>
+            <pre><i>eExpr</i> (&quot;<b>\n</b>&quot;, <i>eExpr</i>)*</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="MatchBindExpr.html">matchBindExpr</a></i>:</pre>
+          </td>
+          <td>
+            <pre><i>eExpr</i> &quot;<b>=~</b>&quot; <i>pattern</i></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="DefineExpr.html">defineExpr</a></i>:</pre>
+          </td>
+          <td>
+            <pre>&quot;<b>def</b>&quot; <i>pattern</i> &quot;<b>:=</b>&quot; <i>eExpr</i></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="HideExpr.html">hideExpr</a></i>:</pre>
+          </td>
+          <td>
+            <pre>"<b>{</b>" <i>eExpr</i> "<b>}</b>"</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="IfExpr.html">ifExpr</a></i>:</pre>
+          </td>
+          <td>
+            <pre>"<b>if</b>" "<b>(</b>" <i>eExpr</i> "<b>)</b>" "<b>{</b>"
+    <i>eExpr</i>
+"<b>}</b>" "<b>else</b>" "<b>{</b>"
+    <i>eExpr</i>
+"<b>}</b>"</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="EscapeExpr.html">escapeExpr</a></i>:</pre>
+          </td>
+          <td>
+            <pre>"<b>escape</b>" <i>simplePattern</i> "<b>{</b>" <i>eExpr</i> "<b>}</b>"</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="CatchExpr.html">catchExpr</a></i>:</pre>
+          </td>
+          <td>
+            <pre>"<b>try</b>" "<b>{</b>"
+    <i>eExpr</i>
+"<b>}</b>" "<b>catch</b>" <i>pattern</i> "<b>{</b>"
+    <i>eExpr</i>
+"<b>}</b>"</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="FinallyExpr.html">finallyExpr</a></i>:</pre>
+          </td>
+          <td>
+            <pre>"<b>try</b>" "<b>{</b>"
+    <i>eExpr</i>
+"<b>}</b>" "<b>finally</b>" "<b>{</b>"
+    <i>eExpr</i>
+"<b>}</b>"</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="CallExpr.html">callExpr</a></i>:</pre>
+          </td>
+          <td>
+            <pre><i>eExpr</i> Verb [&quot;<b>(</b>&quot; <i>eExpr</i> (&quot;<b>,</b>&quot; <i>eExpr</i>)* &quot;<b>)</b>&quot;]</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="SendExpr.html">sendExpr</a></i>:</pre>
+          </td>
+          <td>
+            <pre><i>eExpr</i> &quot;<b>&lt;-</b>&quot; Verb [&quot;<b>(</b>&quot; <i>eExpr</i> (&quot;<b>,</b>&quot; <i>eExpr</i>)* &quot;<b>)</b>&quot;]</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="ObjectExpr.html">objectExpr</a></i>:</pre>
+          </td>
+          <td>
+            <pre>[&quot;<b>/**</b>&quot; <i>docComment</i>
+  &quot;<b>*/</b>&quot;] &quot;<b>def</b>&quot; (String | &quot;<b>_</b>&quot;) <i>auditors</i> <i>behavior</i></pre>
+            <p><tt><i># objectExpr</i></tt> is therefore <tt><i>methodicalExpr</i>
+              | <i>plumbingExpr</i></tt></p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre>&nbsp;&nbsp;<i><a href="MethodicalExpr.html">methodicalExpr</a></i>:</pre>
+          </td>
+          <td>
+            <pre>[&quot;<b>/**</b>&quot; <i>docComment</i>
+  &quot;<b>*/</b>&quot;] &quot;<b>def</b>&quot; (String | &quot;<b>_</b>&quot;) <i>auditors</i> <i>eScript</i></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre>&nbsp;&nbsp;<i><a href="PlumbingExpr.html">plumbingExpr</a></i>:</pre>
+          </td>
+          <td>
+            <pre>[&quot;<b>/**</b>&quot; <i>docComment</i>
+  &quot;<b>*/</b>&quot;] &quot;<b>def</b>&quot; (String | &quot;<b>_</b>&quot;) <i>auditors</i> <i>matcher</i></pre>
+          </td>
+        </tr>
+        <tr>
+          <th colspan="2" valign="top">
+            <pre><i>pattern</i>: any of the following</pre>
+          </th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i>simplePattern</i>:</pre>
+          </td>
+          <td>
+            <pre><i>finalPattern</i> | <i>varPattern</i> | <i>ignorePattern</i></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="FinalPattern.html">finalPattern</a></i>:</pre>
+          </td>
+          <td>
+            <pre>Noun &quot;<b>:</b>&quot; <i>eExpr</i></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="VarPattern.html">varPattern</a></i>:</pre>
+          </td>
+          <td>
+            <pre>&quot;<b>var</b>&quot; Noun &quot;<b>:</b>&quot; <i>eExpr</i></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="IgnorePattern.html">ignorePattern</a></i>:</pre>
+          </td>
+          <td>
+            <pre>&quot;<b>_</b>&quot;</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="SuchThatPattern.html">suchThatPattern</a></i>:</pre>
+          </td>
+          <td>
+            <pre><i>pattern</i> &quot;<b>?</b>&quot; <i>eExpr</i></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="ListPattern.html">listPattern</a></i>:</pre>
+          </td>
+          <td>
+            <pre>"<b>[</b>" [<i>pattern</i> (&quot;,&quot; <i>pattern</i>)*] "<b>]</b>"</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="CdrPattern.html">cdrPattern</a></i>:</pre>
+          </td>
+          <td>
+            <pre><i>listPattern</i> "<b>+</b>" <i>pattern</i></pre>
+          </td>
+        </tr>
+        <tr>
+          <th colspan="2" valign="top">
+            <pre>Helper Productions</pre>
+          </th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="Auditors.html">auditors</a></i>:</pre>
+          </td>
+          <td>
+            <pre>[&quot;<b>::</b>&quot; Noun (&quot;<b>,</b>&quot; Noun)*]</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="EMethod.html">eMethod</a></i>:</pre>
+          </td>
+          <td>
+            <pre>[&quot;<b>/**</b>&quot; <i>docComment</i>
+  &quot;<b>*/</b>&quot;] &quot;<b>to</b>&quot; Verb [&quot;<b>(</b>&quot; <i>pattern</i> (&quot;<b>,</b>&quot; <i>pattern</i>)* &quot;<b>)</b>&quot;] &quot;<b>:</b>&quot; <i>eExpr</i> &quot;<b>{</b>&quot;
+    <i>eExpr</i>
+&quot;<b>}</b>&quot;</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i><a href="Matcher.html">matcher</a></i>:</pre>
+          </td>
+          <td>
+            <pre>&quot;<b>match</b>&quot; <i>pattern</i> &quot;<b>{</b>&quot; <i>eExpr</i> &quot;<b>}</b>&quot;</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><a href="EScript.html"><i>eScript</i></a>:</pre>
+          </td>
+          <td>
+            <pre>&quot;<b>{</b>&quot; <i>eMethod</i>* <i>matcher</i>? &quot;<b>}</b>&quot;</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i>behavior</i>:</pre>
+          </td>
+          <td>
+            <pre><i>eScript</i> | <i>matcher</i></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre><i>docComment</i>:</pre>
+          </td>
+          <td>
+            <pre>(Text | DocTag)*</pre>
+          </td>
+        </tr>
+        <tr>
+          <th colspan="2" valign="top">
+            <pre>Terminals
+(in addition to the literals and quoted terminals above)</pre>
+          </th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre>Verb:</pre>
+          </td>
+          <td>
+            <pre>Identifier</pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre>Identifier</pre>
+          </td>
+          <td>
+            <pre>  (IdentStart)(IdentPart)*
+| &quot;<b>_</b>&quot;(IdentPart)+</pre>
+            <p>Since &quot;<b>_</b>&quot; by itself is a keyword</p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre>Text</pre>
+          </td>
+          <td>Arbitrary text within a <i><tt>docComment</tt></i>.</td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <pre>DocTag</pre>
+          </td>
+          <td>
+            <pre>&quot;<b>@</b>&quot; Identifier Text</pre>
+          </td>
+        </tr>
+      </table>
+      <h1 ALIGN="left"><a name="meta-setup"></a>Meta-Interpreter Setup </h1>
+      <h3 ALIGN="left">Specification by Meta-Interpreter Enhancement </h3>
+      <P ALIGN="left">Defining a computational model that deals with security,
+        upgrade, and debugging in one step is too hard. Rather, we take it in
+        stages. There is a danger of losing security when introducing support
+        for either upgrade or debugging, so we first present -- as the contents
+        of this chapter -- a meta-interpreter for a secure but non-upgradable,
+        non-debuggable <i><b><font color="#009000">E</font></b></i>.
+      <P ALIGN="left">In Brian Smith's terminology, this meta-interpreter reifies
+        <i>eval</i> but absorbs <i>apply</i> and capability security. Borrowing
+        some terminology from Jonathan Rees, <i>eval</i> is the means by which
+        an object changes it state and decides what actions it would like to take
+        on the world outside of itself -- it is what happens inside an object.
+        <i>apply</i> is the means by which an object takes such external actions
+        -- it is what happens between objects. By absorbing <i>apply</i>, interpreted
+        subworlds can work transparently with non-interpreted contexts. In E,
+        the apply functionality is provided by the <a href="CallExpr.html">callExpr</a>
+        and <a href="SendExpr.html">sendExpr</a> constructs.
+      <P ALIGN="left">(This is the also basis for the transparent inter-operation
+        of Java and E objects: ELib implements E's inter-object semantics, and
+        it is used both as the E language's runtime library, and directly as a
+        library called by Java programs. Neither caller nor callee knows whether
+        the other is implemented in E or Java.)
+      <P ALIGN="left">This enables us to define upgrade and debugging support
+        as enhanced meta-interpreters, such that we can design and understand
+        the resulting security properties. A real implementation can then provide
+        the behavioral equivalent of allowing (not requiring) code to be run under
+        such an enhanced interpreter. This clearly continues to be a faithful
+        and secure implementation of the semantics specified by the unenhanced
+        interpreter, since one could have run the enhanced interpreter on top
+        of it.
+      <P ALIGN="left">The resulting enhanced interpreter gives us clear answers
+        to the &quot;who is allowed to do-or-see what?&quot; issues needed for
+        debugging securely. Basically, the instantiator of an interpreted subworld
+        holds the only debugging capabilities to that world. For anyone else to
+        have debugging access, they must get it from the interpreter-starter.
+        However, the interpreter-starter can only obtain a debugger's-eye-view
+        on an object if they also have the object. Not surprisingly, this follows
+        KeyKOS discipline rather well. Ironically, these same debugging hooks
+        also enhance security, by providing us a discretion check enabling confinement.
+        (** explain & refer somewhere **)
+      <h3 ALIGN="left"><a name="name-spaces"></a>Name Spaces </h3>
+      <P ALIGN="left">
+      <ol>
+        <li>
+          <p><a name="keywords"></a>Keywords are reserved for use by the grammar,
+            and eventually, perhaps by user-defined macros (syntactic extensions).
+            Each keyword is its own Terminal type, and these are not Identifiers.
+            Some keywords are reserved for future use.</p>
+        </li>
+        <li>
+          <p><i><a name="nouns"></a>Nouns</i> are E's term for variable names,
+            since they are a way to refer to things. Every use-occurence of a
+            variable name is a nounExpr, and corresponds to a defining-occurence
+            -- a finalPattern or varPattern -- of the same name. The rules for
+            matching nounExpr to a finalPattern or varPattern are purely static.
+          </p>
+          <p> In the kernel language, each use-occurence statically corresponds
+            to exactly one defining-occurence by a simple rule: the scope of a
+            definer extends textually left-to-right from the point of its definition
+            until the corresponding close curly, except where it is shadowed by
+            an inner definition of the same name. However, the definition of <i>corresponding</i>
+            is a bit tricky. (E's syntactic sugar usually follows the same rule,
+            with the exception of the for-loop, conditional-or expression, and
+            quasi-literal pattern.)</p>
+        </li>
+        <li>
+          <p><i><a name="verbs"></a>Verbs</i> are E's terms for method or selector
+            names, since they are a way to request actions. The defining-occurence
+            appears in a method definition, and the use-occurence occurs in a
+            call or send expression. The correspondence between the two is many-to-many
+            and not statically determinable.</p>
+        </li>
+        <li>
+          <p><a name="behavior-names"></a>Behavior-names. For all the elegance
+            of anonymous closures, to my knowledge no existing systems upgrade
+            old instances of anonymous lambda expression to behave according to
+            a newer versions of the lambda expression. How would it figure out
+            which new lambda corresponds to which old lambda? By contrast, behavior-names
+            in E's object and plumbing expressions enable such upgrades. Behavior
+            names are composed from definers according to the rules in Upgrading
+            Behaviors (XXX need to write). </p>
+          <P ALIGN="left">The following meta-circular interpreter ignores upgrade
+            and debugging-support issues. Without these issues,
+          <pre ALIGN="left">        def foo { ... }</pre>
+          <P ALIGN="left">is equivalent to
+          <pre ALIGN="left">        def foo := def _ { ... }</pre>
+          <P ALIGN="left">since the remaining significance of foo is only as a
+            finalPattern (and similarly with a varPattern). Therefore, the meta-interpreter
+            ignores behavior names.
+        </li>
+      </ol>
+      <h3 ALIGN="left"><a name="eval"></a>Meta-Interpreter Skeleton: Evaluation
+      </h3>
+      <P ALIGN="left">As with the Lambda Calculus and related languages (most
+        notably Scheme), the heart of computation within an object is the evaluation
+        of an expression in a lexical scope. E's expressions are exactly those
+        kernel parse node types defined by the eExpr production above. In the
+        Lambda Calculus, a scope is an immutable mapping from names (in E, nouns)
+        to values. In the non-debuggable, non-upgradable E presented here, a scope
+        is also an immutable mapping from nouns to values, but these values are
+        termed slots, since they are expected to hold a variable's value. Slots
+        are similar to locations in Scheme's semantics, except that the E programmer
+        can bind whatever object they want to be a noun's slot, and can obtain
+        the slot of an in-scope noun. A primitive mutable slot type is available
+        -- and used by default in the expansion of the sugar language -- enabling
+        classic side effects by assignment.
+      <P ALIGN="left">So altogether, we have four distinct indirections to get
+        from a variable name to the object it designates:
+      <h4 ALIGN="left"><a name="static"></a>1) Static Correspondence </h4>
+      <P ALIGN="left">nounExpr -> finalPattern or varPattern
+      <P ALIGN="left">The statically analyzable correspondence between use-occurences
+        of a variable names (noun expressions) and a defining occurence of the
+        same name (a finalPattern or varPattern). In the kernel language, this
+        strictly follows the left-to-right definer to corresponding close curly
+        rule. The interpreter presented below makes less use of this static analyzability
+        than it probably should, instead managing scopes carefully so that the
+        run-time name/scope uniqueness exactly matches the static correspondence
+        rule.
+      <h4 ALIGN="left"><a name="lexical"></a>2) Lexical Loopup </h4>
+      <P ALIGN="left">scope[identifier] -> slot
+      <P ALIGN="left">A scope is an immutable mapping from names to slots. Each
+        time an expression is evaluated, a distinct scope is provided, so it will
+        often look up a distinct slot. For example, the equivalent of object's
+        instance variable storage is a scope allocated per-instance that maps
+        instance variable names to slots holding the values. (Note that E has
+        no distinct notion of instance variables. The effect described is an outcome
+        of the semantics presented here.)
+      <h4 ALIGN="left"><a name="state"></a>3) Mutable State </h4>
+      <P ALIGN="left">slot.get() -> reference # reading a variable's value
+      <P ALIGN="left">slot.put(expr) # assignment
+      <P ALIGN="left">When a variable name is used in a noun expression (ther
+        than on the left-side of an assignment), this turns into a slot lookup
+        as described above, followed by asking that slot for its current value.
+        Assignment is turned into a slot lookup, followed by asking the slot to
+        change its value. A slot-expression skips step three, and just returns
+        the slot itself as the value of the expression. Variables can vary precisely
+        because slots can change their value over time.
+      <h4 ALIGN="left"><a name="designation"></a>4) Designation object </h4>
+      <P ALIGN="left">reference -> object
+      <P ALIGN="left">The value returned by step 3 shouldn't be thought of as
+        the object itself, but as a reference (or pointer, or capability) to the
+        object. When drawing a heap of objects, we typically depict the objects
+        themselves as circles or blobs, and objects references as arrows. If object
+        Alice points at object Bob, then Alice holds the tail of an arrow whose
+        head is attached to Bob. Since E is a distibuted language, we give these
+        arrows more semantics than usual: in particular, Alice and Bob can be
+        on different machines, in which case the reference will span machines.
+        Such EVENTUAL references have a restricted semantics that reflect the
+        inescapable difficulties of distributed computing -- like partial failure.
+        This is documented in the E Reference Mechanics.
+      <hr>
+      <P ALIGN="left">In Lambda Calculus, expression evaluation takes in an expression
+        and a scope, and produces a value. In E, expression evaluation similarly
+        takes in an expression and a scope, but produces an outcome. The three
+        forms of outcome are
+      <P ALIGN="left">
+      <ol>
+        <li>Success, in which case eval returns a pair of a resulting value and
+          a resulting scope. The resulting scope is a superset of the input scope,
+          but possibly containing further bindings. (** need to specify shadowing
+          rules **)</li>
+        <li>Failure, in which case eval throws an object as the exception indicating
+          what problem occured. See <a href="CatchExpr.html">catchExpr</a> and
+          <a href="FinallyExpr.html">finallyExpr</a>.</li>
+        <li>Escape, as documented in <a href="EscapeExpr.html">escapeExpr</a>.
+          Both failure and escape are forms of non-local exit.</li>
+      </ol>
+      <P ALIGN="left">The following meta-interpreter absorbs the call-return stack
+        discipline, so that returning successfully in the interpreted language
+        is represented by eval returning successfully, and non-local exit in the
+        interpreted language is represented by eval performing the same non-local
+        exit.
+      <P ALIGN="left">The natural object-oriented way to define the eval function
+        would be to distribute it into a set of eval methods defined on each expr-parse-node
+        type. (Indeed, the bootstrap interpreter written in Java does exactly
+        this.) However, this has the wrong extensibility property: we wish to
+        hold the definition of the kernel language fixed over long periods of
+        time, while we also expect to define enhanced semantics for executing
+        E -- especially for debugging and upgrade -- by enhancing this interpreter.
+        Therefore we need to enable multiple interpreters to co-exist in one system,
+        and to allow the others to be defined by incremental modifications to
+        this one. To do this, we write the interpreter as a simple function containing
+        a big switch. Each branch of the switch matches one of the expression
+        types above, and is shown in the corresponding section:
+      <pre ALIGN="left">def eval(expr, scope) {
+    switch (expr) {
+        ...
+        match e'...' {
+            ...
+        }
+        ...
+    }
+}</pre>
+      <h3 ALIGN="left"><a name="matching"></a>Meta-Interpreter Skeleton: Pattern
+        Matching </h3>
+      <P ALIGN="left">In the Lambda Calculus, defining occurences of nouns only
+        appear in parameter lists. Most programming languages also have a variable
+        declaration/definition construct that can appear in a block of code. Where
+        classically one has defining occurences of variable names, E instead has
+        patterns. Where one classically binds a name to an initial value -- by
+        argument matching or initialization -- E instead pattern matches the pattern
+        against the initial value. When the pattern is the expansion of a simple
+        Identifier, the effect is identical to the classical case. In other words,
+        the classic parameter variable declarations and local variable definitions
+        are degenerate (but common!) forms of E's pattern matching mechanism.
+      <P ALIGN="left">As with eval we define E's pattern matching routine, testMatch,
+        with a global function that dispatches (using E's switch) on the type
+        of the pattern. The Java implementation of the bootstrap interpreter instead
+        distributes the clauses into the Pattern parse-node types.
+      <pre ALIGN="left">def testMatch(patt, scope, specimen) {
+    switch (patt) {
+        ...
+        match e'...' {
+            ...
+        }
+        ...
+    }
+}</pre>
+      <P ALIGN="left">The testMatch function takes in a Pattern parse-tree, a
+        scope as the context in which to perform the match, and a run-time value
+        to match it against. The outcomes:
+      <P ALIGN="left">
+      <ol>
+        <li>If the match is successful, testMatch returns a one-element array
+          containing a scope derived from the imput scope, but also containing
+          any bindings resulting from the match.</li>
+        <li>If the match is unsuccessful, testMatch returns null.</li>
+        <li>Various components of the match may perform a non-local exit (failure
+          or escape), in which case testMatch is so exited.</li>
+      </ol>
+      <P ALIGN="left">As we will see below, by returning a one-element array for
+        the success case, rather than just returning the result directly, we enable
+        the use of matchBind expressions in the interpreter to both test for success
+        and bind the result in a compact fashion.
+      <h4 ALIGN="left">Miscellaneous Interpreter Functions </h4>
+      <P ALIGN="left">The mustMatch function is like testMatch, except that an
+        unsuccessful match results in failure rather than returning null, and
+        therefore a successful match can just return the scope directly. If mustMatch
+        returns, it will always return a scope.
+      <pre ALIGN="left">def mustMatch(patt, scope, specimen) {
+    def [result] := testMatch(patt, scope, specimen)
+    result
+}</pre>
+      <h3 ALIGN="left"><a name="method-n-matcher"></a>Defining Behaviors: Method
+        & Matcher </h3>
+      <P ALIGN="left">Classically, an object is an encapsulated package of state
+        and behavior, and E's semantics reflects this faithfully.
+      <P ALIGN="left">Objects are defined by the <a href="ObjectExpr.html">object
+        expressions</a>, of which there are two kinds: <a href="MethodicalExpr.html">methodical
+        expressions</a> -- for defining methodical objects, and <a href="PlumbingExpr.html">plumbing
+        expressions</a>, for defining objects that act as message plumbing. An
+        object expression evaluates in a scope to an object that behaves as described
+        by the object expression. For example, the following program in the full
+        E language
+      <pre ALIGN="left">def makePoint(x, y) :any {
+    def self {
+        to getX() :any { return x }
+        to getY() :any { return y }
+    }
+    return self
+}</pre>
+      <P ALIGN="left">Sample command-line interaction in the context of the above
+        definition:
+      <pre ALIGN="left">    ? def pt := makePoint(3, 5)
+    ? pt.getX()
+    # value: 3</pre>
+      <P ALIGN="left">expands into the following Kernel E program:
+      <pre ALIGN="left">def makePoint {
+    to run(x, y) {
+        def self {
+            to getX() :any { return x }
+            to getY() :any { return y }
+        }
+        return self
+    }
+}
+    ? def pt := makePoint.run(3, 5)
+    ? pt.getX()
+    # value: 3</pre>
+      <P ALIGN="left">In the original program, it seems we've defined makePoint to
+        be a function. In the expansion, we see that makePoint is actually an object
+        with a single <tt>run</tt> method that takes two arguments. After
+        all, kernel-E is a pure object language: all values are objects, and all
+        inter-object interaction (with the exception of equality) is purely by
+        message sending. However, E's sugar streamlines the use of objects to
+        express conventional functional/procedural patterns. <tt>run</tt>
+        is E's default verb. If left out, it will be supplied in the expansion
+        to the kernel language. An apparent function definition actually defines
+        an object with a <tt>run</tt> method.
+      <P ALIGN="left">The behavior of makePoint's <tt>run</tt> method is to define
+        and return an object (named <tt>self</tt> within the scope of the
+        <tt>run</tt> method, and therefore named <tt>self</tt> to itself).
+        By behavior, we mean this is what makePoint does in response to a <tt>run</tt>
+        message of two arguments. This returned object's behavior is similarly
+        described by two methods: <tt>getX</tt> and <tt>getY</tt>.
+      <P ALIGN="left">This returned object acts like a conventional point object,
+        but where does the state of the object come from? Somehow, <tt>x</tt>
+        and <tt>y</tt> are acting like its classical instance variables, but
+        there doesn't seem to be anything special about their declaration. Indeed
+        there isn't. The scope of <tt>x</tt> and <tt>y</tt> extends from
+        their definition until the close curly at the end of the <tt>run</tt>
+        method. The <tt>self</tt> object expression within this scope can
+        therefore refer to these slots by using their names.
+      <P ALIGN="left">So the state-nouns of an object expression are those nouns
+        used within the object expression that statically correspond (see above)
+        to noun definitions outside the object expression. An object expression
+        evaluates in a scope to an object. The object's state is the subset of
+        this scope containing the object expression's state-nouns. When an object
+        receives a message, it executes a corresponding eMethod or matcher in
+        a scope which is a child of this state.
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="Prev"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" -->x<!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --> <img src="../../images/next-gray.gif" width="64" height="32" alt="Next"><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

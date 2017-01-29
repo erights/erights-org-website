@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//SoftQuad Software//DTD HoTMetaL PRO 6.0::19990601::extensions to HTML 4.0//EN" "hmpro6.dtd">
+<HTML> 
+  <HEAD> 
+	 <TITLE>Eslang Definitions</TITLE> 
+	 <STYLE TYPE="text/css">
+		P.comment { font-style: italic; } 
+		P.rule { margin-left: .5in; } 
+		P.rule BR { margin-left: 1 in; } 
+	 </STYLE>
+  </HEAD> 
+  <BODY> 
+	 <H1><FONT FACE="Arial" SIZE="5">Eslang Definitions</FONT></H1> 
+	 <P><FONT SIZE="2">Eslang is a term tree representation of E code. It is an
+		implementation form, in which many elements of kernel E are already compiled.
+		Specifically:</FONT></P> 
+	 <UL> 
+		<LI>Return guards and value guards are compiled in and compiled away
+		  where possible</LI> 
+		<LI>Some constant elimination is done</LI> 
+		<LI>Lots of the redundancy in the direct expansion for E is
+		  eliminated</LI> 
+		<LI>Object expressions are flattened. Nesting scopes are encoded
+		  explicitly, including separation of universals, outer scope, and free
+		  variables. Object expressions are replaced with &#145;make&#146; expressions
+		  that explicitly instantiate a class object that essentially directly maps to a
+		  script object..</LI> 
+		<LI>Pattern matching is explicitly coded (as part of the guard
+		  expansion).</LI> 
+	 </UL> 
+	 <P>The first argument of all constructs is a placeholder (called
+		&#145;loc&#146;) for meta-information, especially source positions. Names
+		between single quotes simply name the previous construct (for use in the action
+		code associated with the rules).</P> 
+	 <P CLASS="comment">Literals from the scanner</P> 
+	 <P CLASS="rule">string : &lt;STRINGLITERAL&gt;;</P> 
+	 <P CLASS="rule">literal : &lt;INTEGERLITERAL&gt; <BR> <B>|</B>
+		&lt;FLOATINGPOINTLITERAL&gt; <BR> <B>|</B> &lt;CHARACTERLITERAL&gt; <BR>
+		<B>|</B> string ;</P> 
+	 <P CLASS="comment">Different single word tokens</P> 
+	 <P CLASS="rule">name : string 'nm' ;</P> 
+	 <P CLASS="rule">selector : string 'sel' ;</P> 
+	 <P CLASS="comment">A place holder for source locations and meta
+		information. Currently an integer to be able to easily determine which clause
+		in the translator produced a broken eslang expression.</P> 
+	 <P CLASS="rule">loc : &lt;INTEGERLITERAL&gt; ;</P> 
+	 <P CLASS="comment">The top-level construct, containing a list of classes
+		and a method for the module behavior to invoke.</P> 
+	 <P CLASS="rule">module : "pkg" "(" loc string &#145;packageName&#146;class*
+		'classes' method 'moduleMethod' ")" ;</P> 
+	 <P CLASS="comment">All object definitions have been replaced with a
+		top-level class definition (with the correct fully-qualified name) and a
+		&#145;make&#146; expression replacing the nested object expression to
+		instantiate an instance of that definition. All free variables in the object
+		expression (except universals) are passed as arguments in the &#145;make&#146;
+		expression. Outers (top level defines and the Outer scope) that are not
+		universals are always maintained in a single outer scope object and looked up
+		by name.</P> 
+	 <P CLASS="rule">class : "class" "(" loc name 'className' ivars "methods"
+		methods 'ms' ")" ;</P> 
+	 <P CLASS="comment">This is the make expression that replaces object
+		expressions with an explicit instantiation. The arguments are the free
+		variables from the object expression (except universals).</P> 
+	 <P CLASS="rule">make : "make" "(" loc name 'className' expr* 'args' ")"
+		;</P> 
+	 <P CLASS="comment">Different defining occurrence of variables. These are
+		all the same in eslang, but occur in different contexts, and so have different
+		constructs here so we can hang different code off of them.</P> 
+	 <P CLASS="rule">arg : "param" "(" loc string 'name' ")" ;</P> 
+	 <P CLASS="rule">blockArg : "param" "(" loc string 'name' ")" ;</P> 
+	 <P CLASS="rule">temp : "param" "(" loc string 'name' ")" ;</P> 
+	 <P CLASS="rule">param : "param" "(" loc string 'name' ")" ;</P> 
+	 <P CLASS="comment">These are helpers for lists of the different kinds of
+		variables. The leading token for &#145;ivars&#146; is here; for others, it is
+		in the callers.</P> 
+	 <P CLASS="rule">ivars : "ivars" params 'iv' ;</P> 
+	 <P CLASS="rule">args : <B>|</B> "(" arg* 'params' ")" ;</P> 
+	 <P CLASS="rule">temps : <B>|</B> "(" temp* 'params' ")" ;</P> 
+	 <P CLASS="rule">params : <B>|</B> "(" param* 'params' ")" ;</P> 
+	 <P CLASS="comment">A references to a non-outer variable. Outer variables
+		are identified during translation, and managed differently.</P> 
+	 <P CLASS="rule">ref : "ref" "(" loc name 'nm' ")" ;</P> 
+	 <P CLASS="comment">An outer variable reference. The optional base is an
+		outer scope frame. For universal variables, &#145;base&#146; is absent because
+		they are always directly present from the interpreter. If base is present, then
+		the containing object must have gotten base from it&#146;s creator. If base is
+		present, then the variable is looked up in base.</P> 
+	 <P CLASS="rule">outer : "outer" "(" loc name 'name' expr? 'base' ")" ;</P> 
+	 <P CLASS="comment">A literal value.</P> 
+	 <P CLASS="rule">lit : "lit" "(" loc literal 'lit' ")" ;</P> 
+	 <P CLASS="comment">Methods on a class. A class might not have any
+		methods.</P> 
+	 <P CLASS="rule">methods : <B>|</B> "(" method* 'all' ")" ;</P> 
+	 <P CLASS="comment">A method can either be a normal method or the delegation
+		to a superclass. Pattern match methods simply explicitly implement
+		Smalltalk&#146;s "messageNotUnderstood". They should probably get their own
+		construct to be less Smalltalk-specific.</P> 
+	 <P CLASS="rule">method : "method" "(" loc selector 'selector' "params" args
+		'args' "locals" temps 'temps' seq 'bd' ")"<BR> <B>|</B> "delegate" "(" loc ref
+		'sup' ")" ;</P> 
+	 <P CLASS="comment">Most of the places in which a sequence of expressions is
+		allowed, so is a single expression, and vice-versa. </P> 
+	 <P CLASS="rule">singleExpr : ( call <B>|</B> send <B>|</B> escape <B>|</B>
+		match <B>|</B> assign <B>|</B> ref <B>|</B> outer <B>|</B> if <B>|</B> make
+		<B>|</B> lit <B>|</B> try <B>|</B> finally <B>|</B> meta ) ;</P> 
+	 <P CLASS="rule">expr : ( singleExpr <B>|</B> seqExpr ) ;</P> 
+	 <P CLASS="rule">seq : "seq" "(" loc expr* 'subs' ")"<BR> <B>|</B>
+		singleExpr 'sub' ;</P> 
+	 <P CLASS="rule">seqExpr : "seq" "(" loc expr* 'subs' ")" ;</P> 
+	 <P CLASS="comment">These are all the corresponding E constructs.</P> 
+	 <P CLASS="rule">call : "call" "(" loc expr 'rcvr' selector 'sel' expr*
+		'args' ")" ;</P> 
+	 <P CLASS="rule">send : "send" "(" loc expr 'rcvr' selector 'sel' expr*
+		'args' ")" ;</P> 
+	 <P CLASS="rule">assign : "assign" "(" loc ref 'target' expr 'rVal' ")"
+		;</P> 
+	 <P CLASS="rule">escape : "escape" "(" loc blockArg 'hatch' seq 'body' ")"
+		;</P> 
+	 <P CLASS="rule">match : "match" "(" loc blockArg 'hatch' seq 'breaker' seq
+		'body' ")" ;</P> 
+	 <P CLASS="rule">if : "if" "(" loc expr 'cond' seq 'then' seq 'else' ")"
+		;</P> 
+	 <P CLASS="rule">try : "try" "(" loc seq 'attempt' blockArg 'patt' seq
+		'catcher' ")" ;</P> 
+	 <P CLASS="rule">finally : "finally" "(" loc seq 'attempt' seq 'after' ")"
+		;</P> 
+	 <P CLASS="comment">Only meta-context is supported here.</P> 
+	 <P CLASS="rule">meta : "meta" "(" loc "context" ")" ;</P> </BODY> 
+</HTML>

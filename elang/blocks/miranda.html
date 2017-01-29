@@ -1,0 +1,307 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Miranda Methods</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">blocks</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="inheritance.html" title="Back to: Inheritance as aStatic Pattern of Message Passing"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Inheritance as aStatic Pattern of Message Passing" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><img src="../../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b>
+              Miranda Methods</b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p class="Body"> When we first created lazyNum, where did the &quot;&lt;lazy&gt;&quot;
+        string that was printed out come from? After the <i><b><font color="#009000">E</font></b></i>
+        command interpreter reads and evaluates an expression, it then needs to
+        print a string to represent the resulting value. It gets this by calling
+        the result's <i>__printOn</i> method</p>
+      <blockquote>
+        <pre class="updoc"><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+? def makePoint(x, y) :any {
+&gt;     def point {
+&gt;         to __printOn(out) :void { out.print(`&lt;$x, $y&gt;`) }
+&gt;         to getX() :any {x}
+&gt;         to getY() :any {y}
+&gt;     }
+&gt; }
+# value: &lt;makePoint&gt;
+
+? def pt := makePoint(3, 5)
+# value: &lt;3, 5&gt;
+
+? pt.__printOn(stdout)
+# stdout: &lt;3, 5&gt;
+
+? makePoint.__printOn(stdout)
+# stdout: &lt;makePoint&gt;</pre>
+      </blockquote>
+      <p class="Body"> Above, the object expression for <i> point</i> explicitly
+        provides a <i>__printOn</i> method, and this is what gets run when <i>__printOn</i>
+        is called on a point. The object expression for <i> makePoint</i>, on
+        the other hand, does not provide a <i> __printOn</i> method, but nevertheless,
+        we see that it has a <i> __printOn</i> behavior. <i> __printOn</i> is
+        one of a small set of Miranda Methods -- if the object-expression does
+        not supply its own <i> __printOn</i> method, one will be provided for
+        it. Similarly for the other Miranda Methods.</p>
+      <p class="Body"> Rarely, in order to have full control, you may wish to
+        define an object while waiving all your miranda rights, rather than just
+        overriding individual methods. You do this by using a <a href="defPlumbing.html">plumbing
+        expression</a> instead of an <a href="defObject.html">object expression</a>.</p>
+      <p class="Body">The Miranda Methods can also be used from ELib, as documented
+        <a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html">here</a>.
+        (<font color="#FF0000">There is a distressing amount of redundancy between
+        that page and this one. We need to fix this, probably when we build edoc.</font>)
+      </p>
+      <h2 class="Body">The Miranda Methods are:</h2>
+      <p class="Body">The Miranda Methods are actually implemented in Java and
+        operate from within the <i><b><font color="#009000">E</font></b></i> implementation.
+        A few rely on that special position to implement behaviors that could
+        not otherwise have been implemented in <i><b><font color="#009000">E</font></b></i>.
+        In this section, we will do our best job of using <i><b><font color="#009000">E</font></b></i>
+        anyway as a notation to explain what these methods do, but explain in
+        the text what the differences are.</p>
+      <ul>
+        <li>
+          <p class="Body"><a name="printOn"></a><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#__printOn(java.lang.Object,org.erights.e.elib.oldeio.TextWriter)"><b>__printOn</b>(<i>out</i>)</a></p>
+          <blockquote>
+            <p>Asks the object to print a representation of itself onto the TextWriter,
+              using &quot;out.print()&quot; and <a href="../io/text-file-io.html">its
+              siblings</a>. The object should print subobjects by sending them
+              to the same TextWriter (or any indentation of it) rather than coercing
+              these to a string itself, in order to give the TextWriter the opportunity
+              to finitely print <a href="defVar.html#scopeConsistency">cyclic
+              structures</a>.</p>
+            <p>The Miranda behavior is</p>
+            <blockquote>
+              <pre>to __printOn(out :TextWriter) {
+    out.print(&quot;&lt;&quot;, <font class="comment"><i>/*name of object expression*/</i></font>, &quot;&gt;&quot;)
+}</pre>
+            </blockquote>
+            <p>except that an <i><b><font color="#009000">E</font></b></i> object 
+              has no other way to ascertain the name of its defining object expression. 
+              If the defining object expression is anonymous, then the object 
+              prints as</p>
+            <blockquote>
+              <pre>&lt;e object&gt;</pre>
+            </blockquote>
+          </blockquote>
+        </li>
+        <li><a name="__whenMoreResolved"></a><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#__whenMoreResolved(java.lang.Object,java.lang.Object)"><b>__whenMoreResolved</b>(<i>observer</i>)
+          </a>
+          <blockquote>
+            <p>Really used to test a reference rather than an object. When sent
+              to a Promise, should the Promise ever become Resolved, the resolution
+              is eventually sent to observer. If it is sent to a Far reference,
+              even though a Far reference is already Resolved, the __whenMoreResolved
+              message will still be sent to the object the Far reference designates,
+              so that it can respond. This ensures that a __whenMoreResolved does
+              not report successful resolution (notifying the observer with a
+              non-Broken argument reference) until all earlier messages sent on
+              this same reference have been received.</p>
+            <p>The <a href="../intro/quickE.html">when/catch</a> construct expands 
+              into a call to "Ref.whenResolved(...)", which sends __whenMoreResolved.</p>
+            <p>The Miranda behavior is</p>
+            <blockquote>
+              <pre>to __whenMoreResolved(observer) {
+    observer &lt;- run(self)
+}</pre>
+            </blockquote>
+          </blockquote>
+        </li>
+        <li><a name="__whenBroken"></a><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#__whenBroken(java.lang.Object,java.lang.Object)"><b>__whenBroken</b>(<i>observer</i>)</a>
+          <blockquote>Used to ask a reference to notify the observer should it
+            ever become broken. By virtue of the behavior below, a Near reference
+            ignores the request, since it cannot become Broken. A Broken reference
+            immediately responds with itself. Eventual references, whether Resolved
+            or not (whether a Promise or a Far reference) remember the request
+            so they can notify the observer should they become Broken. In all
+            cases, of the observer is invoked, it is eventually send the Broken
+            reference as the argument of a <tt>run</tt> message.
+            <p></p>
+            <p>The Miranda behavior is</p>
+            <blockquote>
+              <pre>to __whenBroken(observer) {}</pre>
+            </blockquote>
+          </blockquote>
+        </li>
+        <li><a name="__order"></a><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#__order(java.lang.Object,java.lang.String,java.lang.Object[])"><b>__order</b>(<i>nestedVerb</i>,
+          <i>nestedArgs</i>)</a> =&gt; [<i>result</i>, <i>self</i>]
+          <blockquote>Without the <tt>order</tt> message, <i><b><font color="#009000">E</font></b></i>
+            already provides for the partially-ordered fail-stop delivery of messages
+            sent on the same reference. However, this notion of fail-stop only
+            makes later delivery contingent on the reference remaining unbroken.
+            You can use the order message to get the same effect, but have later
+            deliveries contingent on the synchronous success of an earlier message
+            as well.
+            <p></p>
+            <p>The Miranda behavior is equivalent to:</p>
+            <blockquote>
+              <pre>to __order(nestedVerb, nestedArgs) :any {
+    [E.call(self, nestedVerb, nestedArg), self]
+}</pre>
+            </blockquote>
+            <p>If the call throws, then the order message as a whole throws. A 
+              promise for the result of an order message becomes broken, rather 
+              than resolving to a pair of a broken promise and self. </p>
+            <blockquote>
+              <pre>? def x := 6 &lt;- __order(&quot;floorDivide&quot;, [2]) &lt;- get(1) &lt;- add(2)
+# value: &lt;Promise&gt;
+
+? x
+# value: 8</pre>
+            </blockquote>
+            <p>8 is indeed 6 + 2. </p>
+            <blockquote>
+              <pre>? def y := 6 &lt;- __order(&quot;floorDivide&quot;, [0]) &lt;- get(1) &lt;- add(2)
+# value: &lt;Promise&gt;
+
+? y
+# value: &lt;ref broken by problem: &lt;ArithmeticException: / by zero&gt;&gt;</pre>
+            </blockquote>
+            We never asked 6 what the &quot;+ 2&quot; of itself is, because the
+            earlier <tt>floorDivide</tt> threw an <tt>ArithmeticException</tt>.
+            Therefore, the promise for the result of the <tt>__order/2</tt> message
+            became broken by this exception, as did the promise for the <tt>get/1</tt>
+            message sent to this promise, and the promise for the <tt>add/1</tt>
+            message sent to that promise. This contingency of the latter operation
+            happened without waiting on a round trip to find out about the earlier
+            operation, and so still made full use of <a href="../../elib/distrib/pipeline.html">pipelining</a>.</blockquote>
+        </li>
+        <li><a name="__getAllegedType"></a><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#__getAllegedType(java.lang.Object)"><b>__getAllegedType</b>()</a>
+          <blockquote><tt>getAllegedType</tt>, which will return a Type object 
+            describing the protocol that this object alleges it responds to. 
+            <p>The Miranda behavior is</p>
+            <blockquote>
+              <pre>to __getAllegedType() :Type {
+    <font class="comment">/*not expressible in E*/</font>
+}</pre>
+            </blockquote>
+       
+          </blockquote>
+        </li>
+        <li><a name="__respondsTo"></a><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#__respondsTo(java.lang.Object,java.lang.String,int)"><b>__respondsTo</b>(<i>verb</i>,
+          <i>arity</i>)</a>
+          <blockquote>Does this object respond to messages with this <i>verb</i> 
+            and this <i>arity</i>? 
+            <p>The Miranda behavior is equivalent to</p>
+            <blockquote>
+              <pre>to __respondsTo(verb :String, arity :int) :boolean {
+    self.__getAllegedType().hasMethod(verb, arity)
+}</pre>
+            </blockquote>
+          </blockquote>
+        </li>
+        <li><a name="__yourself"></a><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#__yourself(java.lang.Object)"><b>__yourself</b>()</a>
+          <blockquote>Used internally by <a href="../../elib/distrib/captp/index.html">CapTP</a> 
+            to ensure that message are delivered in the proper order when Alice, 
+            Bob, and Carol are on three separate machines. Is available for use 
+            by the <i><b><font color="#009000">E</font></b></i> programmer, but 
+            it's hard to see when it would be useful. It you find a programming 
+            technique that makes use of yourself, please let me, the webmaster-at-erights.org, 
+            know. 
+            <p>The Miranda behavior is</p>
+            <blockquote>
+              <pre>to __yourself() :any {
+    self
+}</pre>
+            </blockquote>
+          </blockquote>
+        </li>
+        <li><a name="__reactToLostClient"></a><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#__reactToLostClient(java.lang.Object,java.lang.Throwable)"><b>__reactToLostClient</b>(<i>problem</i>)</a>
+          <blockquote>
+            <p>Informs the object that at least one of its clients may no longer
+              be able to communicate to it, due to a network partition.</p>
+            <p><font color="#FF0000">To be written</font>. See <a href="../../elib/capability/deadman.html">Dead-Man
+              Switch</a>.</p>
+          </blockquote>
+        </li>
+        <li><a name="__optSealedDispatch"></a><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#__optSealedDispatch(java.lang.Object,org.erights.e.elib.sealing.Brand)"><b>__optSealedDispatch</b>(<i>brand</i>)</a>
+          <blockquote>
+            <p>Generic object-level rights amplification protocol.</p>
+            <p><font color="#FF0000">To be written</font>.</p>
+          </blockquote>
+        </li>
+      </ul>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">blocks</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="inheritance.html" title="Back to: Inheritance as aStatic Pattern of Message Passing"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Inheritance as aStatic Pattern of Message Passing" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><img src="../../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

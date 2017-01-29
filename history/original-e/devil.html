@@ -1,0 +1,701 @@
+<HTML>
+<HEAD>
+   <TITLE>Dicing with the Devil</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+
+<H1><CENTER>Dicing with the Devil</CENTER></H1>
+
+<P><CENTER>An Introduction to Secure Protocol Design Using E Examples
+</CENTER>
+
+<P><CENTER><A HREF="../../../copy.html">&copy;1996 Electric
+Communities<BR>
+
+All Rights Reserved Worldwide and Beyond</A></CENTER>
+
+<p><i>Darius Bacon has translated this example from Original-E as represented
+  in this document, to modern <b><font color="#009000">E</font></b>. <a href="http://accesscom.com/%7Edarius/software/e/devil.e">Here</a>
+  is the translation. </i></p>
+<H2>Prologue</H2>
+
+<P>A virtual die is a software device which produces a uniform stream
+of random numbers in the range of 1 through 6. A virtual die can be
+used in games of chance.
+
+<P>The formula for rolling a virtual die is pretty simple:
+
+<PRE>          (randomGenerator.nextLong() % 6) + 1
+&nbsp;</PRE>
+
+<P>Depending on the quality of the source of random numbers, you can
+get a good, unpredictable stream of numbers.
+
+<P>Suppose we want to have a game in which two players play together
+using two computers connected via the Internet. One way of doing that
+is to have one of the computers have a special role. In addition to
+representing one of the players, it is also the Game Master (or
+Dealer, or Bank, or House), which is the keeper of privileged
+knowledge about the state of the game.
+
+<P>Just to make this scenario a little more interesting, imagine that
+you are one of the players, and that Satan is the other, and you are
+playing a dice game for your immortal soul. When Satan suggests that
+his computer (a 666-GHz Pentium XIII) run the Game Master, you become
+concerned about the fairness of the game. You don't want Satan
+telling you what you rolled.
+
+<P>Satan suggests that a trusted third party's computer run the Game
+Master and roll the die, but you are pretty sure that Satan would try
+to corrupt or intimidate the third party and hack his computer.
+
+<P>You insist, in the interest of fairness, that the Game Master be
+distributed, that it run in both computers, so that you can roll your
+die on your machine. Now Satan objects. He doesn't trust your
+computer to roll your die honestly, not when your immortal soul is at
+stake.
+
+<P>You both agree that you need a fully distributed Game Master that
+would have both computers cooperate in every roll of the die in order
+to keep the results fair. You further agree that the new Game Master
+will be implemented using E, because E is well suited to the
+development of secure, distributed applications.
+
+<H2>Act I</H2>
+
+<P>Satan proposes that two <I>eobjects </I>cooperate in the rolling
+of the die. Eobjects are objects which communicate by <I>message
+passing</I>. Message passing is a very effective communications and
+concurrency model for network programming.
+
+<P>The protocol is very simple. The two eobjects both do the
+following:
+
+<BLOCKQUOTE><P>
+<HR>
+Select a random number X.
+
+<P>Send X to the other.
+
+<P>Receive the other's X.
+
+<P>Combine the Xs to form the random number that is used to determine
+the final result.
+<HR>
+</BLOCKQUOTE>
+
+<P>It appears that neither player can force the result of the roll.
+
+<P>The program has two parts: main, which sets up the eobjects and
+starts the protocol, and DieRoller, which actually implements the die
+rolling protocol. <TT>main</TT> contains the minimum structure
+necessary to test DieRoller. We will test DieRoller on a single
+machine now, and later replace main with the Game Master framework
+that will instantiate the eobjects on different machines.
+
+<PRE>    // Dicing with the Devil: Act I
+&nbsp;
+    public class DieRolling {
+&nbsp;
+/*1*/   public static void main(String argv[ ]) {
+            DieRoller first = new DieRoller();
+            DieRoller second = new DieRoller();
+&nbsp;
+/*2*/       first &lt;- dieRollStart (second);
+            second &lt;- dieRollStart (first);
+        }
+    }
+&nbsp;
+    public eclass DieRoller {
+        Random randomGenerator = new Random();
+&nbsp;
+/*3*/   long X = randomGenerator.nextLong();
+&nbsp;
+/*4 6*/ emethod dieRollStart (DieRoller otherRoller) {
+/*5 7*/     otherRoller &lt;- dieRollFinish (X);
+        }
+&nbsp;
+/*10 8*/ emethod dieRollFinish (long otherX) {
+/*11 9*/    long finalResult = combine(otherX, X);
+&nbsp;
+            System.out.println("Roll result = " + finalResult);
+        }
+&nbsp;
+        long combine(long a, long b) {
+            return (((a ^ b) % 6) + 1); /*1..6*/
+        }
+    }
+&nbsp;</PRE>
+
+<P>The Walkthrough:
+
+<OL>
+   <LI><TT>main</TT> declares and initializes first and second, both
+   of eclass <TT>DieRoller</TT>.
+
+   <LI><TT>main</TT> sends the message <TT>dieRollStart</TT> to
+   first, passing it a reference to second, and sends the same
+   message to second, passing it a reference to first. This informs
+   each of the rollers about the other. These messages sends are
+   immediate: <TT>main</TT> doesn't wait for the first message to be
+   delivered before sending the second one. It just keeps going.
+   <TT>main</TT> is complete.
+
+   <LI>The initialization of first and second will select random
+   values for <TT>X</TT>.
+
+   <LI>The order of the delivery of the messages sent in step 2 is
+   not guaranteed. We will assume that first receives the message
+   first. Suddenly, first executes the emethod <TT>dieRollStart</TT>
+   in response to receiving the message.
+
+   <LI>first sends the message <TT>dieRollFinish</TT> to second,
+   passing <TT>X</TT>. <TT>dieRollStart</TT> is complete.
+
+   <LI>Suddenly, second executes the emethod <TT>dieRollStart</TT> in
+   response to receiving the message sent in step 2.
+
+   <LI>second sends the message <TT>dieRollFinish</TT> to first,
+   passing <TT>X</TT>. <TT>dieRollStart</TT> is complete.
+
+   <LI>Suddenly, second executes the emethod <TT>dieRollFinish</TT>
+   in response to receiving the message sent in step 5.
+
+   <LI>second combines the two <TT>X</TT>s and produces the final
+   result. In a real system this would get sent to another eobject
+   which would use the result. But this just a sample program, so it
+   gets printed instead. <TT>dieRollFinish</TT> is complete.
+
+   <LI>Suddenly, first executes the emethod <TT>dieRollFinish</TT> in
+   response to receiving the message sent in step 7.
+
+   <LI>first combines the two <TT>X</TT>s and produces the final
+   result. This will be the same result that second produced in step
+   9. <TT>dieRollFinish</TT> is complete.
+</OL>
+
+<P>The emethods very closely resemble the protocol, so you are
+confident that DieRoller accurately implements the protocol. The
+protocol itself is very simple and effective. Also, the E security
+model gives you confidence that Satan cannot use E to hack your
+computer over the network.
+
+<P>Unfortunately, it is not possible to guarantee that Satan is
+running this code on his computer. Because his computer is under his
+infernal control, he can hack it. There is no way to prevent someone
+from hacking his own machine, and there is no way to prove absolutely
+that a machine has not been hacked. Therefore, it is bad practice to
+place too much trust in any computer.
+
+<P>If Satan does hack his machine, then he could corrupt the
+protocol. An evil version of DieRoller might look like this:
+
+<PRE>      evilclass DieRoller {
+          DieRoller other;
+&nbsp;
+          evilmethod dieRollStart (DieRoller otherRoller) {
+              other = otherRoller;
+          }
+&nbsp;
+          evilmethod dieRollFinish (long otherX) {
+               other &lt;- dieRollFinish (cheat(X, desiredResult));
+          }
+      }
+&nbsp;</PRE>
+
+<P>(Note: <TT>evilclass</TT> and <TT>evilmethod</TT> are not legal
+keywords in E or Java. Satan has his own custom programming tools.)
+
+<P>In the evilmethod <TT>dieRollStart</TT>, Satan doesn't send his
+<TT>X</TT>. Instead, he just remembers the other's reference. When
+<TT>dieRollFinish</TT> arrives, he knows your random number and you
+don't know his. He now has enough information to compute an
+<TT>X</TT> that will force the result to be what he desires.
+
+<P>If you choose to hack your machine in the same way, then the game
+will stall because both machines will be waiting for the other to
+send its <TT>X</TT> first. Only the player going last can benefit
+from cheating.
+
+<H2>Act II</H2>
+
+<P>Satan is offended when you ask for design changes in DieRoller to
+correct the potential insecurity found in Act I, but he very quickly
+produces a new version with a tighter protocol. The new version of
+DieRoller makes use of two additional features of E: channels and
+ewhen.
+
+<P>A <I>channel</I> is a special eobject which stores and forwards
+messages. Every channel has a distributor associated with it.
+Forwarding a distributor to an eobject will cause all of the messages
+sent to the associated channel to be forwarded to that eobject.
+Channels make it possible to send a message to an eobject that
+doesn't exist yet. Uninitialized eobjects are channels by default.
+
+<P><I>ewhen</I> is an E statement which creates a new object (called
+a closure) which will execute a block of code when a particular
+eobject has a value.
+
+<P>Satan's new protocol uses a one-way hash which will prevent the
+changing of <TT>X</TT>. A one-way hash is a function that is
+extremely difficult to reverse. The protocol can be divided into two
+halves: The half that first runs, and the half that second runs. This
+is first's half:
+
+<BLOCKQUOTE><P>
+<HR>
+Select a random number X.
+
+<P>Send the one-way function of X to second.
+
+<P>After receiving the second's X, reveal X.
+
+<P>The X s are combined to produce the final result.
+<HR>
+</BLOCKQUOTE>
+
+<P>This is second's half:
+
+<BLOCKQUOTE><P>
+<HR>
+Select a random number X.
+
+<P>After receiving the hash of first's X, reveal X.
+
+<P>The Xs are combined to produce the final result.
+
+<P>Recompute the one-way hash of first's X to verify that first did
+not change its X when it learned second's X.
+<HR>
+</BLOCKQUOTE>
+
+<P>Shuffling the halves together, we can see the complete protocol:
+
+<BLOCKQUOTE><P>
+<HR>
+The two eobjects, first and second, each select a random number X.
+
+<P>first reveals a one-way hash of its X.
+
+<P>Then second reveals its X.
+
+<P>Then first reveals its X.
+
+<P>The Xs are combined to produce the finalResult.
+
+<P>Second recomputes the one-way hash of first's X to verify that
+first did not change its X after it learned second's X. That would be
+cheating.
+<HR>
+</BLOCKQUOTE>
+
+<P>Satan assures you that if he attempts to cheat, you will be able
+to detect it. Once again, you are invited to observe that the
+emethods closely resemble the protocol.
+
+<PRE>    // Dicing with the Devil: Act II
+&nbsp;
+    public class DieRolling {
+&nbsp;
+/*1*/   public static void main(String argv[ ]) {
+             DieRoller first = new DieRoller();
+             DieRoller second = new DieRoller();
+&nbsp;
+/*2*/        first &lt;- dieRollFirst (second);
+        }
+    }
+&nbsp;
+    public eclass DieRoller {
+        Random randomGenerator = new Random();
+&nbsp;
+/*3*/   emethod dieRollFirst (DieRoller otherRoller) {
+/*4*/       long X = randomGenerator.nextLong();
+&nbsp;
+/*5*/        ELong concealedX, hisX;
+&nbsp;
+             otherRoller &lt;- dieRollSecond (oneWayHash(X),
+                     concealedX, &amp;hisX);
+&nbsp;
+/*6 11*/     ewhen hisX (long otherX) {
+/*12*/               &amp;concealedX &lt;- forward (new ELong(X));
+&nbsp;
+/*13*/           long finalResult = combine(X, otherX);
+&nbsp;
+                 System.out.println("Roll result = " + finalResult);
+             }
+         }
+&nbsp;
+/*7*/    emethod dieRollSecond (long otherHash,
+                 ELong firstX, EDistributor myX) {
+/*8*/        long X = randomGenerator.nextLong();
+&nbsp;
+/*9*/        myX &lt;- forward (new ELong(X));
+&nbsp;
+/*10 14*/    ewhen firstX (long otherX) {
+/*15*/            long finalResult = combine(otherX, X);
+&nbsp;
+                  System.out.println("Roll result = " + finalResult);
+&nbsp;
+/*16*/            if (oneWayHash(otherX) != otherHash) {
+                      System.out.println("There was cheating.");
+                  }
+              }
+          }
+&nbsp;
+          long oneWayHash(long a) {
+              long h = a &gt;&gt;&gt; 32;
+              return ((a*a) ^ ((a ^ 0xDEADBEAD) *
+                      (h ^ 0xFADBEBAD)) ^ (h*h) ^ a);
+          }
+&nbsp;
+          long combine(long a, long b) {
+              return (((a ^ b) % 6) + 1); /*1..6*/
+          }
+      }
+&nbsp;</PRE>
+
+<P>The Walkthrough:
+
+<OL>
+   <LI><TT>main</TT> declares and initializes first and second, both
+   of eclass <TT>DieRoller</TT>.
+
+   <LI><TT>main</TT> sends the message <TT>dieRollFirst</TT> to
+   first, passing it a reference to second. <TT>main</TT> is
+   complete.
+
+   <LI>Suddenly, first executes the emethod <TT>dieRollFirst</TT> in
+   response to receiving the message sent in step 2.
+
+   <LI>first chooses a random number <TT>X</TT>.
+
+   <LI>first sends the message <TT>dieRollSecond</TT> to second,
+   passing a hashed <TT>X</TT>, the uninitialized ELong
+   <TT>concealedX</TT>, and the distributor for the channel
+   representing the uninitialized ELong <TT>hisX</TT>.
+
+   <LI>first executes an ewhen statement that says, "When
+   <TT>hisX</TT> gets a value, assign its value to <TT>otherX</TT>
+   and execute the following code block." <TT>dieRollFirst</TT> is
+   complete.
+
+   <LI>Suddenly, second executes the emethod <TT>dieRollSecond</TT>
+   in response to receiving the message sent in step 5.
+
+   <LI>second chooses a random number <TT>X</TT>.
+
+   <LI>second reveals its <TT>X</TT> by forwarding <TT>myX</TT>.
+
+   <LI>second executes an ewhen statement that says, "When
+   <TT>firstX</TT> gets a value, assign its value to <TT>otherX</TT>
+   and execute the following code block." <TT>dieRollSecond</TT> is
+   complete.
+
+   <LI>Suddenly, <TT>hisX</TT> has a value (as a result of step 9),
+   so first begins execution of the code in the ewhen (as a result of
+   line 6).
+
+   <LI>first forwards the value of its <TT>X</TT> to
+   <TT>concealedX</TT>, completing its half of the protocol. The
+   ewhen is complete.
+
+   <LI>first computes the <TT>finalResult</TT> by combining its
+   <TT>X</TT> and second's <TT>X</TT>.
+
+   <LI>Suddenly, <TT>firstX</TT> has a value (as a result of step
+   12), so second begins execution of the code in the ewhen block (as
+   a result of step 10).
+
+   <LI>second computes the <TT>finalResult</TT> by combining its
+   <TT>X</TT> and first's <TT>X</TT>.
+
+   <LI>second verifies the <TT>otherHash</TT> value it received from
+   first in step 7. If it doesn't match, then do something about it.
+   If this were a real program, ethrow a <TT>cheatingDetected</TT>
+   eexception. But this is only a sample program, so just print a
+   message. The ewhen is complete. The protocol is complete.
+</OL>
+
+<P>One nice feature of this version is that second can't cheat.
+Unfortunately, first can still cheat in a number of ways.
+
+<P>First knows the result before second does, and if first is unhappy
+about the result it could cause a network failure to prevent the
+conclusion of the protocol. This attack doesn't help him to win, but
+it does allow him to avoid losing.
+
+<PRE>        evilmethod dieRollFirst (DieRoller otherRoller) {
+            long X = randomGenerator.nextLong();
+&nbsp;
+            ELong concealedX, hisX;
+            otherRoller &lt;- dieRollSecond (oneWayHash(X),
+                    concealedX, &amp;hisX);
+&nbsp;
+            ewhen hisX (long otherX) {
+                if (combine(X, otherX) == desiredResult) {
+                    &amp;concealedX &lt;- forward (new ELong(X));
+                } else {
+                    simulate_network_failure();
+                }
+            }
+        }
+&nbsp;</PRE>
+
+<P>This sort of attack is difficult to avoid without the use of a
+trusted intermediary. You might want to deal with this contractually:
+If there is a network failure during the final die roll of the game,
+then you win. This way you won't be risking your immortal soul on a
+bug in a socket manager.
+
+<P>There may also be a more serious attack on the one-way hash. There
+may be two or more inputs that will produce the same output. These
+are called collisions. If Satan has a set of candidate <TT>X</TT>s
+that all produce the same hash, then he can freely select among them,
+defeating the cheating-detection feature. In preparation, Satan may
+have done an exhaustive search for collisions. He can then use this
+knowledge to change his choice of <TT>X</TT> without detection:
+
+<PRE>            &amp;concealedX &lt;- forward (new ELong(cheat
+                   (desiredResult, otherX)));
+&nbsp;</PRE>
+
+<P>This is similar to having Satan write his <TT>X</TT> on a piece of
+paper. When he sees your guess, he reveals the paper. If he would
+have lost on 666, he turns it over and says it's 999.
+
+<H2>Act III</H2>
+
+<P>"The third time's the charm," says Satan as he whips out his
+latest protocol, intended to fix the weakness discovered in Act II.
+
+<P>Both sides use this protocol:
+
+<BLOCKQUOTE><P>
+<HR>
+Select two random numbers, X and R. R will be used to prevent a
+precomputed attack on the one-way function.
+
+<P>Reveal R.
+
+<P>After learning the other's R, reveal the one-way hash of X mixed
+with R. The R mixture defeats the hash collision attack from Act II.
+
+<P>After learning the other's hash, reveal X.
+
+<P>After learning the other's X, combine the Xs to produce the
+finalResult.
+
+<P>Verify that there was no cheating.
+<HR>
+</BLOCKQUOTE>
+
+<P>This version uses nested ewhen statements. Using ewhen with
+channels allows for an interactive protocol without having to have
+many emethods. It also prevents attacks which alter the proper
+sequencing of messages.
+
+<PRE>    // Dicing with the Devil: Act III
+&nbsp;
+    public class DieRolling {
+&nbsp;
+/*1*/   public static void main(String argv[ ]) {
+             DieRoller first = new DieRoller();
+             DieRoller second = new DieRoller();
+&nbsp;
+             ELong firstHash, firstX, firstR;
+             ELong secondHash, secondX, secondR;
+&nbsp;
+/*2*/        first &lt;- doDieRoll (&amp;firstHash, &amp;firstX, &amp;firstR,
+                     secondHash, secondX, secondR);
+&nbsp;
+             second &lt;- doDieRoll (&amp;secondHash, &amp;secondX, &amp;secondR,
+                     firstHash, firstX, firstR);
+        }
+    }
+&nbsp;
+    public eclass DieRoller {
+        Random randomGenerator = new Random();
+&nbsp;
+/*3 7*/ emethod doDieRoll (EDistributor myHash,
+                EDistributor myX, EDistributor myR,
+                ELong hisHash, ELong hisX, ELong hisR) {
+&nbsp;
+/*4 8*/     long X = randomGenerator.nextLong();
+            long R = randomGenerator.nextLong();
+&nbsp;
+/*5 9*/     myR &lt;- forward (new ELong(R));
+&nbsp;
+/*6 10*/    ewhen hisR (long otherR) {
+&nbsp;
+/*13 11*/       myHash &lt;- forward (new
+                        ELong(oneWayHash(otherR ^ X)));
+&nbsp;
+/*14 12*/       ewhen hisHash (long otherHash) {
+/*15 17*/           myX &lt;- forward(new ELong(X));
+&nbsp;
+/*16 18*/           ewhen hisX (long otherX) {
+/*21 19*/               long finalResult = combine(X, otherX);
+&nbsp;
+                        System.out.println("Roll result = " +
+                                finalResult);
+&nbsp;
+/*22 20*/               if (oneWayHash(R ^ otherX) != otherHash) {
+                            System.out.println("There was cheating.");
+                        }
+                    }
+                }
+            }
+        }
+&nbsp;
+        long oneWayHash(long a) {
+            long h = a &gt;&gt;&gt; 32;
+            return ((a*a) ^ ((a ^ 0xDEADBEAD) *
+                    (h ^ 0xFADBEBAD)) ^ (h*h) ^ a);
+        }
+&nbsp;
+        long combine(long a, long b) {
+            return (((a ^ b) % 6) + 1);
+        }
+    }
+&nbsp;</PRE>
+
+<P>The Walkthrough:
+
+<OL>
+   <LI><TT>main</TT> declares and initializes first and second, both
+   of eclass <TT>DieRoller</TT>.<TT> main</TT> also declares, but
+   does not initialize, the ELongs which are exchanged in the
+   execution of the protocol.
+
+   <LI><TT>main</TT> sends the message <TT>doDieRoll</TT> to first
+   and second. The first three parameters are used to reveal
+   information to the other. The last three parameters will reveal
+   the other's information. <TT>main</TT> is complete.
+
+   <LI>Suddenly, first executes the emethod <TT>doDieRoll</TT> in
+   response a message sent in step 2.
+
+   <LI>first chooses random numbers <TT>X</TT> and <TT>R</TT>.
+
+   <LI>first reveals <TT>R</TT> by forwarding <TT>myR</TT>.
+
+   <LI>first executes an ewhen statement that says, "When
+   <TT>hisR</TT> gets a value, assign its value to <TT>otherHash</TT>
+   and execute the following code block." first's execution of
+   <TT>doDieRoll</TT> is complete.
+
+   <LI>Suddenly, second executes the emethod <TT>doDieRoll</TT> in
+   response to a message from step 2.
+
+   <LI>second chooses random numbers <TT>X</TT> and <TT>R</TT>.
+
+   <LI>second reveals <TT>R</TT> by forwarding <TT>myR</TT>.
+
+   <LI>second executes an ewhen statement that says, "When
+   <TT>hisR</TT> gets a value, assign its value to <TT>otherR</TT>
+   and execute the following code block." <TT>doDieRoll</TT> is
+   complete.
+
+   <LI>Suddenly, second's <TT>hisR</TT> has a value (as a result of
+   step 5). That value is assigned to <TT>otherR</TT> and execution
+   of the code in the ewhen block begins (as a result of step 10).
+   second reveals the hash of <TT>otherR</TT> xor <TT>X</TT> by
+   forwarding <TT>myHash</TT>.
+
+   <LI>second executes an ewhen statement that says, "When
+   <TT>hisHash</TT> gets a value, assign its value to
+   <TT>otherHash</TT> and execute the following code block." The
+   <TT>hisR</TT> ewhen is complete.
+
+   <LI>Suddenly, first's <TT>hisR</TT> has a value (as a result of
+   step 9). That value is assigned to <TT>otherR</TT> and execution
+   of the code in the ewhen block begins (as a result of step 6).
+   first reveals the hash of its <TT>X</TT> by forwarding
+   <TT>myHash</TT>.
+
+   <LI>first executes an ewhen statement that says "When
+   <TT>hisHash</TT> gets a value, assign its value to
+   <TT>otherHash</TT> and execute the following code block.: The
+   <TT>hisR</TT> ewhen is complete.
+
+   <LI>Suddenly, first's <TT>hisHash</TT> has a value (as a result of
+   step 11). That value is assigned to <TT>otherHash</TT> and
+   execution of the code in the ewhen block begins (as a result of
+   step 14). first reveals its <TT>X</TT> by forwarding <TT>myX</TT>.
+
+   <LI>first executes an ewhen statements that says "When
+   <TT>hisX</TT> gets a value, assign its value to <TT>otherX</TT>
+   and execute the following code block." The <TT>hisHash</TT> ewhen
+   is complete.
+
+   <LI>Suddenly, second's <TT>hisHash</TT> has a value (as a result
+   of step 13). That value is assigned to <TT>otherHash</TT> and
+   execution of the code in the ewhen block begins (as a result of
+   step 12). second reveals its <TT>X</TT> by forwarding
+   <TT>myX</TT>.
+
+   <LI>second executes an ewhen statement that says "When
+   <TT>hisX</TT> gets a value, assign its value to <TT>otherX</TT>
+   and execute the following code block." The <TT>hisHash</TT> ewhen
+   is complete.
+
+   <LI>Suddenly, second's <TT>hisX</TT> has a value (as a result of
+   step 15). That value is assigned to <TT>otherX</TT> and execution
+   of the code in the ewhen block begins (as a result of step 18).
+   second computes the final result.
+
+   <LI>second verifies <TT>hisHash</TT> with <TT>R</TT> xor
+   <TT>hisX</TT> to determine that there was no cheating. The
+   protocol is complete.
+
+   <LI>Suddenly, first's <TT>hisX</TT> has a value (as a result of
+   step 17). That value is assigned to <TT>otherX</TT> and execution
+   of the code in the ewhen block begins (as a result of step 16).
+   first computes the final result.
+
+   <LI>first verifies <TT>hisHash</TT> with <TT>R</TT> xor
+   <TT>hisX</TT> to determine that there was no cheating. The
+   protocol is complete.
+</OL>
+
+<P>This version is much stronger than Act II, but it is also more
+expensive. The program passes many more messages, so it is
+measurably, if not noticeably, slower. Is it safe? It is certainly
+safer. Is it safe enough? Would you bet your immortal soul on it?
+
+<P>One possible attack is on the Java Random function. The protocol
+requires that each side draw two random numbers, <TT>X</TT> and
+<TT>R</TT>, immediately revealing <TT>R</TT>. If knowledge of
+weakness in the design and implementation of Java Random makes it
+possible to predict <TT>X</TT> from <TT>R</TT>, then it may still be
+insecure.
+
+<H2>Epilogue</H2>
+
+<P>You might be wondering, "How far must we go in order to prevent an
+extremely unlikely attack?" These attacks are difficult and time
+consuming. In fact, the attack suggested in Act I has never occurred,
+but we believe that it is possible. The situations to watch for are
+the ones in which it might be worth the trouble. As the Internet
+grows in size and importance, there will be more and more situations
+which are worth the trouble.
+
+<P>One benefit of E is that it can make the attacks more difficult
+and time consuming, but E cannot by itself repel all possible
+attacks. Nothing can. E makes it possible to write secure,
+distributed applications, for some practical definition of the word
+"secure." Use of E does not automatically assure that programs will
+be secure.
+
+<P>For some purposes, the solution in Act I may be completely
+adequate, but with this caution:
+
+<BLOCKQUOTE><P>It is not unusual for the purpose or use or scope of
+software to change over its life. Rarely are the security properties
+of software systems reexamined in the context of new or evolving
+missions. This leads to insecure systems.</BLOCKQUOTE>
+
+<P>If you design systems as though your immortal soul depended on
+them, then you will tend to build more reliable systems.
+</BODY>
+</HTML>

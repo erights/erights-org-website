@@ -1,0 +1,222 @@
+? diffs.txt
+? markm-thesis.aux
+? markm-thesis.bbl
+? markm-thesis.blg
+? markm-thesis.dvi
+? markm-thesis.lof
+? markm-thesis.log
+? markm-thesis.lot
+? markm-thesis.pdf
+? markm-thesis.toc
+Index: acc-objcap.tex
+===================================================================
+RCS file: /home/markm/cvsrep/thesis/acc-objcap.tex,v
+retrieving revision 1.17
+diff -r1.17 acc-objcap.tex
+84c84,86
+< creation   & \code{fork},            & instantiation, construction,   \\
+---
+> object creation,
+>            & \code{fork},            & instantiation, construction,   \\
+> instantiation
+105c107
+< \item An object is either a \emph{primitive} or an
+---
+> \item An \emph{object} is either a \emph{primitive} or an
+109,112c111,122
+< \item An \emph{instance} is a combination of code and state. We say it
+<   is an \emph{instance of} the behavior described by its code. For
+<   example, in an operating system context, we say a process is an
+<   instance of its program.
+---
+> \item An \emph{instance} is a combination of \emph{code} and
+>   \emph{state}. We say it is an \emph{instance of} the behavior
+>   described by its code. For example, in an operating system context,
+>   we say a process is an instance of its program.\footnote{
+> %
+>     To describe Java in these terms, we would say a class is an
+>     instance of its classfile, where the class' state is provided by
+>     its ClassLoader. See the related work section on Joe-E
+>     (section~\ref{sec:joe-e}) for more on how these concepts relate to
+>     Java, and on the restrictions needed to turn Java into an
+>     object-capability language. Given the Joe-E restrictions, we can
+>     also say that a Java object is an instance of its class.}
+139c149,151
+<   addressable references.
+---
+>   addressable references. When Carol is directly accessible to Alice,
+>   we may also say that Alice \emph{refers to}, \emph{holds a reference
+>   to}, or \emph{has direct access to} Carol.
+151,186d162
+< Message passing and object creation dynamically change the graph's
+< connectivity. In the initial conditions of
+< Figure~\ref{fig:granovetter}, Bob and Carol are \emph{directly
+< accessible} to Alice. When Alice sends Bob the message
+< \code{foo(carol)}, she is both accessing Bob and permitting Bob to
+< access Carol.
+< 
+< \begin{figure}
+<   \centerline{\epsfig{figure=granovetter.eps}}
+<   \hangcaption[Introduction by Message Passing]{Introduction by
+<     Message Passing. In an object system, when Alice passed to Bob the
+<     message \code{foo(carol)}, she is both telling Bob about Carol and
+<     giving Bob the means to access Carol. In an object-capability
+<     system, if Bob and Carol already exist and Bob does not already
+<     have access to Carol, the only way he can obtain such access is if
+<     an introducer, such as Alice, passes a message to him, thereby
+<     granting him that access. To be an introducer, Alice must already
+<     have access to Bob and Carol.}
+<   \label{fig:granovetter}
+< \end{figure}
+< 
+< Alice can cause effects on the world outside herself only by sending
+< messages to objects directly accessible to her (Bob), where she may
+< include, at distinct argument indexes, references to objects directly
+< accessible to her (Carol). We model a call-return pattern as two
+< messages. For example, Alice gains information from Bob by causing Bob
+< (with a query) to cause her to be informed (with a
+< return). \markmsays{Expand to explicitly discuss continuation passing}
+< 
+< Bob is affected by the world outside himself only by the arrival of
+< messages sent by those with access to him. On arrival, the arguments
+< of the message (Carol) become directly accessible to Bob. Within the
+< limits set by these rules, and by what Bob may feasibly know or
+< compute, Bob reacts to an incoming message only according to his code.
+< All computation happens only in reaction to messages.
+< 
+216a193,198
+>   For the remainder of this chapter, we simply assume a universally
+>   available object-creation primitive, such as nested lambda
+>   evaluation. \markmsays{Say more. Closed vs open creation. How nested
+>   lambdas & loaders can model each other, but you gotta have at least
+>   one.}
+> 
+219c201
+< \section{Dynamics of the Reference Graph}
+---
+> \section{Reference Graph Dynamics}
+221,222c203,240
+< Let's examine all the ways in which Bob can come to \emph{refer to}
+< (hold a reference to) Carol.
+---
+> \begin{figure}
+>   \centerline{\epsfig{figure=granovetter.eps}}
+>   \hangcaption[Introduction by Message Passing]{Introduction by
+>     Message Passing. In an object system, when Alice passed to Bob the
+>     message \code{foo(carol)}, she is both telling Bob about Carol and
+>     giving Bob the ability to access Carol. In an object-capability
+>     system, if Bob and Carol already exist and Bob does not already
+>     have access to Carol, the only way he can obtain such access is if
+>     an introducer, such as Alice, passes a message to him, thereby
+>     granting him that access. To be an introducer, Alice must already
+>     have access to Bob and Carol.}
+>   \label{fig:granovetter}
+> \end{figure}
+> 
+> Message passing and object creation dynamically change the graph's
+> connectivity. In the initial conditions of
+> Figure~\ref{fig:granovetter}, Bob and Carol are \emph{directly
+> accessible} to Alice. When Alice sends Bob the message
+> \code{foo(carol)}, she is both accessing Bob and permitting Bob to
+> access Carol.
+> 
+> Alice can cause effects on the world outside herself only by sending
+> messages to objects directly accessible to her (Bob), where she may
+> include, at distinct argument indexes, references to objects directly
+> accessible to her (Carol). We model a call-return pattern as two
+> messages. For example, Alice gains information from Bob by causing Bob
+> (with a query) to cause her to be informed (with a
+> return). \markmsays{Expand to explicitly discuss continuation passing}
+> 
+> Bob is affected by the world outside himself only by the arrival of
+> messages sent by those with access to him. On arrival, the arguments
+> of the message (Carol) become directly accessible to Bob. Within the
+> limits set by these rules, and by what Bob may feasibly know or
+> compute, Bob reacts to an incoming message only according to his code.
+> All computation happens only in reaction to messages.
+> 
+> Let's examine all the ways in which Bob can come to hold a reference
+> to Carol.
+225c243
+< \item \emph{By Introduction}, when Alice says:
+---
+> \item \emph{By Introduction}, as when Alice says:
+238,241c256,259
+<   an argument, sharing with Bob her right to access Carol. Unlike the
+<   \fname{cp} example, and like the \fname{cat} example, Alice does not
+<   communicate the string \code{"carol"} to Bob. Bob does not know or
+<   care what name Alice's code uses to refer to Carol.
+---
+>   an argument. Unlike the \fname{cp} example, and like the \fname{cat}
+>   example, Alice does not communicate the string \code{"carol"} to
+>   Bob. Bob does not know or care what name Alice's code uses to refer
+>   to Carol.
+243,250c261,268
+< \item \emph{By Parenthood}, when Bob says: \code{def \dobj{carol} \{
+<   {\ldots} \}}. If Bob already exists and Carol does not, then, if Bob
+<   creates Carol, at that moment Bob is the only object that refers to
+<   Carol. From there, other objects can come to refer to Carol only by
+<   inductive application of these steps. Parenthood may occur by normal
+<   object instantiation, such as calling a constructor or evaluating a
+<   lambda expression, or by loading code, which we return to in
+<   chapter~\ref{chap:acc-loader}.
+---
+> \item \emph{By Parenthood}, as when Bob says: \code{def \dobj{carol}
+>   \{ {\ldots} \}}. If Bob already exists and Carol does not, then, if
+>   Bob creates Carol, at that moment Bob is the only object that refers
+>   to Carol. From there, other objects can come to refer to Carol only
+>   by inductive application of these steps. Parenthood may occur by
+>   normal object instantiation, such as calling a constructor or
+>   evaluating a lambda expression, or by loading code, which we return
+>   to in chapter~\ref{chap:acc-loader}.
+252,260c270,289
+< \item \emph{By Endowment}, when Alice says: \code{def bob \{ {\ldots}
+<   carol {\ldots} \}}. If Carol already exists and Bob does not, then, if
+<   there exists an Alice that already refers to Carol, Alice can create
+<   Bob such that Bob is born already endowed with a reference to
+<   Carol. Bob might be instantiated by lambda evaluation, in which case
+<   a variable \var{carol} which is free within Bob might be bound to
+<   Carol within Bob's creation context, as supplied by Alice. Or Alice
+<   might instantiate Bob by calling a constructor, passing Carol as an
+<   argument.
+---
+> \item \emph{By Endowment}, as when Alice says: \code{def bob \{
+>   {\ldots} carol {\ldots} \}}. If Carol already exists and Bob does
+>   not, then, if there exists an Alice that already refers to Carol,
+>   Alice can create Bob such that Bob is born already endowed with a
+>   reference to Carol. Bob might be instantiated by lambda evaluation,
+>   in which case a variable \var{carol} which is free within Bob might
+>   be bound to Carol within Bob's creation context, as supplied by
+>   Alice. Or Alice might instantiate Bob by calling a constructor,
+>   passing Carol as an argument.\footnote{
+> %
+>     The example of Smalltalk seems to argue that ``by endowment'' is
+>     not fundamental. Instead, Smalltalk objects are initialized ``by
+>     introduction'' after they are created, by an explicit
+>     initialization message. The price of this perspective is that any
+>     of an object's clients could re-initialize it. To write
+>     defensively consistent objects in this style, every initialization
+>     method would have to check, in order to prevent
+>     re-initialization. ``By endowment'' then reappears to compactly
+>     describe the level of abstraction where we can assume such
+>     checking is pervasive.}
+Index: con-evtloop.tex
+===================================================================
+RCS file: /home/markm/cvsrep/thesis/con-evtloop.tex,v
+retrieving revision 1.10
+diff -r1.10 con-evtloop.tex
+134,136c134,136
+< style, as we'll explain in section~\ref{sec:manual-cps}, or d) if it
+< needs external non-prompt input (e.g., a stream from the user), be run
+< in a dedicated vat. E programs have used each of these approaches.
+---
+> style shown in section~\ref{sec:manual-cps}, or d) if it needs
+> external non-prompt input (e.g., a stream from the user), be run in a
+> dedicated vat. E programs have used each of these approaches.
+Index: related-influence.tex
+===================================================================
+RCS file: /home/markm/cvsrep/thesis/related-influence.tex,v
+retrieving revision 1.5
+diff -r1.5 related-influence.tex
+45a46
+> \label{sec:joe-e}

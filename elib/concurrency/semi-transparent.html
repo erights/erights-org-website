@@ -1,0 +1,343 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Semi-Transparent Networking</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">concurrency</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="event-loop.html" title="Back to: Event Loop Concurrency"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Event Loop Concurrency" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="vat.html" title="On to: The Vat"><img src="../../images/next.gif" width="64" height="32" alt="On to: The Vat" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b>Semi-Transparent<br>
+              Networking</b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <blockquote>
+        <div align="center"></div>
+      </blockquote>
+      <p>There have been a variety of attempts at making network programming <i>fully
+        transparent</i>, some of which are ancestors of E (<a href="../../history/actors.html">Actors</a>,
+        <a href="../../history/fcp.html">Concurrent Logic Programming</a>, Concurrent
+        Constraint Programming, Vulcan, <a href="../../history/joule/index.html">Joule</a>).
+        <i>Fully transparent</i> means that any correct program written for a
+        bunch of objects co-existing in a single addess space will remain correct
+        when those objects are distributed over a network, and that any correct
+        program written for a bunch of objects distributed over the network will
+        remain correct when the objects in question are thrown together in the
+        same address space. The computational model of the fully transparent systems
+        must include only those feature that can be adequately supported in both
+        contexts. </p>
+      <p>Carl Hewitt's seminal paper <b><i><a href="http://citeseer.nj.nec.com/context/221753/0">The
+        Challenge of Open Systems</a></i></b> explains the constraints of large
+        scale mutually suspicious radically distributed systems. The Kahn and
+        Miller <a href="http://citeseer.nj.nec.com/context/13965/0"><b><i>Language
+        Design and Open Systems</i></b></a> explains what it means to design fully
+        transparent programming languages that satisfy Hewitt's Open Systems constraints.
+        All the E ancestors listed above satisfy the design principles listed
+        in this paper. At ERights.org, when we refer to distributed computation,
+        unless we state otherwise, assume we are talking about the radical distribution
+        of Hewitt's Open Systems.</p>
+      <p><a href="http://www.sun.com/research/techrep/1994/abstract-29.html"><i><b>A
+        Note on Distributed Computing</b></i></a> argues, in effect, that the
+        costs of these restrictions are too high for general purpose distributed
+        computing. While we disagree with many of the particular arguments in
+        the paper, we find the conclusions phrased much too strongly, and we find
+        the above fully transparent systems much more plausible than this paper
+        would suggest, nevertheless, E gives up on full transparency for the same
+        reasons as what we take to be the main argument of the paper: There are
+        compellingly useful features of local (single machine or single address
+        space) computation that are not naturally available for distributed computation.
+        It is too expensive to give up these features in the local case, where
+        they are cheap; and for many of these, it is impossible or prohibitively
+        expensive to support them in the distributed case. In order to support
+        them in both cases, we must introduce a semantic non-uniformity between
+        the two cases. (For a related but different case against full transparency,
+        see Doug Lea's <a href="http://gee.cs.oswego.edu/dl/coord/index.html"><b><i>Design
+        for Open Systems in Java</i></b></a>.)</p>
+      <p>However, we can give up on full transparency without giving up all the
+        benefits of transparency. We define <i>semi-transparent</i> network programming
+        as the second half of the above definition: <i><b>Any correct program
+        written for a bunch of objects distributed over the network will remain
+        correct when the objects in question are thrown together in the same address
+        space</b></i>. This definition implies that the semantics available in
+        the distributed case are a subset of the semantics available locally.
+        E is semi-transparent, and &quot;vat&quot; serves the role of &quot;address
+        space&quot; in the above definition.</p>
+      <p>
+      <div align="center"> </div>
+      <p>The most compelling cost difference between the intra-vat programming
+        and distributed programming has to do with synchrony, latency, concurrency,
+        atomicity, and reliability. Among objects in the same vat, the familiar
+        synchronous sequential call-return programming, in which the caller waits
+        for the callee to return, has the following attributes:</p>
+      <p>
+      <ul>
+        <li>
+          <p><b>Synchrony</b> makes efficient use of the CPU -- it can only do
+            one thing at a time anyway</p>
+        </li>
+        <li>
+          <p>Adds little <b>latency </b>cost -- as both objects are about equally
+            &quot;close&quot; to the CPU.</p>
+        </li>
+        <li>
+          <p>Enables cheap <b>atomicity</b> -- by disallowing other threads in
+            the same address space (which is again cheap, as the CPU can only
+            do one thing at a time anyway), and by disallowing synchronous communications
+            between vats (which is also desireable on other grounds, as we'll
+            see below).</p>
+        </li>
+        <li>
+          <p>Avoids <b>partial failure</b> handling -- a hardware failure cannot
+            make some objects in an address space fail without making them all
+            fail. The caller does not have to be prepared to react to the disappearance
+            of the callee -- any disaster which kills the callee will kill caller
+            as well, so it cannot react anyway. And vice versa. </p>
+        </li>
+        <li>
+          <p>Avoids <b>temporal inconsistency</b> -- Likewise, no hardware failure
+            can sever the reference between caller and callee without killing
+            them both. Therefore they are always in contact when they should be
+            in contact, and can thereby safely make coordinated changes to their
+            state.</p>
+        </li>
+      </ul>
+      <p> By contrast, distributed inter-object invocation should be based on
+        asynchronous one-way non-fully-reliable pipelined messages:</p>
+      <ul>
+        <li>
+          <p><b>Asynchrony</b>: The sender should send and continue, without waiting
+            for a reply. This allows both processors to proceed in parallel. As
+            is conventional in distributed systems analysis, time between vats
+            must first be understood as a partial causal order, where the inter-vat
+            messages are the causality links. The computation that happens is
+            equivalent to any full order consistent with this partial order.</p>
+        </li>
+        <li>
+          <p><b>Latency</b>: Pipes can be made wider but not shorter -- new technologies
+            will give us ever more bandwidth, but they may never repeal the speed
+            of light. Therefore, the need for network round trips should be kept
+            to a minimum -- it must be reasonable to express distributed algorithms
+            whose implementation requires no more round trips than reasonably
+            necessary. <i><b><font color="#009000">E</font></b></i>'s promise-based
+            <a href="../distrib/pipeline.html">promise pipelining</a> allows computation
+            to &quot;use&quot; the results of previous remote messages before
+            these results have come back.</p>
+        </li>
+        <li>
+          <p><b>Mutual exclusion</b>: While inter-machine mutual exclusion is
+            very expensive (and under mutual suspicion, it's often prohibitively
+            expensive), intra-vat mutual exclusion is free. Distributed computational
+            patterns should make good use of this asymmetry, and our foundations
+            should help us write such patterns.</p>
+        </li>
+        <li>
+          <p><b>Partial failure</b>: Communication lines can temporarily go out,
+            partitioning one part of the network from another. Machine can fail:
+            in a transient fashion, rolling back to a previous stable state; or
+            permanently, making the objects they host forever inaccessible. From
+            a machine not able to reach a remote object, it is generally impossible
+            to tell which of these failure scenarios is occurring. The system
+            as a whole must smoothly continue in the face of these kinds of problems.
+            It must be reasonably possible to write distributed apps whose surviving
+            parts continue to provide valuable service while other parts are inaccessible.
+            See <a href="../distrib/partial-failure.html">Partial Failure Handling</a>
+            for more details.</p>
+        </li>
+        <li><b>Temporal inconsistency</b>: Once you write parts of an app to function
+          in the face such inaccessibility of other parts, then these parts proceed
+          forward and change state while out of contact. This conflicts with the
+          strategy normally advocated by distributed systems designers for failure
+          recovery: transparent masking of failure. You cannot simultaneously
+          hide from the app the occurrence of failure while also allowing it to
+          react to failure in order to continue functioning. E chooses failure-visibility.
+          (By contrast, distributed databases typically choose failure-masking,
+          which means their apps can get wedged during a partition.) The burden
+          of choosing failure-visibility is that E must provide the programmer
+          tools that can be used reliably at reasonable effort to recover distributed
+          consistency on their own. Given the visibility of failure, such recovery
+          is necessarily specific to the semantics of a given distributed app.</li>
+      </ul>
+      <P>E handles this set of differences by adding surprisingly few new abstractions
+        to the conventional set of single-addess space sequential pure object
+        programming abstractions. In addition to the conventional <i><font color="#009900"><b>NEAR</b></font></i>
+        reference, having all the synchrony and reliability properties available
+        in a single address space, E introduces a <a href="refmech.html">reference
+        taxonomy</a> of other reference types including the <i><font color="#000099"><b>EVENTUAL</b></font></i>
+        reference, which is the only kind that can span address spaces. In addition
+        to the conventional message passing taxonomy of synchronous <i>call</i>-return
+        control-flow constructs, which E only allows over conventional <font color="#009900"><b>NEAR</b></font>
+        references, <i><b><font color="#009000">E</font></b></i>'s <a href="msg-passing.html">message passing taxonomy</a>
+        introduces the <i>eventual send</i>, which works over both <font color="#009900"><b>NEAR</b></font>
+        and <b><font color="#000099">EVENTUAL</font></b> references.
+      <P>The properties of <b><font color="#000099">EVENTUAL</font></b> references
+        reflect the inescapable issues of distributed systems. However, the programmer
+        doesn't need to know whether a reference is <font color="#009900"><b>NEAR</b></font>
+        or <b><font color="#000099">EVENTUAL</font></b>. In keeping with the principle
+        of semi-transparency, when the programmer doesn't know, it is always correct
+        to treat a reference as if it is <b><font color="#000099">EVENTUAL</font></b>.
+        You only need to know a reference is <font color="#009900"><b>NEAR</b></font>
+        if you want to use some functionality available only on <font color="#009900"><b>NEAR</b></font>
+        references -- like synchronous calling.
+      <div align="center">
+        <table cellpadding="6">
+          <tr>
+            <th>
+              <div align="left"><font size="+1">Known-</font><font color="#009900"><b>NEAR</b></font><font size="+1">
+                reference</font></div>
+            </th>
+            <th rowspan="6">&nbsp;</th>
+            <th>
+              <div align="left"><font size="+1">Possibly-<b><font color="#000099">EVENTUAL</font></b>
+                reference</font></div>
+            </th>
+          </tr>
+          <tr>
+            <td>
+              <p><font size="+1">Synchronous <b>call</b>-return:</font></p>
+              <blockquote>
+                <pre>val := bob.msg(carol)</pre>
+              </blockquote>
+            </td>
+            <td>
+              <p><font size="+1">Asynch one-way <b>send</b>:</font></p>
+              <blockquote>
+                <pre>promise := bob &lt;- msg(carol)</pre>
+              </blockquote>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p><font size="+1">Sequential programming</font></p>
+              <blockquote>
+                <p><font size="+1">no <tt>synchronized</tt> blocks</font></p>
+              </blockquote>
+            </td>
+            <td>
+              <p><font size="+1">Event-loop programming</font></p>
+              <blockquote>
+                <p><font size="+1">no <tt>synchronized</tt> blocks</font></p>
+              </blockquote>
+            </td>
+          </tr>
+          <tr>
+            <td><font size="+1">Happens <i>now</i></font></td>
+            <td><font size="+1">Happens <i>eventually</i>, and in order...</font></td>
+          </tr>
+          <tr>
+            <td><font size="+1">Partition impossible</font></td>
+            <td><font size="+1">...unless partitioned</font></td>
+          </tr>
+          <tr>
+            <td>
+              <p><img src="images/call.gif" width="238" height="287" alt="Immediate Call Diagram"></p>
+              <p>control-flow outcome</p>
+            </td>
+            <td>
+              <p><img src="images/send.gif" width="238" height="287" alt="Eventual Send Diagram"></p>
+              <p>data-flow outcome</p>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <p>At first, these last two picture may look identical but for the color
+        change. But notice the reversal of the outcome arrow. As explained in
+        <a href="msg-passing.html">Message Passing</a>, the lightning bolt is
+        the stack-frame in Alice in which she emitted a message to Bob. On the
+        left, the arrow goes from the <i>continuation</i> part of the message
+        to the stack-frame, implying that the stack-frame waits for a response
+        to be sent to it along this arrow. </p>
+      <p>On the right, nothing points at the sending stack-frame, so it continues
+        after emitting the message. Moreover, this stack-frame continues holding
+        a promise for the outcome of the message -- the tail of the arrow -- even
+        though the outcome itself hasn't been determined yet. The arrowhead with
+        the gray halo is the ability to determine the resolution of the promise.
+        It serves in the continuation-role of the message delivered to Bob. Messages
+        sent on the arrowtail of a reference always move towards the arrowhead,
+        even while the arrowhead is en-route. This is the basis for <i><b><font color="#009000">E</font></b></i>'s
+        <a href="../distrib/pipeline.html">Promise Pipelining</a>. </p>
+      <p>When Bob finishes reacting to a message, he reports an outcome to the
+        message's continuation. On the left, Alice's stack-frame resumes by reacting
+        to Bob's report. On the right, Bob's report resolves the promise that
+        Alice holds -- the outcome of processing the message beomes the object
+        designated by the reference.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">concurrency</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="event-loop.html" title="Back to: Event Loop Concurrency"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Event Loop Concurrency" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="vat.html" title="On to: The Vat"><img src="../../images/next.gif" width="64" height="32" alt="On to: The Vat" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

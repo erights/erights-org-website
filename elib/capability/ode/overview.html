@@ -1,0 +1,360 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Overview: An Ode to the Granovetter Diagram</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">capability</a>&nbsp;/&nbsp;<a href="index.html">ode</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="ode-objects.html" title="On to: From Functions To Objects"><img src="../../../images/next.gif" width="64" height="32" alt="On to: From Functions To Objects" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b>Overview:<br>
+              <font size="6"> Capability-based<br>
+              Financial Instruments</font></b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <h3 ALIGN="center"><i>Presented at <a href="http://www.fc00.ai/">Financial
+        Cryptography 2000</a></i></h3>
+      <p ALIGN="center">Mark S. Miller, ERights.org<br>
+        Chip Morningstar, Communities.com<br>
+        Bill Frantz, Communities.com</p>
+      <h1 align="left"><a name="abstract"></a>Abstract</h1>
+      <p align="left"> Every novel cooperative arrangement of mutually suspicious
+        parties interacting electronically -- every smart contract -- effectively
+        requires a new cryptographic protocol. However, if every new contract
+        requires new cryptographic protocol <i>design</i>, our dreams of cryptographically
+        enabled electronic commerce would be unreachable. Cryptographic protocol
+        design is too hard and expensive, given our unlimited need for new contracts.</p>
+      <p align="left">Just as the digital logic gate abstraction allows digital
+        circuit designers to create large analog circuits without doing analog
+        circuit design, we present cryptographic <i>capabilities</i> as an abstraction
+        allowing a similar economy of engineering effort in creating smart contracts.
+        We explain the E system, which embodies these principles, and show a covered-call-option
+        as a smart contract written in a simple security formalism independent
+        of cryptography, but automatically implemented as a cryptographic protocol
+        coordinating five mutually suspicious parties.</p>
+      <h1 align="left"><a name="intro"></a>Introduction</h1>
+      <p align="left">From simple abstractions, great power may bloom. Sometimes,
+        this power comes not from wholly new ideas, but rather from the emergent
+        insights that arise when bits of common wisdom from disjoint communities
+        come together. For example, Shannon's formalization of the notion of <i>information</i>
+        [<a href="ode-references.html#Shannon48">Shannon48</a>] built a bridge
+        between the electrical engineer's intuitions about signals, encodings,
+        and noise, and the mechanical engineer's intuitions about temperature
+        and thermodynamic efficiency.</p>
+      <p align="left">This paper takes a first step in unifying the work of the
+        object programming community, the capability-based secure operating systems
+        community, and the financial cryptography community. Historically:</p>
+      <ul>
+        <li>
+          <p>objects have been strong on abstraction and composition,</p>
+        </li>
+        <li>
+          <p>operating systems have been strong on providing a shared platform
+            in which disparate processes can interact without being able to damage
+            one another, even if they contain malicious code, and </p>
+        </li>
+        <li>
+          <p> financial cryptography has been strong on cooperative protocols
+            allowing mutually suspicious parties to trade a diversity of rights
+            in the absence of a mutually-trusted platform.</p>
+        </li>
+      </ul>
+      <p>Unfortunately, each has been weak in the areas where the other two are
+        strong. By bridging the intuitions of these communities, we can engineer
+        systems with the strengths of all three. The bridge described in this
+        paper is based on a joint appreciation, across all three communities,
+        of a common abstraction, illustrated by the <i>Granovetter Diagram</i>
+        shown on the right. The sociologist Mark Granovetter originally developed
+        diagrams of this type to illustrate how the topology of interpersonal
+        relationships changes over time, as people introduce people they know
+        to each other [<a href="ode-references.html#Granovetter73">Granovetter73</a>].
+        Though Granovetter devised this diagram in the context of human relations,
+        we have found it to be a powerful notation for understanding the relations
+        between computational objects in a network.</p>
+      <p><img src="images/granovetter.png" width="339" height="237" align="right" alt="Granovetter Diagram">We
+        present this abstraction from six perspectives: </p>
+      <ol>
+        <li>As the basic step of <i><a href="#perspective-objects">Object Computation</a></i>.</li>
+        <li>As the foundation for <i><a href="#perspective-caps">Capability Security</a></i>.</li>
+        <li>As a <i><a href="#perspective-crypto">Cryptographic Protocol</a></i>
+          implementing distributed capabilities.</li>
+        <li>As a <i><a href="#perspective-pki">Public Key Infrastructure</a></i>,
+          where certificates act like messages, transmitting authorization among
+          the players.</li>
+        <li>As the core <i><a href="#perspective-game">Game-Rule</a></i> for secure
+          computation modeled as a vast multi-player game. </li>
+        <li>As material from which to build a diversity of <i><a href="#perspective-bearer">Financial
+          Bearer Instruments</a></i>.</li>
+      </ol>
+      <p>We are building the E system [<a href="ode-references.html#E">E</a>]
+        to unify these perspectives. E is a simple, secure, distributed, pure-object,
+        persistent programming language. E blends the lambda calculus, capability
+        security, and modern cryptography. In integrating these diverse features,
+        E brings the diverse virtues of the Granovetter Operator to life. Throughout
+        the paper we present our examples in E, explaining the language briefly
+        as needed.
+      <p>Since we can only touch upon each perspective briefly within the space
+        allowed for this paper, we have chosen breadth over depth, so that even
+        a brief treatment can unify the perspectives. Hopefully our references
+        and future writings will provide the needed depth as well.
+      <h1 align="left"><a name="perspectives"></a>Six Perspectives</h1>
+      <ol>
+        <li>
+          <p><b><a name="perspective-objects"></a>Objects</b>. Most importantly,
+            the Granovetter Diagram shows the computation step fundamental to
+            all object computation: the &quot;message send&quot; (in Smalltalk
+            terminology) or the &quot;virtual member function call&quot; (in C++
+            terminology). Alice, Bob, and Carol are three objects. In the initial
+            conditions, Alice holds a reference to (points at, has access to)
+            Bob and Carol. Dynamically, we see that Alice is sending a <tt>foo</tt>
+            message to (calling the <tt>foo</tt> member function of) Bob,
+            in which a parameter of the message (call) is a copy of Alice's reference
+            (pointer, access) to Carol. For conciseness, we will refer to this
+            computation step as the <i>Granovetter Operator</i>. </p>
+          <p>Object-oriented message passing, along with encapsulation and polymorphism,
+            enables modular programming. By designing the interfaces between modules
+            on a <i>need-to-know</i> basis, we satisfy the <i>principle of information
+            hiding</i> [<a href="ode-references.html#Parnas72">Parnas72</a>] that
+            is the basis of much important software engineering theory and practice.</p>
+          <p><a href="ode-objects.html">Read more...</a></p>
+        </li>
+        <li>
+          <p><b><a name="perspective-caps"></a>Capability Security</b>. The Granovetter
+            Operator becomes a security primitive given the following constraint:
+            If Bob does not already have a reference to Carol, Bob can only come
+            to have a reference to Carol if a third party, such as Alice,</p>
+          <ul>
+            <li> <a name="already-carol"></a>already has a reference to Carol,
+              and</li>
+            <li><a name="already-bob"></a>already has a reference to Bob, and</li>
+            <li> <a name="decides"></a>voluntarily <i>decides</i> to share with
+              Bob her reference to Carol.</li>
+          </ul>
+          <p>Adding this property to an object system transforms it into a <i>capability
+            system</i>. In a capability system, <i>only connectivity begets connectivity</i>.
+            In a capability system, an object's authority to affect the world
+            outside itself is determined <i>solely</i> by what references it holds,
+            since the only way the object can cause an external effect is to send
+            a message via one of these references. Consequently, the mechanics
+            of reference-passing determine how authority can change over time.</p>
+          <p>The capability model prohibits certain possibilities, such as forgeable
+            references or mutable global variables, that the object computation
+            model allows (though it does not require them either). Although, in
+            principle, the object computation model is perfectly compatible with
+            these prohibitions, most embodiments of object computation (typically
+            in the form of programming languages) disregard the boundaries imposed
+            by the capability model [<a href="ode-references.html#Kahn88">Kahn88</a>].
+            We explain why E <i>does</i> stay within these boundaries, and so
+            is capability-secure (as are these systems [<a href="ode-references.html#Hewitt73">Hewitt73</a>,
+            <a href="ode-references.html#Tribble95">Tribble95</a>, <a href="ode-references.html#Rees96">Rees96</a>]).
+            We will present an implementation of capability-based money as an
+            example.</p>
+          <p>The main capability-system design rule, the <i>principle of least
+            authority</i> (sometimes called the &quot;principle of least privilege&quot;
+            [<a href="ode-references.html#Saltzer75">Saltzer75</a>]) requires
+            one to design interfaces such that authority is handed out only on
+            a <i>need-to-do</i> basis [<a href="ode-references.html#Crockford97">Crockford97</a>].</p>
+          <p><a href="ode-capabilities.html">Read more...</a></p>
+        </li>
+        <li>
+          <p><b><a name="perspective-crypto"></a>Cryptographic Protocol</b>. Imagine
+            now that Alice, Bob, and Carol are objects residing on three separate
+            machines on a computer network. Distributed object systems, such as
+            CORBA [<a href="ode-references.html#CORBA">CORBA</a>] and RMI [<a href="ode-references.html#Wollrath99">Wollrath99</a>],
+            provide for the diagrammed message send to proceed over the network,
+            while preserving the core semantics of the object computation model.
+            However, these are <i>cooperative protocols</i>, in that they rely
+            on the assumption that the machines involved are correctly cooperating.
+            By contrast, a <i>cryptographic protocol</i> implementing the Granovetter
+            Operator must also preserve the semantics of the capability model,
+            including the prohibitions, in the presence of mutually suspicious
+            objects residing on mutually suspicious machines. </p>
+          <p>We briefly explain Pluribus, <i><b><font color="#009000">E</font></b></i>'s cryptographic capability protocol,
+            turning E into a securely distributed language. We examine how the
+            money example (from the previous section) transparently distributes
+            by showing how Pluribus automatically maps the pieces of the example
+            to stock cryptographic-protocol elements. </p>
+          <p><a href="ode-protocol.html">Read more...</a></p>
+
+        </li>
+        <li>
+          <p><b><a name="perspective-pki"></a>Public Key Infrastructure</b>. Some
+            PKIs, like SPKI (the Simple Public Key Infrastructure [<a href="ode-references.html#Ellison99">Ellison99</a>]),
+            interpret digital certificates primarily as statements authorizing
+            the players to perform various actions on various resources. In the
+            Granovetter Diagram, the message arrow <tt>foo</tt> can be seen
+            as such a certificate, signed by Alice, stating that Bob has the authority
+            to perform the action represented by Carol. This certificate is meaningful
+            if and only if there is a similar certificate granting Alice this
+            right, and so on, back to the creator/owner of Carol. Should Bob choose
+            to exercise this authority, he would present the certificate-chain
+            (or its logical equivalent) as proof that he has received this authorization.</p>
+          <p>The enforceable subset of SPKI can be seen as an off-line, auditable,
+            heavyweight, non-confinable, semi-capability system, as opposed to
+            <i><b><font color="#009000">E</font></b></i>'s on-line, repudiatable-by-default, lightweight, confinable, full-capability
+            system. Perhaps, by comparing these, we may figure out how to build
+            systems with some of the best of both.</p>
+          <p><a href="ode-pki.html">Read more...</a></p>
+
+        </li>
+        <li>
+          <p><b><a name="perspective-game"></a>Game Rules</b>. During a player's
+            turn in a board game, the state of the board constrains what moves
+            that player may make. From these possible moves, the player chooses
+            a particular move, which changes the board and thereby alters the
+            moves then available to the other players. Recall the three conditions
+            needed for Bob to receive a reference to Carol from Alice. The first
+            two conditions are constraints on the possible moves available to
+            Alice (and so correspond to <i>mandatory security</i>). The third
+            condition is that Alice must choose to make this move (and so corresponds
+            to <i>discretionary security</i>). If Alice actually does choose to
+            make this move, she thereby changes the moves available to Bob --
+            afterwards Bob may both send messages to Carol and send messages to
+            yet other parties introducing Carol to them, whereas previously he
+            could not.</p>
+          <p>Attempts to formalize the semantics of computation, including secure
+            computation, have failed to capture the core intuitions of computer
+            security practitioners. Fundamental to these intuitions is the notion
+            of mutually suspicious, separately interested agents, interacting
+            within a framework of rules, under constraints of partial knowledge,
+            each in order to pursue their own interests. The formal tools for
+            capturing such intuitions are to be found in non-zero-sum, partial-information
+            game theory [<a href="ode-references.html#Schelling63">Schelling63</a>].
+            The Granovetter Diagram expresses the core game-rule governing secure
+            capability-based distributed multi-agent computation, viewed as a
+            vast multi-player game.</p>
+          <p>We have yet to exploit this perspective in order to apply game theory
+            to computation in this manner, but we hope this explanation may point
+            the way. We do not explore the game perspective further in this paper.</p>
+          <p><a href="ode-game.html">Read more...</a></p>
+
+        </li>
+        <li>
+          <p><b><a name="perspective-bearer"></a>Financial Bearer Instruments</b>.
+            If Carol provides a useful service, then the ability to send messages
+            to Carol may be a useful <i>right</i>. Perhaps Carol answers questions
+            from a store of knowledge that she alone is privy to. Perhaps she
+            can affect some aspect of the external world, such as pixels on a
+            display or the cash dispenser of an automated teller machine. Any
+            secure system of <i>electronic rights</i> must solve at least three
+            problems: </p>
+          <ul>
+            <li>How to represent who currently has what rights.</li>
+            <li>How to enable rights holders to exercise those rights they have,
+              and no more.</li>
+            <li> How to enable rights holders to securely transfer these rights.</li>
+          </ul>
+          <p>The static reference relationships among objects exactly represent
+            who currently has what rights. Since a right is exercised by sending
+            a message to an object that embodies the right, such as Carol, the
+            rule that you can send a message to any object you have a reference
+            to, but no others, provides for the exercise of those rights you have,
+            and no others. Finally, the transition shown on the Granovetter Diagram
+            is both the secure transfer to Bob of the right to pass messages to
+            Carol, as well as the exercise, by Alice, of whatever right Bob may
+            represent.</p>
+          <p>In the face of widespread misuse of the term &quot;electronic commerce&quot;,
+            we should remember that &quot;commerce&quot; entails more than just
+            the ability of a merchant to accept monetary payment. Commerce is
+            a rich set of market interactions that emerge when territory and abilities
+            are abstracted into &quot;rights&quot;, and a rich set of arrangements
+            that emerge for the mutually acceptable transfer of these rights.
+            For large scale electronic commerce, we should concern ourselves with
+            those rights which are both representable electronically and enforceable
+            electronically, and with mutually-enforceable arrangements for their
+            transfer. </p>
+          <p>The Granovetter Diagram by itself shows the simplest -- in the electronic
+            world -- interesting such electronic right: a non-exclusive, specific,
+            exercisable, non-assayable bearer instrument. By contrast, the money
+            example from sections 2 and 3 shows an exclusive, fungible, non-exercisable,
+            assayable bearer instrument. We sketch a taxonomy of other enforceable
+            electronic rights, and show how most of these can be built by simple
+            compositions of the Granovetter Operator. Derivative rights, including
+            derivative financial instruments, are composed from underlying rights
+            via familiar object abstraction. We show a covered call option as
+            an example.</p>
+          <p><a href="ode-bearer.html">Read more...</a></p>
+
+        </li>
+      </ol>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">capability</a>&nbsp;/&nbsp;<a href="index.html">ode</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="ode-objects.html" title="On to: From Functions To Objects"><img src="../../../images/next.gif" width="64" height="32" alt="On to: From Functions To Objects" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

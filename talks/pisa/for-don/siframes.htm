@@ -1,0 +1,64 @@
+<html>
+<head><title>Subjective Orientation &amp; Objective Wealth: Entrepreneurship &amp; the Evolution of the Structure of &#147;Text&#148;</title>
+<script language="JavaScript">
+<!--
+var nCurrentPage = 0;
+var nPageCount = 17;
+
+function NavigateAbs( nPage )
+{
+  frames["show"].location.href = "img" + nPage + ".htm";
+  //frames["notes"].location.href = "note" + nPage + ".htm";
+  nCurrentPage = nPage;
+  if(nCurrentPage==0)
+  {
+    frames["navbar1"].location.href = "navbar0.htm";
+  }
+  else if(nCurrentPage==nPageCount-1)
+  {
+    frames["navbar1"].location.href = "navbar2.htm";
+  }
+  else
+  {
+    frames["navbar1"].location.href = "navbar1.htm";
+  }
+}
+
+function NavigateRel( nDelta )
+{
+  var nPage = parseInt(nCurrentPage) + parseInt(nDelta);
+  if( (nPage >= 0) && (nPage < nPageCount) )
+  {
+    NavigateAbs( nPage );
+  }
+}
+
+function ExpandOutline()
+{
+  frames["navbar2"].location.href = "navbar4.htm";
+  frames["outline"].location.href = "outline1.htm";
+}
+
+function CollapseOutline()
+{
+  frames["navbar2"].location.href = "navbar3.htm";
+  frames["outline"].location.href = "outline0.htm";
+}
+
+// -->
+</SCRIPT>
+</head>
+<frameset cols="*,816">
+  <frameset rows="42,*">
+    <frame src="navbar3.htm" name="navbar2" marginwidth=4 marginheight=4  scrolling=no>
+    <frame src="outline0.htm" name="outline">
+  </frameset>
+  <frameset rows="42,*">
+    <frame src="navbar0.htm" name="navbar1" marginwidth=4 marginheight=4 scrolling=no>
+    <frame src="img0.htm" name="show" marginwidth=4 marginheight=4>
+  </frameset>
+</frameset>
+<noframes><body text=#000000 bgcolor=#FFFFFF link=#000080 vlink=#800000 alink=#000080>
+Sorry, your browser apparently does not support frames
+</noframes></body>
+</html>

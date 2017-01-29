@@ -1,0 +1,459 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Selective Transparency within the Subgraph</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">data</a>&nbsp;/&nbsp;<a href="../index.html">serial</a>&nbsp;/&nbsp;<a href="index.html">jhu-paper</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="exit-security.html" title="Back to: Manipulating Authority at the Exits"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Manipulating Authority at the Exits" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="entry-security.html" title="On to: Manipulating Identity at the Entries"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Manipulating Identity at the Entries" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b>Selective
+              Transparency<br>
+              within the Subgraph</b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <h1><a name="lessons"></a>Lessons of <i>Selective Transparency within the
+        Subgraph</i></h1>
+      <p><font color="#FF0000">(*** To be written)</font></p>
+      <h1>A Working Pile System</h1>
+      <p>We repair the remaining problem of the last chapter, and solve the problem
+        of selective transparency. The solution builds on rights amplification,
+        so we import the rights amplification abstraction available in the <i><b><font color="#009000">E</font></b></i>
+        library and <a href="../../../elib/capability/ode/ode-capabilities.html#rights-amp">explained</a>
+        in the Ode.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+<span class="stdout">? </span><span class="stdin"><span class="keyword">def</span> <span class="defvar">makeBrandPair</span> := &lt;import:</span><span class="litchars">org.erights.e.elib.sealing.makeBrand</span><span class="stdin">&gt;</span></pre>
+      </blockquote>
+      <p>Without further delay, here's a correct implementation of the pile system,
+        with the differences underlined. Explanations follow.</p>
+      <blockquote>
+        <pre><span class="comment"># E sample</span>
+<span class="keyword">def</span> <span class="defobj">makePileUriGetter</span>(<span class="defvar">&lt;file&gt;</span>) :near {
+    <u><span class="keyword">def</span> [<span class="defvar">magicSealer</span>, <span class="defvar">magicUnsealer</span>] := makeBrandPair(&quot;<span class="litchars">Pile System</span>&quot;)</u>
+    <u><span class="keyword">def</span> <span class="defvar">magicBrand</span> := magicSealer.getBrand()</u>
+
+    <span class="keyword">def</span> <span class="defobj">&lt;pile&gt;</span> {
+        <u><span class="keyword">to</span> <span class="defverb">getSealer</span>() :any { magicSealer }</u>
+        <span class="keyword">to</span> <span class="defverb">optUncall</span>(<span class="defvar">obj</span>) :nullOk[__Portrayal] {
+            <span class="keyword">if</span> (Ref.isNear(obj) &amp;&amp;
+                  <u>obj.__optSealedDispatch(magicBrand) =~</u>
+                  <u>sealedBox :notNull) {</u>
+
+                <u>magicUnsealer.unseal(sealedBox)</u>
+            } <span class="keyword">else</span> {
+                null
+            }
+        }
+        <span class="keyword">to</span> <span class="defverb">optUnget</span>(<span class="defvar">obj</span>) :nullOk[String] {
+            <span class="keyword">if</span> (&lt;pile&gt;.optUncall(obj) =~
+                  [==&lt;pile&gt;, `<span class="litchars">get</span>`, [<span class="defvar">path</span>]]) {
+                path
+            } <span class="keyword">else</span> {
+                null
+            }
+        }
+        <span class="keyword">to</span> <span class="defverb">get</span>(<span class="defvar">absPath</span> :String) :any {
+            <u><span class="keyword">def</span> <span class="defobj">common</span> {</u>
+                <u><span class="keyword">to</span> <span class="defverb">__optSealedDispatch</span>(<span class="defvar">brand</span>) :any {</u>
+                    <u><span class="keyword">switch</span> (brand) {</u>
+                        <u><span class="keyword">match</span> ==magicBrand {</u>
+                            <u>magicSealer.seal([&lt;pile&gt;,
+</u>                                              <u>&quot;<span class="litchars">get</span>&quot;,</u>
+                                              <u>[absPath]])</u>
+                        <u>}</u>
+                        <u><span class="keyword">match</span> _ { null }</u>
+                    <u>}</u>
+                <u>}</u>
+                <u><span class="keyword">to</span> <span class="defverb">getSealer</span>() :any { magicSealer }</u>
+            <u>}</u>
+            <span class="keyword">if</span> (absPath.endsWith(&quot;<span class="litchars">/</span>&quot;)) {
+                <span class="keyword">def</span> <span class="defobj">directory</span> <u><span class="keyword">extends</span> common</u> {
+                    <u><span class="keyword">to</span> <span class="defverb">__optSealedDispatch</span>(brand) :any {</u>
+                        <u>super.__optSealedDispatch(brand)</u>
+                    <u>}</u>
+                    <span class="keyword">to</span> <span class="defverb">optUncall</span>(<span class="defvar">obj</span>) :nullOk[__Portrayal] {
+                        <span class="keyword">if</span> (&lt;pile&gt;.optUncall(obj) =~
+                              [==&lt;pile&gt;, `<span class="litchars">get</span>`, [`$absPath@<span class="defvar">relPath</span>`]]) {
+
+                            <span class="keyword">if</span> (relPath.size() &gt;= 1) {
+                                <span class="keyword">return</span> [directory, &quot;<span class="litchars">get</span>&quot;, [relPath]]
+                            }
+                        }
+                        null
+                    }
+                    <span class="keyword">to</span> <span class="defverb">optUnget</span>(<span class="defvar">obj</span>) :nullOk[String] {
+                        <span class="keyword">if</span> (directory.optUncall(obj) =~
+                              [==directory, `<span class="litchars">get</span>`, [<span class="defvar">path</span>]]) {
+                            path
+                        } <span class="keyword">else</span> {
+                            null
+                        }
+                    }
+                    <span class="keyword">to</span> <span class="defverb">get</span>(<span class="defvar">relPath</span> :String) :any {
+                        &lt;pile&gt;[absPath + relPath]
+                    }
+                }
+            } <span class="keyword">else</span> {
+                <span class="keyword">def</span> <span class="defvar">file</span> := &lt;file&gt;[absPath]
+                require(!file.isDirectory())
+                <span class="keyword">def</span> <span class="defobj">normalPile</span> <u><span class="keyword">extends</span> common</u> {
+                    <u><span class="keyword">to</span> <span class="defverb">__optSealedDispatch</span>(brand) :any {</u>
+                        <u>super.__optSealedDispatch(brand)</u>
+                    <u>}</u>
+                    <span class="keyword">to</span> <span class="defverb">getText</span>() :String {
+                        file.getText()
+                    }
+                    <span class="keyword">to</span> <span class="defverb">setText</span>(<span class="defvar">newText</span> :String) :void {
+                        file.setText(newText)
+                    }
+                }
+            }
+        }
+    }
+}</pre>
+      </blockquote>
+      <p>Besides the <i><b><font color="#009000">E</font></b></i> already explained,
+        this code uses the following constructs.</p>
+      <ul>
+        <li>
+          <p>We have already seen some of <i><b><font color="#009000">E</font></b></i>'s
+            Miranda Methods -- methods all objects are expected to respond to,
+            and for which default implementations are provided. <tt>__optSealedDispatch(brand)</tt>
+            is another one, whose semantics is explained below. Its default implementation
+            is to return null.</p>
+        </li>
+        <li>
+          <p>When an object is defined with the syntax <br>
+            <tt>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">def</span> <span class="defobj">&lt;name&gt;</span>
+            <span class="keyword">extends</span> &lt;expression&gt; {...</tt><br>
+            then the expression is evaluated, bound to the variable <tt>super</tt>
+            in the scope of the object definition, and the object is defined to
+            forward (delegate) all non-Miranda Methods it doesn't define to this
+            super object. This can be used to implement inheritance, but here
+            we use it only for delegation. </p>
+        </li>
+        <li>
+          <p>Since <tt>__optSealedDispatch</tt> is a Miranda Method, in order
+            to delegate it to the super object, we must do so manually.</p>
+        </li>
+        <li>
+          <p>The sealer / unsealer pair introduced by the Ode is actually a triple.
+            The third element is the brand, which can be obtained from the sealer,
+            the unsealer, or any SealedBox created by the sealer. The brand conveys
+            no authority. It provides only unforgeable uniqueness for uniquely
+            labeling its triple.</p>
+        </li>
+        <li><i><b><font color="#009000">E</font></b></i>'s <tt class="keyword">switch</tt>
+          expression contains <tt class="keyword">match</tt> clauses rather than
+          cases. Each <tt class="keyword">match</tt> clause has a pattern as header
+          and an expression as body. These patterns are matched against the specimen
+          in sequence until one succeeds, whereupon that <tt class="keyword">match</tt>'s
+          expression is evaluated to produce the value of the <tt class="keyword">switch</tt>.
+          The pattern <tt>_</tt> matches anything, so a<br>
+          <tt>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">match</span> _ {...</tt><br>
+          at the end of a <tt class="keyword">switch</tt> functions as a <tt>default</tt>
+          case.</li>
+      </ul>
+      <h2>__optSealedDispatch(brand)</h2>
+      <p>Recall we said earlier that a verb (message name, selector, order code)
+        in <i><b><font color="#009000">E</font></b></i> is just a string, so that
+        anyone can send a message using any verb they like to any object they
+        have. For capability programming this is usually an adequate choice, but
+        it is not the only possible choice, and it is not always adequate. In
+        the language T [ref Rees-T], verbs are true capabilities -- they are first
+        class anonymous objects with unforgeable selfish identity. The names that
+        appear as verbs in program text are just yet more variable names, to be
+        lexically looked up in the caller's scope to find the actual verb object.
+        Inspired by T, Joule goes even farther, with the ability to send a message
+        being a sealer, the message itself being a <tt>SealedBox</tt> encapsulating
+        its arguments, and the ability to receive a message and bind the arguments
+        being an unsealer. The message dispatch mechanism mechanism is indexed
+        by the brand.</p>
+      <p>Beyond providing the Miranda <tt>__optSealedDispatch</tt> method whose 
+        default implementation simply returns null, <i><b><font color="#009000">E</font></b></i> 
+        has no built-in support for any such fancier message dispatch mechanism. 
+        Rather, we establish the convention that <tt>obj.__optSealedDispatch(brand)</tt> 
+        means &quot;<i>obj, if I had the unsealer for this brand, what would you 
+        like to say to me?</i>&quot;. obj can only respond for those brands for 
+        which it has the sealer. For these, is dispatches to a <tt class="keyword">match</tt>-clause 
+        that seals its response using the corresponding sealer, and returns the 
+        resulting <tt>SealedBox</tt>. The <tt class="keyword">switch</tt> expression 
+        is analogous to the sequence of method definitions in an object definition, 
+        where each <tt class="keyword">match</tt>-clause is analogous to a method. 
+        The caller of obj can only receive obj's response by unsealing this box, 
+        which requires the unsealer.</p>
+      <p>In our convention, the role of the sealer and unsealer are the reverse 
+        of Joule's. The two conventions are formally equivalent -- either can 
+        easily simulate the other with exactly the same security properties. Joule's 
+        convention is more convenient for use as a general purpose messaging mechanism. 
+        But since <i><b><font color="#009000">E</font></b></i> already has a messaging 
+        mechanism for normal use, where rights amplification isn't needed, our 
+        convention seems to be more convenient for the remaining cases where it 
+        is. </p>
+      <hr>
+      <table cellpadding="12"  bgcolor="#FFFFE8" border="1"  >
+        <tr>
+          <td>
+            <p>Updoc starts afresh on each page, so each chapter needs its own
+              setup.</p>
+            <blockquote>
+              <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">makeSurgeon</span> := &lt;elib:<span class="litchars">serial.makeSurgeon</span>&gt;
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">surgeon</span> := makeSurgeon.withSrcKit(&quot;de: &quot;).diverge()
+
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">&lt;pile&gt;</span> := makePileUriGetter(&lt;file&gt;)
+<span class="stdout"># value: &lt;pile__uriGetter&gt;
+
+? </span><span class="keyword">var</span> <span class="defvar">ehomePath</span> := interp.getProps()[&quot;<span class="litchars">e.home</span>&quot;]
+<span class="stdout">? </span><span class="keyword">if</span> (! ehomePath.endsWith(&quot;<span class="litchars">/</span>&quot;)) {
+<span class="stdout">&gt; </span>    ehomePath += &quot;<span class="litchars">/</span>&quot;
+<span class="stdout">&gt; </span>}
+<span class="stdout">? </span>ehomePath
+<span class="stdout"># value: &quot;c:/Program Files/erights.org/&quot;
+
+? </span><span class="keyword">def</span> <span class="defvar">&lt;ehome&gt;</span> := &lt;pile&gt;[ehomePath]
+<span class="stdout"># value: &lt;directory&gt;
+
+? </span>surgeon.addLoader(&lt;pile&gt;, &quot;<span class="litchars">pile__uriGetter</span>&quot;)<span class="stdout">
+</span><span class="comment"># not yet - ? surgeon.addLoader(&lt;ehome&gt;, &quot;ehome__uriGetter&quot;)</span><span class="stdout">
+
+? </span><span class="keyword">def</span> <span class="defobj">iAmEHome2</span> {
+<span class="stdout">&gt; </span>    <span class="keyword">to</span> <span class="defverb">__optUncall</span>() :__Portrayal {
+<span class="stdout">&gt; </span>        [&lt;pile&gt;, &quot;<span class="litchars">get</span>&quot;, [ehomePath]]
+<span class="stdout">&gt; </span>    }
+<span class="stdout">&gt; </span>}
+<span class="stdout"># value: &lt;iAmEHome2&gt;
+
+? </span>def d1 := surgeon.serialize(&lt;ehome&gt;)<span class="stdout">
+# value: &quot;de: &lt;pile&gt;[\&quot;c:/Program Files/erights.org/\&quot;]&quot;
+
+? </span>def d2 := surgeon.serialize(iAmEHome2)<span class="stdout">
+# value: &quot;de: &lt;pile&gt;[\&quot;c:/Program Files/erights.org/\&quot;]&quot;
+
+? </span>d1 == d2<span class="stdout">
+# value: true
+
+? </span>surgeon.unserialize(d1)<span class="stdout">
+# value: &lt;directory&gt;</span></pre>
+            </blockquote>
+          </td>
+        </tr>
+      </table>
+      <hr>
+      <h1>Selective Transparency by Rights Amplification</h1>
+      <p>Both <tt>ehome__uriGetter</tt> and <tt>iAmEHome2</tt> serialize to the
+        same depiction, which unserializes to an object equivalent to <tt>ehome__uriGetter</tt>.
+        This is as it should be, since both have adequate authority and knowledge
+        -- both have the <tt>pile__uriGetter</tt>, and both know the path string
+        <tt>&quot;<span class="litchars">c:/Program Files/erights.org/</span>&quot;</tt>.
+        If we added a <tt>get(String)</tt> method to <tt>iAmEHome2</tt>, it would
+        have most of the useful abilities of <tt>ehome__uriGetter</tt>, so one
+        might think it is benignly substitutable for <tt>ehome__uriGetter</tt>.
+        However, it lacks <tt>ehome__uriGetter</tt>'s crucial inability -- a client
+        of the <tt>ehome__uriGetter</tt> is not able to obtain from it the <tt>pile__uriGetter</tt>,
+        nor any directory or normalPile not within its subtree, nor even its path.
+        In order to be portrayable by default, <tt>iAmEHome2</tt>, must divulge
+        this knowledge and authority to the <a href="recog-n-build.html#uncalling"><tt>minimalUncaller</tt></a>,
+        which only knows to ask by calling the <tt>__optUncall()</tt> method.
+        The <tt>minimalUncaller</tt>'s means of asking an object to portray itself
+        is a means any other client of the object can use to obtain that portrayal.</p>
+      <p>By contrast, <tt>ehome__uriGetter</tt> is not portrayable by default
+        -- the <tt>minimalUncaller</tt> cannot contribute a portrayal of this
+        object. Instead, the <tt>ehome__uriGetter</tt>'s portrayal is obtained,
+        and contributed to the traversal, by the <tt>pile__uriGetter</tt> in its
+        role as an uncaller on the uncallers list. The pile__uriGetter asks by
+        calling <tt>__optSealedDispatch(magicBrand)</tt>. The <tt>ehome__uriGetter</tt>
+        returns the same portrayal <tt>iAmEHome2</tt> freely offers, but returns
+        it in a box sealed by the <tt>magicSealer</tt>. Any of its clients can
+        perform this call and obtain this box, but the contents of the box --
+        the portrayal containing the power and knowledge that must normally be
+        encapsulated -- can only be obtained by using the <tt>magicUnsealer</tt>,
+        which only the <tt>pile__uriGetter</tt> has. </p>
+      <p>Note that each call to <tt>makePile__uriGetter</tt> creates a separate
+        instance of a pile system. Two separately created pile systems that are
+        otherwise equivalent are mutually opaque. Their loaders will not enable
+        objects from the other to be serialized. Unlike Java's package scope or
+        Dylan's module scope, the sealer/unsealer pattern of rights amplification
+        is dynamic and instance-based.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">&lt;nile&gt;</span> := makePileUriGetter(&lt;file&gt;)
+<span class="stdout"># value: &lt;pile__uriGetter&gt;
+
+? </span><span class="keyword">def</span> <span class="defvar">neprops</span> := &lt;nile&gt;[ehomePath + &quot;<span class="litchars">eprops.txt</span>&quot;]
+<span class="stdout"># value: &lt;normalPile&gt;
+
+? </span>neprops.getText().size()
+<span class="stdout"># example value: 13898
+
+? </span>surgeon.serialize(neprops)
+<span class="stderr"># problem: Can't uneval &lt;normalPile&gt;</span></pre>
+      </blockquote>
+      <p>In the code for the pile system above, we make a questionable design
+        choice to illustrate a point -- by defining the <tt>getSealer()</tt> methods,
+        all the objects created by a given instance of the pile system freely
+        offers their <tt>magicSealer</tt> to their clients. The above security
+        properties depend only on the <tt>magicUnsealer</tt> remaining encapsulated,
+        which it does. In this pattern, the <tt>magicSealer</tt> functions like
+        a public encryption key, and the <tt>magicUnsealer</tt> like a private
+        decryption key.</p>
+      <p>Had we left out these <tt>getSealer()</tt> methods, then the <tt>magicSealer</tt>
+        would also be private to each pile system instance, and the act of sealing
+        would also have the meaning of ensuring authenticity -- no object outside
+        a pile system instance could create a sealed box which that pile system's
+        magicUnsealer would unseal. Had we made this choice, we could have simply
+        sealed <tt>absPath</tt>s into the boxes rather than full portrayal-triples,
+        since the loader could trust anyone it could understand. We would use
+        this to implement <tt>optUnget</tt> directly, and then implement <tt>optUncall</tt>
+        out of <tt>optUnget</tt> rather than the other way around. This would
+        seem much more natural.</p>
+      <p>However, this choice would prevent us from repairing <tt>iAmEHome2</tt>.
+        Here's a repaired one:</p>
+      <blockquote>
+        <pre><span class="comment"># E sample</span><span class="keyword">
+def</span> <span class="defvar">magicSealer</span> := &lt;pile&gt;.getSealer()
+<span class="keyword">def</span> <span class="defvar">magicBrand</span> := magicSealer.getBrand()
+<span class="keyword">def</span> <span class="defobj">iAmEHome3</span> {
+    <span class="keyword">to</span> <span class="defverb">__optSealedDispatch</span>(<span class="defvar">brand</span>) :any {
+        <span class="keyword">switch</span> (brand) {
+            <span class="keyword">match</span> ==magicBrand {
+                magicSealer.seal([&lt;pile&gt;, &quot;<span class="litchars">get</span>&quot;, [ehomePath]])
+            }
+            <span class="keyword">match</span> _ { null }
+        }
+    }
+}</pre>
+      </blockquote>
+      <blockquote>
+        <pre>
+<span class="stdout">? </span>surgeon.serialize(iAmEHome3)<span class="stdout">
+# value: &quot;de: &lt;pile&gt;[\&quot;c:/Program Files/erights.org/\&quot;]&quot;</span></pre>
+      </blockquote>
+      <p>Like the <tt>ehome__uriGetter</tt> trusted by this pile system, <tt>iAmEHome3</tt>,
+        though it is not trusted by the pile system, nevertheless demonstrates
+        to it that it has adequate knowledge and authority to be serialized as
+        <tt>ehome__uriGetter</tt> is, while simultaneously denying this knowledge
+        and authority from its own clients, whom it may not trust. This only works
+        because the full portrayal is sent through the sealed box, not just the
+        path.</p>
+      <p>This dispatch provides a further flexibility -- by adding more <tt class="keyword">match</tt>
+        clauses to the <tt class="keyword">switch</tt>, iAmEHome3 can portray
+        itself differently depending on &quot;who&quot; is asking -- or rather,
+        on which unsealer they would use to unseal the box and obtain the portrayal.</p>
+      <h1>Secure Persistence</h1>
+      <p><tt>iAmEHome3</tt> demonstrates how encapsulated objects may generally 
+        be made persistent. A persistence system establishes a subgraph recognizer 
+        using an uncaller using a <tt>magicUnsealer</tt>. The corresponding <tt>magicSealer</tt> 
+        is made generally available to the population of objects that may wish 
+        to persist. Those that do, use this <tt>magicSealer</tt> to divulge their 
+        portrayal, given that they trust (are constructed to trust) that their 
+        encapsulated knowledge and powers may be made available to anyone with 
+        the corresponding <tt>magicUnsealer</tt>.</p>
+      <h1>Corresponding Concepts in Conventional Serialization</h1>
+      <p>JOSS achieves selective transparency in one sense trivially, by resort
+        to special primitives (native methods) for violating object abstraction.
+        JOSS itself has direct access to the private variables of objects declared
+        <tt>Serializable</tt>. In another sense, JOSS works well with the form
+        of rights amplification provided by Java -- <a href="../../../elib/capability/ode/ode-capabilities.html#rights-amp">sibling
+        communication</a>. For example, within a single package we can define</p>
+      <ul>
+        <li>a subclass of ObjectOutputStream which overrides <a href="../../../javadoc/java/io/ObjectOutputStream.html#replaceObject(java.lang.Object)"><tt>replaceObject(..)</tt></a>
+          to obtain the portrayal the original object would like to offer only
+          to this serializer, and</li>
+        <li>a base class for such original objects to inherit from, defining a
+          package scoped method which will return this portrayal.</li>
+      </ul>
+      <p> By package scoping the access to the portrayal, only other methods defined
+        within the same package, like the above <tt>replaceObject(..)</tt>, can
+        invoke this method and access this portrayal. This technique for expressing
+        rights amplification naturally leads to static protection domains, in
+        which all instances of this serializer class can amplify all objects that
+        inherit from this base class. Fortunately, this is easily repaired: Each
+        base class can record which serializer instance it is supposed to be amplified
+        by, and each serializer can check if it is that one. Since all instances
+        of the same class run the same code, and since an object implicitly &quot;trusts&quot;
+        its own code, the instance that should be able to amplify an object can
+        trust its siblings not to, even though they could.</p>
+      <h1></h1>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">data</a>&nbsp;/&nbsp;<a href="../index.html">serial</a>&nbsp;/&nbsp;<a href="index.html">jhu-paper</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="exit-security.html" title="Back to: Manipulating Authority at the Exits"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Manipulating Authority at the Exits" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="entry-security.html" title="On to: Manipulating Identity at the Entries"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Manipulating Identity at the Entries" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

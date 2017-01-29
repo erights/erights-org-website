@@ -1,0 +1,416 @@
+# E Configuration File (or E Configuration Template File)
+#
+# If you are looking at eprops-template.txt, then you are looking at a
+# template to be used to construct eprops.txt.  In this case, for
+# several property definitions, you should instead see text of the
+# form, for example,
+#
+#     e.version=$<<e.version>>
+#
+# but with curly brackets instead of angle brackets.
+#
+# In the comment preceding that line, you should see an example of a
+# possible value of this property, such as "0.8.9".  Were this
+# property to have this value in the eprops.txt file, it would appear
+# as
+#
+#     e.version=0.8.9
+#
+# The eprops.txt file is written in a restricted form of Java's
+# Properties file save/load syntax.  If you are looking at an
+# eprops.txt file, all property definitions should already have the
+# above form.  You may create an eprops.txt file manually by copying
+# the eprops-template.txt file and replacing the
+# dollar-double-curly-bracket form with the Java property definition.
+#
+# Notice that there are no quotes around the value.  This is correct
+# even if the property value contains spaces, since the Java property
+# syntax reads all text till the end of the line.
+#
+# When a property value is a file or directory path name, it should be
+# absolute and use forward slashes ("/"), regardless of the local
+# platform's convention.  If it's a non-top-level directory, a
+# terminal slash is optional.  Note: On MSWindows, you must specify
+# drives the MSWindows/Java way ("c:...") rather than the Cygwin way
+# ("//c/...").
+#
+# When a property value is a pathlist (a list of paths, sometimes also
+# confusingly refered to as a "path", as in the PATH or CLASSPATH
+# variables), then the entries should be separated by a semicolon
+# (";"), independent of platform.  (As opposed to the Java convention,
+# which is either ";" or ":" depending on platform.)
+#
+# All these property definitions get loaded into an E process'
+# System.properties, so long as they don't override an already present
+# property.  This is so command-line property settings (using
+# arguments of the form "-D<name>=<value>) will take precedence over
+# property settings in eprops.txt.
+#
+# The eprops.txt file should serve as a record of everywhere (outside
+# of the install directory itself) that installation placed files and
+# registry entries, so that a future uninstaller will know (fingers
+# crossed) what files and registry entries to remove.
+#
+# @author Mark S. Miller
+
+
+
+# What version of E is this?
+#
+# For example, "0.8.9".
+
+e.version=0.8.10gamma2
+
+
+# Where is E installed?  If this file is eprops.txt (as opposed to
+# eprops-template.txt) then this eprops.txt file should be in this
+# directory.
+#
+# For example, "c:/Program Files/erights.org/"
+
+e.home=c:/Program Files/erights.org/
+
+
+# What is the absolute path of the Java executable command?  This must
+# be a Java compatible with Sun's JDK >= 1.3.  On MSWindows, if you
+# wish to suppress the MSDOS console window, use a javaw.exe command
+# rather than a java.exe command.
+#
+# For example, "d:/jdk1.3/bin/java.exe"
+
+e.javacmd=c:/jdk1.3.1_01/bin/java.exe
+
+
+# When E shortcuts are launched from the desktop, where should their
+# current directory be?  Under *nix currently, this option does
+# nothing.  On MSWindows, this option affects only newly generated
+# shortcuts.  After changing this option, rerun the setup.e
+# command to generate new shortcuts.
+#
+# For example: "c:/WINDOWS/Desktop" or "".
+
+e.launch.dir=C:/Documents and Settings/Administrator/Desktop
+
+
+# Where does trace data go?  This directory will accumulate
+# debugging information provided by running E programs in order to
+# facilitate a post-mortem analysis of problems.  The trace system
+# treats the directory as a large circular buffer giving a finite
+# window into the past in exchange for a finite memory burden.
+#
+# For example: "c:/WINDOWS/temp/etrace" or "".
+
+TraceLog_dir=C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/etrace
+
+# Other trace switches
+
+# TraceLog_causality=debug
+
+
+# If this property is set, JDK1.3's EventDispatchThread's
+# handleException(Throwable) will delegate exception reporting
+# to a newly made instance of this class name.
+#
+# For example: "org.erights.e.elib.prim.FEProblemHandler"
+
+sun.awt.exception.handler=org.erights.e.elib.prim.FEProblemHandler
+
+
+# Where are copies of the "e" bash script placed?  Since *.e scripts
+# normally begin with the line "#!/usr/bin/env e", a *.e file won't be
+# considered an executable file unless /usr/bin/env can find "e" on
+# the PATH.  On MSWIndows, this option is only relevant to Cygwin
+# users.  The "e" script should be placed somewhere on the PATH
+# visible from a shell.  (On MSWindows, this means Cygwin shells, but
+# not the MSDOS shell).
+#
+# For example: "c:/WINDOWS/;/home/markm/bin"
+
+e.put.bash.pathlist=C:/WINNT
+
+
+# Where are copies of the shortcuts placed?
+#
+# For example: "c:/WINDOWS/Desktop;c:/WINDOWS/Start Menu/Programs/erights.org".
+
+e.put.shortcut.pathlist=C:/Documents and Settings/Administrator/Desktop;C:/Documents and Settings/Administrator/Start Menu/Programs/erights.org
+
+
+# Which of .e, .emaker, .caplet, .updoc, .vat, and .cap should be
+# associated with icons, registry types, mime types, launching
+# programs, and other right button menu commands?  Currently, this
+# definition does nothing, and setup.e simply grabs whatever
+# extensions it likes (which are these 6).
+#
+# ".e;.emaker;.caplet;.updoc;.vat;.cap" or any subset.
+
+e.extensionslist=.e;.emaker;.caplet;.updoc;.vat;.cap
+
+
+# Name of vendor providing this E implementation
+#
+# For example: "ERights.org"
+
+e.vendor=ERights.org
+
+
+# URL of vendor's website
+#
+# For example: "http://www.erights.org/"
+
+e.vendor.url=http://www.erights.org/
+
+
+################## Other Switches #####################
+
+# One of "report" (the default), "prompt", or "gui". <p>
+#
+# When E fails to launch, or when the top level script (the *.e file)
+# throws a problem, how should the E interpreter report the problem
+# before exiting with a non-zero error code?
+#
+# When this property is set to "report" (or when the property is
+# absent), then E prints a problem report on stderr and exits
+# immediately. <p>
+#
+# When set to "prompt", E still prints the problem report on stderr,
+# but it then also prompts for a character to be typed in before the
+# process is dismissed, and then blocks waiting for that
+# character. <p>
+#
+# When set to "gui", E will pop up a window at least reporting the
+# error and waiting to be dismissed.  Later versions of E may provide
+# support for diagnostics and debugging starting from this window.
+# Note: "gui" is not yet implemented.  If used, it will prompt
+# instead.
+
+e.onErrorExit=gui
+
+
+# One of "platform" (the default), "none", or a look and feel class
+# name. <p>
+#
+# When set to "platform" (or when the property is absent), the look
+# and feel is set to the default for the platform according to
+# "UIManager getSystemLookAndFeelClassName()".  <p>
+#
+# When set to "none", this advises code that there may not be an
+# available graphical display device, and that they should try, if
+# possible, to avoid any operations which would fail in a pure
+# character/teletype environment, such as a telnet session. <p>
+#
+# When set to a look and feel class name, it sets this to be the
+# initial look and feel for this E process.
+
+e.swingLnF=platform
+
+
+# When set to false (the default) or if absent, then the interpreter
+# acts as an interactive interpreter when it's not reading from a
+# named file.  When set to true, the interpreter acts as an
+# interactive interpreter in both cases.
+
+e.interp.interactive=false
+
+# When true, the E parser outputs volunimous debugging info.  Defaults
+# to false.
+
+e.interp.parseSpam=false
+
+# In an interactive interpreter, when this is set to true, the
+# expansion to Kernel-E of the entered expression is echoed along with
+# the value it evaluates to.  Defaults to false.
+
+e.interp.expand=false
+
+# When true, problem reports by default show the Java stack trace in
+# addition to the E stack trace.  (This is only relevant while E in
+# interpreted.  Once it's compiled, there will only be one stack trace
+# to report, the Java stack trace, which will be reported regardless
+# of the setting of this switch.  Defaults to false.
+
+e.interp.verbose=false
+
+#
+
+e.interp.runner=fe
+
+
+################# Configuring a Vat's network presence #################
+
+# e.VLSPath is an optional semicolon-separated list of TCP/IP
+# addresses of VLSs this vat should register with.  Defaults to "" --
+# the null list.  Doesn't actually mean anything until the VLS is
+# revived.
+
+# e.VLSPath=
+
+# e.SearchPath is an optional semicolon-separated list of TCP/IP
+# addresses for others to look for me.  Defaults to the VLSPath.  Once
+# a vat knows its own ListenAddress, this should be added to the front
+# of the list.
+
+# e.SearchPath=
+
+# e.ListenAddress is the optional TCP/IP address at which this vat
+# should create the socket it listens to.  If an IP address isn't
+# given, the socket defaults to listening on all IP addresses of this
+# host.  If an IP address is given, it must be one of the IP addresses
+# of this host.  If the TCP port isn't given, it defaults to 0.  A TCP
+# port of 0 instructs the OS to pick any free TCP port.
+
+# e.ListenAddress=
+
+
+################# In-Pocket E Shorthands & Features #################
+
+# To ease the transition to the new restricted syntax, you can set
+# some of the switches below to "true".  Note that all the features
+# below are not part of the official E language as of this release.
+# These are likely to be removed in the future, unless otherwise
+# stated for a particular feature.
+
+# Another reason they are left in the implementation is to allow
+# experimentation.  All these features were added for reasons that
+# seemed good at the time.  If you feel a particular feature's revival
+# (making it again part of official E) is a good idea, please try it
+# out and if you still think it would be a good idea, please speak up
+# and explain why.  If a feature is listed below, then, as of this
+# release, it is considered to be "in-pocket" and is therefore still
+# partly or fully implemented.  Features that are still in-pocket
+# would, therefore, be particularly painless to revive it if we decide
+# to do so.
+
+
+# If e.enable.anon-lambda is set to "true", E accepts the
+# " '_' '('params...')' '{' eExpr '}' and " '_'{eExpr}" lambda
+# shorthands. To turn a program using this feature into a proper
+# modern E program, the first should be prefixed by "def".  In the
+# second, the "_" should be replaced with "thunk".
+
+e.enable.anon-lambda=allow
+
+
+# This feature of E isn't implemented yet, so its syntax is not
+# accepted by default.  Turn this on to allow the syntax to be
+# accepted: " 'def' name '::' name (',' name)* '{' vtable '}' ".  The
+# list of names following the '::' are the auditors.
+
+e.enable.auditors=allow
+
+
+# Accept "define" as a synonym for "def".  All occurrences of the
+# "define" keyword shold instead be replaced by "def".
+
+e.enable.define=allow
+
+
+# Accept "eExpr'.'name" shorthand.  "eExpr'.'name" as an expression
+# should instead be "eExpr getName()".  "eExpr'.'name := eExpr" should
+# instead be "eExpr setName(eExpr)".
+
+e.enable.dot-props=allow
+
+
+# Accepts the experimental "meta(varName)" syntax, where varName is
+# the defining name for an enclosing object definition expression.
+# The value of this expression is a "meta-object" whose protocol gives
+# meta-level access to the semantics of the original object.  The
+# implementation of this feature currently has a FATAL SECURITY BUG,
+# so don't enable this feature in any system that might host actually
+# untrusted local code.  The bug is that it's not yet enforced that
+# the name must be the defining name of an enclosing object
+# definition.
+
+e.enable.meta-object=false
+
+
+# Accepts the experimental "meta scope()" expression, which reifies
+# the current lexical scope into a Scope object.  The proposed
+# semantics of this construct only has the scope within an object
+# include those variables defined outside the object that are used
+# freely within the object -- the instance variables.  The current
+# implementation is therefore buggy, since it shows that the current
+# implementation incorrectly captures the entire environment.  This
+# feature will remain experimental at least until this bug is fixed,
+# which probably awaits the scope analysis needed for compilation.
+
+e.enable.meta-scope=false
+
+
+# Allow no-argument calls to leave out the "()".  The "()" should be
+# added to these calls
+
+e.enable.no-paren-call=allow
+
+
+# Allow no parameter methods to leave out the "()".  The "()" should
+# be added to these definitions.
+
+e.enable.no-paren-method=allow
+
+
+# Accept the " 'def' name verb(params...) {...}" definition
+# shorthand.  Instead, the explicit object definition syntax should be
+# used, where this method is an explicit method.
+
+e.enable.one-method-object=allow
+
+# Accept the experimental
+# " 'def' name 'match' pattern '{' eExpr '}' " kernel
+# construct.  This is not a shorthand, so if you need it there's
+# nothing to do instead.  Rather, it is an exprimental kernel feature
+# mainly awaiting the precise pinning down of what its semantics
+# should be.  If you find you need this construct, please let us know
+# since the particulars of your use may help us figure out what its
+# semantics should be.
+
+e.enable.plumbing=allow
+
+
+# Accept the typedef shorthand.  The typedef shorthand looks like the
+# E object definition syntax, but without method bodies.  (Much as
+# Java interface definitions look like Java class definitions.)  In
+# this case, the syntax itself isn't being retired -- we expect to
+# make it part of the language.  However, the API of the objects it
+# creates hasn't been pinned down yet, so the use of this is
+# considered exprimental until then.
+
+e.enable.typedef=allow
+
+
+# Accept the transposed multi-vow when/catch syntax.  The standard
+# syntax lists all the vow-expressions of the left and all the
+# corresponding params on the right.  In this experimental variation,
+# each vow-expression / pattern pair is listed in turn.
+
+e.enable.when-clauses=allow
+
+
+# Once upon a time, there was general agreement that a tab character
+# in a plain text file took you to the next tab stop, which was every
+# 8 characters.  The Microsoft blight has not only screwed up the
+# newline conventions and the filepath separator conventions (of which
+# the Mac is equally guilty), but also screwed up the meaning of the
+# tab key.  The best path to sanity is to simply avoid the presence of
+# tab characters in text files, with the one unfortunate exception of
+# "Makefile"s and "*.mk" files.
+#
+# Unfortunately, because so many text editors put tabs into files in a
+# way that's hard to turn off, E must, by default, accept tabs as a
+# valid whitespace character.  However, to help you prevent yourself
+# from including tabs, we provide the "notabs" switch, which defaults
+# to "false".  If you set it to true, the tab character will not be
+# considered valid whitespace.
+
+e.enable.notabs=allow
+
+
+# Enables syntax such as 'require (cond) thunk{str}' to be accepted
+# and be equivalent of 'require (cond, thunk{str})'
+
+e.enable.lambda-args=allow
+
+
+# The e.enable.bind switch has been retired, since "bind" is now
+# considered an official part of the language.

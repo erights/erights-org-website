@@ -1,0 +1,224 @@
+<HTML>
+<HEAD>
+   <TITLE>The Factorial Tutorial</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+
+<H1><CENTER>The Factorial Tutorial</CENTER></H1>
+
+<P><CENTER><A HREF="../../../copy.html">&copy;1996 Electric
+Communities<BR>
+
+All Rights Reserved Worldwide</A></CENTER>
+
+<H2>Prologue</H2>
+
+<P>The factorial function is a special case of Pochhammer's
+polynomial and of the gamma function (aka Euler's integral of the
+second kind). The conventional mathematical notation for the
+factorial of <I>n</I> is
+
+<P><CENTER><I>n</I>!</CENTER>
+
+<P>so statements containing a factorial expression always look
+surprising or important.
+
+<P>The factorial function is used in the study of permutations. For
+example, the number of possible sequences of a deck of 52 cards is
+52! which is a really huge 68-digit number. To graph the factorial
+function, start with your pencil at (1,1) moving northeast, then real
+sudden-like, go north. The factorial function is explosive: the
+largest factorial that can fit in a Java int is 12!.
+
+<P>The most important application of the factorial function is a
+pedagogical one: it is one of the classic exercises in first semester
+programming. It is often one of the first examples presented of
+iteration or recursion. It produces precise results, so it is easy to
+verify. It is an integer function, so most number theory issues can
+be avoided.
+
+<P>Part of mastery of E is knowing when to use the optimistic
+computation features of E, and when to use the pessimistic
+computation features of Java. The factorial function does not benefit
+from an optimistic implementation, and so should not be written in E.
+It can be implemented more efficiently in Java. There are many
+applications that benefit significantly from E's optimistic
+computation features. The factorial function is not one of them.
+
+<P>We will now present six implementations of the factorial function,
+all written in E.
+
+<P>All of the implementations of Factorial below can be called with
+this sequence:
+
+<PRE>    EInteger result;
+    new Factorial &lt;- factorial (n, &amp;result);
+    ewhen result (int fac) {
+        // fac contains n! 
+    }
+&nbsp;</PRE>
+
+<P>result is an EInteger which will receive the result. The
+distributor of result is sent to the Factorial eobject. When the
+result has been computed, its value will be assigned to fac.
+
+<P>The examples are presented in order of decreasing practicality.
+
+<H2>Act One</H2>
+
+<P>We will first examine three mostly-Java implementations. The first
+one is very efficient, the remaining two are instructive. All three
+are Java functions in E wrappers. This use of E can be beneficial in
+the case where there is a math server available that could compute
+the function while the requester goes on doing other useful work.
+
+<P>If the goal is to compute the factorial function quickly, then the
+best method is a table look up. The table doesn't even need to be
+very large. This form of the factorial function is rarely seen in
+programming texts, because the purpose of the factorial function in
+general is didactic, not mathematical.
+
+<PRE>// Act 1a: E wrapper table look up 
+&nbsp;
+eclass Factorial {  
+    final static int factorialTable [ ] = {1, 1, 2, 6, 24, 120, 720, 
+            5040, 40320, 362880, 3628800, 39916800, 479001600};
+&nbsp;
+    emethod factorial (int n, EDistributor result) {
+        result &lt;- forward (new EInteger (factorialTable [n]));
+    }
+}
+&nbsp;</PRE>
+
+<P>The next example uses iteration to produce the product of all of
+the counting numbers up to n. This is textbook stuff.
+
+<PRE>// Act 1b: E wrapper iteration
+&nbsp;
+eclass Factorial {  
+    emethod factorial (int n, EDistributor result) {
+        int product = 1;
+        while (n &gt; 1) {
+            product *= n;
+            n -= 1;
+        }
+        result &lt;- forward (new EInteger (product));
+    }
+}
+&nbsp;</PRE>
+
+<P>The other classic textbook implementation of the factorial
+function demonstrates recursion, defining a function in terms of
+itself. This version makes use of a private Java method within an E
+class.
+
+<PRE>// Act 1c: E wrapper recursion 
+&nbsp;
+eclass Factorial {  
+    private int factorialStep (int n) {
+        if (n &gt; 1) {
+            return (n * factorialStep (n - 1));
+        } else {
+            return (1);
+        }
+    }
+&nbsp;
+    emethod factorial (int n, EDistributor result) {
+        result &lt;- forward (new EInteger (factorialStep (n));
+    }
+}
+&nbsp;</PRE>
+
+<H2>Act Two</H2>
+
+<P>The three remaining implementations of the factorial function make
+more extensive (if inappropriate) use of E's messaging semantics.
+
+<P>The first implementation uses the message sending semantics of E
+to perform iteration without using a loop. It iterates by sending
+factorialStep messages (containing a decreasing n and an increasing
+product) to itself. When n goes down to one, the product is forwarded
+to the result.
+
+<PRE>// Act 2a: message iteration (eteration) 
+&nbsp;
+eclass Factorial { 
+    emethod factorialStep (int n, int product, EDistributor result) {
+        if (n &gt; 1) {
+            this &lt;- factorialStep (n - 1, n * product, result);
+        } else {
+            result &lt;- forward (new EInteger (product));
+        }
+    }
+&nbsp;
+    emethod factorial (int n, EDistributor result) {
+        this &lt;- factorialStep (n, 1, result);
+    }
+}
+&nbsp;</PRE>
+
+<P>This next implementation performs recursion without using a stack.
+A chain of linked intermediate results will trigger a cascade of
+ewhens which will produce the result.
+
+<PRE>// Act 2b: message recursion (ecursion) 
+&nbsp;
+eclass Factorial {  
+    emethod factorial (int n, EDistributor result) {
+        if (n &gt; 1) {
+            EInteger intermediate;
+            this &lt;- factorial (n - 1, &amp;intermediate);
+            ewhen intermediate (int product) {
+                result &lt;- forward (new EInteger (n * product));
+            }
+        } else {
+            result &lt;- forward (new EInteger (1));
+        }
+    }
+}
+&nbsp;</PRE>
+
+<P>Finally, we show a factorial function implementation using a pure
+data flow computation model. All of the computation is expressed in
+the form of messages.
+
+<PRE>// Act 2c: dataflow 
+&nbsp;
+eclass Factorial {  
+    final static EInteger EOne = new EInteger (1);
+&nbsp;
+    emethod factorialStep (EInteger n, EInteger product,
+            EDistributor result) {
+&nbsp;
+        EBoolean nGreaterThanOne;
+&nbsp;
+        n &lt;- gt (EOne, &amp;nGreaterThanOne);
+&nbsp;
+        eif (nGreaterThanOne) {
+            EInteger nMinusOne;
+            EInteger nTimesProduct;
+&nbsp;
+            n &lt;- sub (EOne, &amp;nMinusOne);
+            n &lt;- mul (product, &amp;nTimesProduct);
+&nbsp;
+            this &lt;- factorialStep (nMinusOne, nTimesProduct, result);
+        } else {
+            result &lt;- forward (product);
+        }
+    }
+&nbsp;
+    emethod factorial (int n, EDistributor result) {
+        this &lt;- factorialStep (new EInteger (n), EOne, result);
+    }
+}
+&nbsp;</PRE>
+
+<P>This implements the same algorthm as the message iteration (2a)
+example above. The difference is that every statement is an E
+statement and every object is an EObject. So, for example, instead of
+sending (n-1) in factorialStep, it sends a channel (nMinusOne) that
+will eventually point an EObject having that value. This style of
+dataflow programming can be quite effective in highly distributed or
+massively parallel environments.
+</BODY>
+</HTML>

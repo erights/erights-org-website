@@ -1,0 +1,276 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Capabilities As A Cryptographic Protocol</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">capability</a>&nbsp;/&nbsp;<a href="index.html">ode</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="ode-capabilities.html" title="Back to: From Objects to Capabilities"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: From Objects to Capabilities" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="ode-pki.html" title="On to: Capabilities As A Public Key Infrastructure"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Capabilities As A Public Key Infrastructure" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><font size="7"><b><font size="6">Capabilities
+              As A</font><br>
+              Cryptographic Protocol</b></font></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p align="left">First we explain a simplified version of the <i><b><font color="#009000">E</font></b></i>'s communications
+        protocol, <i>Pluribus</i>, identical from a security point of view, but
+        less efficient. The purpose of Pluribus is to provide the Granovetter
+        Operator, with all its implied security properties, even when Alice, Bob,
+        and Carol are on separate machines. </p>
+      <h2 align="left"><a name="distrib-obj"></a>Distributed Objects</h2>
+      <p align="left">Objects are aggregated into units called <i>vats</i>. Each
+        E object exists in exactly one vat -- we speak of an object being <i>hosted</i>
+        by its vat. A vat typically hosts many objects. Similarly, each vat exists
+        on one machine at a time, but a machine may host many vats. A good first
+        approximation is to think of a vat as a process full of objects -- an
+        address space full of objects plus a thread of control. Unlike a typical
+        OS process, a vat persists (that is, its state is saved to persistent
+        storage when its hosting process is terminated or interrupted), so think
+        of a vat-hosting OS process as an incarnation of a vat. The vat maintains
+        its identity and state as it passes serially through a sequence of incarnations.
+      <p align="center"><img src="images/elems.png" alt="Distributed Shortening Granovetter" width="533"
+height="330">
+      <p align="left">To enable objects in separate vats to send messages to each
+        other, we must bridge from the world of local, intra-address-space language-implementation
+        technology to the world of network communications protocols. Our first
+        step is conventional: each vat contains a communications system allowing
+        it to make connections to, and accept connections from, other vats. Each
+        vat's communications system contains objects called <i>proxies</i> (shown
+        by half circles in the figure above). When an object in a vat refers to
+        an object in a different vat, it actually refers to a proxy object, which
+        is the local representative of the remote object. In the illustration,
+        when a proxy (b1) is sent a local message (step 1), it encodes the message
+        arguments (c1) into a packet which it sends out as a network message (step
+        2). When VatB receives the network message, it decodes it into a message
+        local to VatB, handshaking with remote vats (VatC) as necessary to create
+        the needed proxies (c2, step 3). The decoded message is finally delivered
+        to Bob (step 4).
+      <p align="left">The description so far applies equally well to many distributed
+        object systems, such as CORBA and RMI, that have no ambitions to capability
+        security. What more do we need to make this into a secure protocol? (See
+        also [<a href="ode-references.html#Donnelley76">Donnelley76</a>, <a href="ode-references.html#Donnelley81">Donnelley81</a>,
+        <a href="ode-references.html#Tanenbaum86">Tanenbaum86</a>, <a href="ode-references.html#Sansom86">Sansom86</a>,
+        <a href="ode-references.html#Doorn96">Doorn96</a>, <a href="ode-references.html#Close99">Close99</a>])
+      <h2 align="left"><a name="crypto-cap"></a>Cryptographic Capabilities</h2>
+      <p align="left">On creation, each vat generates a public/private key pair.
+        The fingerprint of the vat's public key is its vat Identity, or VatID.
+        What does the VatID identify? The VatID can only be said to designate
+        any vat which knows and uses the corresponding private key apparently
+        according to the protocol.
+      <p align="left">Within a single vat, a capability-arrow is implemented as
+        a traditional memory address pointer. Capability security within an address
+        space is built out of safe language techniques (made popular by Java,
+        but going back to LISP 1.5 and ALGOL 60). A capability-arrow can also
+        go between vats. If Alice, Bob, and Carol are in three separate vats,
+        then Alice can talk to Carol only because VatA can talk to VatC. An inter-vat
+        data connection is secure and authenticated. We care about inductive correctness
+        -- assuming a preexisting secure connection between Alice and Bob, and
+        another between Alice and Carol, can we establish a similarly secure connection
+        between Bob and Carol?
+      <p align="left">When VatC first exported, across the vat boundary, a capability
+        to access Carol, VatC assigned an unguessable randomly chosen number to
+        Carol. We call this a "Swiss number", since it has the knowledge-is-authority
+        logic loosely attributed to Swiss bank accounts. When VatA first received
+        this capability, VatA thereby came to know Carol's Swiss number and VatC's
+        VatID.
+      <p align="left">When Alice sends Bob a reference to Carol, VatA tells VatB
+        Carol's Swiss number and VatC's VatID. VatB now wishes to obtain the tail
+        of a vat-crossing capability-arrow referring directly to Carol, so that
+        it may deliver this arrowtail to Bob. VatB first contacts an alleged
+        VatC (using location routing/hint information which Pluribus allows to
+        be communicated along with the VatID) and asks it for VatC's public key.
+        It verifies that this key matches the fingerprint that (it was told) is
+        VatC's VatID. The handshake logic then proceeds along the lines of SSL
+        (though without certificates, and with perfect forward secrecy): VatC
+        proves her knowledge of the corresponding private key, then Diffie-Hellman
+        key agreement leads to a shared session key for the duration of the inter-vat
+        connection. <i>Only</i> once an authenticated, secure data pipe is set
+        up between them does VatB reveal Carol's Swiss number to VatC, enabling
+        VatC to associate messages, sent inside VatB to the proxy c2 and then
+        encoded over the network to VatC, with Carol.
+      <p align="left">A capability is an arrow, and an arrow has two ends. There
+        is an impostor problem in both directions. The VatID ensures that the
+        vat Bob is speaking to is the one hosting the object Alice meant to introduce
+        him to. The Swiss number ensures that the entity allowed to speak to Carol
+        is the one Alice chose to enable to do so.
+      <h2 align="center"><a name="subj-aggregate"></a>Subjective Aggregation<br>
+        --or--<br>
+        Only Trust Makes Distinctions</h2>
+      <p align="left">Although correct, there's something peculiar in the above
+        description. On the one hand, the analysis seems to assume that we aren't
+        trusting VatB, which is why Carol's Swiss number isn't revealed to VatB
+        until someone reveals it to an object, such as Bob, which is hosted by
+        VatB. On the other hand, Alice's intention is to give Bob access to Carol,
+        but not to give this access to any other objects, such as Joe, that might
+        be hosted by VatB. However, Alice must trust that VatB plays by these
+        rules, since Alice, by sending it Carol's Swiss number, has enabled it
+        to do otherwise.</p>
+      <p align="left">There are two forms of mutual suspicion simultaneously supported
+        by this protocol: inter-vat (or inter-machine) mutual suspicion, and inter-object
+        mutual suspicion. It would be a mistake for anyone to trust Bob any more
+        than they trust VatB. To the objects within a vat, their hosting vat is
+        their <i>Trusted Computing Base</i> (TCB). Their own operation is completely
+        at the mercy of their TCB, with no escape. Bob's behavior can be seen
+        as an aspect of VatB's behavior. </p>
+      <p align="left">Only if Alice trusts VatB to behave properly -- that is,
+        as if it is actually hosting separate objects interacting with each other
+        by capability rules -- does it make sense for Alice to even reason about
+        Bob as being in any way separately trusted from Joe. If Alice does not
+        trust VatB, then Alice should reason about VatB as a single conspiring
+        group of objects pretending to be several separately trustable objects.
+        Alice should represent her suspicion by modeling VatB simply as a monolithic
+        composite, and all its externally accessible objects (such as Bob and
+        Joe) as facets of this composite. Notice that Pluribus grants VatB, considered
+        either as a malicious vat or as a monolithic composite, exactly the authority
+        it should receive according to capability rules.</p>
+      <p align="left">Put another way, mistrust of a vat is equivalent to ignorance
+        of the internal relationships among the objects hosted by that vat. A
+        malicious vat hosting one set of objects can only cause external effects
+        equivalent to a correct vat hosting some different (maliciously coded)
+        set of objects. This is the main economy of the distributed capability
+        model: we can, without loss of generality, reason as if we are only suspicious
+        of objects.</p>
+      <p align="left">The capability model, by limiting authority within the transitive
+        connectivity of graphs, allows a participant to subjectively aggregate
+        arbitrary sets of objects into composites. Given the same graph of objects,
+        different participants will employ different aggregations according to
+        their own subjective ignorance or suspicions, as we have seen, or merely
+        their own lack of interest in making finer distinctions. Capabilities
+        are the only security model that simultaneously supports the economy of
+        aggregation and the necessary subjectivity in deciding how to aggregate.</p>
+      <p align="left">A fully paranoid actor should indeed assume the entire world
+        is a monolithic conspiracy against them. Only with some trust that parts
+        of the world are independent can we gain evidence of any other hypothesis.</p>
+      <h2 align="left"><a name="crypto-payment"></a>Payment in the Crypto Protocol</h2>
+      <p>We now revisit the payment example from the Capability Security section,
+        describing the behavior of the underlying Pluribus cryptographic protocol.
+        Assume that Alice, Bob and the mint are hosted by three separate vats
+        (VatA, VatB and VatM) on three separate machines.
+      <p>First Alice sprouts a new purse from her main purse, and transfers $10
+        into it:
+      <blockquote>
+        <pre><span class="keyword">def</span><span class="stdin"> </span><span class="defvar">paymentForBob</span><span class="stdin"> := aliceMainPurse.sprout()</span>
+<span class="stdout">value: &lt;has 0 Carol bucks></span></pre>
+      </blockquote>
+      <p>This statement causes Alice's vat (VatA) to send a message to the mint's
+        vat (VatM). The message includes the Swiss number of <tt>aliceMainPurse</tt>
+        and the operation <tt>sprout</tt>. VatM creates a new object as a
+        result of the message and sends its Swiss number back to Alice.
+      <blockquote>
+        <pre><span class="stdin">paymentForBob.deposit(10, aliceMainPurse)</span></pre>
+      </blockquote>
+      <p>VatA sends another message to VatM including the Swiss number of the
+        newly created <tt>paymentForBob</tt> purse and the <tt>deposit</tt>
+        request. The parameters are the immutable number 10 and the Swiss number
+        of <tt>aliceMainPurse</tt>. VatM performs the requested operation
+        and returns a <tt>null</tt> to indicate that the request succeeded.
+      <p>Then Alice sends a <tt>foo</tt> message to Bob, providing the purse
+        containing $10 as payment.
+      <blockquote>
+        <pre><span class="stdin">bob.foo(..., paymentForBob, ...)</span></pre>
+      </blockquote>
+      <p>VatA sends a message to Bob's vat (VatB) passing the Swiss number of
+        the <tt>bob</tt> object and the operation <tt>foo</tt>. The parameters
+        include the Swiss number on VatM of the <tt>paymentForBob</tt> object,
+        and the VatID of VatM. This information will allow VatB to make a connection
+        to VatM and use the <tt>paymentForBob</tt> object.
+      <p>When Bob performs the <tt>deposit</tt> operation:
+      <blockquote>
+        <pre><span class="stdin">bobMainPurse.deposit(10, payment)</span></pre>
+      </blockquote>
+      <p>VatB builds the connection to VatM. The connection building process checks
+        that VatM has the private key corresponding to the VatM VatID. After the
+        connection has been authenticated and secured, VatB sends a <tt>deposit</tt>
+        message to the object with the Swiss number of <tt>bobMainPurse</tt>
+        passing 10 and the Swiss number of the purse he received from Alice.
+      <h2><a name="crypto-reuse"></a>Generic Protocols, Reusable Security</h2>
+      <p>Cryptographic protocol design is hard and error prone [<a href="ode-references.html#Schneier96">Schneier96</a>].
+        When we can, we should design generic protocols that implement highly
+        reusable security abstractions.
+      <p>The messages sent between the Alice, Bob, and the mint above are like
+        those that might have been part of a simple cryptographic payment protocol.
+        However, rather than having to design a specialized cryptographic protocol
+        for payment, we have instead reused a generic cryptographic protocol,
+        implementing only distributed capabilities, in combination with a simple
+        specialized object protocol to yield the same effect.
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">capability</a>&nbsp;/&nbsp;<a href="index.html">ode</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="ode-capabilities.html" title="Back to: From Objects to Capabilities"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: From Objects to Capabilities" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="ode-pki.html" title="On to: Capabilities As A Public Key Infrastructure"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Capabilities As A Public Key Infrastructure" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

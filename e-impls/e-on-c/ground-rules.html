@@ -1,0 +1,312 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>ENative: Ground Rules</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">e-impls</a>&nbsp;/&nbsp;<a href="index.html">e-on-c</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="fatpointers.html" title="On to: Fat Pointers"><img src="../../images/next.gif" width="64" height="32" alt="On to: Fat Pointers" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b>Ground
+              Rules</b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> The ground rules for this exercise (at
+      least at this point) are
+      <p align="left">
+      <ul>
+        <li><a href="#noTypes">No static type analysis of E source code</a></li>
+        <li><a href="#simpleScoping">Only simple scope analysis</a></li>
+        <li><a href="#noVirtual">No use of C++'s &quot;virtual&quot;</a></li>
+        <li><a href="#noTemplates">No use of C++'s template feature</a></li>
+        <li><a href="#fewRefs">No unnecessary use of C++'s references</a></li>
+        <li><a href="#absorbStack">Absorb, rather than reify, <i><b><font color="#009000">E</font></b></i>'s stack discipline</a></li>
+        <li><a href="#noStackDebug">No portable virtual machine support for stack
+          debugging</a></li>
+        <li><a href="#otherDebugging">Portable meta-level access to board-state</a></li>
+        <li><a href="#assumeGC">Assume a garbage collector</a></li>
+        <li><a href="#realCosts">Impose all costs that a complete implementation
+          would impose</a></li>
+        <li><a href="#classObsolete">Impose costs of upgrade-for-prototyping</a></li>
+        <li><a href="#compile">Compile rather than interpret</a></li>
+        <li><a href="#callSite">Call-site cacheing</a></li>
+      </ul>
+      <hr>
+      <ul>
+        <li>
+          <p><b><i><a name="noTypes"></a>No static type analysis of E source code</i></b>.
+            The optional SlotMaker expression in an E variable declaration is
+            intended, among other things, to allow the programmer to give a compiler
+            static type information about the values that the variable may hold.
+            A sophisticated compiler could make direct use of this, and indirect
+            use as an aid to infer further types. With static type knowledge,
+            a sophisticated compiler could generate better code than the simple
+            compiler proposed by ENative.</p>
+        </li>
+        <li>
+          <p><i><b><a name="simpleScoping"></a>Only simple scope analysis</b></i>.
+            Crucial to the efficiency of E, even for a simple naive implementation
+            such as ENative, is partitioning variables into one of <a href="varcases.html">several
+            cases</a>, and implementing variable definition, access, assignment,
+            and slot access differently according to which kind of variable we
+            have.</p>
+        </li>
+        <li>
+          <p><a name="noVirtual"></a><i><b>No use of C++'s &quot;virtual&quot;</b></i>.
+            &quot;<tt>virtual</tt>&quot; is C++'s mechanism for run-time polymorphism,
+            and its notation hides some implementation cost. By avoiding it, we
+            ensure that all run-time polymorphism is provided only by C's pointer-to-function
+            mechanism, leaving all costs clear.</p>
+        </li>
+        <li>
+          <p><i><b><a name="noTemplates"></a>No use of C++'s template feature</b></i>,
+            except possibly for the various scalar Lists. The complexity isn't
+            worth it.</p>
+        </li>
+        <li>
+          <p><a name="fewRefs"></a><i><b>No unnecessary use of C++'s references</b></i>.
+            By always using pointers instead, indirection costs are always explicit.
+            <i>Note: if the C++ compilers of interest normally generate better
+            code for references than pointers, which is quite possible, then this
+            decision may be revisited.</i></p>
+        </li>
+        <li>
+          <p><i><b><a name="absorbStack"></a>Absorb, rather than reify, <i><b><font color="#009000">E</font></b></i>'s stack
+            discipline</b></i>. Approximately following <a href="http://www.ageofsig.org/people/bcsmith/index.html">Brian
+            Smith</a>'s usage, by &quot;absorb&quot; I mean that E calls turn
+            into C++ calls, E (implicit) returns turn into C++ (explicit) returns,
+            and E exception throwing &amp; catching turns into C++ exception throwing
+            &amp; catching. In the other conventional language implementation
+            option -- reifying stack discipline -- we would implement <i><b><font color="#009000">E</font></b></i>'s implicit
+            stack state in explicit C++ data structures. By absorbing, we also
+            allow C++ native (primitive) code to be written in a style natural
+            to the C++ programmer. </p>
+        </li>
+        <li>
+          <p><i><b><a name="noStackDebug"></a>No portable virtual machine support
+            for stack debugging</b></i>. This is one of the consequences of absorbing
+            <i><b><font color="#009000">E</font></b></i>'s stack discipline into C++'s. In the resulting code, there is no
+            data structure accessible to portable C++ code that explicitly represents
+            the C++ stack, and therefore no data structure that explicitly represents
+            the E stack. For a widely ported C++ compiler &amp; debugger combo
+            such as gcc/gdb, it is conceivable one could provide &quot;portable&quot;
+            debugging access to the E stack by wrapping gdb's provision of &quot;portable&quot;
+            access to the C++ stack. I put &quot;portable&quot; in scare-quotes
+            to emphasize that this would be portable across hardware platforms
+            but not across C++ implementations. </p>
+          <p>It is fine for this meta-level access to be much slower than normal
+            computation.</p>
+        </li>
+        <li>
+          <p><b><i><a name="otherDebugging"></a>Portable meta-level access to
+            board-state </i></b> in support of, for example, debugging and serialization
+            control. E computation within a vat occurs as a sequence of atomic
+            transactions called <i>turns</i>. Each turn consists of the synchronous
+            processing to completion of a pending delivery from that vat's vat-queue.
+            Stack state only occurs within a turn. The state of greater importance,
+            for most meta-level purposes, is the state present in a vat between
+            turns. If we think of a vat as a game board and a turn as a turn in
+            a game, the states during a turn (including stack state) are transitional:
+            &quot;The pawn is in my hand, because I've picked it up but haven't
+            put it back down.&quot; We call the well-defined states between turns
+            <i>board-states</i>. A turn always computes from one board-state to
+            another. </p>
+          <p> A board-state consists of the states of the objects within the vat,
+            the state of the vat's pending delivery queue, the states of various
+            primitive &quot;devices&quot;, and the state of a vat's comm system
+            -- managing the references that cross between this vat and other vats.
+            The E virtual machine will define portable means for accessing all
+            of this board-state (as well as manipulating some of it). ENative
+            must implement this spec using only portable C++ constructs, rather
+            than, as above, relying on features provided by a particular C++ implementation.
+            Fortunately, only object-state access is relevant to the subset of
+            E currently represented by ENative.</p>
+          <p>As above, it is fine for this meta-level access to be much slower
+            than normal computation.</p>
+        </li>
+        <li>
+          <p><i><b><a name="assumeGC"></a>Assume a garbage collector</b></i>.
+            There are <i>so</i> many ways to implement garbage collection, with
+            <i>so</i> many performance tradeoffs, that ENative simply defers this
+            issue for now and naively allocates (using C++'s &quot;new&quot;)
+            without every freeing. Some conservative garbage collectors are happy
+            to live underneath such C++ code and successfully garbage collect
+            without further programmer (or compiler) attention. The overhead of
+            a given garbage collection scheme can usually be approximated as a
+            function of the number of objects allocated. Any benchmarks run on
+            ENative would have to be adjusted by these estimates before they should
+            be taken seriously.</p>
+        </li>
+        <li>
+          <p><a name="realCosts"></a>Except for garbage collection, <i><b>impose
+            all costs that a complete implementation would impose</b></i>. ENative,
+            being for now an academic exercise, is, and may remain, far from a
+            complete implementation of Kernel-E. However, of the Kernel-E programs
+            that it does run, it should be at least as expensive as a complete
+            implementation of ENative would be. For example, the SmallInteger
+            add code checks for overflow. If overflow occurs, it throws a &quot;<tt>BigInteger
+            Not Yet Implemented</tt>&quot; exception rather than allocating
+            one, but this imposes all the costs on the successful case that a
+            complete implementation would impose. The resulting measured timing
+            may be taken as a reliable lower bound on performance (or upper bound
+            on expected running time) except for </p>
+          <p>
+          <ol>
+            <li>the above garbage collection issue,</li>
+            <li>a larger memory footprint (and therefore potentially a worse instruction-cache
+              hit ratio),</li>
+            <li>
+              <p>longer startup times, due both to the larger footprint and to
+                more static initialization. (But still expected to be trivial
+                compared to Java's startup time.)</p>
+            </li>
+          </ol>
+        </li>
+        <li>
+          <p><a name="classObsolete"></a><i><b>Impose costs of upgrade-for-prototyping</b></i>.
+            This is really a special case of the above, but is listed separately
+            since it is the least obvious cost that would be imposed by a complete
+            implementation. To support rapid prototyping, the E specification,
+            like Smalltalk, supports the loading of replacement behavior for already
+            instantiated objects, and the conversion of these old object states
+            to become post-facto instances of the new behavior. Like at least
+            ParcPlace Smalltalk, this is done lazily at the time the obsolete
+            objects are invoked. Unlike Smalltalk, E has not yet implemented this
+            feature. ENative does not either, but it does impose all the costs
+            on normal execution needed to support this feature.</p>
+          <p>Note that an upgrade (whether -for-prototyping or -for-release) only
+            becomes effective between turns, so it need only worry about old object-states
+            and old undelivered messages, but not old stack-frames. This is quite
+            fortunate, as there is nothing obvious one can do with a stale stack-frame following an upgrade. (<i>A note to be put somewhere else: Under
+            normal conditions, an upgrade-for-release also need not deal with
+            old undelivered messages, since neither the vat-queue nor <a href="../elib/concurrency/refmech.html">Eventual
+            references</a> are checkpointed.</i>)</p>
+        </li>
+        <li>
+          <p><b><i><a name="compile"></a>Compile rather than interpret</i></b>,
+            but use runtime conventions that allow either. The ENative runtime,
+            corresponding approximately to ELib, accomodates both E code compiled
+            into C++ according to its conventions, as well as the interpretation,
+            by a hypothetical byte-code interpreter, of E compiled to a hypothetical
+            byte code language. Indeed, I first designed ENative with a byte code
+            interpreter in mind before I switched to a compilation strategy. Compiling
+            to C++ has the obvious advantage of speed. A disadvantage that often
+            drives implementations towards interpreters is code-size blow up.
+            But by taking an absorption strategy, we manage to avoid this problem.
+            The remaining disadvantages of compilation are </p>
+          <ol>
+            <li>
+              <p><a name="dynamicLoading"></a>Dynamic code loading becomes non-portable.
+                This is much like the debugging issue above. A given widely-ported
+                C++ system, such as gcc, may provide a platform portable way to
+                dynamically load new code, but C++ code using this abstraction
+                would be specific to this C++ system, while being hardware-platform
+                independent. The E language spec requires dynamic code loading,
+                so a complete implementation of ENative must deal with this issue.
+                Were we to interpret byte-codes instead (or in addition), then
+                this issue would go away.</p>
+            </li>
+            <li>
+              <p><a name="dynamicUnloading"></a>Dynamic code unloading becomes
+                similarly non-protable. This is called out separately because
+                it would also interact with the assumed garbage collector.</p>
+            </li>
+          </ol>
+        </li>
+        <li>
+          <p><a name="callSite"></a><i><b>Call-site cacheing</b></i>. Experience
+            with dynamic object language implementations, especially Smalltalk,
+            shows that if there's one &quot;sophisticated&quot; optimization that's
+            worth doing, it's &quot;<a href="http://compilers.iecc.com/comparch/article/90-11-069">call-site
+            cacheing</a>&quot; (originally known as an &quot;inline method cache&quot;,
+            invented by Deutsch and Schiffman and presented at POPL 1984). For
+            a given message call/send expression, if the dynamic implementation-type
+            (script) of the object is the same as it was last time, <i>as it usually
+            is</i>, then this call/send would look up the same method, so go there
+            directly. ENative demonstrates that this optimization can be coded
+            very simply. The flow of execution on a cache hit we call the <i>fast-path</i>.
+            The execution on a cache miss is the <i>slow-path</i>. These caches
+            must, of course, be invalidated by an <a href="#classObsolete">upgrade-for-prototyping</a>.</p>
+        </li>
+      </ul>
+      <P ALIGN="left">&nbsp;
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">e-impls</a>&nbsp;/&nbsp;<a href="index.html">e-on-c</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="fatpointers.html" title="On to: Fat Pointers"><img src="../../images/next.gif" width="64" height="32" alt="On to: Fat Pointers" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

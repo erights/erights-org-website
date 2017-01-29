@@ -1,0 +1,510 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+   <TITLE>Rolling Dice</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.0Gold (Win95; I) [Netscape]">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+
+<PRE><IMG SRC="midi_e.gif" ALT="Electric Communities: E Programming Language" HEIGHT=30 WIDTH=30>  <A HREF="index.html">Contents</A>  <A HREF="../index.html">Home Page</A>
+</PRE>
+
+<H1>Rolling Dice</H1>
+
+<P>
+<HR></P>
+
+<BLOCKQUOTE>
+<P>This chapter presents the Rolling Dice tutorial. In these example programs,
+two E-objects work together to create a random number. They demonstrate
+how easy it is in E to exchange information between two participants that
+do not necessarily trust each other, and guarantee the authenticity of
+the original information.</P>
+
+<P> Both sample programs use a one-way hash function to guarantee the authenticity
+of each player's original number X. A one-way hash function works in one
+direction-it is easy to compute a hash value from a pre-image, but nearly
+impossible to generate the pre-image from that hash value. </P>
+
+<P>This ensures &quot;bit commitment&quot;-by handing the opponent the
+hash value that verifies the original number, each object &quot;commits&quot;
+to its original number X, and cannot cheat by substituting another number
+X later on.</P>
+
+<P> </P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H2><A NAME="Sample program 1"></A>Sample program 1 </H2>
+
+<BLOCKQUOTE>
+<P>This first example uses the following protocol:</P>
+
+<P> </P>
+
+<OL>
+<LI>The two E-objects, <TT>First</TT> and <TT>Second</TT>, each a select
+random number called <TT>X</TT>. The two <TT>X</TT>s will later be combined
+to create a random result.</LI>
+
+<P> </P>
+
+<LI>Using an agreed-upon one-way hashing algorithm, both objects generate
+a hash value of their numbers X.</LI>
+
+<P> </P>
+
+<LI><TT>First</TT> reveals a one way hash of its <TT>X</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>Second</TT> reveals its <TT>X</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>First</TT> reveals its <TT>X</TT>.</LI>
+
+<P> </P>
+
+<LI>The <TT>X</TT>s are combined to produce the final result.</LI>
+
+<P> </P>
+
+<LI><TT>Second</TT> recomputes the one way hash of <TT>First</TT>'s <TT>X</TT>
+to verify that <TT>First</TT> did not change its <TT>X </TT>when it learned
+<TT>Second</TT>'s X. That would be cheating.</LI>
+
+<P> </P>
+</OL>
+
+<P>A potential problem in this protocol is that <TT>First</TT> receives
+<TT>Second</TT>'s X value. This means that <TT>First</TT> knows the result
+before <TT>Second</TT> does. If <TT>First</TT> is unhappy about the result,
+it could do something toprevent the conclusion of the protocol, such as
+cause a network failure. </P>
+
+<PRE><TT>  /*
+  Die Rolling Example
+  Copyright 1996 Electric Communities
+  All Rights Reserved Worldwide.
+  */  
+
+  import java.util.Random;
+  import ec.e.lang.EInteger;
+
+  public class DieRolling
+  {
+/*1*/ public static void main(String args[])
+      {
+        DieRoller First = new DieRoller();
+        DieRoller Second = new DieRoller();
+
+/*2*/   First &lt;- dieRollStart(Second);
+      }
+   }
+
+  eclass DieRoller 
+  {
+     Random randomGenerator = new Random();
+
+/*3*/ emethod dieRollStart(DieRoller secondRoller)
+     {
+/*4*/  long X = randomGenerator.nextLong();
+    
+/*5*/  EInteger concealedX, secondX;
+        secondRoller &lt;- dieRollFinish(OneWayHash(X), 
+         concealedX, &amp;secondX);
+    
+/* 6 */  ewhen secondX (long otherX)
+/* 11 */ {
+/* 12 */ long finalResult = Combine(X, otherX);
+         System.out.println(&quot;Roll result = &quot; + finalResult);
+/* 13 */ &amp;concealedX &lt;- forward(new EInteger(X));
+         }
+       }
+
+/* 7*/ emethod dieRollFinish (long otherHash,
+          EInteger firstX, EDistributor myX)
+      {
+/*8*/    long X = randomGenerator.nextLong();
+
+/* 9 */  myX &lt;- forward(new EInteger(X));
+
+/* 10 */ ewhen firstX (long otherX)
+/* 14 */ {
+/* 15 */   long finalResult = Combine(otherX, X);
+           System.out.println(&quot;Roll result = &quot; + finalResult);
+
+/* 16 */   if (OneWayHash(otherX) != otherHash) {
+             System.out.println(&quot;There was cheating.&quot;);
+           }
+         }
+       }
+
+      long OneWayHash(long a) /* Placeholder function */
+      {
+        return (a); 
+      }
+
+      long Combine(long a, long b)
+      {
+        return (((a ^ b) % 6) + 1); /* 1..6 */
+      }
+    }</TT></PRE>
+
+<H3>The Walkthrough</H3>
+
+<OL>
+<LI><TT>main</TT> declares <TT>First</TT> and <TT>Second</TT>, both of
+E-class <I>DieRoller</I>. In this example, <TT>First</TT> and <TT>Second</TT>
+will both be running in the same machine. However, <TT>First</TT> and <TT>Second</TT>
+could easily be on different machines connected by a network.</LI>
+
+<P> </P>
+
+<LI><TT>main</TT> sends the message <TT>dieRollStart</TT> to <TT>First</TT>,
+passing it a reference to <TT>Second</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>First</TT> executes the E-method <TT>dieRollStart</TT> in response
+to receiving the message sent in step 2.</LI>
+
+<P> </P>
+
+<LI><TT>First</TT> chooses a random number <TT>X</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>First</TT> sends the message <TT>dieRollFinish</TT> to <TT>Second</TT>,
+passing a hashed <TT>X</TT>, the uninitialized <I>EInteger</I> <TT>concealedX</TT>,
+and the distributor for the channel representing the uninitialized <I>EInteger</I>
+<TT>secondX</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>First</TT> executes an <TT>ewhen</TT> statement that says, &quot;When
+<TT>secondX</TT> gets a value, assign its value to <TT>otherX</TT> and
+execute the following code block.&quot; <TT>dieRollStart</TT> terminates.</LI>
+
+<P> </P>
+
+<LI>Suddenly, <TT>Second</TT> executes the E-method <TT>dieRollFinish</TT>
+in response to receiving the message sent in step 5.</LI>
+
+<P> </P>
+
+<LI><TT>Second</TT> chooses a random number <TT>X</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>Second</TT> reveals its <TT>X</TT> by forwarding it to <TT>myX</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>Second</TT> executes an <TT>ewhen</TT> statement that says, &quot;When
+<TT>firstX</TT> gets a value, assign its value to <TT>otherX</TT> and execute
+the following code block.&quot; <TT>dieRollFinish</TT> terminates.</LI>
+
+<P> </P>
+
+<LI>Suddenly, <TT>secondX</TT> has a value (as a result of step 9), so
+<TT>First</TT> begins execution of the code in the <TT>ewhen</TT> block
+(as a result of line 6).</LI>
+
+<P> </P>
+
+<LI><TT>First</TT> computes the <TT>finalResult</TT> by combining its <TT>X</TT>
+and <TT>Second</TT>'s<TT> X</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>First</TT> forwards the value of its <TT>X</TT> to <TT>concealedX</TT>,
+completing its half of the protocol. The block terminates.</LI>
+
+<P> </P>
+
+<LI>Suddenly, <TT>firstX</TT> has a value (as a result of step 13), so
+<TT>Second</TT> begins execution of the code in the <TT>ewhen</TT> block
+(as a result of step 10).</LI>
+
+<P> </P>
+
+<LI><TT>Second</TT> computes the <TT>finalResult</TT> by combining its
+<TT>X</TT> and <TT>First</TT>'s <TT>X</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>Second</TT> verifies the <TT>otherHash</TT> value it received from
+<TT>First</TT> in step 7. The block terminates. The protocol has been completed.</LI>
+
+<P> </P>
+</OL>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H2><A NAME="Sample program 2"></A>Sample program 2 </H2>
+
+<BLOCKQUOTE>
+<P>In the previous example, there were two E-methods, <TT>dieRollStart</TT>
+and <TT>dieRollFinish</TT>. In this example, there is a single method,
+<TT>doDieRoll</TT>. This example also uses nested <TT>ewhen</TT> statements.
+This is a more elegant solution than the previous program.</P>
+
+<P> Note that in this example, either <I>DieRoller</I> can go first. </P>
+
+<P>Both sides use this protocol:</P>
+
+<P> </P>
+
+<OL>
+<LI>Select a random number X.</LI>
+
+<P> </P>
+
+<LI>Reveal the one way hash of X.</LI>
+
+<P> </P>
+
+<LI>After receiving the other's hash, reveal X.</LI>
+
+<P> </P>
+
+<LI>After receiving the other's X, combine the Xs to produce the final
+result.</LI>
+
+<P> </P>
+
+<LI>Verify that there was no cheating.</LI>
+
+<P> </P>
+</OL>
+
+<P>This protocol is more secure than the previous example, since each object
+reveals its hash value before the original number X. This means that neither
+can know the result before the other, and possibly stop the process before
+the other side knows the final result.</P>
+
+<P> </P>
+
+<PRE><TT>  /*
+  Die Rolling Example II
+  Copyright 1996 Electric Communities
+  All Rights Reserved Worldwide.
+  */
+
+      import ec.e.lang.EInteger;
+      import java.util.Random;
+
+      public class DieRolling
+      {
+/*1*/   public static void main(String args[])
+       {
+         DieRoller rollerOne = new DieRoller();
+         DieRoller rollerTwo = new DieRoller();
+
+         EInteger rollerOneHash, rollerOneX;
+         EInteger rollerTwoHash, rollerTwoX;
+
+/*2*/    rollerOne &lt;- doDieRoll(&amp;rollerOneHash, &amp;rollerOneX,
+          rollerTwoHash, rollerTwoX);
+
+         rollerTwo &lt;- doDieRoll(&amp;rollerTwoHash, &amp;rollerTwoX,
+           rollerOneHash, rollerOneX);
+       }
+      }
+
+      eclass DieRoller
+      {
+      Random randomGenerator = new Random();
+
+/*3,7*/ emethod doDieRoll(EDistributor myHash, EDistributor myX,
+         EInteger hisHash, EInteger hisX) {
+
+/*4-8*/   long X = randomGenerator.nextLong();
+
+/* 5 9 */ myHash &lt;- forward(new EInteger(OneWayHash(X)));
+
+/* 6 10 */ ewhen hisHash (long otherHash) {
+/* 11 13 */   myX &lt;- forward(new EInteger(X));
+
+/* 12 14 */   ewhen hisX (long otherX) {
+/* 15 17 */      long finalResult = Combine(X, otherX);
+
+               System.out.println(&quot;Roll result = &quot; + finalResult);
+
+/* 16 18 */     if (OneWayHash(otherX) != otherHash) {
+                  System.out.println(&quot;There was cheating.&quot;);
+                }
+              }
+            }
+          }
+
+        long OneWayHash(long a) /* Placeholder function */
+        {
+          return (a);
+        }
+
+        long Combine(long a, long b)
+        {
+          return (((a ^ b) % 6) + 1);
+        }
+      }</TT>
+</PRE>
+
+<H3>The Walkthrough</H3>
+
+<OL>
+<LI><TT>main</TT> declares <TT>rollerOne</TT> and <TT>rollerTwo</TT>, both
+of eclass <I>DieRoller</I>. In this example, <TT>rollerOne</TT> and <TT>rollerTwo</TT>
+will both be running on the same machine, but could easily be on different
+machines.</LI>
+
+<P> </P>
+
+<LI><TT>main</TT> sends the message <TT>doDieRoll</TT> to <TT>rollerOne</TT>
+and <TT>rollerTwo</TT>. The first two parameters are used to reveal information
+to the other. The last two parameters will reveal the other's information.
+</LI>
+
+<LI>The order of the delivery of the messages in step 2 is not guaranteed,
+so either could get it first, or they could be delivered at the same time.
+To simplify this walkthrough, assume that suddenly <TT>rollerOne</TT> executes
+the E-method <TT>doDieRoll</TT> in response a message sent in step 2.</LI>
+
+<P> </P>
+
+<LI><TT>rollerOne</TT> chooses a random number <TT>X</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>rollerOne</TT> reveals the hash of its <TT>X</TT> by forwarding
+it to <TT>myHash</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>rollerOne</TT> executes an <TT>ewhen</TT> statement that says,
+&quot;When <TT>hisHash</TT> gets a value, assign its value to <TT>otherHash</TT>
+and execute the following code block.&quot; <TT>rollerOne</TT>'s execution
+of <TT>doDieRoll</TT> terminates.</LI>
+
+<P> </P>
+
+<LI>Suddenly <TT>rollerTwo</TT> executes the E-method <TT>doDieRoll</TT>
+in response to a message from step 2.</LI>
+
+<P> </P>
+
+<LI><TT>rollerTwo</TT> chooses a random number <TT>X</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>rollerTwo</TT> reveals the hash of its <TT>X</TT> by forwarding
+it to <TT>myHash</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>rollerTwo</TT> executes an <TT>ewhen</TT> statement that says,
+&quot;When <TT>hisHash</TT> gets a value, assign its value to <TT>otherHash</TT>
+and execute the following code block.&quot; <TT>rollerTwo</TT>'s execution
+of <TT>doDieRoll</TT> terminates.</LI>
+
+<P> </P>
+
+<LI>Suddenly, <TT>rollerTwo</TT>'s <TT>hisHash</TT> has a value (as a result
+of step 5). That value is assigned to <TT>otherHash</TT> and execution
+of the code in the <TT>ewhen</TT> block begins (as a result of step 10).
+<TT>rollerTwo</TT> reveals its <TT>X</TT> by forwarding it to <TT>myX</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>rollerTwo</TT> executes an <TT>ewhen</TT> statement that says,
+&quot;When <TT>hisX</TT> gets a value, assign its value to <TT>otherX</TT>
+and execute the following code block.&quot; <TT>rollerTwo</TT>'s execution
+of the current <TT>ewhen</TT> code block terminates.</LI>
+
+<P> </P>
+
+<LI>Suddenly, <TT>rollerOne</TT>'s <TT>hisHash</TT> has a value (as a result
+of step 9). That value is assigned to <TT>otherHash</TT> and execution
+of the code in the <TT>ewhen</TT> block begins (as a result of step 6).
+<TT>rollerOne</TT> reveals its <TT>X </TT>by forwarding it to <TT>myX</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>rollerOne</TT> executes an <TT>ewhen</TT> statement that says,
+&quot;When <TT>hisX</TT> gets a value, assign its value to <TT>otherX</TT>
+and execute the following code block.&quot; <TT>rollerOne</TT>'s execution
+of the current <TT>ewhen</TT> code block terminates.</LI>
+
+<P> </P>
+
+<LI>Suddenly, <TT>rollerOne</TT>'s <TT>hisX</TT> has a value (as a result
+of step 11). That value is assigned to <TT>otherX</TT> and execution of
+the code in the <TT>ewhen</TT> block begins (as a result of step 14). <TT>rollerOne</TT>
+computes the final result.</LI>
+
+<P> </P>
+
+<LI><TT>rollerOne</TT> verifies <TT>hisHash</TT> with <TT>hisX</TT> to
+determine that there was no cheating, completing its half of the protocol.
+The block terminates.</LI>
+
+<P> </P>
+
+<LI>Suddenly, <TT>rollerTwo</TT>'s <TT>hisX</TT> has a value (as a result
+of step 13). That value is assigned to <TT>otherX</TT> and execution of
+the code in the <TT>ewhen</TT> block begins (as a result of step 12). <TT>rollerTwo</TT>
+computes the final result.</LI>
+
+<P> </P>
+
+<LI><TT>rollerTwo</TT> verifies <TT>hisHash</TT> with <TT>hisX</TT> to
+determine that there was no cheating. The block terminates. The protocol
+has been completed.</LI>
+
+<P> </P>
+</OL>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H2><A NAME="Compiling and Running"></A>Compiling and Running</H2>
+
+<BLOCKQUOTE>
+<P>To compile source code for the E runtime, use the <I>ecomp</I> compiler:</P>
+
+<P> </P>
+
+<PRE><TT>  ecomp</TT> <I>filename</I></PRE>
+
+<P>The <I>ecomp</I> command compiles E and Java source files directly into
+Java bytecodes. You can then run your compiled program with the E Java
+interpreter (the<TT> javaec</TT> command):</P>
+
+<P> </P>
+
+<PRE><TT>  javaec</TT> <I>filename</I></PRE>
+
+<P>For more information on these commands, see the <I>E Tools and Utilities
+</I>section in the <I>E Programmer's Guide</I>.</P>
+
+<P> </P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<ADDRESS>Copyright (c) 1996 Electric Communities. All rights reserved worldwide.<BR>
+Most recent update: 5/29/96</ADDRESS>
+
+<P> </P>
+
+</BODY>
+</HTML>

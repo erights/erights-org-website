@@ -1,0 +1,84 @@
+<HTML>
+<HEAD>
+
+<TITLE>Proxy Manager</TITLE>
+
+<META NAME="generator" CONTENT="BBEdit 4.5">
+
+</HEAD>
+<BODY BGCOLOR="#ffeedd" TEXT="#000000" LINK="#0000FF" VLINK="#800080">
+
+<H1>
+Proxy Management in Neocosm</H1>
+<B>Last updated:</B><I> [98/07/19 Bob]</I> Author: Bob Schumaker. 
+<H2>
+Introduction</H2>
+The Proxy Manager is the layer between raw communications and remote object references. High-level distributed object will never access data communication primitives directly. Instead, the higher layers will access remote objects through a proxy mechanism.
+<H2>
+Requirements</H2>
+
+<OL>
+  <LI> Encapsulate secure and authenticated remote object references in a 'simple' 
+    interface (currently <TT><A HREF="../javadoc/org/erights/e/elib/ref/Ref.html">Ref</A></TT>)</LI>
+<LI>
+Hide the details of the low-level communications mechanisms from the distributed object layer</LI>
+<LI>
+Provide consistent failure semantics for all proxies that travel over a single physical connection (<I>i.e.</I> if the underlying transport fails in a way that will affect all traffic over that connection, make sure that all clients of that connection also fail)</LI>
+
+</OL>
+
+<H2>
+Architecture</H2>
+<H4>
+Current Architecture Overview</H4>
+In the current system, proxy objects are closely tied to the underlying connection in that the fragile references to objects go through a per-connection table (import/export).
+<H4>
+Proposed Architecture Overview</H4>
+How proxies get created, an overview (straw man until some of the actual details can be hammered out, success is assumed everywhere):
+<OL>
+<LI><TT>FollowRef</TT> is invoked on a SturdyRef object (&lt;registrar
+ID&gt;, &lt;object id&gt;) [&lt;object ID&gt; is a swiss number]</LI> <LI>A proxy
+constructor is invoked (Proxy(&lt;registrar ID&gt;, &lt;object ID&gt;)<LI> <LI>The
+proxy code asks the low-level comm system for a connection object</LI>
+<LI>A connection is opened and returned (or a reference to an already
+open connection)</LI> <LI>The proxy code asks the connection for a
+reference to &lt;object id&gt;, specifying its local reference (this is
+optional really, since all messages could be addressed purely by swiss
+number -- but we're assuming a table structure along the lines of the
+current import/export table)</LI> <LI>The comm system makes the
+request of the remote machine</LI> <LI>The remote machine's comm
+system checks to see if &lt;object id&gt; is exported to the requesting
+machine</LI> <LI>The remote machine fills in its derived table and
+returns success to the requestor</LI> <LI>The local machine's comm
+system returns the appropriate data-comm level reference for the
+remote object (a table index, perhaps?)</LI> <LI>The proxy constructor
+finishes, and the proxy is now ready to accept 'E.Send' requests</LI>
+</OL>
+<IMG SRC="ProxyManagerArch.gif" WIDTH="544" HEIGHT="391" HSPACE="0" VSPACE="0"> 
+<P>The life cycle of a proxy, and how they are created and destroyed can be found in the <A HREF="ProxyLifeCycle.html">Proxy Life Cycle</A> document.
+<H4>
+Which directories on our tree does this subsystem cover?</H4>
+This subsystem is contained in the package org.erights.e.net.proxy.
+<H4>
+Is it JavaDoc'ed?</H4>
+The JavaDoc for the proxy subsystem can be found in <A HREF="../javadoc/net/captp/jcomm/package-summary.html">the 
+package summary</A>. 
+<H4>
+Examples</H4>
+<I>Are there examples?</I>
+<H4>
+Testing and Debugging</H4>
+<I>(Optional) Lists any tests and debugging utilities which are to be developed
+to help test the design (e.g. test classes, trace categories, etc.)</I>
+<H2>
+Design Issues</H2>
+
+<H4>
+Resolved Issues</H4>
+<I>History of issues raised and resolved during initial design, or during
+design inspections. Can also include alternative designs, with the reasons
+why they were rejected</I>
+<H4>
+Open Issues</H4>
+</BODY>
+</HTML>

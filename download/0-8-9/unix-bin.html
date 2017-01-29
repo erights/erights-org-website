@@ -1,0 +1,229 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>E 0.8.9: Installing on Unix/Linux</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">download</a>&nbsp;/&nbsp;<a href="index.html">0-8-9</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="windows-src.html"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: E 0.8.9: Building on Windows" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" -->x<!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="unix-src.html"><img src="../../images/next.gif" width="64" height="32" alt="On to: E 0.8.9: Building on Unix/Linux" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Installing
+              </B><font size="7"><font size="7"><i><font color="#009000"><b>E</b></font></i></font><b></b><b>
+              0.8.9</b></font><B><br>
+              on Unix/Linux</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p>E can be installed on Linux from the <a href="https://www.cypherpunks.to/erights/download/0-8-9/tl-otc-E-linux-i386-glibc-0.8.9.tar.gz">binary
+        distribution</a>, compiled for the 386 architecture and a glibc-supporting
+        version of Linux (this includes RedHat 6.1, which is what we're using).
+        If you need E for a different Unix/Linux configuration, you should <a href="unix-src.html">build
+        E from source</a> instead.</p>
+      <p>There are two ways of installing E: A <i>personal</i> installation, and
+        a <i><a href="#root-install">root</a></i><a href="#root-install"> installation</a>.
+      </p>
+      <h1>Personal Installation</h1>
+      <p>A personal installation requires no privileges, and different users can
+        play with separate installations without conflict. On the other hand,
+        <i>older</i> E scripts (<tt>*.e</tt> files) often begin with &quot;<tt>#!/usr/local/bin</tt>/e&quot;.
+        A personal installation cannot cause &quot;e&quot; to be placed there,
+        and therefore cannot allow E scripts to appear directly as shell commands.
+        In other word, you'll always need to say, for example, &quot;<tt>e findall.e
+        ...</tt>&quot; rather than &quot;<tt>findall.e ...</tt>&quot;.</p>
+      <p><i>Note: To avoid this problem, we are switching to the same technique
+        Python uses: making the first line of an E script be </i>&quot;<tt>#!/usr/bin/env
+        e</tt>&quot;. <i>You should do this in all your E scripts as well. With
+        this initial line, the </i><tt>e</tt><i> used will be the first</i>
+        <tt>e</tt> <i>found on your </i><tt>PATH</tt>. <i>Thanks to <a href="http://www.milk.com/home/danfuzz/">Dan
+        Bornstein</a> for this suggestion.</i></p>
+      <p>To do a personal install, create the directory where you wish E to be
+        installed, and unpack the binary distribution there:</p>
+      <p>
+      <blockquote>
+        <pre>$ <b>mkdir ehome</b>
+$ <b>cd ehome
+
+</b><font class="comment"># download <a href="https://www.cypherpunks.to/erights/download/0-8-9/tl-otc-E-linux-i386-glibc-0.8.9.tar.gz">tl-otc-E-linux-i386-glibc-0.8.9.tar.gz</a> to here</font>
+$ <b>tar xzf tl-otc-E-linux-i386-glibc-0.8.9.tar.gz</b></pre>
+      </blockquote>
+      <p>Among the files that appear, you want to run <tt>personal-install.sh</tt></p>
+      <p>
+      <blockquote>
+        <pre>$ <b>./personal-install.sh</b>
+Starting E
+Installed at &lt;file:/home/markm/ehome&gt;
+We seem to be headless
+
+Welcome to E 0.8.9
+You should "source" your ~/.bash_profile
+or otherwise set your EHOME environment variable to /home/markm/ehome</pre>
+      </blockquote>
+      <p>The personal installer placed a copy of the &quot;e&quot; command in
+        your <tt>~/bin</tt> directory. However, before E can successfully
+        run, it needs to know where its home is -- the directory in which you
+        unpacked the binary distribution. So that it will know in the future,
+        it appended to your <tt>~/.bash_profile</tt> file instructions to
+        set the <tt>EHOME</tt> environment variable the next time you log
+        in. That's fine for next time, but what about now? As it explains above,
+        you can now either</p>
+      <p>
+      <blockquote>
+        <pre>$ <b>source ~/.bash_profile</b></pre>
+      </blockquote>
+      <p>or</p>
+      <p>
+      <blockquote>
+        <pre>$ <b>EHOME=/home/markm/ehome</b>
+$ <b>export EHOME</b></pre>
+      </blockquote>
+      <p>obviously, substituting wherever you installed it for <tt>/home/markm/ehome</tt>.
+        You should now be able to run E programs:</p>
+      <p>
+      <blockquote>
+        <pre>$ <b>e</b>
+? <b>2 + 3</b>
+# value: 5
+
+? <b><i>#&lt;Ctrl-D&gt;</i></b></pre>
+      </blockquote>
+      <p>That last line indicated that you can exit the E command line interpreter
+        by typing the Control-D character, as with many other Unix programs.</p>
+      <p>Above, the &quot;We seem to be headless&quot; is printed out is you run
+        the installer from a character terminal (or its moral equivalent) rather
+        than an X terminal. If install from an X terminal, the welcome message
+        should be in the form of a swing monologue box with an Ok button.</p>
+      <p>You should now proceed to the <a href="../../elang/intro/index.html">E
+        Tutorial</a>.</p>
+      <h1><a name="root-install"></a>Root Installation</h1>
+      <p>A root installation requires root privilege in order to install E in
+        a canonical shared location. <i>Older </i>E scripts (<tt>*.e</tt>
+        files) often begin with &quot;<tt>#!/usr/local/bin</tt>/e&quot;. A
+        root installation installs the shared E files in &quot;<tt>/usr/local/e</tt>&quot;
+        and places a copy of the &quot;e&quot; command at &quot;<tt>/usr/local/bin/e</tt>&quot;
+        so that E commands can be run directly as executable commands.</p>
+      <p><i>Note: To avoid this issue, we are switching to the same technique
+        Python uses: making the first line of an E script be </i>&quot;<tt>#!/usr/bin/env
+        e</tt>&quot;. <i>You should do this in all your E scripts as well. With
+        this initial line, the </i><tt>e</tt><i> used will be the first</i>
+        <tt>e</tt> <i>found on your </i><tt>PATH</tt>. <i>Thanks to <a href="http://www.milk.com/home/danfuzz/">Dan
+        Bornstein</a> for this suggestion.</i></p>
+      <p></p>
+      <p>To do a root install, create a working directory and unpack the binary
+        distribution there:</p>
+      <p>
+      <blockquote>
+        <pre>$ <b>mkdir efoo</b>
+$ <b>cd efoo</b>
+<font class="comment"># download <a href="https://www.cypherpunks.to/erights/download/0-8-9/tl-otc-E-linux-i386-glibc-0.8.9.tar.gz">tl-otc-E-linux-i386-glibc-0.8.9.tar.gz</a> to here</font>
+$ <b>tar xzf tl-otc-E-linux-i386-glibc-0.8.9.tar.gz</b></pre>
+      </blockquote>
+      <p>Among the files that appear, you want to run <tt>root-install.sh</tt>
+        as root</p>
+      <p>
+      <blockquote>
+        <pre>$ <b>su - root</b>
+Password:
+# <b>./root-install.sh</b>
+Starting E
+Installed at &lt;file:/usr/local/e&gt;
+We seem to be headless
+
+Welcome to E 0.8.9
+# <i><b>//&lt;ctrl-D&gt;</b></i>
+</pre>
+      </blockquote>
+      You should now be able to run E programs:
+      <blockquote>
+        <pre>
+$ <b>e</b>
+? <b>2 + 3</b>
+# value: 5
+
+? <b><i>#&lt;Ctrl-D&gt;</i></b></pre>
+      </blockquote>
+      <p>Above, the &quot;We seem to be headless&quot; is printed out is you run
+        the installer from a character terminal (or its moral equivalent) rather
+        than an X terminal. If you install from an X terminal, the welcome message
+        should be in the form of a swing monologue box with an Ok button.</p>
+      <p>You should now proceed to the <a href="../../elang/intro/index.html">E
+        Tutorial</a>.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="Prev"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" -->x<!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --> <img src="../../images/next-gray.gif" width="64" height="32" alt="Next"><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

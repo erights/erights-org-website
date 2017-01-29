@@ -1,0 +1,48 @@
+11.0.672.0 canary build
+
+
+this (15.1) .Infinity writable?: should be false but was true
+this (15.1) .NaN writable?: should be false but was true
+this (15.1) .undefined writable?: should be false but was true
+RegExp.prototype (15.10.6) [[Class]]: should be [object RegExp] but was [object Object]
+Error.prototype (15.11.4) .name configurable?: should be true but was false
+Error.prototype (15.11.4) .name writable?: should be true but was false
+Error.prototype.toString (15.11.4.4) None of the built-in functions described in (15) shall have a prototype property unless otherwise specified ...
+RangeError.prototype (15.11.7.7) .message absent
+RangeError.prototype (15.11.7.7) .name configurable?: should be true but was false
+RangeError.prototype (15.11.7.7) .name enumerable?: should be false but was true
+RangeError.prototype (15.11.7.7) .name writable?: should be true but was false
+TypeError.prototype (15.11.7.7) .message absent
+TypeError.prototype (15.11.7.7) .name configurable?: should be true but was false
+TypeError.prototype (15.11.7.7) .name enumerable?: should be false but was true
+TypeError.prototype (15.11.7.7) .name writable?: should be true but was false
+EvalError.prototype (15.11.7.7) .message absent
+EvalError.prototype (15.11.7.7) .name configurable?: should be true but was false
+EvalError.prototype (15.11.7.7) .name enumerable?: should be false but was true
+EvalError.prototype (15.11.7.7) .name writable?: should be true but was false
+URIError.prototype (15.11.7.7) .message absent
+URIError.prototype (15.11.7.7) .name configurable?: should be true but was false
+URIError.prototype (15.11.7.7) .name enumerable?: should be false but was true
+URIError.prototype (15.11.7.7) .name writable?: should be true but was false
+ReferenceError.prototype (15.11.7.7) .message absent
+ReferenceError.prototype (15.11.7.7) .name configurable?: should be true but was false
+ReferenceError.prototype (15.11.7.7) .name enumerable?: should be false but was true
+ReferenceError.prototype (15.11.7.7) .name writable?: should be true but was false
+SyntaxError.prototype (15.11.7.7) .message absent
+SyntaxError.prototype (15.11.7.7) .name configurable?: should be true but was false
+SyntaxError.prototype (15.11.7.7) .name enumerable?: should be false but was true
+SyntaxError.prototype (15.11.7.7) .name writable?: should be true but was false
+passed: 3706
+failed: 31
+
+
+Failed to fail: var class = 1;
+Failed to fail: var enum = 1;
+Failed to fail: var export = 1;
+Failed to fail: var extends = 1;
+Failed to fail: var import = 1;
+Failed to fail: var super = 1;
+"var native = 1;" failed with SyntaxError: Unexpected token native
+""use strict"; var native = 1;" failed with SyntaxError: Unexpected token native
+passed: 108
+failed: 8

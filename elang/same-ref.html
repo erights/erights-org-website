@@ -1,0 +1,342 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Semantics of "Same"</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="index.html">elang</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="kernel/index.html" title="Back to: Kernel Reference"><img src="../images/prev.gif" width="64" height="32" alt="Back to: Kernel Reference" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="scalars/index.html" title="On to: Scalar Data Types"><img src="../images/next.gif" width="64" height="32" alt="On to: Scalar Data Types" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>When
+              Are Two<br>
+              Things the <i>Same</i>?</b></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p><i><b><font color="#009000">E</font></b></i> has two flavors of built-in
+        equality -- synchronous and asynchronous. The next chapter covers the
+        asynchronous flavor, <i>join</i>. This chapter covers the synchronous
+        flavor, &quot;<tt>==</tt>&quot;, which asks if two references are
+        known to be the <i>same</i> at this moment. Indeed, in <i><b><font color="#009000">E</font></b></i>,
+        the expression &quot;<tt>a == b</tt>&quot; is pronounced &quot;<i>Is
+        a the same as b?</i>&quot;</p>
+      <p><i>Note: This chapter is written ahead of the implementation. The behavior
+        it specifies is not yet implemented. If you see problems with the specification,
+        please comment on it soon, so we can avoid implementing down blind alleys.
+        Thanks.</i></p>
+      <p><i>The examples below that don't yet run as shown are colored <font color="#CF0000">red</font>.</i></p>
+      <p>The semantics of sameness corresponds to the equality we learned in high
+        school algebra: If a == b (<i>if a is the same as b</i>) then if you take
+        a system and magically replace any number of one with the other, the resulting
+        system must be equivalent (<i>mean the same thing</i>) as the original
+        system. Here <i>system</i> means computation state. This strong requirement
+        is incompatible with the normal object-oriented practice of asking one
+        object if it's equal to another, since the object might lie.</p>
+      <h3>Sameness is Reflexive</h3>
+      <p>If &quot;<tt>a</tt>&quot; is in scope and <a href="../elib/equality/same-ref.html">settled</a>,
+        &quot;<tt>a == a</tt>&quot; is always true. Mathematicians call this
+        property <i>reflexiveness</i>. <font color="#FF0000">(***reflexivity?)</font>
+        (If &quot;a&quot; isn't settled, then &quot;a == a&quot; will throw a
+        NotSettledException. In no case will &quot;a == a&quot; ever be false
+        in E.) Believe it or not, <i>reflexiveness</i> has one odd effect:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">a</span> := 0.0/0.0
+<span class="stdout"># value: NaN</span>
+
+<span class="stdout">? </span>a == a
+<span class="stdout"># value: true</span></pre>
+      </blockquote>
+      <p>In all ways besides sameness, the behavior of <i><b><font color="#009000">E</font></b></i>'s
+        floating point values corresponds exactly to the subset of the IEEE spec
+        implemented by Java. However, IEEE specifies that &quot;<tt>NaN == <i>anything</i></tt>&quot;
+        is always false. What is were <i><b><font color="#009000">E</font></b></i>
+        to adopt this rule and so lose reflexivity? Consider: </p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">m</span> := [].asMap().diverge()
+<span class="stdout"># value: [].asMap().diverge()</span>
+
+<span class="stdout">? </span>m[a] := &quot;<span class="litchars">foo</span>&quot;
+<span class="stdout"># value: &quot;foo&quot;</span>
+
+<span class="stdout">? </span>m[a]
+<span class="stdout"># value: &quot;foo&quot;</span></pre>
+      </blockquote>
+      <p>During lookup, the map <i>m</i> needs to test if the key provided is
+        the same as any of the key-value pairs it contains. Only if &quot;<tt>==</tt>&quot;
+        is guaranteed to be reflexive will the above code return &quot;foo&quot;
+        independent of the value of <i>a</i>. <i><b><font color="#009000">E</font></b></i> provides this guarantee.</p>
+      <p>For an IEEE conformant comparison, use instead <i><b><font color="#009000">E</font></b></i>'s &quot;&lt;=&gt;&quot;
+        operator, pronounced &quot;is the same magnitude as&quot;. It is one of
+        <i><b><font color="#009000">E</font></b></i>'s magnitude comparison operators along with &quot;&lt;&quot;, &quot;&lt;=&quot;,
+        &quot;&gt;=&quot;, and &quot;&gt;&quot;. Like other operators in E, but
+        unlike &quot;<tt>==</tt>&quot;, the magnitude comparison operators
+        expand to message sends to the left hand operand, so the result is according
+        to the left hand operand.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>a &lt;=&gt; a
+<span class="stdout"># value: false</span></pre>
+      </blockquote>
+      <h3>When are Scalars the Same?</h3>
+      <p>As documented <a href="scalars/index.html">here</a>, <i><b><font color="#009000">E</font></b></i> has four scalar
+        data types, <tt>integer</tt>, <tt>float64</tt>, <tt>boolean</tt>,
+        and <tt>char</tt>. In all cases, two of these are the same if they
+        are the same type and have the same value. </p>
+      <blockquote>
+        <pre><span class="stdout">? </span>2 == 2
+<span class="stdout"># value: true</span>
+
+<span class="stdout">? </span>2 == 3
+<span class="stdout"># value: false</span>
+
+<span class="stdout">? </span>0 == 0.0
+<span class="stdout"># value: false</span>
+
+<span class="stdout">? </span>'<span class="litchars">a</span>' == '<span class="litchars">a</span>'.asInteger()
+<span class="stdout"># value: false</span></pre>
+      </blockquote>
+      <p>Surprisingly, <a href="scalars/float64-ref.html#SameFloat64">when applied
+        to float64s</a>, this rule has some counter-intuitive effects.</p>
+      <h3>Selfish and Selfless Objects</h3>
+      <p>For a surprise, let's revisit our familiar makePoint example:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defobj">makePoint</span>(<span class="defvar">x</span>, <span class="defvar">y</span>) :any {
+<span class="stdout">&gt; </span>    return <span class="keyword">def</span> <span class="defobj">point</span> {
+<span class="stdout">&gt; </span>        <span class="keyword">to</span> <span class="defverb">getX</span>() :any { return x }
+<span class="stdout">&gt; </span>        <span class="keyword">to</span> <span class="defverb">getY</span>() :any { return y }
+<span class="stdout">&gt; </span>        <span class="keyword">to</span> <span class="defverb">__printOn</span>(<span class="defvar">out</span>) :void {
+<span class="stdout">&gt; </span>            out.print(`<span class="litchars">&lt;</span>$x<span class="litchars">, </span>$y<span class="litchars">&gt;</span>`)
+<span class="stdout">&gt; </span>        }
+<span class="stdout">&gt; </span>    }
+<span class="stdout">&gt; </span>}
+<span class="stdout"># value: &lt;makePoint&gt;</span>
+
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">a</span> := makePoint(3, 5)
+<span class="stdout"># value: &lt;3, 5&gt;
+
+? </span><span class="keyword">def</span> <span class="defvar">b</span> := makePoint(3, 5)
+<span class="stdout"># value: &lt;3, 5&gt;
+
+? </span>a == a
+<span class="stdout"># value: true
+
+? </span>a == b
+<span class="stdout"># value: false</span>
+</pre>
+      </blockquote>
+      <p>Why false? In the corresponding situation, Java, Smalltalk, Python, and
+        most other object languages would also say false, and for a similar reason.
+        Each newly created object has, besides its state and behavior, a unique
+        identity, or <i>self</i>, endowed by the act of creation. &quot;==&quot;
+        is asking not &quot;<i>Do a and b point at objects with the same contents?</i>&quot;
+        but &quot;<i>Do a and b point at the same object, that is to say, an object
+        with the same identity?</i>&quot;. In these languages, we say that &quot;==&quot;
+        compares object identity, rather than object contents.</p>
+      <p>In <i><b><font color="#009000">E</font></b></i> likewise, between two objects with identity -- or <i>selfish objects</i>
+        -- &quot;a == b&quot; justs tests whether both pointers designate the
+        same object identity. All objects, such as the above points, are selfish
+        unless declared <i>selfless</i>. The scalars explained above are a kind
+        of selfless object. Scalars are the same based only on their value, not
+        their identity, since they have no identity. Just as 3 is only 3, without
+        a separate identity, Euclid and Decarte would find it strange for one
+        &lt;3, 5&gt; point wasn't the same as another. Here's how you'd create
+        mathematically respectable selfless points:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">pragma</span>.enable(&quot;<span class="litchars">meta-scope</span>&quot;)
+
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defobj">makePoint</span>(<span class="defvar">x</span>, <span class="defvar">y</span>) :any {
+<span class="stdout">&gt; </span>    return <span class="keyword">def</span> <span class="defobj">point</span> <span class="keyword">implements</span> PassByCopy {
+<span class="stdout">&gt; </span>        <span class="keyword">to</span> <span class="defverb">getX</span>() :any { return x }
+<span class="stdout">&gt; </span>        <span class="keyword">to</span> <span class="defverb">getY</span>() :any { return y }
+<span class="stdout">&gt; </span>        <span class="keyword">to</span> <span class="defverb">openState</span>() :any {
+<span class="stdout">&gt; </span>            return <span class="keyword">meta</span>.getState()
+<span class="stdout">&gt; </span>        }
+<span class="stdout">&gt; </span>        <span class="keyword">to</span> <span class="defverb">openSource</span>() :any {
+<span class="stdout">&gt; </span>            return <span class="keyword">meta</span>.context().getOptSource()
+<span class="stdout">&gt; </span>        }
+<span class="stdout">&gt; </span>        <span class="keyword">to</span> <span class="defverb">__printOn</span>(<span class="defvar">out</span>) :void {
+<span class="stdout">&gt; </span>            out.print(`<span class="litchars">&lt;</span>$x<span class="litchars">, </span>$y<span class="litchars">&gt;</span>`)
+<span class="stdout">&gt; </span>        }
+<span class="stdout">&gt; </span>    }
+<span class="stdout">&gt; </span>}
+<span class="stdout"># value: &lt;makePoint&gt;
+
+? </span><span class="keyword">def</span> <span class="defvar">c</span> := makePoint(3, 5)
+<span class="stdout"># value: &lt;3, 5&gt;
+
+? </span><span class="keyword">def</span> <span class="defvar">d</span> := makePoint(3, 5)
+<span class="stdout"># value: &lt;3, 5&gt;
+
+? </span><span class="keyword">def</span> <span class="defvar">e</span> := makePoint(7, 5)
+<span class="stdout"># value: &lt;7, 5&gt;
+
+? </span>c == c
+<span class="stdout"># value: true
+
+? </span>c == d
+<span class="stdout"># value: <font color="#cf0000">true</font>
+
+? </span>c == e
+<span class="stdout"># value: false</span></pre>
+      </blockquote>
+      <p> The previous <tt>a</tt> and <tt>b</tt> were both &lt;3, 5&gt;
+        points, but were distinct because they were different objects, created
+        separately. <tt>c</tt> and <tt>d</tt> are simply &lt;3, 5&gt;
+        points, with no other hidden information.</p>
+      <p>An object is selfless if it is the value of an object expession that
+        is declared selfless, as shown above. This declaration is only accepted
+        as valid after three conditions are checked. Before listing the conditions,
+        we first define an <i>instance variable</i> of an object expression as
+        a variable used within the object expression whose corresponding definition
+        is outside the object expression, though not in the universalScope.</p>
+      <ul>
+        <li><i>Immutable</i>. All instance variables of a selfless object must
+          be defined as final, although their values may be mutable objects.</li>
+
+        <li><i>Open State</i><i></i>. There must be a <tt>openState</tt> method
+          exactly as shown above. The body of this method provides to the caller
+          the current scope. Since there are no intervening variable definitions,
+          this scope hold exactly the point's instance variables. Objects are
+          generally <i>encapsulating</i>, meaning they can have and use instance
+          variables that they deny their callers access to. Open State ensures
+          that a selfless object is non-encapsulating. </li>
+
+        <li><i>Open Source</i><i></i>. There must be a <tt>openSource</tt>
+          method exactly as shown above. The body of this method provides to the
+          caller the source of the enclosing named object expression. Objects
+          are generally <i>polymorphic</i>, meaning their external behavior does
+          not uniquely determine an implementation of that behavior. Open Source
+          ensures that a selfless object is non-polymorphic. </li>
+      </ul>
+      <p>We say that an object is <i>transparent</i> if it is both <i>open state</i>
+        and <i>open source</i>.</p>
+      <p>By declaring an object selfless, you ensure that it is immutable and
+        transparent, you cause it to pass-by-copy between Vats, you cause its
+        sameness to be tested by contents comparison, and you cause its selflessness
+        to be apparent.</p>
+      <p>By being immutable, we know that if c's contents and d's contents are
+        the same now, they'll be the same later. By being transparent, we know
+        that there are no encapsulated secrets for a contents comparison to reveal.
+        Therefore, it's safe for this object to give up its identity, and use
+        its contents for its sameness check.</p>
+      <p>When an object is immutable, and lacks an identity, then it cannot be
+        distinguished from an equivalent copy of itself. A local implementation
+        should feel free to copy such objects at will, or collapse equivalent
+        copies into one representation, as in neither case can it be caught. However,
+        if an encapsulating object were implicitly copied <i>between</i> machines,
+        this would violate the encapsulation expressed by the <i><b><font color="#009000">E</font></b></i> program, since
+        an untrustworthy recipient machine would be improperly gaining access
+        to the contents. Since <i><b><font color="#009000">E</font></b></i>'s selfless objects are also transparent, a distributed
+        implementation is also free to copy them. Indeed, in <i>Reference Mechanics</i>
+        we'll see that it's often obligated to.</p>
+      <h3>Collections</h3>
+      <blockquote>
+        <pre><span class="stdout">? </span>[2, 3] == [2, 3]
+<span class="stdout"># value: true
+
+? </span><span class="keyword">def</span> <span class="defvar">cl</span> := [2, 3]
+<span class="stdout"># value: [2, 3]
+
+? </span><span class="keyword">def</span> <span class="defvar">fla</span> := cl.diverge()
+<span class="stdout"># value: [2, 3].diverge()
+
+? </span><span class="keyword">def</span> <span class="defvar">flb</span> := cl.diverge()
+<span class="stdout"># value: [2, 3].diverge()
+
+? </span>fla == fla
+<span class="stdout"># value: true
+
+? </span>fla == flb
+<span class="stdout"># value: false
+
+? </span>fla.snapshot() == flb.snapshot()
+<span class="stdout"># value: true</span>
+</pre>
+      </blockquote>
+      <h3>Infinite Rational Selflessness</h3>
+      <h3>Broken References</h3>
+      <h3>Deferred References <i>vs</i> Stable Answers</h3>
+      <h3>Join: Asynchronous Sameness</h3>
+      <h3>Cooperatively-Transparent Forwardability</h3>
+      <P ALIGN="left">&nbsp;
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="index.html">elang</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="kernel/index.html" title="Back to: Kernel Reference"><img src="../images/prev.gif" width="64" height="32" alt="Back to: Kernel Reference" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="scalars/index.html" title="On to: Scalar Data Types"><img src="../images/next.gif" width="64" height="32" alt="On to: Scalar Data Types" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

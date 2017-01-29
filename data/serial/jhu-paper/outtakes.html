@@ -1,0 +1,462 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Outtakes</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="Prev"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" -->x<!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" -->
+                  <img src="../../../images/next-gray.gif" width="64" height="32" alt="Next"><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Outtakes</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p>To deal with mutual suspicion, secure systems design the interfaces between
+        objects (processes, subjects, protection domains) to require <i>least
+        authority </i> <i></i> -- authority not unreasonably greater than each
+        object needs to carry out its proper duties [ref POLA/POLP, SaltzerShroeder].
+        Very few objects possess god-like authority. Most objects operate with
+        little authority, and so can do little damage. To provide support for
+        an actual diversity of policies, each policy must itself require only
+        least authority. The more authority a policy choice would demand, the
+        fewer the objects with adequate authority to put that policy into operation.</p>
+      <p>Serialization is used for several purposes in <i><b><font color="#009000">E</font></b></i>,
+        a pure object-capability-based distributed persistent secure programming
+        language. <i><b><font color="#009000">E</font></b></i> serializes remote
+        messages to transcend space -- maintaining the fiction of a single distributed
+        heap of mutually suspicious objects, connected by capabilities, and hosted
+        by a network of mutually suspicious machines. Capability designers long
+        ago realized how to instantiate such a messaging service using hardly
+        any initial authority at all [ref Donnelley76, Sansom86/88, Actors?],
+        thereby allowing multiple such systems to co-exist. We explain a generalization
+        of their invention.</p>
+      <p>To our knowledge, prior to this work, persistence for secure systems,
+        whether by page-fault handling or by serialization, has only been provided
+        by services that were granted god-like authority over the subsystem they
+        were persisting. As a result, such persistence was provided as a single
+        comprehensive one-size-fits-all solution. We explain how <i><b><font color="#009000">E</font></b></i>'s
+        serialization allows co-existence of unprivileged persistence systems,
+        and deals with issues of mutual suspicion</p>
+      <ul>
+        <li>among the object being serialized</li>
+        <li>between these objects and the serializer</li>
+        <li>between the serializer and the unserializer</li>
+        <li>between the unserializer and its context</li>
+        <li>between the unserialzer and the objects in reconstructs</li>
+        <li>among the reconstructed objects.</li>
+      </ul>
+      <p>&nbsp;</p>
+      <p>However, some of these uses of serialization have been thought to require
+        special privilege, limiting their application within object-capability
+        systems. We present a serialization framework constrained by <i>POLA</i>
+        -- the Principle of Least Authority. As a framework more closely approximates
+        <i>least authority</i> in the authority it requies the participants to
+        grant each other, it lowers the risks of each to the others. This increases
+        the frequency of cases where all the needed parties are willing to bear
+        the remaining risks, as well as the cases where the interested parties
+        actually have the authority needed to wield the tools, and so increases
+        the applicability of serialization as a useful tool.</p>
+      <hr>
+      <p>Abstract<br>
+        Serialization and object-capability security [ref Ode, Demolished] are
+        two extensions of the object paradigm that seem to pull in opposing directions.
+        This paper presents serialization abstractions for use in object-capability
+        systems, which </p>
+      <p>Resolve the conflict: They live within object-capability constraints,
+        and so maintain object-capability security.</p>
+      <p>Leverage the combination: They apply the power of serialization to the
+        manipulation of authority and secure identity in addition to information.</p>
+      <p>Serialization is used for several purposes in E, a pure object-capability-based
+        distributed persistent secure programming language. This paper presents
+        E's use of serialization for unprivileged persistence as a motivating
+        example for the mechanisms presented here; but most of these ideas are
+        applicable to any object-capability language and are useful for many other
+        purposes.</p>
+      <p></p>
+      <hr>
+      <p>We often use serialization tools to <i>maintain the fiction of object
+        continuity </i>by<i> adapting to a change of context</i>. With these fictions,
+        we effectively stretch our object systems across space, time, versions,
+        and more. For example, serialization in RMI and CORBA creates a fiction
+        that the message as unserialized and delivered in one addess space designates
+        the same arguments as the message that was sent from another address space
+        -- they adapt to the change of location. Serialization is used for persistence
+        by creating the fiction that an object revived from recorded state is
+        the same object as the original, well after the original's process has
+        died. With long object lifetimes, we need to <i>upgrade</i> -- to adapt
+        an old object's state to a new versions of its behavior (class, schema),
+        perhaps on an altered platform, all while seeming to be the same object.
+        In all these cases, the fiction need not pretend that nothing has changed,
+        but rather that the graph of relationships maintained it connectivity,
+        and that enough of the original's essential properties were preserved
+        so that the adapted objects can &quot;continue&quot; to work in their
+        new context.</p>
+      <p>No single serialization tool can fulfill all these needs -- there are
+        too many kinds of adaptation problems, and too many policy choices that
+        must be made for each. Such situations demand <i>mechanism / policy separation</i>
+        -- rather than a single built-in one-size-fits-all tool, we need a kit
+        of building blocks from which a range of tools may be fashioned, expressing
+        a diversiy of policy choices, all potentially co-existing within the same
+        system.</p>
+      <p>A key security design rule is <i>POLA</i> -- the Principle of Least Authority
+        (also known as the Principle of Least Privilege [ref SaltzerShroeder]):
+        An entity's interface should require us to give it only that authority
+        needed for it to carry out its proper duties -- as with the Valet key
+        that does not open the trunk. True <i>least authority</i> is rarely achieved
+        or needed. Rather, this is an ideal to be approaced. The less authority
+        is granted, the more limited our risk from its misbehavior, and the lower
+        the trust required for us to be willing to bear that risk. As our abstraction
+        designs </p>
+      <p></p>
+      <p>Depending on our relationship to it, these are risks we are or aren't
+        willing to bear. (If we aren't willing to grant it its proper least authority,
+        then we cannot make use of it.)</p>
+      <p>However, the utility of </p>
+      <p> </p>
+      <p>These shifts of space and time are only two of the kinds of context change
+        we may want to transcend. For example, w</p>
+      <p>Serialization is being used to stretch object-capability systems over
+        many of the same shifts in context, </p>
+      <p>POLA-constrained. Diversity of policies.</p>
+      <hr>
+      <p>To deal with mutual suspicion, secure systems design the interfaces between
+        objects (processes, subjects, protection domains) to require <i>least
+        authority </i> <i></i> -- authority not unreasonably greater than each
+        object needs to carry out its proper duties [ref POLA/POLP, SaltzerShroeder].
+        Very few objects possess god-like authority. Most objects operate with
+        little authority, and so can do little damage. To provide support for
+        an actual diversity of policies, each policy must itself require only
+        least authority. The more authority a policy choice would demand, the
+        fewer the objects with adequate authority to put that policy into operation.</p>
+      <p>Serialization is used for several purposes in <i><b><font color="#009000">E</font></b></i>,
+        a pure object-capability-based distributed persistent secure programming
+        language. <i><b><font color="#009000">E</font></b></i> serializes remote
+        messages to transcend space -- maintaining the fiction of a single distributed
+        heap of mutually suspicious objects, connected by capabilities, and hosted
+        by a network of mutually suspicious machines. Capability designers long
+        ago realized how to instantiate such a messaging service using hardly
+        any initial authority at all [ref Donnelley76, Sansom86/88, Actors?],
+        thereby allowing multiple such systems to co-exist. We explain a generalization
+        of their invention.</p>
+      <p>To our knowledge, prior to this work, persistence for secure systems,
+        whether by page-fault handling or by serialization, has only been provided
+        by services that were granted god-like authority over the subsystem they
+        were persisting. As a result, such persistence was provided as a single
+        comprehensive one-size-fits-all solution. We explain how <i><b><font color="#009000">E</font></b></i>'s
+        serialization allows co-existence of unprivileged persistence systems,
+        and deals with issues of mutual suspicion</p>
+      <ul>
+        <li></li>
+      </ul>
+      <p>&nbsp;</p>
+      <p>Within the context of secure mutual suspicion, practical support of such
+        diversity entails that each such policy choice can be expressed without
+        requiring undue authority.</p>
+      <p>Some object-capability systems also stretch across these context boundaries
+        to create distributed persistent capabilities, and some have used serialization
+        for this purpose. In the process, they invented serialization constrained
+        by <i>POLA</i> -- the Principle of Least Authority. By generalizing from
+        these inventions and applying POLA consistently to various remaining issues,
+        this paper presents serialization abstractions for use in object-capability
+        systems, which </p>
+      <ul>
+        <li>
+          <p>resolve the conflict: They live within object-capability and POLA
+            constraints, and so maintain object-capability security, where a simple
+            set of mechanisms to may be used to support a greater diversity of
+            unprivileged and co-existing policies.</p>
+        </li>
+        <li>
+          <p>leverage the combination: They apply the power of serialization to
+            the manipulation of authority and secure identity in addition to information.</p>
+        </li>
+      </ul>
+      <p>As a motivating example for the abstractions presented here, this paper
+        presents <i><b><font color="#009000">E</font></b></i>'s use of serialization
+        for handling<i> object-faults</i> in order to implement <i>unprivileged</i>
+        persistence of distributed secure objects. This one example motivates
+        all the mechanisms presented in this paper, but most of these abstractions
+        should be applicable in any object-capability system and useful for many
+        other purposes.</p>
+      <hr>
+      <p>The term <i>object-fault</i> was coined by analogy with <i>page fault</i>
+        [ref Loom]. In both cases, state which is conceptually part of a running
+        process may actually be stored elsewhere until needed. When part of this
+        state is accessed, the state is <i>faulted-in</i> -- converted from its
+        external representation into operational form so the attempted access
+        can proceed. To the process performing this access, this faulting is not
+        visible. Typically, virtual memory mechanisms are used only to increase
+        the storage available to a graph of processes, but they can also be used
+        for <i>persistence</i> -- to extends the lifetime of a graph of processes
+        well beyond the crash or replacement of their hosting machine [ref KeyKOS,
+        EROS, Grasshopper]. </p>
+      <p>Typically, such fault handlers are included in the system's primitives,
+        and so operate with privileges significantly greater than that granted
+        to ordinary processes. Though some operating systems allow unprivileged
+        fault handlers [ref KeyKOS Segment Keeper, Mach], in order to make available
+        to ordinary programs the power inherent in the fault mechanism -- to be
+        able to engage in arbitrary computation on the way to servicing a fault
+        -- and so enable this mechanism to be used for semantically significant
+        purposes; like copy-on-write, encrypted disks, data breakpoints, generational
+        GC write barriers, etc... However, unprivileged <i>page fault </i>handlers
+        operate on pages, which are already only data, and typically operate only
+        within the scope of a single protection domain -- each serves the needs
+        of just one process, which is assumed to represent only a single interest.</p>
+      <p>There has been much work on object persistence, much of which also attempts
+        to provide object-oriented virtual memory as part of the deal. Some, such
+        as PJama [ref PJama] </p>
+      <p>&nbsp; </p>
+      <hr>
+      <p><font color="#FF0000">*** incoherent notes here to the end of this file.
+        Do Not Read ****</font></p>
+      <h2>Chain of Purposes</h2>
+      <p align="right"><i>Ok, it's a 3. But 3 what?</i><br>
+        --What Carol never asks.</p>
+      Once upon a time, the object Carol is invoked and receives a <tt>3</tt>
+      from an incoming message. How does she know what it means? How does she
+      know if it's correct, what she's supposed to do with it, or if it's safe
+      for her to believe it? She can validate incoming arguments with type declarations
+      or assertions, but this may tell her only that this is indeed an integer,
+      as she may already know to expect of that argument. Further refinements,
+      like subranges, units, or so called &quot;self-describing data&quot; --
+      that it is 3 oranges raher than 3 seconds -- may help catch some common
+      accidents, and may be adequate for Carol to preserve her own internal integrity,
+      but none of these really answer the questions posed above.
+      <p>By the experience of programming, we already know in our bones why these
+        quandries are not actually problems for Carol. Any attempt to state these
+        reasons may seem to belabor the obvious, but are necessary to extend this
+        reasonng to less obvious situations. A bit sequence has little meaning
+        when considered devoid of context. We must understand the how the computational
+        context of an object gives each incoming argument adequate meaning --
+        so Carol can correctly know what she is to do with this 3.</p>
+      <p  align="right"><b><i>Chain of Custody.</i></b><i> An unbroken trail of
+        acceptability that ensures<br>
+        �the physical security of samples, data and records.<br>
+        </i>--American Society for Quality Control, ANSI/ASQC E4-1993</p>
+      <p>x</p>
+      <h2>Lambda Good. Files Bad</h2>
+      <p>&nbsp;</p>
+      <hr>
+      <h2>Motivation: Unprivileged Fault Handlers</h2>
+      <p>&nbsp;</p>
+      <hr>
+      <p>&nbsp;</p>
+      <p>With all these hooks for expressing policy by transformation, how can
+        the unserializer succeed at producing a new live subgraph that works?
+        Not all the state that enabled the original subgraph to work was saved,
+        so where's the new state to come from?</p>
+      <ul type=disc>
+        <li>Restoring</li>
+        <li>Replacing / Resolving</li>
+        <li>Reconstructing</li>
+        <li>Reconnecting</li>
+      </ul>
+      <h2> <i>The Gordian Scalpel: </i>Extracting a Subgraph for Transplant</h2>
+      <h3> Lambda Abstraction by "Removing Details" [Kahn]</h3>
+      <h3> Comity</h3>
+      <h3> Chain of Custody</h3>
+      <h2> <i>The Gordian Suture: </i>Transplanting a Subgraph into a Live Host</h2>
+      <p  align="right"><i>Immortality is easy. Comity is hard.<br>
+        </i>--with apologies to Edward Kean <sup><font size="-2"><a href="acks-n-refs.html#_ftn2">2</a></font></sup></p>
+      <h3> Reconnection as Lambda Application</h3>
+      <h3> Limited Willingness to Extend Comity</h3>
+      <h3> Extending Virtualized Comity</h3>
+      <h3> Limited Ability to Extend Comity</h3>
+      <h2> Persistence and Magic Powers</h2>
+      <p>*** Ideally, all authority derives from diminishing the authorities provided
+        by magic powers.</p>
+      <p>Magic powers as scope/unscope sub-tables</p>
+      <h3> Example: Capabilities to Access Named Files</h3>
+      <p>*** chroot and virtual comity</p>
+      <p>Portability by using multiple "roots".</p>
+      <h3> Schema Evolution <i>as</i> Comity for Code [Shapiro]</h3>
+      <p>The behavior loader is effectively a magic power sub-table mapping fqn-graph-parameter-names
+        to its desired version of the named behavior. Evolution happens by applying
+        the old data to the new code? Weird.</p>
+      <p>An appealing generalization, but not reflected in the current mechanisms.</p>
+      <h2><a name="impressionists"></a>Society of Impressionists</h2>
+      <p>Java's Object Serialization Streams (JOSS) [ref JOSS] is an good example
+        of the opposite notion -- of serialization as a framework for customizing,
+        and for composing customizations, of the processes of depiction and reconstruction.</p>
+      <p>In many object serialization systems including JOSS, there's enough flexibility
+        that a serializer can compute just about any function from a subgraph
+        to bits, and the unserializer can compute just about any function from
+        bits to any resulting value. The reconstructed subgraph <i>can</i> be
+        arbitrarily different than the original. This makes any general specification
+        mostly vacuous. Rather, the framework provides guidance and tools that
+        encourage a certain style of use. Most of all, we assume that the serializer
+        and unserializer are each designed to the intention that the reconstructed
+        graph be somehow <i>meaningfully similar to the original, but with differences
+        as needed in order to satisfy other goals</i>. These differences are the
+        result of the structured mixing of four sources of intention: in dominance
+        order, that of the unserializer, the reconstructed objects from root to
+        leaf, the serializer, and the original objects from root to leaf. </p>
+      <p>In other words, the unserializer builds whatever new objects it likes
+        (subject to the limits of what objects it <i>can</i> build), but it normally
+        chooses to build along the lines of its interpretation of the intentions
+        of the serializer, as recorded in the depiction. The serializer paints
+        whatever depiction it wishes (subject to the limits of what knowledge
+        it can gain), but it normally chooses to depict along the lines of each
+        original object's expressed intentions of how and whether it would like
+        to be portrayed. Each object portrays that its alleged instance variables
+        -- the set of references it would have the serializer represent as its
+        state and further traverse from there -- is any set of references it likes
+        (subject to the limits of what references it can produce). The subgraph
+        the serializer is able to perceive is therefore not the real subgraph
+        of objects in memory, but rather a kind of story spun by the objects being
+        traversed.</p>
+      <p> This impressionistic notion of serialization is mostly <i>not</i> a
+        design choice. For us, it is a necessary consequence of insisting that
+        our serialization system play the same rules imposed on all other objects.
+        Objects cannot perceive each other's true state; rather, they perceive
+        only what other objects claim in response to messages. <font color="#FF0000">(***
+        note exception: Auditors)</font></p>
+      <p align="right"><font color="#FF0000">(*** Find quote from &quot;I Pencil&quot;)</font></p>
+      <p align="right"><i>Modern civilization has given man undreamt of powers
+        largely because,<br>
+        without understanding it, he has developed methods of utilizing<br>
+        more knowledge and resources than any one mind is aware of.<br>
+        </i>--Friedrich Hayek [Hayek78]</p>
+      <p>When all these expressions of intent reflect the code written by one
+        programmer all at once, then they are all aspects of one underlying intent,
+        and the architecture for composing intentions may not matter so much.
+        When they are written by different programmers at different times in different
+        companies, all with little knowledge of each other's specifics, then the
+        architecture should be well adapted to the expected locality of knowledge
+        -- demanding from each component the expression of intent which that component
+        is in a better position to contribute. It should compose these together
+        into a result which successfully utilizes more knowledge than any one
+        component plausibly has. JOSS does quite well at this. The Data-E architecture
+        presented below does similarly well for similar reasons -- partially as
+        a result of thinking about and learning from JOSS.</p>
+      <p>We need to compose not only diverse knowledge, but also diverse (and
+        possibly hostile) interests. When these all seek only literal accuracy
+        (the default behavior), and when all the objects to be depicted are transparent
+        (defined below), then the result must be according to Literal Realism.
+        Given this, we can explain the effects of each kind of customization in
+        terms of how it causes the result to deviate from Literal Realism, and
+        of how multiple customizations interact.</p>
+      <hr>
+      <p>&nbsp;</p>
+      <p>Since no exits are allowed, only a subgraph containing no authority-conveying
+        primitives (in their terminology, &quot;Local Operations&quot;) may be
+        serialized. Likewise, the reconstructed graph is born with no authority.
+        So, in literal realism, the reconstructed subgraph is a perfect replica.
+        It cannot be an imperfect heir, since the issue cannot arise.</p>
+      <p>The quoted text continues:</p>
+      <blockquote>
+        <p> Finally, if we redirect all external links into the graph rooted by
+          x to the respective nodes of the graph rooted by y, no difference must
+          be observable when the VM proceeds.</p>
+      </blockquote>
+      <p>If the hypothetical redirection described above were to actually be performed,
+        then we have a perfect reincarnation in addition to perfect replication.
+      </p>
+      <p>Our <a href="#preview">first preview example</a> happens to achieve perfect
+        reincarnation trivially, since all the objects involved are <i>selfless</i>
+        -- they have no creation (EQ) identity, only value equality. For example,
+        two 3s are the same independent of when they were &quot;created&quot;.
+        By contrast, the <a href="#capsule-example">example capsule</a> is <i>selfish</i>,
+        with each instance having its own identity endowed at creation. Mozart
+        makes a similar distinction. </p>
+      <h1><a name="uses"></a>Other Uses for Serialization</h1>
+      <p>The secure serialization abstractions presented in this paper are surprisingly
+        similar to conventional serialization, but are not identical. We are not
+        somehow taking serialization and adding security while leaving everything
+        else alone. The changes we have made no doubt break some of the uses made
+        of conventional serialization. Have we thrown the baby out with the bath
+        water? To evaluate this, it helps to keep in mind a range of purposes
+        serialization is used for. In addition to the distribution and persistence
+        issues mentioned above, we believe the abstractions proposed in this paper
+        are adequate for the following purposes:</p>
+      <h2><a name="trans-origin"></a>Transcending Origin: State Separation, Communication,
+        Integration</h2>
+      <p><font color="#FF0000">*** Just the obvious stuff.</font></p>
+      <h2><a name="trans-short"></a>Transcending Shortsightedness: Unanticipated
+        Tools</h2>
+      <p><font color="#FF0000">*** Story of discovery of data corruption bug and
+        release of fixing tool. More... </font></p>
+      <h1>&nbsp;</h1>
+      <P ALIGN="left">&nbsp;
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="Prev"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" -->x<!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --> <img src="../../../images/next-gray.gif" width="64" height="32" alt="Next"><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

@@ -1,0 +1,918 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Manipulating Authority at the Exits</TITLE>
+<!-- #EndEditable -->
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<P>
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP">
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD>
+      <P>
+      <TABLE BORDER="0" WIDTH="100%">
+        <TR>
+          <TD ALIGN="LEFT" valign="top">
+            <table cellpadding="2">
+              <tr>
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a>
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">data</a>&nbsp;/&nbsp;<a href="../index.html">serial</a>&nbsp;/&nbsp;<a href="index.html">jhu-paper</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr>
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="recog-n-build.html" title="Back to: "Reversing" Evaluation"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: "Reversing" Evaluation" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="subgraph-security.html" title="On to: Selective Transparency within the Subgraph"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Selective Transparency within the Subgraph" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table>
+          </TD>
+          <TD ALIGN="RIGHT">
+            <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b>Manipulating
+              Authority<br>
+              at the Exits</b><!-- #EndEditable --></FONT>
+          </TD>
+        </TR>
+      </TABLE>
+      <hr>
+      <!-- #BeginEditable "LongBody" -->
+      <h1><a name="lessons"></a>Lessons of <i>Manipulating Authority at the Exits</i></h1>
+      <p><font color="#FF0000">(*** To be written)</font></p>
+      <h1><a name="veracity"></a>Veracity <i>vs.</i> Representational Freedom</h1>
+      <p>As you may have noticed, serializing an object produces a string that
+        often looks like the result of printing the object. Indeed, the two strings
+        are often identical. <i><b><font color="#009000">E</font></b></i> objects
+        print by a recursive traversal using <tt>.__printOn(out)</tt> messages.
+        For present purposes these may as well be Java's <tt>.toString()</tt>
+        messages. Given mutual suspicion, then, like serialization, such a printing
+        framework also <i>composes knowledge by the rule-based mixing of intentions
+        expressed by mutually suspicious interests</i>. Why is our serialization
+        algorithm so much more complicated than these?</p>
+      <p>Is it the representational freedom provided by our serialization framework?
+        Hardly. Our serializer spends very little code on providing customization
+        hooks. The representational freedom it provides is mostly an unavoidable
+        consequence of having to ask each object to portray its state, and having
+        to treat each answer as the truth. Besides, the printing frameworks provide
+        much greater representational freedom -- they directly ask each object
+        to report its depiction, leaving it to each object to handle the traversal
+        starting from itself. Since a depiction is only bits, this enables each
+        object to report whatever depiction of itself it wishes, subject only
+        to the limits of what that object knows. (By &quot;knows&quot;, we include
+        what it can feasibly compute.) But this is precisely the problem. </p>
+      <p>Such full representational freedom would make serialization useless for
+        the mission we set out on: We seek to serialize in the capability system
+        on one side of a barrier, and unserialize in the capability system on
+        the other side, in order to stitch these together into a virtual capability
+        system that transcends these barriers. To succeed, our connective fabric
+        must not only operate within capability constraints, it must also enforce
+        these constraints within the illusion it creates. If it provides the objects
+        with the wrong kinds of representational freedom, it cannot enforce these
+        constraints. </p>
+      <p>Our serialization framework strikes an interesting balance between the
+        full veracity guaranteed by literal realism and the full representational
+        freedom provided by conventional object printing frameworks. It provides
+        approximately all the representational freedom we know how to allow while
+        still providing the additional veracity guarantee we require: that an
+        object cannot portray itself as holding more authority than it actually
+        has. (By &quot;has&quot;, we include that authority it can feasibly obtain.)
+        Otherwise, a matching unserializer may inadvertently grant the object's
+        reconstruction more authority than it should have.</p>
+      <h2>An Expository File System</h2>
+      <p>In this chapter, we use the principles behind <i><b><font color="#009000">E</font></b></i>'s
+        file system abstractions as examples. However, for legacy support reasons,
+        <i><b><font color="#009000">E</font></b></i>'s actual file system is implemented
+        in Java. We present here a simplified variant -- the &quot;pile&quot;
+        system. The authority exercised by the pile system is implemented trivially
+        by wrapping the actual file system abstractions; but the pile system handles
+        all its own serialization-relevant logic. Our first version doesn't handle
+        serialization issues at all:</p>
+      <blockquote>
+        <pre><span class="comment"># E sample</span>
+<span class="keyword">def</span> <span class="defobj">makePile__uriGetter</span>(<span class="defvar">file__uriGetter</span>) :near {
+    <span class="keyword">def</span> <span class="defobj">pile__uriGetter</span> {
+        <span class="comment">/** To get a directory, have absPath end in '/' */</span>
+        <span class="keyword">to</span> <span class="defverb">get</span>(<span class="defvar">absPath</span> :String) :any {
+            <span class="keyword">if</span> (absPath.endsWith(&quot;<span class="litchars">/</span>&quot;)) {
+                <span class="keyword">def</span> <span class="defobj">directory</span> {
+                    <span class="keyword">to</span> <span class="defverb">get</span>(<span class="defvar">relPath</span> :String) :any {
+                        <span class="comment"># shorthand for pile__uriGetter.get(absPath + relPath)</span>
+                        &lt;pile: absPath + relPath&gt;
+                    }
+                }
+            } <span class="keyword">else</span> {
+                <span class="comment"># shorthand for file__uriGetter.get(absPath)</span>
+                <span class="keyword">def</span> <span class="defvar">file</span> := &lt;file: absPath&gt;
+                <span class="comment"># Note that the underlying file__uriGetter already disallows paths</span>
+                <span class="comment"># containing &quot;..&quot; segments, so we need not worry about upward</span>
+                <span class="comment"># navigation.</span>
+                require(!file.isDirectory())
+                <span class="keyword">def</span> <span class="defobj">normalPile</span> {
+                    <span class="comment">/** Return the file's contents as a String */</span>
+                    <span class="keyword">to</span> <span class="defverb">getText</span>() :String {
+                        file.getText()
+                    }
+                    <span class="comment">/** Set the file's contents to newText */</span>
+                    <span class="keyword">to</span> <span class="defverb">setText</span>(<span class="defvar">newText</span> :String) :void {
+                        file.setText(newText)
+                    }
+                }
+            }
+        }
+    }
+}</pre>
+      </blockquote>
+      <p>The following step can only be done with access to a <tt>file__uriGetter</tt>.
+        Updoc scripts, like .e scripts, evaluate in the <tt>privilegedScope</tt>,
+        which contains binding to powerful capabilities normally conveying all
+        the authority given to this process by the underlying OS. In particular,
+        the <tt>file__uriGetter</tt> is normally bound to an object conveying
+        all the current user's authority to the file system.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">pile__uriGetter</span> := makePile__uriGetter(file__uriGetter)
+<span class="stdout"># value: &lt;pile__uriGetter&gt;</span></pre>
+      </blockquote>
+      <p>Like the <tt>file__uriGetter</tt>, the <tt>pile__uriGetter</tt> conveys
+        all the read/write authority held by the current user to the file system.
+      </p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">var</span> <span class="defvar">ehomePath</span> := interp.getProps()[&quot;<span class="litchars">e.home</span>&quot;]
+<span class="stdout">? </span><span class="keyword">if</span> (! ehomePath.endsWith(&quot;<span class="litchars">/</span>&quot;)) {
+<span class="stdout">&gt; </span>    ehomePath += &quot;<span class="litchars">/</span>&quot;
+<span class="stdout">&gt; </span>}
+<span class="stdout">? </span>ehomePath
+<span class="stdout"># value: &quot;c:/Program Files/erights.org/&quot;
+
+? </span><span class="keyword">def</span> <span class="defvar">ehome__uriGetter</span> := &lt;pile: ehomePath&gt;
+<span class="stdout"># value: &lt;directory&gt;
+
+? </span>&lt;ehome:<span class="litchars">eprops.txt</span>&gt;.getText().size()
+<span class="stdout"># value: 25108</span></pre>
+      </blockquote>
+      <p>The expression <tt>interp.getProps()[&quot;<span class="litchars">e.home</span>&quot;]</tt>
+        returns the absolute path of the directory where you installed <i><b><font color="#009000">E</font></b></i>.
+        The script above reads the value of the <tt>eprops.txt</tt> file in this
+        directory and tells you its size as a string (number of characters, not
+        bytes). It could have as easily overwritten this security-critical file
+        of yours. <a href="../../../elang/tools/updoc.html#security">Be careful</a>
+        when running other people's updoc scripts! (If you updoc this page, don't
+        be surprised when it fails because of a different value. 25108 is simply
+        the size this file happens to be on my system. Updoc needs to <a href="http://bugs.sieve.net/bugs/?func=detailbug&bug_id=125397&group_id=16380">be
+        made</a> more tolerant.) </p>
+      <h1><a name="trueexits"></a>Unforgeable Exit Names</h1>
+      <p>Updoc starts afresh with each chapter, so we must redo our example setup:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">makeSurgeon</span> := &lt;elib:<span class="litchars">serial.makeSurgeon</span>&gt;
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">surgeon</span> := makeSurgeon.withSrcKit(&quot;<span class="litchars">de: </span>&quot;)</pre>
+      </blockquote>
+      <p>We now make <tt>pile__uriGetter</tt> into a named exit point, by adding
+        it to both scope and unscope:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>surgeon.addExit(pile__uriGetter, &quot;<span class="litchars">pile__uriGetter</span>&quot;)</pre>
+      </blockquote>
+      <p>We can now show by example why printing is insufficiently constrained:</p>
+      <blockquote>
+        <pre><span class="comment"># Must quote it because it may contain non-URI characters, like space.</span><span class="stdout">
+? </span><span class="keyword">def</span> <span class="defvar">quotedPath</span> := ehomePath.quote()
+<span class="stdout"># value: &quot;\&quot;c:/Program Files/erights.org/\&quot;&quot;
+
+? </span><span class="keyword">def</span> <span class="defobj">iAmEHome1</span> {
+<span class="stdout">&gt; </span>    <span class="keyword">to</span> <span class="defverb">__printOn</span>(<span class="defvar">out</span>) :void {
+<span class="stdout">&gt; </span>        out.print(`<span class="litchars">&lt;pile: </span>$quotedPath<span class="litchars">&gt;</span>`)
+<span class="stdout">&gt; </span>    }
+<span class="stdout">&gt; </span>}
+<span class="stdout"># value: &lt;pile: &quot;c:/Program Files/erights.org/&quot;&gt;</span></pre>
+      </blockquote>
+      <p>Here <tt>iAmEHome1</tt> prints itself as having authority derived from
+        the <tt>pile__uriGetter</tt>, even though <tt>iAmEHome1</tt> (we assume)
+        does not have such authority. </p>
+      <blockquote>
+        <pre>? <span class="keyword">def</span> <span class="defvar">allegedDepiction</span> := &quot;<span class="litchars">de: </span>&quot; + E.toString(iAmEHome1)
+<span class="stdout"># value: &quot;de: &lt;pile: \&quot;c:/Program Files/erights.org/\&quot;&gt;&quot;
+
+? </span><span class="keyword">def</span> <span class="defvar">stolenHome__uriGetter</span> := surgeon.unserialize(allegedDepiction)
+<span class="stdout"># value: &lt;directory&gt;
+
+? </span>&lt;stolenHome:<span class="litchars">eprops.txt</span>&gt;.getText().size()
+<span class="stdout"># value: 25108</span></pre>
+      </blockquote>
+      <p>As we see above, unserializing <tt>iAmEHome1</tt>'s printed form in a
+        scope where <tt>pile__uriGetter</tt> is bound as above creates an object
+        equivalent to <tt>ehome__uriGetter</tt>.</p>
+      <p>But how is this different from <tt>iAmFive</tt> <a href="deconstructing.html#getOptUncall">portraying
+        itself</a> to be <tt>5</tt>, which is also a lie, and which our serialization
+        framework intentionally allows? The difference is that <tt>iAmFive</tt>
+        has access to 5 (or shows that it may feasibly compute 5), so although
+        it is misrepresenting what it is, it cannot misrepresent itself to possess
+        more authority than it actually has. Let's create an <tt>iAmEHome2</tt>
+        that use this technique to impersonate <tt>ehome__uriGetter</tt> during
+        serialization.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defobj">iAmEHome2</span> {
+<span class="stdout">&gt; </span>    <span class="keyword">to</span> <span class="defverb">__optUncall</span>() :__Portrayal {
+<span class="stdout">&gt; </span>        [pile__uriGetter, &quot;<span class="litchars">get</span>&quot;, [ehomePath]]
+<span class="stdout">&gt; </span>    }
+<span class="stdout">&gt; </span>}
+<span class="stdout"># value: &lt;iAmEHome2&gt;
+
+? </span>iAmEHome2.__optUncall()
+<span class="stdout"># value: [&lt;pile__uriGetter&gt;, &quot;get&quot;, [&quot;c:/Program Files/erights.org/&quot;]]
+
+? </span><span class="keyword">def</span> <span class="defvar">iAmEHome2Depiction</span> := surgeon.serialize(iAmEHome2)
+<span class="stdout"># value: &quot;de: &lt;pile: \&quot;c:/Program Files/erights.org/\&quot;&gt;&quot;
+
+? </span><span class="keyword">def</span> <span class="defvar">dir</span> := surgeon.unserialize(iAmEHome2Depiction)
+<span class="stdout"># value: &lt;directory&gt;
+
+? </span>dir.get(&quot;<span class="litchars">eprops.txt</span>&quot;).getText().size()<span class="stdout">
+# value: 25108</span></pre>
+      </blockquote>
+      <p>Like <tt>iAmEHome1</tt>, <tt>iAmEHome2</tt> misrepresents itself as being
+        equivalent to <tt>ehome__uriGetter</tt>. Within the printing framework,
+        <tt>iAmEHome1</tt> was able to misrepresent itself despite its lack of
+        the authority it pretends to have. (Which is why one should generally
+        not evaluate or unserialize an object's printed form.) Using the serialization
+        framework, <tt>iAmEHome2</tt> can misrepresent itself only as an object
+        it demonstrates it could have made. Without access to knowledge and authority
+        adequate to make the equivalent of the <tt>ehome__uriGetter</tt>, <tt>iAmEHome2</tt>
+        cannot successfully misrepresent itself as that object -- it cannot fool
+        the surgeon into unserializing such an object in lieu of itself.</p>
+      <p>Why not? How can we have confidence in this impossibility? Syntactic
+        shorthands <a href="deconstructing.html#data-e-fund">aside</a>, there
+        are only three sources of names in a Data-E expression: free variable
+        names (imports), temporary variable names (temps), and message names (verbs).
+      </p>
+      <ul>
+        <li>
+          <p>When an object overrides <tt>__optUncall()</tt>, or, as we've seen,
+            when an uncaller implements <tt>optUncall(..)</tt>, they can report
+            whatever message name (verb string) they can know or feasibly compute.
+            This is sensible, as an object may send a message with any verb it
+            wishes to any object it has access to.</p>
+        </li>
+        <li>
+          <p>The free variables or imports only enter the recognition process
+            by lookup in the unscope table. In order to cause a given name to
+            be retrieved from the unscope, so that it may enter the depiction
+            as an import, one must have the associated unscope-key.</p>
+        </li>
+        <li>
+          <p>Temporary variable names come only from the internal logic of the
+            subgraph recognizer. No external source can inject a chosen name into
+            the recognition process. These designate only values previously traversed.
+            In order to cause a given temporary variable name to be retrieved,
+            one must again have the unscope key, demonstrating that the subgraph
+            is actually at least as internally connected as is being claimed.</p>
+        </li>
+      </ul>
+      <p>Other systems [ref Rees] have also used an inverse scope table to delimit
+        the subgraph on the right -- to cut off traversal at enumerated instances,
+        leaving named exits behind; and where these named exits were then reconnected
+        on unserialization using a matched scope table. However, these previous
+        systems have generally provided additional representational freedoms that
+        unknowingly enabled forged authority claims. The invention of the Gordian
+        Surgeon is to solicit from each object <i>only</i> a portrayal of itself
+        in terms of other objects -- never names -- and to depict named exits
+        based <i>only</i> on unscope lookup -- an unforgeable demonstration of
+        held authority. Why and when is this property important?</p>
+      <h1>Comity Among Nations</h1>
+      <p  align="right"><b><i>Comity</i></b><i> [...] the courtesy by which nations
+        recognize within their own territory<br>
+        [...] the rights and privileges acquired by [...] citizens in their own
+        land [...].<br>
+        </i>--Webster's Revised Unabridged Dictionary</p>
+      <p>By the practice known as <i>Comity Among Nations</i> a traveler's new
+        home may extend to him those local rights most closely corresponding to
+        the rights he had in his old one. When practiced routinely, each nation's
+        separate systems of rights and laws are roughly and imperfectly stitched
+        together into a virtual worldwide legal system, giving travelers a certain
+        illusion of uniformity, and their rights a certain measure of location
+        independence. The willingness and ability to extend comity, and the nature
+        of comity extended, will differ on a case by case basis, constrained by
+        each nation's internal policies and by the nature of its relationship
+        with each potential counterparty. The resulting rough virtual legal system
+        emerges in a fully decentralized manner from all these local decisions,
+        without need for any central body.</p>
+      <p></p>
+      <p>Once upon a time, a U.S. doctor, faker, lawyer, and CIA agent with a
+        stereo system move to France. Honoring the principle of comity among nations,
+        the French grant the doctor a corresponding license to practice medicine
+        -- the fact that she acquired that right in the U.S. is taken as adequate
+        evidence that she should hold the most closely corresponding right in
+        her new home. Like the doctor, the faker presents a U.S. license to practice
+        medicine, but a forged one. If this mere piece of paper is taken at face
+        value, then the faker is also granted a license to practice in France.
+        The lawyer is not so lucky -- whereas U.S. and French biology are very
+        similar, their legal systems are very different, so a lawyer able to function
+        in one environment may not be assumed competent to function in the other.
+        The veracity and competence of the CIA agent is not in doubt, but he is
+        also not granted a corresponding position in the French intelligence agency,
+        for either of two reasons enumerated below. </p>
+      <p>Below we enumerate various consideration that that effect whether and
+        how comity is granted. While many of these considerations may involve
+        decision processes of potentially great complexity, well beyond that of
+        the present work, the point here is that this whole range of policy choices
+        can be cleanly expressed using the simple mechanism of choosing bindings
+        for the scope and unscope tables.</p>
+      <h3>Willing and Able to Extend Comity</h3>
+      <p> This is the happy case -- the French agency is both willing and able
+        to grant comity to the doctor, and are properly satisfied that she did
+        have such authority, so they grant her corresponding authority.</p>
+      <h3>False Pretenses</h3>
+      <p> The French also grant a license to the faker, but this case isn't so
+        happy, at least for the faker's patients -- those whose interests the
+        comity-granting agency is charged with protecting. Like the doctor and
+        the faker, our <tt>iAmEHome2</tt> and <tt>iAmEHome1</tt> unserialized
+        in the same way, acquiring the same authority. What differed is how they
+        were serialized -- where their diplomas came from -- which, unlike the
+        French government, our unserializer is not in a position to determine.
+        Rather, the programmer must jointly design which authorities an unserializer
+        may grant, what reasons he has for confidence that the depiction comes
+        from a matched serializer, and what sort of trust he is willing to invest
+        in that serializer such that he's willing to have authorities granted
+        to reconstructed objects on its say so. The two extreme cases should make
+        this clearer:</p>
+      <ul>
+        <li>The CapTP comm system creates e new serializer / unserializer pair
+          for each side of each pairwise inter-vat connection. Since anyone on
+          the open Internet may connect to a vat and form a new connection, such
+          connection start out with very little authority -- just access to a
+          lookup service that enables them to obtain authorities they can prove
+          were granted to them by cryptographically-based means. But this one
+          remaining authority still has a false pretense issue: anyone holding
+          such authority (anyone with access to such a lookup service) cannot
+          be confined. They are able to operate by password-capability rules,
+          where bits may be turned into capabilities, rather than partitioned-capability
+          rules, where they cannot. This power may safely be granted to anyone
+          connecting to a vat, since a vat takes this ability to connect as adequate
+          evidence that the connecting party is unconfined anyway.</li>
+      </ul>
+      <blockquote>
+        <p> In accord with comity, on unserializing a message, CapTP grants a
+          reference to the local lookup service only to object whose serialized
+          form claims they held the corresponding lookup service in the sending
+          vat. This accommodates both suspicion by the receiving vat of the sending
+          vat, and suspicion by the sending vat of the objects it is sending.
+        </p>
+      </blockquote>
+      <ul>
+        <li>The central persistence mechanism for a vat uses serialization to
+          checkpoint a vat's core state, including its private keys; and to revive
+          from such checkpoints. While the objects within the checkpoint are not
+          generally trusted, the checkpoint it -- you should be willing to do
+          a normal revive from a checkpoint only if you're confident you can trust
+          that this is a valid checkpoint -- that it was serialized as a checkpoint
+          by code you trust to be a valid vat implementation. Building on stock
+          platforms, these assumptions are difficult to earn, but they are necessary
+          in order for powerful objects, like the <tt>file__uriGetter</tt>, to
+          be granted to the reconstruction of objects that used to have these
+          powers.</li>
+      </ul>
+      <blockquote>
+        <p>Although much engineering would be needed before it would be practical,
+          the serialization mechanisms provided here do support the virtual comity
+          needed to do a virtual revive of a checkpoint you don't trust -- revive
+          it using a scope in which all the root powers are rebound to a simulated
+          external world, creating in effect a virtual machine. For example, virtualizing
+          the <tt>file__uriGetter</tt> is much like <tt>chroot</tt>. Virtualizations
+          like a chrooted file__uriGetter are also a form of authority-diminishing
+          adapter. (Unfortunately for the Java-based implementation of <i><b><font color="#009000">E</font></b></i>,
+          the unsafe__uriGetter is a gateway to a large legacy of hard to virtualize
+          powers primitively provided by the Java libraries.) </p>
+      </blockquote>
+      <h3>Limited Willingness to Extend Comity</h3>
+      <p>For very different reasons, the French are unwilling to extend comity
+        to the lawyer and the secret agent. However, they represent this policy
+        choice in the same way: they do not populate the scope with the bindings
+        that would grant these authorities, even if they have these authorities
+        and they know the incoming objects may fail to work unless these authorities
+        are granted. Better fail-stop than sorry. Serializers and unserializers
+        don't have to be perfectly matched if unserialization is allowed to fail.
+        However, they still must be confident they agree on the meaning of the
+        names they have in common.</p>
+      <h3>Limited Authority to Extend Comity</h3>
+      <p>The French agency charged with making comity choices may not having jurisdiction
+        over the French intelligence agency. Even if it were willing to extend
+        comity to the arriving agent, it may not be able to. One cannot populate
+        the unserializer's scope with bindings one does not have.</p>
+      <h3>Virtual Comity in order to Diminish Authority</h3>
+      <p>On moving into his apartment, our agent sets his stereo back up. He doesn't
+        know or care how it works inside, so, before unplugging all the wires,
+        being a meticulous agent type of guy, he labeled what each was hooked
+        to. OK, this one goes to the left speaker ..., the internal subgraph is
+        now hooked back up. What of the power cord? They've got a funny socket
+        here that provides <i>too much power</i>. Even though it is the connection
+        most closely corresponding to what it used to be connected to, it provides
+        more power than he's willing to grant to the stereo system. So he pulls
+        out his power adapter. A power adapter intermediates between the amount
+        and kind of power appropriate for the stereo system and which it is built
+        to expect <i>vs.</i> the amount and kind of power made available by connectors
+        in the stereo's new environment. The adapter provides only diminished
+        power to the stereo.</p>
+      <p>The closest adequate matching authority in the new environment may be
+        too far in excess of the originally held authority. Comity should usually
+        not increase the authority held by an incoming object. (Using conventional
+        notions of typing and compatibility, these can be difficult to detect
+        across versions, since an otherwise equivalent object that conveys more
+        authority than its predecessor would classically be considered to be an
+        upwards compatible subtype of its predecessor. We need authority-cognizant
+        theories of compatibility and subtyping)</p>
+      <p>When setting up an unserializer, to express the policy choice of granting
+        approximately par authority but not increased authority, one will often
+        need to create and populate the scope with adapters -- facets on the newly
+        available authorities that diminish their powers to approximate their
+        earlier version.</p>
+      <h3>Virtual Comity in order to Simulate Operation</h3>
+      <p>Virtual comity is not just a matter of adapting authority, but also of
+        functionality. The lawyer carries around a Berlitz phrasebook, the doctor
+        an English-metric conversion table. The agent a babel fish. Each is able
+        to deal with their new world in a somewhat degraded fashion, but using
+        an interface they already know how to operate. In the extreme of this
+        technique, we find ourselves simulating (rehosting) a previous environment
+        with all its ideosynchracies. Without preparation, this may be the most
+        tractable way to revive old state and have it continue to work. (In the
+        chapter <a href="upgrade.html">Persistence and Upgrade</a>, we show how
+        preparation can mostly avoid this worst case.)</p>
+      <p>Notice that our directory objects above have the same protocol as the
+        <tt>pile__uriGetter</tt> itself. As we will see once we have a more complete
+        pile system, if directory <tt>&lt;pile:<span class="litchars">/foo/bar/</span>&gt;</tt>
+        is installed in an unserializer's scope <i>as</i> the <tt>&quot;<span class="litchars">pile__uriGetter</span>&quot;</tt>,
+        then a serialized claim to the authority <tt>&quot;<span class="litchars">&lt;pile:/zip/zap.txt&gt;</span>&quot;</tt>
+        would unserialize to authority to the actual <tt>&lt;pile:<span class="litchars">/foo/bar/zip/zap.txt</span>&gt;</tt>.
+        This is the familiar Unix chroot trick in a new guise. It is virtual comity
+        both to diminish authority and to simulate operation.</p>
+      <h1>Subgraph Transplant Surgery</h1>
+      <p>Although our <tt>iAmEHome2</tt> above serializes and unserializes as
+        the equivalent of our <tt>ehome__uriGetter</tt>, our <tt>ehome__uriGetter</tt>
+        itself doesn't. In fact, it doesn't serialize at all:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>surgeon.serialize(ehome__uriGetter)
+<span class="stderr"># problem: Can't uneval &lt;directory&gt;</span></pre>
+      </blockquote>
+      <p>Could we repair this by having each directory use the same technique
+        used by <tt>iAmEHome2</tt>? This would involve simply adding to each directory
+        the method</p>
+      <blockquote>
+        <pre><span class="keyword">to</span> <span class="defverb">__optUncall</span>() :__Portrayal {
+    [pile__uriGetter, &quot;<span class="litchars">get</span>&quot;, [absPath]]
+}</pre>
+      </blockquote>
+      <p>However, this would destroy a crucial property of the <tt>directory</tt>
+        abstraction -- it would no longer be diminishing the authority of the
+        <tt>pile__uriGetter</tt> by only granting its clients access to a subtree.
+        Instead, any of its clients could simply call <tt>__optUncall()</tt> on
+        a directory, and obtain access to that directory's entire pile system.
+        Such a method would make a directory <i>unconditionally transparent</i>.</p>
+      <p>To repair this correctly requires the selective transparency technique
+        we're postponing to the <a href="subgraph-security.html">next chapter</a>,
+        so instead, here, we cheat. In the following, assume that any message
+        names beginning with &quot;<tt>pkg_</tt>&quot; are somehow made to behave
+        like Java's package scope -- assume these messages can only be sent by
+        other code within the same package-or-something, but not by separately
+        trusted clients. Let's proceed pretending we have selective transparency.</p>
+      <blockquote>
+        <pre><span class="comment"># E sample</span>
+<span class="keyword">def</span> <span class="defobj">makePile__uriGetter</span>(<span class="defvar">file__uriGetter</span>) :near {
+    <span class="keyword">def</span> <span class="defobj">pile__uriGetter</span> {
+        <span class="keyword">to</span> <span class="defverb">optUncall</span>(<span class="defvar">obj</span>) :nullOk[__Portrayal] {
+            <span class="keyword">if</span> (Ref.isNear(obj) &amp;&amp;
+                  obj.__respondsTo(&quot;<span class="litchars">pkg_getOptUncall</span>&quot;, 0)) {
+
+                obj.pkg_getOptUncall()
+            } <span class="keyword">else</span> {
+                null
+            }
+        }
+        <span class="keyword">to</span> <span class="defverb">optUnget</span>(<span class="defvar">obj</span>) :nullOk[String] {
+            <span class="keyword">if</span> (pile__uriGetter.optUncall(obj) =~
+                  [==pile__uriGetter, `<span class="litchars">get</span>`, [<span class="defvar">path</span>]]) {
+                path
+            } <span class="keyword">else</span> {
+                null
+            }
+        }
+        <span class="comment">/** To get a directory, have absPath end in '/' */</span>
+        <span class="keyword">to</span> <span class="defverb">get</span>(<span class="defvar">absPath</span> :String) :any {
+            <span class="keyword">if</span> (absPath.endsWith(&quot;<span class="litchars">/</span>&quot;)) {
+                <span class="keyword">def</span> <span class="defobj">directory</span> {
+                    <span class="keyword">to</span> <span class="defverb">pkg_getOptUncall</span>() :__Portrayal {
+                        [pile__uriGetter, &quot;<span class="litchars">get</span>&quot;, [absPath]]
+                    }
+                    <span class="keyword">to</span> <span class="defverb">optUncall</span>(<span class="defvar">obj</span>) :nullOk[__Portrayal] {
+                        <span class="comment"># The pattern ==&lt;expression&gt; is true iff it is matched against a</span>
+                        <span class="comment"># specimen that's == to the value of this expression.</span>
+                        <span class="comment"># The pattern `get` matches only the string &quot;get&quot;</span>
+                        <span class="comment"># The pattern `$absPath@relPath` matches a string iff the string</span>
+                        <span class="comment"># begins with the value of absPath, in which case it defines relPath</span>
+                        <span class="comment"># to hold the rest of the string.</span>
+                        <span class="keyword">if</span> (pile__uriGetter.optUncall(obj) =~
+                              [==pile__uriGetter,
+                               `<span class="litchars">get</span>`,
+                               [`$absPath@<span class="defvar">relPath</span>`]]) {
+
+                            <span class="keyword">if</span> (relPath.size() &gt;= 1) {
+                                <span class="comment"># If it is under this directory, then portray it relative to </span>
+                                <span class="comment"># this directory. Under no circumstances allow the </span>
+                                <span class="comment"># pile__uriGetter to be exposed.</span>
+                                <span class="keyword">return</span> [directory, &quot;<span class="litchars">get</span>&quot;, [relPath]]
+                            }
+                        }
+                        <span class="comment"># Let some other uncaller handle it, if any.</span>
+                        null
+                    }
+                    <span class="keyword">to</span> <span class="defverb">optUnget</span>(<span class="defvar">obj</span>) :nullOk[String] {
+                        <span class="keyword">if</span> (directory.optUncall(obj) =~
+                              [==directory, `<span class="litchars">get</span>`, [<span class="defvar">path</span>]]) {
+                            path
+                        } <span class="keyword">else</span> {
+                            null
+                        }
+                    }
+                    <span class="keyword">to</span> <span class="defverb">get</span>(<span class="defvar">relPath</span> :String) :any {
+                        <span class="comment"># shorthand for pile__uriGetter.get(absPath + relPath)</span>
+                        &lt;pile: absPath + relPath&gt;
+                    }
+                }
+            } <span class="keyword">else</span> {
+                <span class="comment"># shorthand for file__uriGetter.get(absPath)</span>
+                <span class="keyword">def</span> <span class="defvar">file</span> := &lt;file: absPath&gt;
+                <span class="comment"># Note that the underlying file__uriGetter already disallows paths</span>
+                <span class="comment"># containing &quot;..&quot; segments, so we need not worry about upward</span>
+                <span class="comment"># navigation.</span>
+                require(!file.isDirectory())
+                <span class="keyword">def</span> <span class="defobj">normalPile</span> {
+                    <span class="keyword">to</span> <span class="defverb">pkg_getOptUncall</span>() :__Portrayal {
+                        [pile__uriGetter, &quot;<span class="litchars">get</span>&quot;, [absPath]]
+                    }
+                    <span class="comment">/** Return the file's contents as a String */</span>
+                    <span class="keyword">to</span> <span class="defverb">getText</span>() :String {
+                        file.getText()
+                    }
+                    <span class="comment">/** Set the file's contents to newText */</span>
+                    <span class="keyword">to</span> <span class="defverb">setText</span>(<span class="defvar">newText</span> :String) :void {
+                        file.setText(newText)
+                    }
+                }
+            }
+        }
+    }
+}</pre>
+      </blockquote>
+      <table cellpadding="12" bgcolor="#FFFFE8" border="1" >
+        <tr>
+          <td>
+            <p>Once <i><b><font color="#009000">E</font></b></i> supports live
+              upgrade, we will no longer need to repeat the following setup code.
+              Rather, a side effect of evaluating the above definitions with the
+              same fully qualified names (e.g., <tt>__main$makePile__uriGetter__C$pile__uriGetter</tt>)
+              as the earlier ones would be to upgrade-in-place the live instances
+              of the earlier definitions to be live instances of the new ones.
+              Smalltalk has long provided this functionality.</p>
+          </td>
+        </tr>
+      </table>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">pile__uriGetter</span> := makePile__uriGetter(file__uriGetter)
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">ehome__uriGetter</span> := &lt;pile: ehomePath&gt;
+
+<span class="stdout">? </span>surgeon.addExit(pile__uriGetter, &quot;<span class="litchars">pile__uriGetter</span>&quot;)</pre>
+      </blockquote>
+      <p>But a <tt>directory</tt> or <tt>normalPile</tt> cannot yet be serialized,
+        since they don't portray themselves. We need to add an uncaller, like
+        the <tt>pile__uriGetter</tt>, that knows how to portray them. <tt>addUncaller(..)</tt>
+        inserts its argument at the beginning of this surgeon's uncallers list.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>surgeon.addUncaller(pile__uriGetter)
+
+<span class="stdout">? </span>surgeon.serialize(ehome__uriGetter)
+<span class="stdout"># value: &quot;de: &lt;pile: \&quot;c:/Program Files/erights.org/\&quot;&gt;&quot;
+
+? </span><span class="keyword">def</span> <span class="defvar">eprops</span> := &lt;ehome:<span class="litchars">eprops.txt</span>&gt;
+<span class="stdout"># value: &lt;normalPile&gt;
+
+? </span>surgeon.serialize(eprops)
+<span class="stdout"># value: &quot;de: &lt;pile: \&quot;c:/Program Files/erights.org/eprops.txt\&quot;&gt;&quot;</span></pre>
+      </blockquote>
+      <p>We have also made each directory act as an uncaller that knows how to
+        uncall directories and normalPiles within its subtree. In order for a
+        directory to have any affect, we must add it ahead of the <tt>pile__uriGetter</tt>,
+        since the <tt>pile__uriGetter</tt> will portray anything any of its directories
+        will portray.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>surgeon.addUncaller(ehome__uriGetter)
+
+<span class="stdout">? </span>surgeon.serialize(ehome__uriGetter)
+<span class="stdout"># value: &quot;de: &lt;pile: \&quot;c:/Program Files/erights.org/\&quot;&gt;&quot;
+
+? </span>surgeon.serialize(eprops)
+<span class="stdout"># value: &quot;de: &lt;pile: \&quot;c:/Program \
+#        Files/erights.org/\&quot;&gt;.get(\&quot;eprops.txt\&quot;)&quot;</span></pre>
+      </blockquote>
+      <p>Cute, but it doesn't do much good until the directory is also added to
+        the scope and unscope tables.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>surgeon.addExit(ehome__uriGetter, &quot;<span class="litchars">ehome__uriGetter</span>&quot;)
+
+<span class="stdout">? </span>surgeon.serialize(ehome__uriGetter)
+<span class="stdout"># value: &quot;de: ehome__uriGetter&quot;
+
+? </span><span class="keyword">def</span> <span class="defvar">depiction</span> := surgeon.serialize(eprops)
+<span class="stdout"># value: &quot;de: &lt;ehome:eprops.txt&gt;&quot;
+
+? </span><span class="keyword">def</span> <span class="defvar">eprops2</span> := surgeon.unserialize(depiction)<span class="stdout">
+# value: &lt;normalPile&gt;
+
+? </span>eprops2.getText().size()<span class="stdout">
+# value: 25108</span></pre>
+      </blockquote>
+      <p>Like an actual surgeon extracting an organ for transplant, we see we
+        have some freedom in where to cut. We should chose those cut points that
+        increase the likelihood that the extracted organ, when reattached to corresponding
+        cut points in a new body, will result in an overall working system. These
+        choices must often be made without knowledge of the specifics of the recipient
+        body, but just from a general knowledge of the ways in which one body
+        tends to differ from another.</p>
+      <p>Since the files in the <i><b><font color="#009000">E</font></b></i> installation
+        directory have a special significance to <i><b><font color="#009000">E</font></b></i>,
+        and since we know this directory may be placed at different absolute paths
+        during installation, cutting at this directory as an additional exit point
+        is plausible, to enable, for example, a checkpoint taken at one time to
+        be more likely to revive after the user uninstalls <i><b><font color="#009000">E</font></b></i>
+        and reinstalls it at a different location. (To see these choices as cut
+        points in the graph, imagine our pile system implemented as if each directory
+        or normalPile were local name + a pointer to the immediate parent directory,
+        or <tt>pile__uriGetter</tt> for the root.)</p>
+      <p>Leaving our organ metaphor, this freedom is also crucial for flexible
+        handling of authority issues. The subsystem arranging a matched serializer
+        / unserializer pair may not have access to the file system as a whole,
+        but only access to certain subdirectories. Clearly, the unserializer cannot
+        unserialize something to have access to a directory it itself does not
+        have. A serializer using this pattern will also fail to serialize access
+        to files outside the directories it names as exit points.</p>
+      <p>With this pattern, an original object that held access to the file named
+        <tt>&quot;<span class="litchars">c:/Program&nbsp;Files/erights.org/eprops.txt</span>&quot;</tt>
+        only reconstructs with access to whatever file this name is redirected
+        to by the above technique. It cannot retain access to whatever file happens
+        to have the original name.</p>
+      <p>Together, these techniques effectively extend the unscope and scope tables
+        into a hierarchical name space, in which a virtual exit name is a path
+        rooted in an actual exit name.</p>
+      <h2>The Loader Pattern</h2>
+      <p>Ignoring our cheat till the next chapter, our pile system has been following
+        the <i>Loader Pattern</i>. A Loader is defined by the following interface
+        declaration</p>
+      <blockquote>
+        <pre><span class="keyword">interface</span> <span class="defobj">Loader</span> {
+    <span class="keyword">to</span> <span class="defverb">get</span>(<span class="defvar">name</span> :String) :any
+
+    <span class="comment">/** If child can be gotten from this Loader with a get, return the needed argument string.  */</span>
+    <span class="keyword">to</span> <span class="defverb">optUnget</span>(<span class="defvar">child</span>) :nullOk[String]
+
+    <span class="comment">/** Actually, optUncall is defined in Uncaller, and Loader is a subtype of Uncaller. */</span>
+    <span class="keyword">to</span> <span class="defverb">optUncall</span>(<span class="defvar">specimen</span>) :nullOk[__Portrayal]
+}</pre>
+      </blockquote>
+      <p>The <i>Loader Pattern</i> has the following elements.</p>
+      <ul>
+        <li>
+          <p>It is used when a Loader represents some source of authority from
+            which other diminished authorities can be directly derived by <tt>.get(String)</tt>.
+            When one of these is also a source of authority from which further
+            diminished authority can be directly derived (like our directories),
+            then these should be Loaders following the Loader Pattern as well.</p>
+        </li>
+        <li>
+          <p>The Loader is placed on the uncallers list.</p>
+        </li>
+        <li>
+          <p>The Loader is associated with names of the form <tt>&quot;<i>&lt;something&gt;</i><span class="litchars">__uriGetter</span>&quot;</tt>
+            in unscope and/or scope. (For clarity and convenience, the programer
+            may often also name the program variable holding a Loader <tt>&quot;<i>&lt;something&gt;</i><span class="litchars">__uriGetter</span>&quot;</tt>,
+            as we have been doing.)</p>
+        </li>
+        <li>
+          <p>The Loader implements <tt>.getOptUncall(..)</tt> methods as the inverse
+            of <tt>.get(String)</tt> to reveal a portrayal of how the argument
+            could have been directly derived from it, if indeed it could have.</p>
+        </li>
+      </ul>
+      The last point bears emphasis. The portrayal revealed by a derived authority
+      should only be a derivation starting from itself, not starting from some
+      more powerful underlying authority, since the derived power must not reveal
+      any power more powerful than itself. The portrayals revealed by an uncaller
+      about its argument must be limited by the encapsulation obligations of the
+      uncaller, and therefore relative to the authority the uncaller itself represents:
+      <blockquote>
+        <pre><span class="stdout">? </span>pile__uriGetter.optUncall(eprops)
+<span class="stdout"># value: [&lt;pile__uriGetter&gt;, &quot;get&quot;, \
+#        [&quot;c:/Program Files/erights.org/eprops.txt&quot;]]
+
+? </span>pile__uriGetter.optUnget(eprops)<span class="stdout">
+# value: &quot;c:/Program Files/erights.org/eprops.txt&quot;
+
+? </span>ehome__uriGetter.optUncall(eprops)
+<span class="stdout"># value: [&lt;directory&gt;, &quot;get&quot;, [&quot;eprops.txt&quot;]]
+
+? </span>ehome__uriGetter.optUnget(eprops)<span class="stdout">
+# value: &quot;eprops.txt&quot;</span></pre>
+      </blockquote>
+      <p>In support of the Loader pattern, surgeons also implement the following
+        convenience method:</p>
+      <blockquote>
+        <pre>    <span class="keyword">to</span> <span class="defverb">addLoader</span>(<span class="defvar">loader</span>, <span class="defvar">exitName</span> :String) :void {
+        surgeon.addExit(loader, exitName)
+        surgeon.addUncaller(loader)
+    }</pre>
+      </blockquote>
+      <h2>Devices and Magic Powers</h2>
+      <p> Beware! By using files as our first extended example, we may have led
+        you into one of the most common blindspots in thinking about security
+        -- that it is about access to files. Access control is not about which
+        processes have access to which files, but about which objects have access
+        to which objects. Files are just a particularly degenerate passive form
+        of object.</p>
+      <p>Rather, for any subgraph which we don't fully traverse, these issues
+        come up at all exit points -- all places we cut off the traversal during
+        serialization, leaving behind an exit point to reconnect during unserialization.
+        All are potential manipulations of authority. But could we cut the graph
+        anywhere? Could we decide not to cut the graph, but instead serialize
+        the whole thing, including the authority-conveying objects? No.</p>
+      <p>We can divide up all objects into primitives and composites. The composites
+        are defined (or definable) by composition of primitives and other composites.
+        If they are willing, they can be serialized by divulging such a composition
+        as their portrayal. If they are not willing -- if, like the <tt>pile__uriGetter</tt>,
+        they are opaque to us, then they are virtually primitive -- we cannot
+        tell that they aren't actually primitive.</p>
+      <table cellpadding="12" align="right" bgcolor="#FFFFE8" border="1"  width="30%">
+        <tr>
+          <td>
+            <p>If a universal Turing machine computes a tree structure but can't
+              tell anyone, a correctness preserving transform may optimize it
+              out of existence. Semantically though, we still say the computation
+              &quot;happened&quot;. The universe as a whole, by definition, cannot
+              affect the world outside itself. It may therefore be implemented
+              trivially. </p>
+          </td>
+        </tr>
+      </table>
+      <p>Whether we can tell or not from within the system, the system itself
+        bottoms out in actual primitives, of which there are two kinds. We have
+        already the pure data primitives, the scalars, like the number 3. There
+        are fixed set of kinds of scalars, which our recognizers and builders
+        already handle as a special case. Finally, there are the primitive <i>soft
+        devices</i>, like the underlying <tt>file__uriGetter</tt>, which are the
+        only means for affecting the world outside the vat, or being affected
+        by it. A vat without soft devices is as fully isolated and useless as
+        a machine without hard devices. Soft devices <i>cannot</i> be serialized,
+        because serialization produces a depiction, which is just bits, and no
+        mere bit pattern is adequate to grant access to that device on unserialization.</p>
+      <p>In mapping the Java I/O library into <i><b><font color="#009000">E</font></b></i>
+        soft devices, it would have been most natural to treat each instance of
+        <tt>java.lang.File</tt> as a primitive device. Instead, for any such system
+        of related devices, we create one, or a small number, of truly primitive
+        devices, like the <tt>file__uriGetter</tt>, and then define individual
+        files as derived from these. These root authorities are generally very
+        powerful; we call them <i>magic powers</i>. They convey all the power
+        that would be conveyed in aggregate by all the devices that could be derived
+        from them. Each individual composite device derived from a magic power
+        acts as if it retains access to this magic power (as the directories and
+        <tt>normalPile</tt>s of the pile system actually do), and generally represents
+        a diminishing of the authority of this power (as the above version of
+        the pile system still only pretends to do).</p>
+      <p>Magic powers should usually follow the Loader pattern, and most of <i><b><font color="#009000">E</font></b></i>'s
+        already do. </p>
+      <h2>Module Loaders</h2>
+      <p>One crucial category of Loader are the module loaders, one of which is
+        already preinstalled in the default uncallers list, unscope, and scope
+        -- the <tt>import__uriGetter</tt>. (Note: this is no more than a default.
+        It is not mandated.) <i><b><font color="#009000">E</font></b></i>'s module
+        loaders are inspired by Java's ClassLoader.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">capitals</span> := [&quot;<span class="litchars">New York</span>&quot; =&gt; &quot;<span class="litchars">Albany</span>&quot;,
+<span class="stdout">&gt; </span>                 &quot;<span class="litchars">California</span>&quot; =&gt; &quot;<span class="litchars">Sacramento</span>&quot;]
+<span class="stdout"># value: [&quot;New York&quot; =&gt; &quot;Albany&quot;, &quot;California&quot; =&gt; &quot;Sacramento&quot;]
+
+</span><span class="stdout">? </span>surgeon.serialize(capitals)
+<span class="stdout"># value: &quot;de: &lt;import:org.erights.e.elib.tables.ConstMap&gt;.fromColumns(
+#             [\&quot;New York\&quot;, \&quot;California\&quot;],
+#             [\&quot;Albany\&quot;, \&quot;Sacramento\&quot;]
+#         )&quot;
+
+? </span>import__uriGetter.optUncall(&lt;elib:<span class="litchars">tables.ConstMap</span>&gt;)<span class="stdout">
+# value: [&lt;import:*&gt;, &quot;get&quot;, [&quot;org.erights.e.elib.tables.ConstMap&quot;]]
+
+</span><span class="stdout">? </span>surgeon.addLoader(elib__uriGetter, &quot;<span class="litchars">elib__uriGetter</span>&quot;)
+
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">depiction</span> := surgeon.serialize(capitals)
+<span class="stdout"># value: &quot;de: &lt;elib:tables.ConstMap&gt;.fromColumns(\
+#             [\&quot;New York\&quot;, \&quot;California\&quot;],
+#             [\&quot;Albany\&quot;, \&quot;Sacramento\&quot;])&quot;
+
+? </span>surgeon.unserialize(depiction)
+<span class="stdout"># value: [&quot;New York&quot; =&gt; &quot;Albany&quot;, &quot;California&quot; =&gt; &quot;Sacramento&quot;]</span></pre>
+      </blockquote>
+      <p>Java's ClassLoader is an important invention for language-based security,
+        but not for the reason normally cited. Being an object-capability language,
+        <i><b><font color="#009000">E</font></b></i> has no use for the principle-id
+        tagging or stack introspection normally associated with the ClassLoader.
+        Rather, the ClassLoader system allows modules to import each other by
+        name, while at the same time avoiding the creation of any global name
+        space. A Class or Type identity in Java is a ClassLoader identity + a
+        fully qualified name relative to that ClassLoader. A ClassLoader has no
+        name in some yet more global name space. Rather, identity bottoms out
+        in ClassLoader identity, which is exactly object identity -- first class,
+        anonymous, selfish, and opaque.</p>
+      <p>Like the policy provided by <i><b><font color="#009000">E</font></b></i>'s
+        built in module loaders, JOSS serializes a class by serializing a bit
+        string that acts like the &quot;name&quot; of the class (the <tt>serialVersionUID</tt>),
+        rather than serializing the behavior definition itself (the .class file).
+        Both therefore treat all behavior definitions in effect as named exit
+        points, to be reconnected on unserialization to a behavior that one hopes
+        is adequately similar. Unlike JOSS, <i><b><font color="#009000">E</font></b></i>
+        maintains the ClassLoader's philosophy -- a behavior definition is derived
+        from a loader, and is only named relative to that loader. When serializing
+        a graph of instances of behaviors obtained from several loaders, the unscope
+        and scope must generally hold these loaders, in which case the behaviors
+        in the reconstituted graph maintain the original's separation of loaders.</p>
+      <h1>Corresponding Concepts in Conventional Serialization</h1>
+      <p>JOSS does not provide named exit points, except for the special case
+        where it mandates them -- serializing classes by <tt>serialVersionUID</tt>
+        or fully qualified class name rather than by copying and reloading class
+        files. JOSS does have the critical enabling property for implementing
+        the Gordian Surgeon -- an object's portrayal is in terms of other objects,
+        so an object cannot portray itself as having access it doesn't. The resulting
+        depiction represents only the connectivity demonstrated by these portrayals.</p>
+      <p><font color="#FF0000">(*** explain how <a href="../../../javadoc/org/erights/e/extern/persist/GraphParam.html">GraphParam</a>s
+        implement the Gordian Surgeon technique in JOSS.)</font></p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%">&nbsp;</TD>
+  </TR>
+  <TR VALIGN="TOP">
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD>
+      <hr>
+      <div align="center">
+        <table cellpadding="4" cellspacing="0">
+          <tr>
+            <td>
+              <div align="left"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a></div>
+            </td>
+            <td>
+              <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr>
+                  <td>
+                    <div align="center"><font size="-1"><a href="../../../elib/index.html">ELib</a>
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a>
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a>
+                      </font></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a>
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a>
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp;
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <table width="100%" border="0" cellspacing="0" cellpadding="4">
+        <tr>
+          <td><i>email webmaster-at-erights.org</i> <br>
+            or <a href="http://bugs.sieve.net/bugs/?func=addbug&amp;group_id=16380"><i>report
+            bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid
+            html</a>)<br>
+            or <a href="http://www.blindpay.com/crit-me-now.cgi"><img src="../../../images/cmn.gif" width="98" height="21" border="0" align="middle" alt="Annotate this page"></a>
+          </td>
+          <td>
+            <div align="right">
+              <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a> <a href="http://www.stoppoliceware.org/"><img src="../../../images/stoppoliceware_gray_88x32.gif" width="88" height="32" border="0" alt="Stop Policeware Campaign"></a>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </TD>
+    <TD WIDTH="10%" valign="bottom">&nbsp;</TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

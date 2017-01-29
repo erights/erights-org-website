@@ -1,0 +1,65 @@
+
+<HTML>
+
+<HEAD>
+<META HTTP-EQUIV="Context-Type" CONTEXT="text/html;charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft Internet Assistant for PowerPoint 97">
+ <TITLE>Distributed Cap Example: Money</TITLE> 
+</HEAD>
+
+<BODY     >
+
+ <H1>Distributed Cap Example: Money</H1> 
+ <P><UL>
+def makeMint(name) :any {
+<BR></UL><UL>
+    def [sealer, unsealer] := makeBrandPair(name)
+</UL><UL>
+    def mint {
+</UL><UL>
+        to makePurse(var balance :(integer &#062= 0)) :any {
+</UL><UL>
+            def decr(amount :(0..balance)) {
+</UL><UL>
+                balance -= amount
+</UL><UL>
+            }
+</UL><UL>
+            def purse {
+</UL><UL>
+                to getBalance() :any { balance }
+</UL><UL>
+                to sprout()         :any { mint.makePurse(0) }
+</UL><UL>
+                to getDecr()      :any { sealer.seal(decr) }
+</UL><UL>
+                to deposit(amount :int, src) {
+</UL><UL>
+                    unsealer.unseal(src.getDecr())(amount)
+</UL><UL>
+                    balance += amount
+</UL><UL>
+                }
+</UL><UL>
+            }
+</UL><UL>
+        }
+</UL><UL>
+    }
+</UL><UL>
+}  </UL></P>
+<P></P> 
+<P>
+<TABLE>
+  <TD HEIGHT=100 WIDTH=100> <A HREF="tsld013.htm">Previous slide</A> </TD>
+  <TD HEIGHT=100 WIDTH=100> <A HREF="tsld015.htm">Next slide</A> </TD>
+  <TD HEIGHT=100 WIDTH=150> <A HREF="tsld001.htm">Back to first slide</A> </TD>
+  <TD HEIGHT=100 WIDTH=150> <A HREF="sld014.htm">View graphic version</A> </TD>
+</TABLE>
+<BR>
+</P>
+
+
+
+</Body>
+</HTML>

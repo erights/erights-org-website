@@ -1,0 +1,36 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE>This document was written and is maintained by Claire Griffin</TITLE>
+<META NAME="Template">
+</HEAD>
+<BODY BGCOLOR="#ffeedd" TEXT="#000000" LINK="#0000FF" VLINK="#800080">
+
+<EM><H1>Source Tree Structure</H1>
+</EM>
+<P>This document was written and is maintained by</i> <I>Claire Griffin</I></P>
+<P><B>Last updated:</b><I> [6/19/</I><A NAME="_Hlk422893839"><I>98 </i>Claire</A><I>]</I> 
+</P>
+<H2>Introduction</H2>
+<P ALIGN="JUSTIFY">This is a summary of guidelines for adding source code and packages into the source tree. The tree can be arranged in many ways. Experience has led to the understanding that a source tree should be neither too flat nor too nested. A tree that is too flat makes it difficult to locate an item. One that is too nested is difficult to navigate.</P>
+<H4>Related Documents</H4>
+<ADDRESS>Check-in Guidelines (XXX file not found)</ADDRESS>
+<H2>Requirements</H2>
+
+<UL>
+<LI>Don't simply drop a package at the highest level of the tree. Take the time to figure out to what it is related. Use the subsystem diagram to help you figure out where you should be grouped. </LI>
+<LI>The package structure should mirror the subsystem diagram as nearly as possible. </LI>
+<LI>The directory structure should mirror the package name. This is crucial for compatibility with all standard IDEs. Remember that while ecomp allowed more than one public class per file, the standard java compiler does not. </LI>
+<LI>If a package is from a third party it should be in the third party directory \tp </LI>
+<LI>If a package is a library created by Communities.com but unrelated to other subsystem components, it should be placed in \lib </LI>
+<LI>If a package is a utility that is generally useful, it should be placed in \util </LI>
+<LI>If a package is useful only within a specific subsystem, it should be placed in \util below that subsystems directory </LI>
+<LI>Similarly, test applications should be placed in \test if it is general test or in subsystem\test if it local to a subsystem. </LI>
+<LI>If you have a large number of data classes that are currently stored in a single file consider moving them into a separate package. If this creates package access problems then make sure all of your data classes are easily distinguished as data classes. </LI>
+  <LI>If in doubt, send mail to ec_dev. Someone may have already given thought to 
+    a similar situation. Send email to me or amend this document when a convention 
+    has been reached so others will have knowledge of it.</LI>
+</UL>
+</BODY>
+</HTML>

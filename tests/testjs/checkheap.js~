@@ -1,0 +1,251 @@
+
+
+var stdheap;
+
+(function(global){
+  "use strict";
+
+  // TODO(erights): Assumes local v8 shell API
+  if (stdheap === undefined) {
+    if (typeof read === 'function') {
+      stdheap = JSON.parse(read('stdheap.json'));
+    } else {
+      throw new Error('Need stdheap');
+    }
+  }
+
+  var hop = Object.prototype.hasOwnProperty;
+  var toString = Object.prototype.toString;
+  var slice = Array.prototype.slice;
+  var isArray = Array.isArray;
+  if (!isArray) {
+    isArray = function(obj) {
+      return toString.call(obj) === '[object Array]';
+    };
+  }
+
+  var isExtensible = Object.isExtensible;
+  if (!isExtensible) {
+    // We'll naturally report it missing later, so don't need
+    // a diagnostic here.
+    isExtensible = function(obj) {
+      try {
+        obj.___probe___ = '___probe___';
+      } catch (err) {
+        if (err instanceof TypeError) { return false; }
+        throw err;
+      }
+      if (obj.___probe___ === '___probe___') {
+        delete obj.___probe___;
+        return true;
+      }
+      return false;
+    };
+  }
+
+  var keys = Object.keys;
+  if (!keys) {
+    keys = function(obj) {
+      var result = [];
+      for (var name in obj) {
+        if (hop.call(obj, name)) { result.push(name); }
+      }
+      return result;
+    };
+  }
+
+  var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+  if (!getOwnPropertyDescriptor) {
+    getOwnPropertyDescriptor = function(obj, name) {
+      if (!hop.call(obj, name)) { return undefined; }
+      // Assumes below that it's a data property, because general
+      // checking is hard.
+      return {
+        value: obj[name],
+        writable: "?",
+        enumerable: (function() {
+                       for (var i in obj) {
+                         if (i === name) { return true; }
+                       }
+                       return false;
+                     })(),
+        configurable: "?"
+      };
+    };
+  }
+
+  var log;
+  if (typeof console !== 'undefined' && console.log) {
+    log = function(str){ console.log(str); };
+  } else if (typeof print !== undefined) {
+    log = print;
+  } else {
+    log = function(str) {};
+  }
+  function assert(cond, var_args) {
+    if (!cond) {
+      var str = slice.call(arguments, 1).join('');
+      if (str === '') { str = 'assertion failed'; }
+      log(str);
+      throw new Error(str);
+    }
+  }
+
+  function getActual(path) {
+    switch (typeof path) {
+    case 'number':
+    case 'boolean':
+    case 'undefined': { return path; }
+    case 'object': {
+      if (path === null) { return null; }
+      if (isArray(path)) {
+        assert(path.length >= 1);
+        switch (path[0]) {
+        case '@quote': { return path[1]; }
+        default: { throw assert(false, "unrecognized: ", path[0]); }
+        }
+      }
+      throw assert(false, "unexpected: ", path);
+    }
+    case 'string': {
+      if (path === '-Infinity') {
+        // Special case because it's the one primitive value that is
+        // neither representable in JSON nor is a global variable
+        return -Infinity;
+      }
+      var names = path.split('.');
+      assert(names.length >= 1);
+      var result = global;
+      var i = 0;
+      if (names[0] === 'this') { i = 1; }
+      for (var len = names.length; i < len; i++) {
+        var name = names[i];
+        assert(result === Object(result));
+      if (!hop.call(result, name)) { return undefined; }
+        result = result[name];
+      }
+      assert(eq(result, (1,eval)(path)), "doesn't match: ", path);
+      return result;
+    }
+    default: {
+      if (path === null) { return null; }
+      throw assert(false, "surprising: ", path);
+    }
+    }
+  }
+
+  var passed = 0;
+  var failed = 0;
+  var skipped = 0;
+
+  // See http://wiki.ecmascript.org/doku.php?id=harmony:egal
+  function eq(x, y) {
+    if (x === y) {
+      return x !== 0 || 1/x === 1/y;
+    }
+    return x !== x && y !== y;
+  }
+
+  keys(stdheap).forEach(function(path) {
+    var record = stdheap[path];
+    assert(path === record.path);
+    var section = record.section;
+
+    function check(str, should, did, opt_shouldStr, opt_didStr) {
+      if (eq(should, did)) {
+        passed++;
+        return true;
+      }
+      if (did === '?') {
+        skipped++;
+        return '?'; // Note: truthy
+      }
+      failed++;
+      var shouldStr = opt_shouldStr || should;
+      var didStr = opt_didStr || did;
+      if (typeof shouldStr === 'boolean' && typeof didStr === 'boolean') {
+        log(path + ' (' + section + ') ' + str);
+      } else {
+        log(path + ' (' + section + ') ' + str +
+            ': should be ' + shouldStr + ' but was ' + didStr);
+      }
+      return false;
+    }
+
+
+    var actual = getActual(path);
+    if (!check("doesn't exist",
+               true, actual !== undefined)) { return; }
+    var clazz = record['[[Class]]'];
+    if (clazz !== '?') {
+      check('[[Class]]',
+            '[object ' + clazz + ']', toString.call(actual));
+    }
+    var protoName = record['[[Prototype]]'];
+    if (protoName !== '?') {
+      var protoShould = getActual(protoName);
+      var protoDid = Object.getPrototypeOf(actual);
+      check('[[Prototype]]',
+            protoShould, protoDid,
+            protoName);
+    }
+    var typShould = record['typeof'];
+    if (typShould !== '?') {
+      check('typeof',
+           typShould, typeof actual);
+    }
+    var extShould = record.extensible;
+    if (extShould !== '?') {
+      check('extensible',
+            extShould, isExtensible(actual));
+    }
+
+    var pdmap = record.pdmap;
+    if (hop.call(actual, 'prototype') &&
+        !hop.call(pdmap, 'prototype') &&
+        record['[[Class]]'] === 'Function' &&
+        record.section.split('.')[0] === '15') {
+      check("None of the built-in functions described in (15) " +
+            "shall have a prototype property unless otherwise " +
+            "specified ...",
+            false, true);
+    }
+
+    keys(pdmap).forEach(function(name) {
+      var shouldPD = pdmap[name];
+      var didPD = getOwnPropertyDescriptor(actual, name);
+      if (!check('.' + name + ' absent',
+                 !!shouldPD, !!didPD)) {
+        return;
+      }
+      check('.' + name + ' configurable?',
+            '' + shouldPD.configurable, '' + didPD.configurable);
+      check('.' + name + ' enumerable?',
+            '' + shouldPD.enumerable, '' + didPD.enumerable);
+      if ('value' in shouldPD) {
+        if (!check('.' + name + ' should be data property',
+                  true, 'value' in didPD)) { return; }
+        check('.' + name + ' writable?',
+              '' + shouldPD.writable, '' + didPD.writable);
+        var shouldValue = getActual(shouldPD.value);
+        var didValue1 = didPD.value;
+        var didValue2 = actual[name];
+        check('.' + name + " doesn't have claimed value",
+              didValue1, didValue2);
+        check('.' + name + " doesn't have expected value",
+              shouldValue, didValue1);
+      } else {
+        assert('get' in shouldPD);
+        if (!check('.' + name + ' should be accessor property',
+                  true, 'get' in didPD)) { return; }
+
+      }
+    });
+
+  });
+
+  log('passed: ' + passed);
+  log('failed: ' + failed);
+  log('skipped: ' + skipped);
+
+})(this);

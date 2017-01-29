@@ -1,0 +1,231 @@
+<HTML>
+
+<HEAD>
+
+<TITLE>Timers</TITLE>
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="GENERATOR" CONTENT="Internet Assistant for Microsoft Word 2.0z">
+</HEAD>
+
+<BODY BGCOLOR="#ffeedd" TEXT="#000000" LINK="#0000FF" VLINK="#800080">
+
+<H1>Timer Support </H1>
+
+<P> <B>Last updated:</B> [98/06/18 Chip] <I>This page was written by <I>Chip,</I> 
+  based on <I>Arturo's</I> excellent <A HREF="http://www-int.communities.com/engineering/neocosm/SubsystemDocTemplate.html"><I>template.</I></A> 
+  </I> 
+<H2>Introduction </H2>
+
+<P> In lieu of attempting to deconstruct the old timer API, this document describes 
+  the new timer API. 
+<H2>Overview </H2>
+
+<P>
+There are five public classes/interfaces in the new timer API
+(which will live in the package org.erights.e.extern.timer):
+<UL>
+<LI>Timer -- Control object for timer-related stuff
+<LI>Timeout -- Object representing a one-time timeout event
+<LI>TimeoutHandling -- Interface to be implemented by objects interested
+in being informed of timeout events
+<LI>Clock -- Object representing a stream of clock tick events
+<LI>TickHandling -- Interface to be implemented by objects interested
+in being informed of clock tick events
+</UL>
+As of now there is a single, statically allocated Timer object.
+Everything else, however, is accessed via object references so
+going to a full-up capability model is trivial.
+<P>
+There are two kinds of timer-related things which Timer provides,
+timeouts and clocks. A timeout is a one-time event whereas a clock
+repeats. Timer provides the methods setTimeout() and newClock()
+(respectively) for setting up these two kinds of things. In either
+case you indicate the time duration, an object to handle the event
+when it happens, and a flag indicating whether synchronous (i.e.,
+direct Java method call) or asynchronous (i.e., posting a message
+on the E run queue) is to be used for notification. You can also
+provide an arbitrary object of your own choosing which will be
+held and passed on along with the even notification.
+<P>
+The setTimeout() method returns a Timeout object which can be
+used to cancel the timeout and also serves to identify the timeout
+event when it happens.
+<P>
+The newClock() method returns a Clock object which can be used
+to start, stop and otherwise fiddle with the clock and which also
+serves to identify clock tick events when they happen.
+<P> Where things work the same as they did before, I tried to retain the basic 
+  feature functionality and class/method naming of the existing timer and clock 
+  machinery, so as to be minimally disruptive. Clock, in particular, still has 
+  too many features for my taste, but it should be fine for now. 
+<H2>Javadoc API </H2>
+
+<PRE>
+package org.erights.e.extern.timer;
+
+/**
+ * The master control object for timers and clocks.
+ */
+public class Timer
+{
+    /**
+     * Fire up the timer subsystem.
+     */
+    public static void startTimers();
+
+    /**
+     * Return the single permitted Timer object.
+     */
+
+    public static Timer theTimer();
+    /**
+     * Sets a timeout for the specified number of milliseconds. After the timer
+     * expires, target is sent the handleTimeout() message.
+     *
+     * @param millis How long to wait until timing out
+     * @param target Object to be informed when the time comes
+     * @param arg An arbitrary object to be sent to target along with the
+     *   timeout notification
+     * @param synchronous Flag controlling synchronous notification the
+     *   timeout. True=&gt;notify synchronously; false=&gt;post notification on E
+     *   message queue.
+     *
+     * @return A timeout object that can be used to cancel or identify the
+     *   timeout.
+     *
+     * @see org.erights.e.extern.timer.TimeoutHandling
+     */
+    public Timeout setTimeout(long millis, TimeoutHandling target,
+                              Object arg, boolean synchronous);
+
+    /**
+     * Creates a new clock. The new clock begins life stopped with its tick
+     * count at zero.
+     *
+     * @param resolution The clock tick interval
+     * @param target Object to be sent tick notifications
+     * @param arg Arbitrary object to be sent to target with tick notifications
+     * @param synchronous Flag controlling synchronous notification of clock
+     *   ticks. True=&gt;notify synchronously; false=&gt;post notification on E
+     *   message queue.
+     *
+     * @return A new Clock object according to the given parameters
+     *
+     * @see org.erights.e.extern.timer.TickHandling
+     */
+    public Clock newClock(long resolution, TickHandling target, Object arg,
+                          boolean synchronous);
+}
+
+/**
+ * Object representing a scheduled timeout event.
+ */
+public class Timeout
+{
+    /**
+     * Cancels this timeout. Note, however, that although a Timeout can be
+     * cancelled, there is no guarantee that it has not already occured at the
+     * time it is cancelled.
+     *
+     * @return Status flag: true=&gt;cancellation was successful; false=&gt;it wasn't
+     */
+    public boolean cancelTimeout();
+}
+
+/**
+ * Interface implemented by objects that wish to be informed about timeout
+ * events using the Timer.setTimeout() method.
+ */
+public interface TimeoutHandling
+{
+    /**
+     * Notification of a timeout event.
+     *
+     * @param timeout The Timeout that occurred.
+     * @param arg An arbitrary object previously supplied in the setTimeout
+     *   call.
+     *
+     * @see org.erights.e.extern.timer.Timer#setTimetimeout
+     */
+    void handleTimeout(Timeout timeout, Object arg);
+}
+
+/**
+ * A Clock is an Object which sends the message handleTick to a target Object
+ * every 'n' milliseconds. Clocks can only be created by calling the method
+ * newClock on a Timer instance. &lt;p&gt;
+ *
+ * A Clock can be started and stopped, and also terminated. If a Clock is
+ * terminated, it is stopped and can no longer be started.
+ *
+ * @see org.erights.e.extern.timer.TickHandling
+ */
+public class Clock
+{
+    /**
+     * Starts the Clock from the current tick.
+     */
+    public synchronized void start();
+
+    /**
+     * Starts the Clock from a given tick.
+     *
+     * @param fromTick Tick setting to start ticking from.
+     */
+    public void start(int fromTick);
+
+    /**
+     * Stops the clock from ticking. The clock can be restarted with start().
+     */
+    public void stop();
+
+    /**
+     * Sets the clock's current tick setting. If the Clock is running, it is
+     * stopped.
+     *
+     * @param toTick Value to set the clock to.
+     */
+    public void set(int toTick);
+
+    /**
+     * Resets the clock's current tick to 0
+     */
+    public void reset();
+
+    /**
+     * Gets the current tick
+     *
+     * @return The current tick setting.
+     */
+    public int getTicks();
+
+    /**
+     * Stops the Clock and frees up its resources. Once a Clock is terminated,
+     * it can no longer be used.
+     */
+    public void terminate();
+}
+
+/**
+ * The TickHandling interface is implemented by classes that want to handle
+ * repeated ticks from a Clock.
+ *
+ * @see org.erights.e.extern.timer.Clock
+ */
+public interface TickHandling {
+    /**
+     * Called by Clocks on their targets after each tick.
+     *
+     * @param clock the Clock that ticked
+     * @param arg An arbitrary object supplied by the creator of the Clock
+     * @param ticks The current tick count for the Clock
+     */
+    handleTick(Clock clock, Object arg, int tick);
+}
+</PRE>
+
+</BODY>
+
+</HTML>
+

@@ -1,0 +1,187 @@
+? def BrandMaker := import:org.erights.e.elang.sealing.Brand
+# value: <statics of org.erights.e.elang.sealing.Brand>
+
+? def MintMaker(name) {
+>     def [sealer, unsealer] := BrandMaker pair(name)
+>
+>     def Issuer {
+>         to __printOn(oo) { oo print(`<$name bucks>`) }
+>
+>         to vouch(item) {
+>             unsealer unseal(item getSealed)
+>         }
+>
+>         to makeAssay(amount : (_ >= 0)) {
+>             def Assay {
+>                 to __printOn(oo) { oo print(`<assays $amount $name bucks>`) }
+>                 to getIssuer { Issuer }
+>                 to getSealed { sealer seal(Assay) }
+>
+>                 to transfer(src, dest) {
+>                     def srcIncr := unsealer unseal(src getIncr)
+>                     def destIncr := unsealer unseal(dest getIncr)
+>                     srcIncr(-amount)
+>                     destIncr(amount)
+>                     null
+>                 }
+>                 to compareTo(otherAssay) {
+>                     otherAssay := Issuer vouch(otherAssay)
+>                     amount compareTo(otherAssay getAmount)
+>                 }
+>                 to getAmount { amount }
+>             }
+>         }
+>
+>         to makePurse {
+>             def balance : (_ >= 0) := 0
+>             def incr(delta) {
+>                 balance += delta
+>             }
+>
+>             def Purse {
+>                 to __printOn(oo) { oo print(`<holds $balance $name bucks>`) }
+>                 to getIssuer     { Issuer }
+>                 to getSealed     { sealer seal(Purse) }
+>
+>                 to getIncr       { sealer seal(incr) }
+>                 to getAssay      { Issuer makeAssay(balance) }
+>                 to getBalance    { balance }
+>
+>                 to depositAll(src) {
+>                     def assay := Issuer vouch(src getAssay)
+>                     assay transfer(src, Purse)
+>                     assay
+>                 }
+>             }
+>         }
+>     }
+>     def Mint {
+>         to __printOn(oo) { oo print(`<$name's Mint>`) }
+>         to getIssuer     { Issuer }
+>         to getSealed     { sealer seal(Mint) }
+>
+>         to inflate(dest, amount) {
+>             def destIncr := unsealer unseal(dest getIncr)
+>             destIncr(amount)
+>         }
+>     }
+> }
+# value: <MintMaker>
+
+? def JoeMint := MintMaker("Joe")
+# value: <Joe's Mint>
+
+? def JoeCurrency := JoeMint getIssuer
+# value: <Joe bucks>
+
+? def ThreeBucks := JoeCurrency makeAssay(3)
+# value: <assays 3 Joe bucks>
+
+? def PurseA := JoeCurrency makePurse
+# value: <holds 0 Joe bucks>
+
+? def PurseB := JoeCurrency makePurse
+# value: <holds 0 Joe bucks>
+
+? ThreeBucks transfer(PurseA, PurseB)
+# problem: <StringException: not in region>
+
+? [PurseA, PurseB]
+# value: [<holds 0 Joe bucks>, <holds 0 Joe bucks>]
+
+? JoeMint inflate(PurseA, 100)
+# value: 100
+
+? JoeMint inflate(PurseB, 200)
+# value: 200
+
+? [PurseA, PurseB]
+# value: [<holds 100 Joe bucks>, <holds 200 Joe bucks>]
+
+? ThreeBucks transfer(PurseA, PurseB)
+? [PurseA, PurseB]
+# value: [<holds 97 Joe bucks>, <holds 203 Joe bucks>]
+
+? def TwoBucks := JoeCurrency makeAssay(2)
+# value: <assays 2 Joe bucks>
+
+? TwoBucks < ThreeBucks
+# value: true
+
+? PurseA depositAll(PurseB)
+# value: <assays 203 Joe bucks>
+
+? [PurseA, PurseB]
+# value: [<holds 300 Joe bucks>, <holds 0 Joe bucks>]
+
+? def CambioMaker(inPurse, outPurse, in2out) {
+>
+>     def Cambio {
+>         to __printOn(oo) {
+>             oo print(`<turning ${inPurse getIssuer} into ${outPurse getIssuer}>`)
+>         }
+>         to changeMoney(srcPurse) {
+>             def inAssay := inPurse depositAll(srcPurse)
+>             def outAssay := in2out(inAssay)
+>             def destPurse := outPurse getIssuer makePurse
+>             try {
+>                 outAssay transfer(outPurse, destPurse)
+>             } catch ex {
+>                 inAssay transfer(inPurse, srcPurse)
+>                 throw ex
+>             }
+>             destPurse
+>         }
+>     }
+> }
+# value: <CambioMaker>
+
+? def BettyMint := MintMaker("Betty")
+# value: <Betty's Mint>
+
+? def BettyBucks := BettyMint getIssuer
+# value: <Betty bucks>
+
+? def BettyPurseA := BettyBucks makePurse
+# value: <holds 0 Betty bucks>
+
+? BettyMint inflate(BettyPurseA, 250)
+# value: 250
+
+? BettyPurseA
+# value: <holds 250 Betty bucks>
+
+? def in2out(inAssay) {
+>     BettyBucks makeAssay((0.5 * inAssay getAmount) round)
+> }
+# value: <in2out>
+
+? def JBCambio := CambioMaker(PurseA, BettyPurseA, in2out)
+# value: <turning <Joe bucks> into <Betty bucks>>
+
+? [PurseA, BettyPurseA]
+# value: [<holds 300 Joe bucks>, <holds 250 Betty bucks>]
+
+? JoeMint inflate(PurseB, 23)
+# value: 23
+
+? def BettyPurseB := JBCambio changeMoney(PurseB)
+# value: <holds 12 Betty bucks>
+
+? [PurseA, BettyPurseA]
+# value: [<holds 323 Joe bucks>, <holds 238 Betty bucks>]
+
+?
+
+
+
+
+
+
+
+
+
+
+
+
+

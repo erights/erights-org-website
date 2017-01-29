@@ -1,0 +1,289 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Reference Mechanics</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">concurrency</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="queuing.html" title="Back to: Distributed Queuing"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Distributed Queuing" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="msg-passing.html" title="On to: Message Passing"><img src="../../images/next.gif" width="64" height="32" alt="On to: Message Passing" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>Reference<br>
+              Mechanics</b></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p> This page explains the different kinds of references for purposes of
+        accurately understanding message delivery and partial failure. For orientation
+        it also provides introductory explanations of how these distinctions affect
+        reference equality. Briefly, if a reference is <b>Settled</b>, it supports
+        The E language's &quot;==&quot; construct and may be used as a key in
+        <i><b><font color="#009000">E</font></b></i>'s hashtables. Once you have this page under your belt, if you want more
+        information of reference equality and Settled vs Unsettled, proceed to
+        <a href="../equality/same-ref.html">When are two references the same?</a>.</p>
+      <h2>Horizontal Taxonomy</h2>
+      <p>All references are either Sturdy or Live. The following diagrams illustrate
+        the possible transitions between the states of a Live reference.</p>
+      <p>The most important distinction is that a live reference is either <font color="#006600"><b><font color="#009900">Near</font></b></font>,
+        <font color="#000099"><b>Eventual</b></font>, or <font color="#990000"><b>Broken</b></font>.
+      </p>
+      <p align="center"><img src="images/ref-mech-0.gif" width="392" height="403" alt="Simple Ref Taxonomy"></p>
+      <p>These Diagrams use David Harel's <a href="http://www.cc.gatech.edu/classes/AY2001/cs4330_spring/misc/harel.pdf"><b><i>Statecharts</i></b></a>
+        notation, a generalization of state transition diagrams. In statecharts,
+        rounded rectangles represent a state or set of states. Arrows between
+        rounded rectangles represent possible state transitions from any of the
+        states in the <i>from-set</i> to any of the states in the <i>to-set</i>.
+        So the arrow from <b><font color="#000099">Promise</font></b> to <b>Resolved</b>
+        means that a <b><font color="#000099">Promise</font></b> may become <font color="#006600"><font color="#009900"><b>Near</b></font></font>,
+        <b> <font color="#000099">Far</font></b>, or <font color="#990000"><b>Broken</b></font>.
+        Separately, A <b><font color="#000099">Far</font></b> reference may become
+        <font color="#990000"><b>Broken</b></font>.</p>
+      <ul>
+        <li>
+          <p>A <b><font color="#009900">Near</font></b> reference is the one familiar
+            from single machine object programming languages. It is a reference
+            arrow in which both head and tail are in the same Vat, and the arrowhead
+            is attached to the object being designated. Being Near is a final
+            state: once a reference is Near, it is forever Near. Therefore, Near
+            references are not susceptible to partition. Near references support
+            both immediate calls and eventual sends. Immediate calls are guaranteed
+            to reach their recipient. Eventually sent messages are guaranteed
+            to be delivered according to the partial-order, except across a checkpoint/revival.
+          </p>
+        </li>
+        <li>
+          <p>An <font color="#000099"><b>Eventual</b></font> reference is strictly
+            weaker than a Near reference. It only supports eventual sends, with
+            only a fail-stop guarantee, rather than guaranteed delivery. Fail-stop
+            means that, should it ever come to designate an object, it will deliver
+            messages to that object according to the partial-order until it fails.
+            Once it fails, it will never again deliver any messages, and it will
+            eventually become <b><font color="#990000">Broken</font></b>. </p>
+        </li>
+        <li>
+          <p>A <b><font color="#990000">Broken</font></b> reference is strictly
+            weaker than Eventual or Near references. It does not and never will
+            designate an object. Instead, it holds a Throwable to indicate what
+            problem caused it not to designate an object. It does not support
+            immediate calls -- if one is attempted it throws its problem. It does
+            not support eventual sends -- if one is attempted, the result is a
+            reference broken by this same problem. Like Near, Broken is a terminal
+            state (once Broken always Broken). Broken references are transitively
+            immutable and are transitively passed by copy. </p>
+        </li>
+      </ul>
+      <h1 ALIGN="left">Vertical Taxonomy</h1>
+      <P ALIGN="left"> A reference is either a <b><font color="#000099">Promise</font></b>
+        or <b>Resolved</b>.
+      <ul>
+        <li>
+          <p>A <b><font color="#000099">Promise</font></b> is not (yet) locally
+            known to designate an object. Messages sent to an Promise are queued,
+            awaiting the Promise's resolution. Should the Promise become fulfilled,
+            whether to a Near or Far reference, these messages will be delivered
+            to that object. The result of an <a href="msg-passing.html#send">eventual-send</a>
+            always starts as a Promise for the outcome. Promises are Unsettled.</p>
+        </li>
+        <li>
+          <p>It is locally known whether a <b>Resolved</b> reference designates
+            an object or not, and if so, which object it designates. When the
+            result of an eventual send becomes Resolved, we know that the request
+            has completed, and that the reference now designates its outcome.
+            Promises can become Resolved, but once Resolved always Resolved.</p>
+          <ul>
+            <li>
+              <p>A Resolved reference that isn't Broken is <b>Fulfilled</b> --
+                it is known which object it designates, and it will convey messages
+                to this object. If the result of an eventual send becomes Fulfilled,
+                we know the request succeeded. Whereas if the result becomes Broken,
+                either </p>
+              <ol>
+                <li>
+                  <p>the request reported an exceptional outcome (either by <a href="msg-passing.html#failure">throwing</a>,
+                    or by returning a Broken reference), or </p>
+                </li>
+                <li>
+                  <p>a network partition prevented the request from arriving,
+                    or </p>
+                </li>
+                <li>
+                  <p>a network partition prevented the answer from coming back.
+                  </p>
+                </li>
+              </ol>
+              <p>In the latter two cases, the reference the message was sent on
+                has failed, and will become Broken as well. </p>
+            </li>
+            <li>
+              <p>A Resolved Eventual reference is a <b><font color="#000099">Far</font></b>
+                reference. A Far reference is locally known to designate a PassByProxy
+                object in a remote vat. Messages sent on a Far reference will
+                eventually reach that object, unless the Far reference fails because
+                of a network partition (communications failure or vat crash) in
+                the meantime. The Far reference is Settled, and has the identity
+                of the remote object it designates.</p>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <hr>
+      <h1>Detailed Taxonomy</h1>
+      <p>There are two kinds of Promises: The LocalPromise and the RemotePromise.
+        These further distinctions are mostly of interest to the theoretician
+        or E implementor, and will not normally be of concern to the E programmer.
+        For most programming purposes, all Promises can be treated alike.</p>
+      <p>The result of an eventual-send always starts out as a Promise, either
+        a LocalPromise or a RemotePromise depending on whether the message was
+        sent intra- or inter-vat. A <b><font color="#000099">LocalPromise</font></b>
+        is a promise for which the Resolver is in the same vat. A <b><font color="#000099">RemotePromise</font></b>,
+        like a Far reference, crosses vat boundaries. </p>
+      <p align="center"><img src="images/ref-mech.gif" width="408" height="461" alt="Ref Taxonomy"></p>
+      <ul>
+        <li>
+          <p> A <b><font color="#000099">LocalPromise</font></b> is a reference
+            that is locally known to not yet designate any object (as opposed
+            to a RemotePromise, which is <i>not yet locally known to</i> designate
+            any object). A LocalPromise is a reference arrow in which both tail
+            (Ref) and head (Resolver) are in the same vat, but the head isn't
+            yet pointing at anything. A LocalPromise is paired with a corresponding
+            Resolver, which is used to attach the arrow head to some target object.
+            Since it can be attached to anything, a LocalPromise can transition
+            to any of the other states. An eventual-send on an intra-vat reference
+            will return a LocalPromise as a Promise for the result. A LocalPromise
+            can also be created explicitly by using <tt>Ref.promise()</tt>.</p>
+        </li>
+        <li>
+          <p>A <b><font color="#000099">RemotePromise</font></b> is a Remote reference
+            for which the identity and location of the object to which messages
+            are to be delivered isn't yet locally known, and in which the tail
+            and head of the reference arrow are not both in the same vat. The
+            RemotePromise nevertheless sends messages towards its arrow head in
+            the hope that they can be delivered as soon as it is determined who
+            the lucky object is. An eventual send on a RemotePromise will return
+            a RemotePromise as a promise for the result. Also, when a LocalPromise
+            is passed over the network, the receiving vat receives a RemotePromise
+            remotely designating the original LocalPromise.</p>
+        </li>
+      </ul>
+      <h2><a name="legend"></a>Expanded Reference Taxonomy</h2>
+      <p>So, mixing graphical notations, here is the expanded reference taxonomy:</p>
+      <p align="center"><img src="images/ref-taxonomy.gif" width="384" height="653" alt="Expanded Ref Taxonomy"></p>
+      <p>Rounded rectangles and the arrows <i>between</i> them, none of whom begin
+        with a dot, are to be interpreted according to statechart notation as
+        above. <i>Within</i> the leaf rounded rectangles (those that do not contain
+        further rounded rectangles) the arrows shown, all of whom begin with dots,
+        represent references using our extended Granovetter notation. </p>
+      <p>A line without a <b>squiggle</b> is wholly contained within a single
+        vat. A line with a squiggle (Remote) isn't, or in the case of a SturdyRef,
+        may not be. </p>
+      <p>A <b>triangular arrowhead</b> is a reference messages can be sent on.
+        These messages move towards the arrowhead, in the hopes of eventually
+        being delivered.</p>
+      <p>A <b>gray halo</b> around an arrowhead (Promise) means that, although
+        the arrowhead is not <i>yet</i> attached to an object, and therefore the
+        arrow does not <i>yet</i> point at an object, the arrowhead itself is
+        reified as a Resolver object, which can be used to determine whether and
+        what the arrow should point at.</p>
+      <p>A <b>gray circle</b> attached to an arrowhead is the object the reference
+        points at. Elsewhere, we use cirle vs rectangle to distinguish whether
+        the pointed-to object is PassByProxy (circle) or PassByConstruction (rectangle).
+        (The common case of PassByConstruction is PassByCopy.)</p>
+      <p>A <b>slash</b> as arrowhead (Broken) indicates that the reference will
+        never point at anything. This always goes with a box on the side which
+        is the problem-object (a Throwable presumably explaining why not). While
+        messages may still be sent on this reference, they will always simply
+        report this problem and be discarded. If a gray circle is shown after
+        the slash, it represents the object the reference used to point at before
+        it broke, in which case it retains this identity for equality testing
+        purposes.</p>
+      <p>A <b>diamond</b> as arrowhead (SturdyRef) is &quot;forever&quot;. This
+        is the only kind of reference to survive a network partition, and so is
+        the means by which connectivity is preserved and consistency recovered
+        across such traumas. The price of survival is that a SturdyRef cannot
+        directly accept messages, since it cannot guarantee fail-stop delivery:
+        See <a href="../distrib/partial-failure.html">Handling Partial Failure</a>.
+      </p>
+      <h1>Distributed Equality</h1>
+      <p>In order to reason about distributed reference equality, yet further
+        distinctions are needed. See <a href="../equality/index.html">Equality</a>
+        and in particular <a href="../equality/same-ref.html">When are two references
+        the same?</a>.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">concurrency</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="queuing.html" title="Back to: Distributed Queuing"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Distributed Queuing" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="msg-passing.html" title="On to: Message Passing"><img src="../../images/next.gif" width="64" height="32" alt="On to: Message Passing" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

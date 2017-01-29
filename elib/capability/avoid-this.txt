@@ -1,0 +1,5 @@
+The file [an excel spreadsheet] may contain programs or macros.
+Opening it might transmit your data over the Internet, or alter,
+damage, or remove files and applications on your computer.  Unless you
+were expecting this file from this sender, you may not wish to open
+it. 

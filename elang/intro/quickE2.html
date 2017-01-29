@@ -1,0 +1,460 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>A 15 Minute Introduction to E</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">intro</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="standalone.html" title="Back to: Standalone E Programs"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Standalone E Programs" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" -->x<!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="object-lambda.html" title="On to: Lambda-Based Objects"><img src="../../images/next.gif" width="64" height="32" alt="On to: Lambda-Based Objects" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>15
+              Minute<br>
+              Intro to <i><b><font color="#009000">E</font></b></i><font size="5"><br>
+              by Marc Stiegler</font> </B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> This document is intended as a 15-minute
+      introduction to <i><b><font color="#009000">E</font></b></i>. Many--even
+      most--of the constructs of the language are not even mentioned. But the
+      constructs left out are ones that should be straightforward to learn for
+      anyone who has programmed in Java. We leap almost directly to a discussion
+      of the features that make <i><b><font color="#009000">E</font></b></i> unique,
+      starting with the <i>eventually</i> operator and its attendant features.
+      For a succinct view of the syntax of <i><b><font color="#009000">E</font></b></i>
+      and its traditional programming constructs, refer to the <a href="../quick-ref.html"><i><b><font color="#009000">E</font></b></i>
+      Quick Reference Card</a>.
+      <p>Most of <i><b><font color="#009000">E</font></b></i> looks and acts like
+        a conventional object-oriented programming language. A few quick examples
+        are:</p>
+      <p>The declaration of a variable and the assignment statement look a bit
+        like Pascal: </p>
+      <blockquote>
+        <pre><span class="keyword">def</span> <span class="defvar">a</span> := 1 + 2
+<span class="comment"># Comments can start with a #</span></pre>
+      </blockquote>
+      <p>The if-statement looks quite familiar to anyone who has done C:</p>
+      <blockquote>
+        <pre><span class="keyword">if</span> (a == b) { a := 3 * a }</pre>
+      </blockquote>
+      <p>The print-statement looks much like Java:</p>
+      <blockquote>
+        <pre>println(&quot;<span class="litchars">Here's the answer</span>&quot;)</pre>
+      </blockquote>
+      <p>The creation of an object looks a little different, but is easily understood 
+        by anyone who has written Java; in this example, we use the <tt>carMaker</tt> 
+        object (which behaves like a class) to create a car: </p>
+      <blockquote>
+        <pre><span class="keyword">def</span> <span class="defvar">car</span> := carMaker(&quot;<span class="keyword">Mercedes</span>&quot;)</pre>
+      </blockquote>
+      <p>Calling a method on an object looks somewhat like C++, Python, or Java,
+        with a period separating the object from the method name:</p>
+      <blockquote>
+        <pre>car.moveTo(2,3)</pre>
+      </blockquote>
+      <p>For the purposes of this introduction, this ends our coverage of the
+        ordinary object-oriented E features. Let us now launch into the features
+        that make E unique. We start with the <i>eventually</i> operator, &quot;<tt>&lt;-</tt>&quot;:</p>
+      <blockquote>
+        <pre>car &lt;- moveTo(2,3)
+println(&quot;<span class="litchars">car will eventually move to 2,3. But not yet.</span>&quot;)</pre>
+      </blockquote>
+      <p>The first statement can be read as, &quot;car, eventually moveTo(2,3)&quot;. 
+        As soon as this <i>eventual send</i> has been made to the car, the program 
+        immediately moves on to the next sequential statement--the program does 
+        not wait for the car to move. Since the program does not wait around for 
+        the eventual send, an eventual send is very different from a traditional 
+        object-oriented method call (referred to here as an <i>immediate call</i> 
+        to distinguish it from an eventual send; the statement &quot;<tt>car.moveTo(2,3)</tt>&quot;, 
+        shown earlier, is an immediate call). In general, you do not know, and 
+        cannot know, exactly when the car will move; indeed, if the car is on 
+        a remote computer, and the communication link is lost, the car may never 
+        move at all (which throws an exception,discussed later). </p>
+      <p>This brings us to the most interesting feature of an eventual send: just
+        as you do not know when the operation will complete, you also do not know,
+        and <i>do not need to know</i>, where the car is. The car could be a local
+        object running on the same machine with the program... or it could be
+        on a computer a thousand miles away across the Internet. Regardless, E
+        keeps track of the car's location and delivers the message for you. Moreover,
+        if the car is indeed remote, E sets up a secure communication link between
+        the program and the car; and since the Universal Resource Identifier for
+        the car includes an ungueassable random string of characters, no one can
+        send a message to the car or extract information from the car except someone
+        who has explicitly and intentionally received a reference to it from someone
+        with authority. Thus a computation running on five computers scattered
+        across five continents, all publicly accessible by the whole world of
+        the Web,can be as secure as a computation running on a box locked in your
+        basement.</p>
+      <p>Another very interesting feature of the eventual send: because the program
+        continues on to the next statement immediately, without waiting for the
+        eventual send to finish, <i>deadlock can never occur</i>.</p>
+      <p>Finally, note that the eventual send invoked an ordinary object method 
+        (&quot;<tt>moveTo(x,y)</tt>&quot;)in the car. The programmer who created 
+        the <tt>carMaker</tt> defines the cars to have ordinary methods, with 
+        ordinary returns of values (or null if no value need be returned). He 
+        does not know and does not need to know whether objects that invoke those 
+        methods use calls or sends, and does not know or need to know whether 
+        those invoking objects are local or remote. </p>
+      <p>When you make an eventual send to an object (referred to hereafter simply
+        as a <i>send</i>, which contrasts with a <i>call</i> to a local object
+        that waits for the action to complete), even though the action may not
+        occur for a long time, you immediately get back a promise for the result
+        of the action:</p>
+      <blockquote>
+        <pre><span class="keyword">def</span> <span class="defvar">carVow</span> := carMaker &lt;- new(&quot;<span class="litchars">Mercedes</span>&quot;)
+carVow &lt;- moveTo(2,3)</pre>
+      </blockquote>
+      <p>In this example, we have sent the <tt>carMaker</tt> object the &quot;new(name)&quot; 
+        message. Eventually the <tt>carMaker</tt> will create the new car on the 
+        same computer where the <tt>carMaker</tt> resides; in the meantime, we 
+        get back a promise for the car. We can make eventual sends to the promise 
+        just as if it were indeed the car, but we cannot make immediate calls 
+        to the promise even if the <tt>carMaker</tt> (and therefore the car it 
+        creates) actually live on the same computer with the program. To make 
+        immediate calls on the promised object, you must set up an action to occur 
+        when the promise <i>resolves</i>:</p>
+      <blockquote>
+        <pre><span class="keyword">def</span> <span class="defvar">temperatureVow</span> := carVow &lt;- getEngineTemperature()
+<span class="keyword">when</span> (temperatureVow) -&gt; {
+    println(`<span class="litchars">The temperature of the car engine is: </span>$temperatureVow`)
+} <span class="keyword">catch</span> <span class="defvar">e</span> {
+    println(`<span class="litchars">Could not get engine temperature, error: </span>$e`)
+}
+println(&quot;<span class="litchars">execution of the when-catch waits for resolution of the </span>" +
+        &quot;<span class="litchars">promise, but the program moves on immediately to this println</span>&quot;)</pre>
+      </blockquote>
+      <p>We can read the when-catch statement as, &quot;when the promise for a 
+        temperature is resolved, and therefore the temperature is locally available, 
+        perform the main action block... but if something goes wrong, catch the 
+        error in variable e and perform the error block&quot;. Inside the when-catch 
+        statement, we say that the promise has been <i>resolved</i>. In this example, 
+        we have requested the engine temperature from the <tt>carVow</tt>. Eventually 
+        the <tt>carVow</tt> resolves to a car and receives the request for engine 
+        temperature; then eventually the <tt>temperatureVow</tt> resolves into 
+        an actual temperature. The when-catch construct waits for the temperature 
+        to resolve into an actual (integer) temperature, but <i>only</i> the when-catch 
+        construct waits. The program itself does not wait: rather, it proceeds 
+        on, with methodical determination, to the next statement following the 
+        when-catch.</p>
+      <p>The temperature is an integer and is guaranteed to resolve to a local
+        integer object upon which you can make immediate calls, even if the car
+        is remote. Immutable objects, such as integers, floating point numbers,
+        booleans, arrays, and the E data structures ConstLists and ConstMaps,
+        are always <i>passed by copy</i>, so you always get a local copy of the
+        object if one of these is returned by a method call or send. This local
+        copy can of course accept immediate calls. Mutable objects like cars reside
+        on the machine upon which they were constructed. So in general, if you
+        created the car using an eventual send, you will probably have to interact
+        with the car using eventual sends forever, since only such sends are guaranteed
+        to work with remote objects.</p>
+      <blockquote>
+        <pre><span class="keyword">def</span> <span class="defvar">farCar</span> := carMaker &lt;- new(&quot;<span class="litchars">Mercedes</span>&quot;)
+farCar &lt;- moveTo(2,3)
+farCar &lt;- moveTo(5,6)
+farCar &lt;- moveTo(7,3)
+<span class="keyword">def</span> <span class="defvar">fuelVow</span> := farCar &lt;- fuelRemaining()</pre>
+      </blockquote>
+      <p>Here we have created a farCar using an eventual send to the <tt>carMaker</tt>. 
+        Earlier, we declared a variable <tt>temperatureVow</tt>, wherein the suffix 
+        of &quot;<tt>Vow</tt>&quot; was a notational reminder that indeed this 
+        was only a promise, and it could not receive immediate calls except inside 
+        a when-catch construct where the promise would have resolved into an actual 
+        local copy of the temperature. </p>
+      <p>In this example, we use the prefix &quot;far&quot; as a notational reminder 
+        that this car may be (indeed, probably is) executing on a remote machine, 
+        and that consequently we can never make immediate calls to it. It is a 
+        reminder that we will always have to make eventual sends to it for any 
+        interactions we desire. Technically, what we get back immediately from 
+        the <tt>carMaker</tt> is still only a promise, but since the promise and 
+        the farCar both respond identically to sends, and both respond identically 
+        to calls (by throwing an error), we treat it the same as if the promise 
+        had already been resolved to a remote reference, and name the variable 
+        using the remote reference convention. In a real program, the <tt>carMaker</tt> 
+        object would probably be a remote reference as well, and would actually 
+        have the variable name farCarMaker to follow the convention.</p>
+      <p>The example moves the farCar around repeatedly and then asks for the 
+        amount of fuel remaining. This displays another important property of 
+        eventual sends: if object A sends several messages to object B, it is 
+        guaranteed that those messages will arrive and be processed in the order 
+        of sending. This is only a partial ordering, however. From B's point of 
+        view, there are no guarantees that the messages from A will not be interspersed 
+        with messages from C, D, etc. Also, from A's point of view, there are 
+        no guarantees that, if A sends messages to both B and C, the message to 
+        B will resolve before (or after) the message from C, regardless of the 
+        order in which A initiates the messages. Despite those uncertainties, 
+        however, in the example the partial ordering is sufficient to guarantee 
+        that <tt>fuelVow</tt> will resolve to the quantity of fuel remaining after 
+        all three of the moveTo() operations have occurred, and that those moveTos 
+        will have been performed in the specified sequence.</p>
+      <p>There is one reason to use a when-catch construct to resolve the promise
+        for a far object. This reason is to do a test for equality, i.e., to see
+        whether the promised object is the same object you received from another
+        activity:</p>
+      <blockquote> 
+        <pre>def <span class="defvar">farPolePositionCar</span> := raceTrack &lt;- getPolePositionCar()
+<span class="keyword">when</span> (farPolePositionCar) -&gt; {
+    <span class="keyword">if</span> (farPolePositionCar == myCar) {
+        println(&quot;<span class="litchars">My car is in pole position</span>&quot;)
+    }
+} <span class="keyword">catch</span> <span class="defvar">e</span> {}</pre>
+      </blockquote>
+      <p>Note that the catch clause is empty. Because remote references across
+        a network are much less reliable than immediate calls to objects collocated
+        with the program, you will usually want to handle the error case. However,
+        if you have many pending actions with a single remote object, all the
+        catch clauses for all those actions will start up if the connection fails,
+        so you may want to disregard most of the catch clauses and focus on handling
+        the larger problem (loss of connection) in one place. In this example,
+        there is no compelling special action to take if you can't find out whether
+        your car is in pole position, so no action is taken.</p>
+      <p>If you write a function or method that must get values from a far object
+        before returning an answer, your function should return promise for the
+        answer, and fulfill that answer later. You can create your own promises
+        using the Ref.promise() primitive in <i><b><font color="#009000">E</font></b></i>:</p>
+      <blockquote>
+        <pre><span class="keyword">def</span> <span class="defobj">promiseMilesBeforeEmpty</span>(<span class="defvar">farCar</span>) :any{
+    <span class="keyword">def</span> [<span class="defvar">milesBeforeEmptyVow</span>, <span class="defvar">milesBeforeEmptyResolver</span>] := Ref.promise()
+    <span class="keyword">def</span> <span class="defvar">fuelRemaining</span> := farCar &lt;- fuelRemaining()
+    <span class="keyword">def</span> <span class="defvar">milesPerGallonVow</span> := farCar &lt;- efficiency()
+    <span class="keyword">when</span> (milesPerGallonVow) -&gt; {
+        milesBeforeEmptyResolver.resolve(milesPerGallonVow * fuelRemaining)
+    } <span class="keyword">catch</span> <span class="defvar">e</span> {
+        milesBeforeEmptyResolver.smash(`<span class="litchars">Car Lost: </span>$e`)
+    }
+    <span class="keyword">return</span> milesBeforeEmptyVow
+}
+
+<span class="comment"># Somewhere else in the program</span>
+<span class="keyword">def</span> <span class="defvar">milesVow</span> := promiseMilesBeforeEmpty(myCar)
+<span class="keyword">when</span> (milesVow) -&gt; {
+    println(`<span class="litchars">miles before empty = </span>$milesVow`)
+} <span class="keyword">catch</span> <span class="defvar">e</span> {
+    println(`<span class="litchars">Error: </span>$e`)
+}</pre>
+      </blockquote>
+      <p>Once again our example highlights several different features of <i><b><font color="#009000">E</font></b></i>.
+        The basic idea of the example is that the function promiseMilesBeforeEmpty(farCar)
+        will eventually compute the number of miles the car can still travel before
+        it is out of fuel; later in the program, when this computation is resolved,
+        the program will print the value. However, before we can do the computation,
+        we must first get both the fuelRemaining and the milesPerGallon values
+        from the far car.</p>
+      <p>The promise and the resolver for that promise are created as a pair using 
+        the Ref.promise() built-in <i><b><font color="#009000">E</font></b></i> 
+        primitive. They are &quot;normal&quot; variables in the sense that they 
+        can be passed as arguments, returned from methods as answers, and sent 
+        messages: the resolver can even accept immediate calls, though the promise 
+        of course cannot. In this example, the function returns the <tt>milesBeforeEmptyVow</tt> 
+        to the caller just as it would return any other kind of value.</p>
+      <p>To cause the promise to resolve, call the resolver (or send to the resolver
+        if the resolve may be remote to your program) with the &quot;resolve(value)&quot;
+        method. To <i>break</i> the promise (which produces an exception that
+        will cause the catch clause of a when-catch to execute), call the resolver
+        with the &quot;smash(value)&quot; method.</p>
+      <p>The naming conventions used here are worth noticing. The function has
+        the suffix &quot;promise&quot;, informing the user of the function that
+        the function will return a promise rather than an actual value, and the
+        user will therefore have to resolve the promise before using the answer.
+        Also, the parameter for the function has the prefix &quot;far&quot;. We
+        have seen the &quot;far&quot; prefix before, as a reminder to the author
+        not to make immediate calls. Here, as a convention in a parameter list,
+        the &quot;far&quot; prefix has the following deeper implication: by calling
+        the parameter &quot;farCar&quot;, the author of the function is making
+        a commitment to users that nowhere in the function will the author use
+        immediate calls: the author will only interact with the farCar using eventual
+        sends. So the &quot;far&quot; convention in this case is not only a reminder,
+        it can actually act as an important part of the function's contract.</p>
+      <p>Another interesting naming issue arises here: You may have noticed that 
+        the variable fuelRemaining is created using an eventual send. In fact, 
+        at the moment of creation, this variable contains only a promise, not 
+        a value. Our normal convention would be to give this variable a name such 
+        as <tt>fuelRemainingVow</tt>. However, in this case, the fuelRemaining 
+        variable is never used except in the when-catch construct defined shortly 
+        after the creation of the variable. Inside this when-catch construct, 
+        the fuelRemaining promise is guaranteed to have been resolved. How do 
+        we know the promise is resolved, even though the when-catch does not explicitly 
+        resolve the value? Because, as noted earlier, a series of messages sent 
+        to a single remote object by a single program are guaranteed to be processed 
+        (and resolved) in the sequence in which they are sent. Therefore, the 
+        <tt>milesBeforeEmptyVow</tt> cannot resolve until after the fuelRemaining 
+        promise has been fulfilled, and since the <tt>milesBeforeEmptyVow</tt> 
+        is guaranteed to have been fulfilled inside the when-catch, fuelRemaining 
+        is also guaranteed to have been fulfilled. Upon fulfillment of the promise, 
+        the variable containing the promise is itself filled with the actual value. 
+        Therefore, fuelRemaining does indeed contain a value (not a promise) by 
+        the time it is actually used. And as a minor observation, note that inside 
+        the when-catch construct both <tt>milesBeforeEmptyVow</tt> and milesBeforeEmpty 
+        contain the same resolved value.</p>
+      <p>As discussed earlier, though we can guarantee the ordering of messages
+        sent and answers received coming back to a single program from a single
+        object, when a program sends messages to several objects, the order in
+        which answers will be received cannot be predicted. You can nest when-catch
+        clauses to ensure several the resolutions have taken place before doing
+        a computation:</p>
+      <blockquote>
+        <pre><span class="keyword">def</span> <span class="defvar">mercedesDistanceVow</span> := mercedes &lt;- distanceToFinishLine()
+<span class="keyword">def</span> <span class="defvar">chevyDistanceVow</span> := chevy &lt;- distanceToFinishLine()
+<span class="keyword">when</span> (mercedesDistanceVow) -&gt; {
+    <span class="keyword">when</span> (chevyDistanceVow) -&gt; {
+        <span class="keyword">if</span> (chevyDistanceVow &lt; mercedesDistanceVow) {
+            println(&quot;<span class="litchars">Chevy is in the lead</span>&quot;)
+        } <span class="keyword">else</span> {
+            println(&quot;<span class="litchars">Mercedes is in the lead</span>&quot;)
+        }
+    } <span class="keyword">catch</span> <span class="defvar">chevyE</span> {
+        println(&quot;<span class="litchars">Chevy lost</span>&quot;)
+    }
+} <span class="keyword">catch</span> <span class="defvar">mercedesE</span> {
+    println(&quot;<span class="litchars">Mercedes lost</span>&quot;)
+}</pre>
+      </blockquote>
+      <p>Here, to determine which car was leading the race, we had to get the 
+        distance f rom the finish line for each of the cars. We compute the leader 
+        inside nested when-catch constructs to ensure we have all the distances 
+        before trying to compare them. </p>
+      <p>We end this introduction by answering a last, critical question: How 
+        does a program acquire its very first reference to an object on a different 
+        computer? In all our examples up to this point, we have always started 
+        out with a reference to at least one remote object, and we retrieved other 
+        remote objects by asking that object for other objects: for example, we 
+        asked a remote <tt>carMaker</tt> for a new (remote) car, and were able 
+        to immediately work with the car just like any other remote object. How 
+        did we get the reference to the <tt>carMaker</tt> in the first place?</p>
+      <p>In E, the reference to an object can be encoded as a Universal Resource
+        Identifier string, known as a <i>uri</i> (the familiar <i>url</i> of the
+        Web is a type of uri). This uri string can be passed around in many fashions;
+        one good secure way of passing a uri is to save it as a text file, encrypt
+        and sign it with PGP, and send it in email. If you wish to run a seriously
+        secure distributed E system, encrypting the uris is crucial: indeed, the
+        passing of the uris from machine to machine is the main security issue
+        that E cannot address for you. Other ways uris have been passed in operational
+        E systems have been to send the uri over an ssh connection, and (less
+        securely) by reading the uri off over a telephone! If you are using E
+        on a local area network and have no security concerns, but are using E
+        simply because it is simpler, safer, and more maintainable for distributed
+        computing, the uris can be stored in files on a shared file system and
+        read directly by the programs on different computers as they start up.</p>
+      <p>The functions makeURIFromObject(object) and getObjectFromURI(uri) detailed
+        in the E Quick Reference Card perform the basic transformations you need
+        to hook up objects on multiple computers. Each program that expects to
+        work with remote objects needs to invoke the primitive &quot;introducer
+        onTheAir&quot; before starting any remote connections, including the making
+        or using of uris. An example of these functions working together can be
+        found in the Securit-Echat system.</p>
+      <p>The promise architecture described here is the heart of what makes E
+        different. There are no multiple threads, no synchronize statements, no
+        critical objects, no deadlocks. Yet the promise architecture allows the
+        construction of all the different distributed programming behaviors that
+        more conventional architectures allow. The consequence is that distributed
+        systems written in E are more robust and easier to work with-- once you
+        have grasped the implications of promises. However, though this introduction
+        may have taken only 15 minutes, most people will find it takes more time
+        and more thought to fully appreciate the ramifications. As noted at the
+        beginning, the E Quick Reference Card is a compact introduction to all
+        the features of E, and may be the next useful place to go. Beyond that,
+        the Securit-Echat system is a very small but full featured example of
+        E at work, documented in detail for the explicit purpose of being a learning
+        tool.</p>
+      <p>When first using a promise architecture, people often have a sense of
+        breathlessness, a feeling that once they have started a series of remote
+        computations, they have lost control of the action. This sense can actually
+        become a sense of panic if the sense of lost controlled is accompanied
+        by a sense of lost understanding. There are multiple techniques and patterns
+        for &quot;reining in&quot; the remote computations. Several of these can
+        be found in the Securit-Edesk program, including the promiseAllDone function,
+        the vowsMonitorMaker, the Sequencer, and the summoning pattern. Feel free
+        to join the E Language Discussion group if these matters become of serious
+        interest to you.</p>
+      <hr>
+      <h3>Topics Beyond the 15 minute intro, for the full concurrency chapter:</h3>
+      <p>Recursion for multiple when-catch resolutions, calculating lead car if
+        we do not know how many cars there are in the race.</p>
+      <p>promiseAllDone example, both with a loop and with a recursion.</p>
+      <p>Summoning pattern</p>
+      <p>Breathless E, the need for blockAtTop and continueAtTop for a windowed
+        application</p>
+      <p>The whenBroken construct. A promise can only be broken once, however,
+        if the promise is fulfilled with a remote reference, that remote reference
+        can become broken at any time through the loss of the connection.</p>
+      <p>Subtlety that it is objects outside the vat, not outside the computer,
+        that need a remote reference.</p>
+      <p>Data lock possibility, example, explanation of why it is rare.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">intro</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="standalone.html" title="Back to: Standalone E Programs"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Standalone E Programs" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" -->x<!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="object-lambda.html" title="On to: Lambda-Based Objects"><img src="../../images/next.gif" width="64" height="32" alt="On to: Lambda-Based Objects" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

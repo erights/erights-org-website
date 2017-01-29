@@ -1,0 +1,378 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0091)http://web.archive.org/web/19980520232606/www.communities.com/company/papers/dgc/index.html -->
+<HTML><HEAD><TITLE>The Electric Communities Distributed Garbage Collector</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<META content="MSHTML 6.00.2800.1106" name=GENERATOR></HEAD>
+<BODY bgColor=#ffffff>
+<BLOCKQUOTE>
+  <CENTER>
+  <H1>The Electric Communities Distributed Garbage Collector</H1></CENTER>
+  <CENTER>
+    An&nbsp;<A href="http://www.communities.com/index.html"><IMG 
+  src="../e/mini_electric.gif" align=ABSCENTER width="64" height="32"></A> White 
+    Paper
+</CENTER>
+  <P><FONT size=-1><I>Electric Communities has developed a distributed garbage 
+  collector that identifies and collects garbaged objects in a distributed 
+  network, especially those involved in cycles. It uses a unique technology that 
+  can identify these cycles without having to check redundant relationship paths 
+  between the objects; this makes it faster and more efficient than other 
+  garbage collectors. The EC Distributed Garbage Collector works in conjunction 
+  with the local garbage collector on each user's machine, providing a 
+  multi-tiered approach to garbage collection that can work with any distributed 
+  object system.</I></FONT> 
+  <P>
+  <HR>
+
+  <P>In the object-oriented world, garbage collection is a process that 
+  effectively deletes obsolete objects from machine memory. An object becomes 
+  obsolete when it is no longer required or referenced by any other existing 
+  object. However, these obsolete objects continue to tie up the machine's 
+  memory. Accordingly, identifying and collecting these objects is important to 
+  maximize the efficient operation of the machine; if collection of these 
+  objects lags too far behind their obsolescence, overall machine performance 
+  can degrade. 
+  <P>Current solutions to object garbage collection are quite efficient when all 
+  the objects are located on one machine. However, they are not nearly as 
+  effective for a system where objects on different machines are referencing 
+  each other, especially when trying to identify cycles of objects spanning 
+  multiple machines. In contrast, the EC Distributed Garbage Collector (DGC) 
+  provides an economical solution to marking these obsolete cycles of objects 
+  and reclaiming resources among the network. It works with any system of 
+  distributed objects. 
+  <P> 
+  <H2>Terms used in this document</H2>This document presents a summary of the 
+  DGC technology, which is based on identifying and collecting cycles of 
+  objects. It uses the following terms: 
+  <UL>
+    <LI><B>Rooted object.</B> This is an object that is recognized as 
+    persistent, and therefore should not be collected. An example in Java is the 
+    top-level object containing the <TT>main</TT> function code. 
+    <P> </P>
+    <LI><B>Locally rooted object. </B>This is an object referenced by a rooted 
+    object on the same machine. 
+    <P> </P>
+    <LI><B>Remotely rooted object.</B> This is an object referenced only by 
+    objects in remote machines, and all references originate from one or more 
+    locally rooted objects. 
+    <P> </P>
+    <LI><B>Cycles of objects.</B> A cycle of objects involves two or more 
+    objects that reference each other. 
+    <P>&nbsp; 
+    <TABLE cellPadding=2 width="50%" border=0>
+      <TBODY>
+      <TR>
+        <TD><FONT face=arial,helvetica,swiss><FONT size=-1><B>FIGURE 1.</B> A 
+          simple cycle of objects. Object A refers to object B, which refers to 
+          object C, which in turn refers back to object A.</FONT></FONT> 
+          <HR>
+        </TD></TR>
+      <TR>
+          <TD><IMG 
+          src="images/fig1.bmp"></TD>
+        </TR></TBODY></TABLE><p></P>
+    <LI><B>Forward reference graph.</B> This is the hierarchical "layout" of a 
+    rooted object and all the objects that the rooted object references. It 
+    includes all branches of objects that the rooted object refers to, directly 
+    or indirectly. 
+    <TABLE cellPadding=2 width="50%" border=0>
+      <TBODY>
+      <TR>
+        <TD><FONT face=arial,helvetica,swiss><FONT size=-1><B>FIGURE 2.</B> A 
+          forward-reference graph of a rooted object A, containing all objects A 
+          refers to, either directly or indirectly.</FONT></FONT> 
+          <HR>
+        </TD></TR>
+      <TR>
+          <TD><IMG 
+          src="images/fig2.bmp"></TD>
+        </TR></TBODY></TABLE>
+    <LI><B>Inverse reference graph.</B>This is the inverse of a 
+    forward-reference graph, depicting a backward chain of objects that 
+    reference an object. These objects can exist on other machines. 
+    <P>&nbsp; 
+    <TABLE cellPadding=2 width="50%" border=0>
+      <TBODY>
+      <TR>
+        <TD><FONT face=arial,helvetica,swiss><FONT size=-1><B>FIGURE 3.</B> An 
+          inverse reference graph for object A. For purposes of this document, 
+          the first level of objects referring to A is called the primary level. 
+          These objects in turn are referenced by other objects; this is A's 
+          secondary level, and so on.</FONT></FONT> 
+          <HR>
+        </TD></TR>
+      <TR>
+          <TD><IMG 
+          src="images/fig3.bmp"></TD>
+        </TR></TBODY></TABLE>&nbsp;<p></P></LI></UL>
+  <H2>Catching cycles of distributed objects</H2>To maintain optimal 
+  performance, the system needs to identify cycles of objects for garbage 
+  collection. By definition, a cycle of objects becomes a candidate for garbage 
+  collection when none of the objects represent a rooted object, either local or 
+  remote. 
+  <P>Collecting obsolete cycles is important because they can: 
+  <UL>
+    <LI>Maintain unnecessary connections that could be shut down. This is 
+    especially true for implicit connections, where 1) an object A is implicitly 
+    connected to an object C through an object B, and 2) object B then 
+    disconnects. This leaves object A with a now unnecessary connection to 
+    object C. 
+    <P> </P>
+    <LI>Consume resources such as memory and disk space. 
+    <P> </P>
+    <LI>Cause network traffic; even though objects are garbage, they can still 
+    send messages to each other. 
+    <P> </P>
+    <LI>Directly affect scalability, performance and reliability of service 
+    servers. If a specific event generates some cyclical trash, it would not 
+    take many of those events to fill up a server, since they will be constantly 
+    accumulating. Taking the server off-line to remedy the situation could be 
+    unacceptable in a commercial system. 
+    <P>&nbsp;</P></LI></UL>Discovering cycles of objects for collection is 
+  straightforward on a single machine with few objects. However, when cycles 
+  become distributed across multiple machines, catching them with current 
+  solutions is neither easy nor economical. Consider the current 
+  <I>mark-and-sweep</I> and <I>reference counting</I> systems: 
+  <UL>
+    <LI>Mark-and-sweep solutions must first poll every object on every machine 
+    before any object can be declared garbage. This is expensive in a networked 
+    environment, with the expense increasing in direct proportion to the number 
+    of machines on the network. 
+    <P> </P>
+    <LI>Reference counting systems do not even check for cycles of objects at 
+    all. </LI></UL>The DGC technology, in contrast, is geared specifically for a 
+  distributed system, considerably reducing the number of message sent across 
+  the network during a garbage collection cycle. 
+  <H2>How the DGC works</H2>A DGC process uses the following algorithm. 
+  <BR>&nbsp; 
+  <TABLE>
+    <TBODY>
+    <TR>
+      <TD><FONT face=arial,helvetica,swiss><FONT size=-1><B>FIGURE 4.</B> Flow 
+        of a DGC process.</FONT></FONT> 
+        <HR>
+      </TD></TR>
+    <TR>
+      <TD><IMG src="images/fig4.bmp" 
+        border=1></TD>
+    </TR></TBODY></TABLE>&nbsp; 
+  <OL>
+    <LI><B>Process is triggered.</B> The garbage collection process can be 
+    activated by several events: 
+    <P> 
+    <DL>
+      <DD>An object is detected in the network's suspect list (see the following 
+      step). 
+      <P>&nbsp;A preset time period has expired. 
+      <P>&nbsp;An asynchronous event occurs, such as when available memory 
+      becomes critical. 
+      <P>&nbsp;</P></DD></DL>
+    <LI><B>Scan suspect object list. </B>The DGC checks to see if there are any 
+    objects in the suspect object list. An object A can become suspect in two 
+    different ways: 
+    <P> 
+    <DL>
+      <DD>A locally rooted object with remote references both from and to other 
+      objects becomes suspect when it no longer is locally rooted. 
+      <P>&nbsp;A remotely rooted object becomes suspect when it loses one or 
+      more of its remote references.</P></DD></DL>The DGC relies on the local 
+    garbage collector on each machine to determine if an object is suspect. 
+    <P> </P>
+    <LI><B>Transmit rooted-status request to referring objects.</B> If an object 
+    A is marked as suspect, the DGC gives it a unique session identifier. It 
+    then sends a message from object A to all the objects in the primary level 
+    of A's inverse reference graph (that is, all remote objects directly 
+    referring to A--see the inverse reference graph at the beginning of this 
+    document for a visual representation), tagging the message with the 
+    identifier. This message asks each object if it is locally rooted. 
+    <P> </P>
+    <LI><B>Referencing objects process request. </B>A referencing object B 
+    processes the root-status request according to the following rules: 
+    <P> 
+    <DL>
+      <DD>If object B is already processing a request with the same identifier, 
+      it knows the request is redundant, and returns a DISREGARD to object A. 
+      <P>&nbsp;If object B is locally rooted, it returns a YES to object A. 
+      <P>&nbsp;If object B is not locally rooted, it forwards the requests in 
+      turn to all of the objects in its branch of A's inverse reference graph; 
+      that is, the objects in A's secondary level that directly reference B. If 
+      these secondary objects are not locally rooted, they repeat the request 
+      process to their referencing objects in A's tertiary level, and so on. 
+      <P>&nbsp;While B is waiting for its request to resolve, it might receive 
+      the same request message from another object. If this message has the same 
+      identifier, B knows the request is redundant, and returns a DISREGARD to 
+      object A. 
+      <P>&nbsp;If B receives replies from all its referenced objects and none of 
+      them are locally rooted, it returns a DISREGARD to object A. 
+      <P>&nbsp;</P></DD></DL>
+    <LI><B>DGC processes all replies to the suspect object. </B>The DGC 
+    processes the message replies according to the following rules: 
+    <P> 
+    <DL>
+      <DD>If object A received a YES from any of its referenced objects, the DGC 
+      marks it as remotely rooted, and does not collect it. 
+      <P>If object A receives replies from all its objects and none of them are 
+      locally rooted, the DGC marks it as garbage. 
+      <P>&nbsp;</P></DD></DL>In either case, object A is then removed from the 
+    suspect list. 
+    <P> 
+    <P>A major feature of this algorithm is the DISREGARD message. A DISREGARD 
+    signals that a particular object is already processing a root status request 
+    with the same ID number. Therefore, the message does not need to be 
+    forwarded along that particular branch of the suspect object's inverse 
+    reference graph. This lets the DGC know that it can disregard that 
+    particular branch during the evaluation process. Not having to check 
+    redundant object cycle paths can significantly reduce the number of messages 
+    the DGC sends across the network. 
+    <H3>Implementation 
+    <HR>
+    </H3>The DGC works in conjunction with the local garbage collection system. 
+    Its primary focus is on identifying/collecting cycles spanning multiple 
+    machines, and presumes that each machine has some local garbage collection 
+    process to perform the following functions: 
+    <P> 
+    <UL>
+      <LI>Catch and collect isolated obsoleted objects on the local machine. 
+      This includes cycles of objects that exist only on one machine. 
+      <P> </P>
+      <LI>Determine when an object changes local or remote rooted status, 
+      therefore marking it suspect. 
+      <P> </P>
+      <LI>Traverse local reference paths of objects on its machines to help 
+      create the suspect object's inverse reference graph. </LI></UL>This provides 
+    a multi-tiered approach to garbage collection. On the local end, each 
+    participating machine can still take advantage of its garbage collector's 
+    ability to inexpensively clean up local garbage. The network also benefits 
+    from the DGC's cleanup of distributed cycles. 
+    <P>The DGC operates independently of the local garbage collector (see step 1 
+    of the algorithm for events that can trigger a DGC process). Because the DGC 
+    is not responsible for cleaning up garbage for the entire system, you do not 
+    need to run it as frequently. 
+    <H3>Security and reliability 
+    <HR>
+    </H3>The DGC has a number of built-in features that protect the security and 
+    reliability of the distributed environment: 
+    <UL>
+      <LI>Unlike other garbage collectors, the DGC does not let the garbaged 
+      object tell its referenced objects to also destroy themselves. This is an 
+      important security feature on a system with multiple users. 
+      <P> </P>
+      <LI>Conversely, the DGC also does not tell objects pointing to the 
+      garbaged object to destroy themselves automatically, even though by the 
+      algorithm's definition they are also garbage. 
+      <P> </P>
+      <LI>If there is a connection failure on one of the machines in the suspect 
+      object's inverse reference graph, all the remote references to the object 
+      on the failed machine also drop. This in turn makes the object on the 
+      dropped node either 1) garbage (if there were only one reference, which 
+      got dropped with the connection failure), or 2) suspect itself (if there 
+      were multiple references, one of which got dropped with the failed 
+      connection). In the latter situation, the now-suspect object runs its own 
+      DGC process to find out its status. In either situation, the object passes 
+      its status back to the original suspect object. 
+      <P> </P>
+      <LI>The DISREGARD message is a built-in defense against deadlocks. Since 
+      an object replies with a DISREGARD rather than a "wait" message to another 
+      root status request with the same ID, objects do not wait for each other 
+      to furnish a response. </LI></UL><A name=HEADING1-64></A>
+    <H2>Benefits of the DGC</H2>In summary, the DGC provides several notable 
+    features: 
+    <UL>
+      <LI>Identifies and collects garbaged cycles of distributed objects 
+      spanning multiple machines. 
+      <P> </P>
+      <LI>Uses a unique technology that identifies these cycles without having 
+      to check redundant branches of an object's inverse reference graph. 
+      <P> </P>
+      <LI>Works in conjunction with the local garbage collector. This makes it 
+      easy to implement with your current system. It also takes advantage of the 
+      local collector's ability to clean up local garbage inexpensively. 
+      <P> </P>
+      <LI>Works asynchronously with the local garbage collector. It can be 
+      activated independently of the local collector by several criteria; for 
+      example, when a preset time period has expired, or by an asynchronous 
+      event such as when available memory becomes critical. 
+      <P> </P>
+      <LI>Does not rely on polling every object on every machine to identify 
+      suspect objects. Instead, suspect objects are identified locally, which is 
+      much less expensive for the network. 
+      <P> </P>
+      <LI>Prevents deadlock situations with the DISREGARD message. 
+      <P> </P>
+      <LI>Can work with any system of distributed objects. 
+      <P> </P>
+      <LI>Helps maintain the security of the network by preventing 1) an object 
+      targeted for collection from telling other referenced objects to destroy 
+      themselves, and 2) objects pointing to a garbaged object from destroying 
+      themselves automatically. 
+      <P>&nbsp;</P></LI></UL>
+    <H2>How to obtain more information</H2>Electric Communities' Distributed 
+    Garbage Collector can be incorporated into any distributed object system. It 
+    is already implemented with the Java(TM) Garbage Collector as part of the E 
+    runtime. For more information on obtaining the DGC, contact Electric 
+    Communities at the address listed at the end of this document. 
+    <H2>A word about E</H2>E is a set of extensions to Java designed for writing 
+    distributed applications including databases, groupware, publishing systems, 
+    multimedia, and games. E builds upon the Java Virtual Machine. E classes are 
+    very similar to Java classes, and the two can coexist in the same program. 
+    However, an E-object responds only to <I>messages</I> sent by other objects, 
+    rather than using the traditional call/return semantics of Java methods. 
+    When an E-object receives a message, it executes an associated 
+    <I>E-method</I> that defines what to do when the class receives that 
+    message. 
+    <P>E provides some powerful enhancements to Java, including: 
+    <UL>
+      <LI><B>Distributed communication.</B> E features a built-in model for 
+      remote object communications, allowing an object to send messages directly 
+      to objects that exist in other machines. 
+      <P> </P>
+      <LI><B>Capability semantics.</B> E offers a sophisticated security model 
+      that allows convenient but extremely detailed control over sensitive 
+      functions within a single machine or across a network. 
+      <P> </P>
+      <LI><B>Optimistic computation.</B> E implements a powerful method for 
+      reducing the effect of communications latency in distributed systems. 
+      <P>&nbsp;</P></LI></UL>
+    <P>Patent Pending for the EC Distributed Garbage Collector. 
+    <H2>Trademark and contact information</H2>© 1996 Electric Communities 
+    <BR>10101 North De Anza Boulevard, Suite 100 <BR>Cupertino, California 95014 
+    <BR>(408) 342-9500 <BR>http://www.communities.com/ 
+    <P>Electric Communities and the E logo are trademarks of Electric 
+    Communities. Use of the E logo for commercial purposes without the prior 
+    written consent of Electric Communities may constitute trademark 
+    infringement and unfair competition in violation of federal and state laws. 
+    <P>This document is copyrighted by Electric Communities with all rights 
+    reserved worldwide. Under copyright laws, this document may not be copied, 
+    in whole or in part, without the written consent of Electric Communities. 
+    Under the law, copying includes translating into another language. 
+    <P>Java(TM), and HotJava(TM) are trademarks of Sun Microsystems, Inc. 
+    <P>&nbsp;</P></LI></OL></BLOCKQUOTE>
+<SCRIPT language=Javascript>
+<!--
+
+// FILE ARCHIVED ON 19980520232606 AND RETRIEVED FROM THE
+// INTERNET ARCHIVE ON 20030130105251.
+// JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+// ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+// SECTION 108(a)(3)).
+
+   var sWayBackCGI = "http://web.archive.org/web/19980520232606/";
+
+   function xLateUrl(aCollection, sProp) {
+      var i = 0;
+      for(i = 0; i < aCollection.length; i++)
+         if (aCollection[i][sProp].indexOf("mailto:") == -1 &&
+             aCollection[i][sProp].indexOf("javascript:") == -1)
+            aCollection[i][sProp] = sWayBackCGI + aCollection[i][sProp];
+   }
+
+   if (document.links)  xLateUrl(document.links, "href");
+   if (document.images) xLateUrl(document.images, "src");
+   if (document.embeds) xLateUrl(document.embeds, "src");
+
+   if (document.body && document.body.background)
+      document.body.background = sWayBackCGI + document.body.background;
+
+//-->
+</SCRIPT>
+</BODY></HTML>

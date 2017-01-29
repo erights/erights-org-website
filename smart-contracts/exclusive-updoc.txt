@@ -1,0 +1,145 @@
+? def BrandMaker := import:org.erights.e.elang.sealing.Brand
+# value: <statics of org.erights.e.elang.sealing.Brand>
+
+? def NaN := 0.0/0.0
+# value: NaN
+
+? def ExcluderMaker(name) {
+>     def [sealer, unsealer] := BrandMaker pair(name)
+>
+>     def Issuer {
+>         to __printOn(oo) { oo print(`<Exclusives by $name>`) }
+>
+>         to vouch(item) {
+>             unsealer unseal(item getSealed)
+>         }
+>
+>         to makeAssay(myPrecious) {
+>             def AssayPrivate {
+>                 to getPrecious { myPrecious }
+>             }
+>             def Assay {
+>                 to __printOn(oo) {
+>                     oo print(""+`<a $name exclusive on $myPrecious>`)
+>                 }
+>                 to getIssuer { Issuer }
+>                 to getSealed { sealer seal(Assay) }
+>                 to getPrivate { sealer seal(AssayPrivate) }
+>
+>                 to transfer(src, dest) {
+>                     def srcPrivate := unsealer unseal(src getPrivate)
+>                     def destPrivate := unsealer unseal(dest getPrivate)
+>                     if (destPrivate getPrecious != null &&
+>                         destPrivate getPrecious != myPrecious) {
+>
+>                         throw("destination not empty")
+>                     }
+>                     if (srcPrivate getPrecious != myPrecious) {
+>                         throw("precious not in src")
+>                     }
+>                     srcPrivate setPrecious(null)
+>                     destPrivate setPrecious(myPrecious)
+>                     null
+>                 }
+>                 to compareTo(otherAssay) {
+>                     def otherPrivate := unsealer unseal(otherAssay)
+>                     def otherPrecious := otherPrivate getPrecious
+>                     if (myPrecious == otherPrecious) {
+>                         true
+>                     } else if (myPrecious == null) {
+>                         -1.0
+>                     } else if (otherPrecious == null) {
+>                         1.0
+>                     } else {
+>                         NaN
+>                     }
+>                 }
+>             }
+>         }
+>         to makePurse {
+>             def myPrecious := null
+>             def PursePrivate {
+>                 to getPrecious { myPrecious }
+>                 to setPrecious(newPrecious) { myPrecious := newPrecious }
+>             }
+>             def Purse {
+>                 to __printOn(oo) {
+>                     oo print(""+`<a $name excludable to $myPrecious>`)
+>                 }
+>                 to getIssuer { Issuer }
+>                 to getSealed { sealer seal(Purse) }
+>                 to getPrivate { sealer seal(PursePrivate) }
+>
+>                 to getAssay { Issuer makeAssay(myPrecious) }
+>                 to depositFrom(src) {
+>                     def assay := Issuer vouch(src getAssay)
+>                     assay transfer(src, Purse)
+>                     assay
+>                 }
+>
+>                 match [verb, args] {
+>                     E call(myPrecious, verb, args)
+>                 }
+>             }
+>         }
+>     }
+>     def Excluder {
+>         to __printOn(oo) { oo print(`<$name's Excluder>`) }
+>         to getIssuer     { Issuer }
+>         to getSealed     { sealer seal(Excluder) }
+>
+>         to makeExcludable(precious) {
+>             def purse := Issuer makePurse
+>             def pursePrivate := unsealer unseal(purse getPrivate)
+>             pursePrivate setPrecious(precious)
+>             purse
+>         }
+>     }
+> }
+# value: <ExcluderMaker>
+
+? def JoeExcluder := ExcluderMaker("Joe")
+# value: <Joe's Excluder>
+
+? def JoeIssuer := JoeExcluder getIssuer
+# value: <Exclusives by Joe>
+
+? def xPrintlnA := JoeExcluder makeExcludable(println)
+# value: <a Joe excludable to <PrintlnFunc>>
+
+? def xPrintlnB := JoeIssuer makePurse
+# value: <a Joe excludable to null>
+
+? println("hello fundamental instrument")
+hello fundamental instrument
+# value: hello fundamental instrument
+
+? xPrintlnA("hello derivative A")
+hello derivative A
+# value: hello derivative A
+
+? xPrintlnB("hello derivative B")
+# problem: <NoSuchMethodException: run/1>
+
+? xPrintlnB depositFrom(xPrintlnA)
+# value: <a Joe exclusive on <PrintlnFunc>>
+
+? println("hello fundamental instrument")
+hello fundamental instrument
+# value: hello fundamental instrument
+
+? xPrintlnA("hello derivative A")
+# problem: <NoSuchMethodException: run/1>
+
+? xPrintlnB("hello derivative B")
+hello derivative B
+# value: hello derivative B
+
+? println
+# value: <PrintlnFunc>
+
+? xPrintlnA
+# value: <a Joe excludable to null>
+
+? xPrintlnB
+# value: <a Joe excludable to <PrintlnFunc>>

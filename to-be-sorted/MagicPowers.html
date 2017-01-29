@@ -1,0 +1,108 @@
+<HTML>
+
+<HEAD>
+
+<TITLE>Startup</TITLE>
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="GENERATOR" CONTENT="Internet Assistant for Microsoft Word 2.0z">
+</HEAD>
+
+<BODY BGCOLOR="#ffeedd" TEXT="#000000" LINK="#0000FF" VLINK="#800080">
+
+<H1>Magic Powers in The New World Order</H1>
+
+<P>
+<B>Last updated:</B> [98/06/24 Chip]
+<P> <I>This page was written by <I>Chip</I> </I> 
+<P>
+Magic powers were a capability-compatible way to bootstrap access
+to external services, such as file I/O. If a service can be defined
+in advance, the means of initializing it and encapsulating it
+in objects (that is capabilities) can be handled by the TCB directly.
+However, we were also confronted with services which didn't really
+belong inside the core runtime but which nevertheless needed to
+be bootstrapped into the capability world. These services may
+be part of what we think of as the application rather than the
+runtime infrastructure, but they are still part of the TCB.
+<P>
+The Java way to add such services is by attaching them to static
+methods, allowing class names to be used as globals which anybody
+can access. The problem with this is that anybody can access them;
+it is very much not the capability idea at all (this is, in fact,
+the fundamental problem with Java as a capability language - which
+we have thus far devised 3 or 4 different ways to fix!).
+<P>
+So what we did was treat the right to dereference a class name
+as itself a closely held capability. This power was vested in
+the EEnvironment object. Unfortunately, about all you can do with
+a class name in such a case is instantiate an instance of the
+class. So that's what EEnvironment did: the magicPower() method
+accepted a class name and created an instance of that class. The
+newly instantiated object was expected to implement the MagicPowerMaker
+interface, so that its make() method could be called, resulting
+(one hoped) in a new object which was the magic power itself.
+This worked -- it is a general mechanism for creating special-case
+capabilities.
+<P>
+To create a new magic power, you would create a TCB class which
+implemented MagicPowerMaker and give it whatever power it needed
+to instantiate an instance of the special capability itself (typically
+by being inside a package boundary and accessing package-scoped
+constructors). For example, the capability-oriented file package
+was bootstrapped via the class EDirectoryRootMakerMaker, whose
+make() method returned an instance of EDirectoryRootMaker which
+was in turn the magic power from which file access flowed. Typically,
+the magic power class itself would have a static summon() method
+which encapsulated this, so that you didn't have to know the MagicPowerMaker
+class directly (even though it uses a static method, the summon()
+pattern is safe because you need to pass an EEnvironment object
+as a parameter, which you can only get in the first place if you
+are already inside the trust boundary).
+<P>
+The other piece of the magic power story was that the EEnvironment
+would keep a hashtable of the magic powers that had been created
+(indexed by the MagicPowerMaker class name). So the EEnvironment
+was also responsible for maintaining this special bag of root
+level powers. This means that you could always get a power from
+the EEnvironment but the EEnvironment class itself didn't need
+to have any special knowledge about which powers exist (resulting,
+in theory at least, in a better extensibility story).
+<P>
+Oh, and there were some other complications, like the ComparingMagicPower
+interface, which you don't even want to know about, trust me.
+<P>
+As we move into the New World Order Simplicity And Goodness, there
+are three main problems with the magic power approach:
+<OL>
+<LI>It has a lot of mechanism (bloat)
+<LI>It's hard for people to understand (resulting in error and
+amazing cruft)
+<LI>It's awkward and hard to use (resulting in error and in avoidance
+behavior)
+</OL>
+
+<P>
+I also have an aesthetic objection, as the self-appointed Reichschancellor
+of Code Hygiene, to what I call the &quot;Big Bag Of Shit&quot;
+model -- &quot;We don't know how to structure this stuff, so let's
+just dump it all in this BBOS.&quot; Whenever I see a BBOS you
+should just know that I'm going to try to get rid of it. That
+hashtable in EEnvironment is a BBOS (hashtables are a traditional
+BBOS data structure).
+<P>
+So here's the new model for magic powers, which I have incorporated
+with great happiness into the current Boot system:
+<P>
+Magic power classes produce their magic power object via their
+constructor (that is, they <I>are</I> the magic power object).
+The class keeps a private static boolean flag that prevents more
+than one instance of the class from being instantiated. Code in
+the TCB makes sure it calls this constructor before any non-TCB
+code gets invoked. Once the magic power is initialized, it's a
+capability.
+<P>
+Realistically, even though we wanted the collection of magic powers
+to be arbitrarily extensible, the reality is that there is a basic,
+fixed set which really matters. So the EEnvironment knows about
+a fixed collection of magic powers which are cr

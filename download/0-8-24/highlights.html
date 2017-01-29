@@ -1,0 +1,388 @@
+ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Highlights of 0.8.24j</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">download</a>&nbsp;/&nbsp;<a href="index.html">0-8-24</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="swt-support.html" title="On to: SWT Support"><img src="../../images/next.gif" width="64" height="32" alt="On to: SWT Support" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Highlights
+              of 0.8.24j</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p><a href="#kernel-e-changes">Changes to Kernel-E</a></p>
+      <blockquote>
+        <p><a href="#vardef">Variable Definition Patterns<br>
+          </a><a href="#escape">Experimental Extended "<tt>escape</tt>" Expression</a><br>
+          <a href="#scope">Internal Changes to Scope Handling</a></p>
+      </blockquote>
+      <p><a href="#perf">Performance Improvements</a></p>
+      <blockquote>
+        <p align="left"><a href="#call-site">Call-site Caching</a><br>
+          <a href="#smallints">Integers Are Typically Small</a><br>
+          <a href="#nonproxy">Most Objects Aren't a kind of <tt>Proxy</tt></a><tt><br>
+          </tt><a href="#extends">Expanding &quot;<tt>extends</tt>&quot; into
+          Faster Code</a></p>
+      </blockquote>
+      <p align="left"><a href="#easy-return">Preparing for the Proposed &quot;<tt>easy-return</tt>&quot;
+        Style</a></p>
+      <blockquote>
+        <p align="left"><a href="#easy-return-prop">New &quot;<tt>e.enable.easy-return</tt>&quot;
+          Property</a><br>
+          <a href="#uparrow">Unary Prefix &quot;^&quot; for Returning Values</a></p>
+      </blockquote>
+      <p align="left"><a href="#incompat">Non-Upwards Compatible Changes</a></p>
+      <blockquote>
+        <p align="left"><a href="#parseInt">Parsing Integers</a></p>
+      </blockquote>
+      <p align="left"><a href="#rune">Rune improvements</a></p>
+      <blockquote>
+        <p align="left"><a href="#help">--help</a><br>
+          <a href="#src">--src</a></p>
+      </blockquote>
+      <p align="left"><a href="#bugs">Bugs Closed</a></p>
+      <blockquote>
+        <p align="left"><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125575&amp;group_id=16380">E
+          implementation must use StrictMath, not Math</a><br>
+          <a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125576&amp;group_id=16380">FlexSet
+          is untamed</a> <br>
+          <a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125578&amp;group_id=16380">line
+          numbers not reported for some problems</a> <br>
+          <a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125577&amp;group_id=16380">Stack
+          Traces show many stack frames multiple times</a> </p>
+      </blockquote>
+      <hr>
+      <h1><a name="kernel-e-changes"></a>Changes to Kernel-E</h1>
+      <h2><a name="vardef"></a>Variable Definition Patterns</h2>
+      <p>The concept of a SlotGuard has disappeared. Instead, the guard after
+        a &quot;<tt>:</tt>&quot; is now always a <a href="../../javadoc/org/erights/e/elib/slot/ValueGuard.html">ValueGuard</a>.
+        The boundary between <i><b><font color="#009000">E</font></b></i> and
+        Kernel-E has moved:</p>
+      <ul>
+        <li>In Kernel-E, the guard is now optional as well. (It used to default
+          to &quot;<tt>:any</tt>&quot;. If left out, it still acts like &quot;<tt>:any</tt>&quot;,
+          but is visibly distinct.)</li>
+        <li>Besides the old <tt>&lt;name&gt;</tt> and <tt>&quot;var&quot; &lt;name&gt;</tt>
+          patterns, the <tt>&quot;&amp;&quot; name</tt> pattern is now also part
+          of Kernel-E.</li>
+      </ul>
+      <table cellpadding="12">
+        <tr>
+          <td valign="top"> <pre>def x := y</pre></td>
+          <td><tt>x</tt> is a final variable whose permanent value is the current
+            value of <tt>y</tt>.</td>
+        </tr>
+        <tr>
+          <td valign="top"> <pre>def x :int := y</pre></td>
+          <td><p><tt>x</tt> is final variable whose permanent value is the result,
+              if any, of coercing the current value of <tt>y</tt> through the
+              <tt>int</tt> guard. This definition has the same effect as</p>
+            <pre>    (def x := int.coerce(y, null); y)</pre>
+            except that the original will be taken by many meta-level tools (like
+            <a href="../../elang/kernel/auditors/index.html">auditors</a>) to
+            declare approximately the &quot;type&quot; of <tt>x</tt>, whereas
+            the expanded version leaves <tt>x</tt> &quot;untyped&quot;.</td>
+        </tr>
+        <tr>
+          <td valign="top"> <pre>var x := y</pre></td>
+          <td><p><tt>x</tt> is an assignable variable whose initial value is the
+              current value of <tt>y</tt>.</p>
+            <ul>
+              <li><tt>&amp;x</tt> obtains the implicitly-created <a href="../../javadoc/org/erights/e/elib/slot/SimpleSlot.html">SimpleSlot</a>
+                used to hold <tt>x</tt>'s current value.</li>
+              <li><tt>(x := z)</tt> is equivalent to <tt>((&amp;x).setValue(z);
+                z)</tt>, which always succeeds.</li>
+              <li>The expression <tt>x</tt> is equivalent to<tt> (&amp;x).getValue()</tt>,
+                which has no side effects and always succeeds. </li>
+            </ul></td>
+        </tr>
+        <tr>
+          <td valign="top"> <pre>var x :int := y</pre></td>
+          <td><tt>x</tt> is an assignable variable that may only hold the result,
+            if any, of coercing values through the <tt>int</tt> guard. It's initial
+            value is the result of coercing the current value of <tt>y</tt>.
+            <ul>
+              <li><tt>&amp;x</tt> obtains the implicitly-created <a href="../../javadoc/org/erights/e/elib/slot/SettableSlot.html">SettableSlot</a>
+                used to hold <tt>x</tt>'s current value.</li>
+              <li><tt>(x := z)</tt> is equivalent to <tt>((&amp;x).setValue(z);
+                z)</tt>, which stores the coercion, if any, of <tt>z</tt> through
+                <tt>int</tt>. On coercion failure, the value of x is unaffected.</li>
+              <li>The expression <tt>x</tt> is equivalent to<tt> (&amp;x).getValue()</tt>,
+                which has no side effects and always succeeds.</li>
+            </ul></td>
+        </tr>
+        <tr>
+          <td valign="top"> <pre>def &amp;x := y</pre></td>
+          <td><tt>x</tt> is an indirect variable whose slot is the current value
+            of <tt>y</tt>.
+            <ul>
+              <li><tt>&amp;x</tt> obtains this slot.</li>
+              <li><tt>(x := z)</tt> is equivalent to <tt>((&amp;x).setValue(z);
+                z)</tt>, whatever that means according to that slot.</li>
+              <li>The expression <tt>x</tt> is equivalent to<tt> (&amp;x).getValue()</tt>,
+                whatever that means according to that slot.</li>
+            </ul></td>
+        </tr>
+        <tr>
+          <td valign="top"> <pre>def &amp;x :sg := y</pre></td>
+          <td><tt>x</tt> is an indirect variable whose slot is the result, if
+            any, of coercing the current value of <tt>y</tt> though the <tt>sg</tt>
+            guard. This definition has the same effect as
+            <pre>    (def &amp;x := sg.coerce(y, null); y)</pre>
+            except that the original will be taken by many meta-level tools (like
+            <a href="../../elang/kernel/auditors/index.html">auditors</a>) to
+            declare approximately the &quot;type&quot; of <tt>&amp;x</tt>, whereas
+            the expanded version leaves <tt>&amp;x</tt> &quot;untyped&quot;.</td>
+        </tr>
+      </table>
+      <p>See <a href="http://www.eros-os.org/pipermail/e-lang/2003-November/009261.html">the
+        email thread rooted here</a> for more.</p>
+      <h2><a name="escape"></a>Experimental Extended "<tt>escape</tt>" Expression</h2>
+      <p>The new <tt>e.enable.escape-handler</tt> property can be turned on to
+        experiment with the proposed extended <tt>escape</tt> expression.
+      <p>It allows the <tt>escape</tt> expression, and the loop expressions which
+        build on it -- &quot;<tt>while</tt>&quot;, &quot;<tt>for</tt>&quot; --
+        to be optionally followed by an escape-handler. As of the 0.8.24j release,
+        the optional escape-handler is written with the same syntax as the catch-clause
+        of a try-catch block:
+      <pre>    &quot;catch&quot; pattern &quot;{&quot; expression &quot;}&quot;</pre>
+      An <tt>escape</tt> expression with an escape-handler is therefore written
+      as
+      <pre>    escape ejector-pattern {
+        body-expression
+    } catch handler-pattern {
+        handler-expression
+    }</pre>
+      If such an <tt>escape</tt> expression, if the ejector is invoked during
+      the execution of body-expression, body-expression is terminated, the handler-pattern
+      is matched against the argument to the ejector, and the handler-expression
+      is evaluated in the resulting scope.
+      <p> In a <tt>while</tt>-loop or <tt>for</tt>-loop with a escape-handler,
+        if the <tt>break</tt> ejector is called, the loop is exited and the argument
+        to <tt>break</tt> is passed to the handler.</p>
+      <p>See <a href="http://www.eros-os.org/pipermail/e-lang/2003-December/009369.html">the
+        email thread rooted here</a> for more.</p>
+      <h2><a name="scope"></a>Internal Changes to Scope Handling</h2>
+      <p><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125579&amp;group_id=16380"><img src="../../images/bug3.gif" width="34" height="47" border="0" align="right"></a>We
+        have changed the internal representation of Scopes in Kernel-E in order
+        to close out bug &quot;<a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125579&amp;group_id=16380">safeScope
+        Mutability breaks confinement</a>&quot;, and to implement <a href="../../elang/kernel/auditors/index.html">auditors</a>,
+        but neither of these have yet happened.</p>
+      <h1><a name="perf"></a>Performance Improvements</h1>
+      <p>We have now implemented most of the performance imrovements discussed
+        in recent email. For reasons we don't yet understand, we are running about
+        twice as fast as before. While this is nothing to sneeze at, the measurements
+        our measurements had led us to expect a larger improvement.</p>
+      <p>Thanks to Chris Hibbert for providing a benchmark for evaluating the
+        speedup. Unfortunately, this benchmark probably isn't representative.
+        The speedup may be smaller on more typical code.</p>
+      <p>Thanks to Dean Tribble, Tyler Close, and Bill Frantz for various measurements
+        and suggestions.</p>
+      <h2><a name="call-site"></a>Call-site Caching</h2>
+      <p>Familiar from Smalltalk implementations. Each &quot;call site&quot;,
+        i.e., static occurrence of a call-expression in <i><b><font color="#009000">E</font></b></i>
+        source code, now has a call-site-cache, remembering the last method looked
+        up by that call. When this expression is next evaluated, it first does
+        a quick check to see if the cached method is applicable to the new receiver.
+        If so, it branches to the method with no hash table lookups.</p>
+      <h2><a name="smallints"></a>Integers Are Typically Small</h2>
+      <p>Prior to 0.8.24, the <i><b><font color="#009000">E</font></b></i> implementation
+        preferred to keep integers in <a href="../../javadoc/java/math/BigInteger.html">BigInteger</a>
+        form. Now, if it will fit into an Integer, the <i><b><font color="#009000">E</font></b></i>
+        implementation prefers to keep it in <a href="../../javadoc/java/lang/Integer.html">Integer</a>
+        form. If not, then it still uses a BigInteger.</p>
+      <p>In addition, the integers in the range <tt>-128..127</tt> are preallocated.
+        If <i><b><font color="#009000">E</font></b></i> needs to produce an integer
+        in that range, it reuses a preallocated one rather than allocating a new
+        one. Thanks to Greg Nelson for reminding us of this technique (used in
+        some old Lisp implementations). It allows most of the same benefits as
+        tagged pointers, but without needing to fight against the JVM's type system.</p>
+      <h2><a name="nonproxy"></a>Most Objects Aren't a kind of <tt>Proxy</tt></h2>
+      <p>This refers to <tt><a href="http://java.sun.com/j2se/1.3/docs/api/java/lang/reflect/Proxy.html">java.lang.reflect.Proxy</a></tt>,
+        which is the magic Java class used to dynamically implement Java interfaces.
+        Measurement had seemed to indicate that <i><b><font color="#009000">E</font></b></i>'s
+        tables were bottlenecked on <a href="../../javadoc/org/erights/e/elib/ref/Ref.html#resolution(java.lang.Object)">Ref.resolution/1</a>,
+        which was in turn bottlenecked on <a href="http://java.sun.com/j2se/1.3/docs/api/java/lang/reflect/Proxy.html#isProxyClass(java.lang.Class)">Proxy.isProxyClass</a>.
+      </p>
+      <h2><a name="extends"></a>Expanding &quot;<tt>extends</tt>&quot; into Faster
+        Code</h2>
+      <p>See <a href="http://www.eros-os.org/pipermail/e-lang/2003-December/009362.html">the
+        email thread rooted here</a> for an explanation.</p>
+      <p>This &quot;improvement&quot; only resulted in a 1% speedup.</p>
+      <h1><a name="easy-return"></a>Preparing for the Proposed &quot;<tt>easy-return</tt>&quot;
+        Style</h1>
+      <p>The easy-return style was privately suggested by Dean. Dean, could I
+        get you to explain it to the list? (I'll link to it from here.) Thanks.</p>
+      <h2><a name="easy-return-prop"></a>New &quot;<tt>e.enable.easy-return</tt>&quot;
+        Property</h2>
+      <p>The new e.enable.easy-return property has two related effects:</p>
+      <p>It makes a left out method result guard default to the equivalent of
+        <tt>:any</tt>, and it changes the expansion of "<tt>to</tt>" methods into
+        primitive methods so that an explicit return is required to return a non-null
+        value. Whereas
+      <pre>    to foo() { ... }</pre>
+      normally expands to
+      <pre>    method foo() :void { escape __return { ... } }</pre>
+      after a pragma.enable("easy-return"), it instead expands to
+      <pre>    method foo() { escape __return { ...; null } }</pre>
+      <p>As with left-out variable guards, a left-out result guard is now represented
+        as a distinct case in Kernel-E ((internally represented with a null).
+      </p>
+      <p><font color="#FF0000">Until this proposal is accepted, the printed form
+        of Kernel-E is misleading. As seen above, when interpreted as an <i><b>E</b></i>
+        program by current rules, the missing result guard will be taken to be
+        equivalent to <tt>:void</tt> rather than <tt>:any</tt>, which is incorrect.</font></p>
+      <p>This proposal, if accepted, would be non-upwards compatible. Assuming
+        we make this change, the transition plan is to go through a phase where
+        only a more restrictive form of <i><b><font color="#009000">E</font></b></i>
+        is accepted by default -- one that means the same thing under either syntax.
+        In this more restrictive form of <i><b><font color="#009000">E</font></b></i>,
+        result guards are always required, and if non-<tt>:void</tt>, a value
+        must always be returned from a function or to-method by an explicit return.
+        Until the matter is settled, and possibly even afterwards, published papers
+        should stay within this more restrictive style. (See <a href="../../talks/asian03/index.html">Paradigm
+        Regained</a> and the online version of <a href="../../elib/capability/ode/index.html">The
+        Ode</a>.)</p>
+      <h2><a name="uparrow"></a>Unary Prefix &quot;^&quot; for Returning Values</h2>
+      <p>The proposed style requires much more frequent use of the &quot;<tt>return</tt>&quot;
+        keyword -- even more frequent than C or Java, since <i><b><font color="#009000">E</font></b></i>
+        uses lambda evaluation for instantiation. To avoid having this be an noisy
+        syntactic burden, we introduce the unary prefix &quot;<tt>^</tt>&quot;
+        operator as a synonym for &quot;<tt>return</tt>&quot;.</p>
+      <h1><a name="incompat"></a>Non-Upwards Compatible Changes</h1>
+      <h2><a name="parseInt"></a>Parsing Integers</h2>
+      <p>Code that used to say &quot;<tt>&lt;import:java.lang.Integer&gt;.parseInt(string)</tt>&quot;
+        should now say &quot;<tt>__makeInt(string)</tt>&quot;. The new form is
+        not precision limited.</p>
+      <h1><a name="rune"></a>Rune improvements</h1>
+      <h2><a name="help"></a>--help</h2>
+      <p>The &quot;<tt>rune</tt>&quot; command has a somewhat improved help system.
+        Start with</p>
+      <pre>    $ rune --help</pre>
+      <h2><a name="src"></a>--src</h2>
+      <p>The previously reserved &quot;<tt>--src</tt>&quot; option to <tt>rune</tt>
+        is now implemented. If you ask the new help system,</p>
+      <pre>    $ rune --help --src</pre>
+      <p>it says</p>
+      <blockquote>
+        <pre>Help on &quot;--src&quot;:
+
+    $ rune --src.&lt;ext&gt; &lt;src&gt; &lt;arg&gt;*    Interprets &lt;src&gt; as if from a file
+                                       ending in &quot;.&lt;ext&gt;&quot;.
+    $ rune --src       &lt;src&gt; &lt;arg&gt;*    Equivalent to &quot;--src.e &lt;src&gt; &lt;arg&gt;*&quot;.
+
+For example, in a bash shell:
+
+    $ rune --src 'println(interp.getArgs())' foo bar
+    [&quot;foo&quot;, &quot;bar&quot;]
+
+    $ rune --src 'println(help)'       For E command line help.
+
+For help on an individual extension, use &quot;$ rune --help.&lt;ext&gt;&quot;
+For general Rune help, use &quot;$ rune --help&quot;</pre>
+      </blockquote>
+      <h1><a name="bugs"></a>Bugs Closed</h1>
+      <table cellpadding="12">
+        <tr>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125575&amp;group_id=16380">E
+            implementation must use StrictMath, not Math</a></td>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125575&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+        </tr>
+        <tr>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125576&amp;group_id=16380">FlexSet
+            is untamed</a></td>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125576&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+        </tr>
+        <tr>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125578&amp;group_id=16380">line
+            numbers not reported for some problems</a></td>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125578&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+        </tr>
+        <tr>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125577&amp;group_id=16380">Stack
+            Traces show many stack frames multiple times</a></td>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125577&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+        </tr>
+      </table>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">download</a>&nbsp;/&nbsp;<a href="index.html">0-8-24</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="swt-support.html" title="On to: SWT Support"><img src="../../images/next.gif" width="64" height="32" alt="On to: SWT Support" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

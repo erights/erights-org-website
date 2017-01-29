@@ -1,0 +1,33 @@
+
+updoc: started
+
+skipping c:/Documents and Settings/MILLERM1/e/doc/elib/equality/after-both.html
+skipping c:/Documents and Settings/MILLERM1/e/doc/elib/equality/grant-matcher/distrib-grant.html
+skipping c:/Documents and Settings/MILLERM1/e/doc/elib/equality/grant-matcher/history.html
+skipping c:/Documents and Settings/MILLERM1/e/doc/elib/equality/grant-matcher/index.html
+skipping c:/Documents and Settings/MILLERM1/e/doc/elib/equality/index.html
+skipping c:/Documents and Settings/MILLERM1/e/doc/elib/equality/join.html
+skipping c:/Documents and Settings/MILLERM1/e/doc/elib/equality/passing-rules.html
+c:/Documents and Settings/MILLERM1/e/doc/elib/equality/report.txt:
+skipping c:/Documents and Settings/MILLERM1/e/doc/elib/equality/same-object.html
+skipping c:/Documents and Settings/MILLERM1/e/doc/elib/equality/same-ref.html
+[420, "1.1%", "ok org.erights.e.elang.interp.vow$vow0__C$vow1__C#coerce/2"]
+[424, "1.1%", "ok org.erights.e.elang.interp.vow$vow0__C#run/1"]
+[430, "1.1%", "ok BaseGuard#run(ValueGuard)"]
+[549, "1.4%", "ok org.erights.e.tools.updoc.makeHashCache$makeHashCache__C$1#run/2"]
+[549, "1.4%", "ok static EInt#fromString64(String)"]
+[550, "1.4%", "ok FlexMap#put(Object, Object)"]
+[561, "1.4%", "ok static Ref#isFar(Object)"]
+[630, "1.6%", "ok Resolver#resolve(Object)"]
+[630, "1.6%", "ok static Ref#promise()"]
+[764, "2.0%", "ok static BooleanSugar#not()"]
+[769, "2.0%", "ok org.erights.e.elib.slot.near$near0__C#coerce/2"]
+[943, "2.4%", "ok Equalizer#sameEver(Object, Object)"]
+[1357, "3.5%", "ok static Ref#isNear(Object)"]
+[3845, "9.9%", "ok FlexList#append(EList)"]
+[3845, "9.9%", "ok FlexList#push(Object)"]
+[3845, "9.9%", "ok org.erights.e.tools.updoc.makeHashCache$makeHashCache__C$hashCache__C$1#run/2"]
+[3845, "9.9%", "ok static BigIntegerSugar#toString64()"]
+[5729, "14.8%", "ok static ConstList#match(String, ConstList)"]
+Call site cache hits: 30256 misses: 754 (98%)
+Run after initialization: 5749 ms

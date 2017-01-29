@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>API Legend</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">legacy</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="taming.html" title="Back to: A Theory of Taming"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: A Theory of Taming" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="joe-e/index.html" title="On to: Joe-E --or-- Look ma, no language!"><img src="../../images/next.gif" width="64" height="32" alt="On to: Joe-E --or-- Look ma, no language!" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>API 
+              Legend</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <P ALIGN="left">Adapted from <a href="http://www.eros-os.org/pipermail/e-lang/2002-September/007679.html"><i>Announcing 
+        E 0.8.20t: A preview of a real 0.8.20</i></a>: 
+      <P ALIGN="left">The new javadoc-umentation is now posted <a href="../../javadoc/index.html">here</a>, 
+        and represents real progress towards edoc. This documentation includes 
+        all the public interface of Java code available to the ELib programmer, 
+        both from the E implementation itself, and for each java or SWT package 
+        which contains any tamed class. Besides the normal javadoc info, these 
+        pages also reflect the taming of the API. (I should be able to include 
+        doc-comments extracted from E code soon, but not quite yet.) 
+      <p> Each class or interface is annotated with an initial bold italic color-coded:</p>
+      <ul>
+        <li>
+          <p>&quot;<b><i><font color="#009000">Safe:</font></i></b>&quot; -- if 
+            the class is importable via the <tt>import__uriGetter</tt>, ie, by 
+            an expression of the form <tt>&lt;import:...&gt;</tt> A class should 
+            only be declared Safe when it's enabled (see below) constructors and 
+            static members provide no ability to effect or be effected by the 
+            world outside the invoking object (ie, provide no &quot;authority&quot; 
+            as we define the term). If you see any questionable Safe declarations, 
+            please ask. Our security rests on not making errors of inclusion here. 
+            Note: the AWT and Swing classes currently declared Safe will be reclassified 
+            into a new category, since we don't ever expect to completely tame 
+            these.</p>
+        </li>
+        <li>
+          <p>&quot;<b><i><font color="#FF0000">Unsafe:</font></i></b>&quot; -- 
+            if the class is importable via the <tt>unsafe__uriGetter</tt>, ie, 
+            by an expression of the form <tt>&lt;unsafe:...&gt;</tt> A class should 
+            only be declared Unsafe when there's a clear theory of the authority 
+            provided by its enabled constructors and static members, and when 
+            these have been tamed in accordance with this theory.</p>
+        </li>
+        <li>
+          <p>&quot;<b><i><font color="#FF00FF">Untamed:</font></i></b>&quot; -- 
+            if this class has not been tamed. Currently, such classes are still 
+            importable via <tt>&lt;unsafe:...&gt;</tt>, but this will eventually 
+            be controlled by a properties setting, with the default being for 
+            untamed classes to be unimportable. However, we can't make this change 
+            until we make it <i>much</i> easier to tame existing classes.</p>
+        </li>
+      </ul>
+      <p> Each member (method, constructor, or field) is annotated with an initial:</p>
+      <ul>
+        <li> 
+          <p>&quot;<b><font color="#009000"><i>Enabled:</i></font></b>&quot; -- 
+            if this member is visible both to Java clients and to E/ELib clients. 
+            A member should only be enabled if it follows capability discipline. 
+            For a constructor or static member, this means it provides no more 
+            authority than is thought to be provided by the imported class (the 
+            class' maker). For an instance member, this means it provides no more 
+            authority than is thought to be provided by an instance.</p>
+        </li>
+        <li> 
+          <p>&quot;<b><i><font color="#FF0000">Suppressed:</font></i></b>&quot; 
+            -- if the member is not visible to the E-language programmer, nor 
+            to the ELib programmer via the ELib invocation mechanisms (E.call(...), 
+            E.send(...), etc). These are still accessible to the Java programmer, 
+            and therefore to the ELib programmer when using Java's &quot;.&quot; 
+            operator.</p>
+        <li> 
+          <p>&quot;<b><font color="#009000"><i>Added:</i></font></b>&quot; -- 
+            if the member is directly visible to the E/ELib programmer as if it 
+            were a member of the class, though it's actually a static public member 
+            of a sugaring class. The Java programmer must invoke these indirectly 
+            by calling the static member instead. For example using <a href="../../javadoc/java/awt/Component.html#transferFocus(java.awt.Component%5B%5D,java.awt.Component)">Component.transferFocus(Component[], 
+            Component)</a> the E-language programmer can say</p>
+          <blockquote> 
+            <pre>def makeComponent := &lt;import:java.awt.Component&gt;
+makeComponent.transferFocus(oldComponents, newComponent)</pre>
+          </blockquote>
+          <p> whereas the Java programmer would say</p>
+          <blockquote> 
+            <pre>import org.erights.e.meta.java.awt.ComponentMakerSugar;
+ComponentMakerSugar.transferFocus(oldComponents, newComponent);</pre>
+          </blockquote>
+          <p> For an added instance method, like <a href="../../javadoc/java/awt/Component.html#iterate(org.erights.e.elib.tables.AssocFunc)">Component.iterate(AssocFunc)</a> 
+            the Java programmer would provide the receiver as first argument to 
+            the static method:</p>
+          <blockquote>
+            <pre>import org.erights.e.meta.java.awt.ComponentSugar;
+ComponentSugar.iterate(component, assocFunc);</pre>
+          </blockquote>
+      </ul>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">legacy</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="taming.html" title="Back to: A Theory of Taming"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: A Theory of Taming" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="joe-e/index.html" title="On to: Joe-E --or-- Look ma, no language!"><img src="../../images/next.gif" width="64" height="32" alt="On to: Joe-E --or-- Look ma, no language!" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

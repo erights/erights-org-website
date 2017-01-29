@@ -1,0 +1,521 @@
+<html>
+
+<head>
+<title>DivX Movies - Download Movies</title>
+<meta name="description" content="Want to download movies still in theaters as well as movies out on DVD from the net? We can show you how!">
+<meta name="keywords" content="divx,movies,divx movies,download movies,movie downloads">
+<meta name="copyright" content="2002 DivXMovies.com. All rights reserved. Duplication of any content on this site is strictly prohibited.">
+<link rel="shortcut icon" href="/divxmovies.ico">
+<link rel="stylesheet" href="/divxmovies.css" type="text/css">
+<script language="javascript" type="text/javascript"><!--
+if(window != top) { top.location.href = location.href; }
+//--></script>
+</head>
+
+<body >
+
+<table width="100%" cellpadding=0 cellspacing=0 bgcolor="#eeeeee" border=0>
+<tr>
+	<td class="middle" nowrap>
+		<a href="http://www.divxmovies.com/"><img src="/images/logo_grey.gif" width=500 height=60 border=0 alt="DivX Movies"></a><br>
+	</td>
+	<td>
+		<br>
+	</td>
+</tr>
+</table>
+
+<table width="100%" cellpadding=3 cellspacing=0 bgcolor="#7299b9" border=0>
+<tr>
+	<td nowrap>
+		<br>
+	</td>
+	<td width="100%">
+		<br>
+	</td>
+	<td nowrap>
+		<font color="#ffffff"><b>
+		January 30, 2003		&nbsp;&nbsp;</b></font>
+	</td>
+</tr>
+</table>
+
+<table width="100%" cellpadding=0 cellspacing=0 border=0 bgcolor="#ffffff">
+<tr>
+	<td height=18 colspan=7>
+		<br>
+	</td>
+</tr>
+<tr>
+	<td width="1%">
+		<br>
+	</td>
+	<td width="15%">
+		<table width="100%" cellpadding=3 cellspacing=0 bgcolor="#7299b9" border=0>
+<tr>
+	<td nowrap>
+		<font color="#ffffff"><b>Menu</b></font>
+	</td>
+</tr>
+</table>
+
+<table width="100%" cellpadding=3 cellspacing=0 bgcolor="#eeeeee" border=0>
+<tr>
+	<td>
+		<br>
+		<b>&nbsp;&middot;&nbsp;</b><a href="/">Home</a><br>
+		<b>&nbsp;&middot;&nbsp;</b><a href="/introduction/">What is DivX?</a><br>
+		<b>&nbsp;&middot;&nbsp;</b><a href="/codec/">DivX Codec</a><br>
+		<b>&nbsp;&middot;&nbsp;</b><a href="/faq/">DivX FAQ</a><br>
+		<b>&nbsp;&middot;&nbsp;</b><a href="/software/">DivX Software</a><br>
+		<b>&nbsp;&middot;&nbsp;</b><a href="/guides/">DivX Guides</a><br>
+<!--		<b>&nbsp;&middot;&nbsp;</b><a href="/trailers/">DivX Trailers</a><br> -->
+		<b>&nbsp;&middot;&nbsp;</b><a href="/subtitles/">DivX Subtitles</a><br>
+		<b>&nbsp;&middot;&nbsp;</b><a href="/movies/">Download Movies</a><br>
+		<b>&nbsp;&middot;&nbsp;</b><a href="/forums/">Forums</a><br>
+		<b>&nbsp;&middot;&nbsp;</b><a href="/links/">Links</a><br>
+		<br>
+	</td>
+</tr>
+</table>
+<br>
+		<table width="100%" cellpadding=3 cellspacing=0 bgcolor="#7299b9" border=0>
+<tr>
+	<td nowrap>
+		<font color="#ffffff"><b>Site</b></font>
+	</td>
+</tr>
+</table>
+
+<table width="100%" cellpadding=3 cellspacing=0 bgcolor="#eeeeee" border=0>
+<tr>
+	<td>
+		<br>
+		<b>&nbsp;&middot;&nbsp;</b><a href="#" onclick="javascript: window.external.AddFavorite('http://www.divxmovies.com/','DivX Movies')">Bookmark us</a><br>
+		<b>&nbsp;&middot;&nbsp;</b><a href="/links/#link_to_us">Link to us</a><br>
+		<b>&nbsp;&middot;&nbsp;</b><a href="/links/#link_exchange">Link exchange</a><br>
+		<b>&nbsp;&middot;&nbsp;</b><a href="/press/">Press inquiries</a><br>
+		<b>&nbsp;&middot;&nbsp;</b><a href="/privacy/">Privacy policy</a><br>
+		<b>&nbsp;&middot;&nbsp;</b><a href="/contact/">Contact us</a><br>
+		<br>
+	</td>
+</tr>
+</table>
+<br>
+		<table width="100%" cellpadding=3 cellspacing=0 bgcolor="#7299b9" border=0>
+<tr>
+	<td nowrap>
+		<font color="#ffffff"><b>Members</b></font>
+	</td>
+</tr>
+</table>
+
+<table width="100%" cellpadding=3 cellspacing=0 bgcolor="#eeeeee" border=0>
+<tr>
+	<td>
+		<br>
+		<b>&nbsp;&middot;&nbsp;</b><a href="/members/">Members login</a><br>
+		<b>&nbsp;&middot;&nbsp;</b><a href="/movies/">Become a member</a><br>
+		<br>
+	</td>
+</tr>
+</table>
+<br>
+		<br><br><br><br><br>
+	</td>
+	<td width="3%">
+		<br>
+	</td>
+
+	<td>
+		<table width="100%" cellpadding=0 cellspacing=0 border=0>
+		<tr>
+			<td>
+				<table width="100%" cellpadding=3 cellspacing=0 bgcolor="#7299b9" border=0>
+				<tr>
+				        <td nowrap>
+				                <font color="#ffffff"><b>Download Movies</b></font>
+				        </td>
+				</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<br>
+
+
+
+<center>
+<h1>Want to download movies still in theaters as well as movies out on DVD from the net? We can show you how!</h1>
+</center>
+<br><br><br><br>
+
+<center>
+<h2><font color="#333399">Are you having problems finding movies on the net?</font></h2>
+</center>
+
+<p class="text">
+	You've probably heard of people downloading DivX movies from the net, but no sites actually
+	show you how to do it. If you've tried searching the web for movies you know that all
+	you will find is <b>banners, popups and top list sites</b> which have you going in circles, and
+	when you finally get to the movies the links never work.
+	<br><br>
+
+	While we can't offer you movie downloads, we can show you <b>how to find and download movies
+	from the net for free</b>. All that is needed is a computer which is fast enough to play
+	DivX movies (Pentium 300MHz or better) and a fast internet connection to download them
+	(Cable, DSL or better).
+</p>
+<br><br><br><br>
+
+
+
+<center>
+<h2><font color="#333399">Now you have the chance to learn how to find and download movies!</font></h2>
+</center>
+
+<p class="text">
+	Inside you will find information about all the <b>best programs for downloading movies</b>,
+	along with easy to follow guides which show you how to use the programs. Whether you are a
+	beginner or an experienced user we think that we have can provide you with the best solution
+	for your needs.
+	<br><br><br>
+</p>
+
+<center>
+<a href="/images/screenshot.jpg"><img src="/images/tn_screenshot.jpg" width=468 height=290 border=0 alt="Click on the picture for a full-size version"></a><br>
+<i>Example search for "divx" using one of the programs you will learn how to use.</i><br>
+<i>Click on the picture for a full-size version.</i>
+</center>
+<br><br>
+
+<p class="text">
+	For beginners the easiest way to find and download DivX movies is using file-sharing
+	programs. Despite the downfall of Napster, file-sharing is stronger than ever and
+	it is estimated that during the month of March 2002, over <b>three billion files</b> were
+	downloaded from file-sharing networks. Since it is possible to share any type of file,
+	you will find <b>movies, music, games, software, porn</b> and just about anything.
+	<br><br>
+
+	For experienced users who have mastered file-sharing and want an even more powerful way
+	to get DivX movies, we've written a comprehensive guide how to find and download movies using IRC.
+	This is the way the pro's use to get all their movies. It is a bit more complicated to learn,
+	but it truly is the <b>best way to find and download movies</b>.
+	<br><br>
+
+	<b>Why waste time searching for movies when you could be downloading instead?</b>
+	Join now and learn how to find and download movies. It's so easy anyone can do it.
+</p>
+<br><br><br><br>
+
+
+
+<center>
+<h2><font color="#333399">Membership benefits</font></h2>
+</center>
+
+<p class="text">
+	
+	You can now <b>become a member for only $19.95!</b> Because of the very low price
+	we can only guarantee this price for today. The fee is a one-time fee, so you don't
+	have to worry about getting stuck with a monthly membership you have to cancel.
+	<b>There are no monthly fees or hidden charges</b>.
+</p>
+<br>
+
+<li>Instant access
+<li>Guides how to find and download movies
+<li>Guides how to install, configure and use the required programs
+<li>Lifetime membership
+<li>Free updates
+<li>Support
+<br><br>
+
+<p class="text">
+	<b>All of the above is included in the lifetime membership fee</b>.
+	If you have any questions about becoming a member, feel free to <a href="/sales/">contact us</a>
+	for more information. If you have decided not to join, please <a href="/feedback/">let us know why</a>.
+</p>
+<br><br><br><br>
+
+
+
+<center>
+<h2><font color="#333399">Get instant access using your credit card, debit card or a check.</font></h2>
+</center>
+
+<table width="100%" cellpadding=0 cellspacing=0 border=0>
+<tr>
+	<td width="25%" align=center>
+		<img src="/images/cc/amex.gif" alt="American Express">
+	</td>
+	<td width="25%" align=center>
+		<img src="/images/cc/visa.gif" alt="Visa">
+	</td>
+	<td width="25%" align=center>
+		<img src="/images/cc/mastercard.gif" alt="MasterCard">
+	</td>
+	<td width="25%" align=center>
+		<img src="/images/cc/discover.gif" alt="Discover">
+	</td>
+</tr>
+<tr>
+	<td align=center>
+		<b>American Express</b>
+	</td>
+	<td align=center>
+		<b>Visa</b>
+	</td>
+	<td align=center>
+		<b>MasterCard</b>
+	</td>
+	<td align=center>
+		<b>Discover</b>
+	</td>
+</tr>
+</table>
+<br>
+
+<p class="text">
+	To become a member you first have to provide us with your e-mail address and select a
+	password you want to use to login to the members section. After you've submitted
+	this information you will be taken to <a href="http://www.clickbank.com/">ClickBank</a>,
+	which handles the billing. <b>All payment details are encrypted and processed through
+	a secure server</b>. As soon as your payment has been accepted you will get an
+	e-mail confirmation with instructions how to access the members section.
+</p>
+<br><br>
+
+<center>
+<form method=post action="http://www.divxmovies.com/cgi-bin/join.cgi">
+<table cellpadding=0 cellspacing=0 border=0>
+<tr>
+	<td width=160 class="middle">
+		E-mail address<br>
+	</td>
+	<td align=right>
+		<input type=text size=38 name=email1><br>
+	</td>
+</tr>
+<tr>
+	<td width=160 class="middle">
+		E-mail address (confirm)<br>
+	</td>
+	<td align=right>
+		<input type=text size=38 name=email2><br>
+	</td>
+</tr>
+<tr>
+	<td width=160 class="middle">
+		Password<br>
+	</td>
+	<td align=right>
+		<input type=password size=38 name=password1><br>
+	</td>
+</tr>
+<tr>
+	<td width=160 class="middle">
+		Password (confirm)<br>
+	</td>
+	<td align=right>
+		<input type=password size=38 name=password2><br>
+	</td>
+</tr>
+</table>
+<br>
+
+<table cellpadding=0 cellspacing=0 border=0>
+<tr>
+	<td class="middle">
+		I have read and accept the <a href="/terms/" target=parent>Terms and conditions</a>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	</td>
+	<td align=right>
+		Yes <input type=radio name=accept value=1>&nbsp;
+		No <input type=radio name=accept value=0>
+	</td>
+</tr>
+<tr>
+	<td colspan=2 align=right>
+		<br>
+		<input type=submit name=submit value="Submit">
+		<input type=reset name=reset value="Clear">
+	</td>
+</tr>
+</table>
+</form>
+</center>
+<br><br><br>
+
+
+
+			</td>
+		</tr>
+		</table>
+
+		<br><br><br><br><br>
+	</td>
+
+	<td width="3%">
+		<br>
+	</td>
+	<td width="15%">
+		
+<table width="100%" cellpadding=3 cellspacing=0 bgcolor="#7299b9" border=0>
+<tr>
+	<td nowrap>
+		<font color="#ffffff"><b>Community</b></font>
+	</td>
+</tr>
+</table>
+
+<table width="100%" cellpadding=3 cellspacing=0 bgcolor="#eeeeee" border=0>
+<tr>
+	<td>
+		<br>
+&nbsp;Members: <b>9012</b><br>&nbsp;Movies: <b>199906</b><br>	</td>
+</tr>
+<tr>
+	<td align=center>
+		<form action="/community/index.php" method="POST">
+		<table width="95%" cellpadding=0 cellspacing=0 border=0>
+		<tr>
+			<td>
+				<br>
+				<b>Handle</b>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input type=text name="username" maxlength=20 style="width: 100%">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<b>Password</b>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input type=password name="password" maxlength=20 style="width: 100%">
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2 align=right>
+				<input type=submit name="submit1" style="font-size: 75%" value=" Login ">
+			</td>
+		</tr>
+		</table>
+		</form>
+
+		<a href="/community/join.php">Join the community</a><br>
+		<br>
+	</td>
+</tr>
+</table>
+
+<br>
+		
+<table width="100%" cellpadding=3 cellspacing=0 bgcolor="#7299b9" border=0>
+<tr>
+	<td nowrap>
+		<font color="#ffffff"><b>Search movies</b></font>
+	</td>
+</tr>
+</table>
+
+<table width="100%" cellpadding=3 cellspacing=0 bgcolor="#eeeeee" border=0>
+<tr>
+	<td align=center>
+		<br>
+		<form action="/search/index.php" method="POST">
+
+		<table width="95%" cellpadding=0 cellspacing=0 border=0>
+		<tr>
+			<td colspan=2>
+				<b>Keywords</b>
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2>
+				<input type="text" name="keyword" style="width: 100%">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<select name="type">
+				<option value="Any">
+				<option value="DivX" selected>DivX
+				<option value="XviD">XviD
+				<option value="VCD">VCD
+				<option value="SVCD">SVCD
+				</select>
+			</td>
+			<td align=right>
+				<input type="submit" name="search" style="font-size: 75%" value=" Search "><br>
+			</td>
+		</tr>
+		</table>
+		</form>
+	</td>
+</tr>
+</table>
+<br>
+		<table width="100%" cellpadding=3 cellspacing=0 bgcolor="#7299b9" border=0>
+<tr>
+	<td nowrap>
+		<font color="#ffffff"><b>Poll</b></font>
+	</td>
+</tr>
+</table>
+
+<table width="100%" cellpadding=0 cellspacing=0 bgcolor="#eeeeee" border=0>
+<tr>
+	<td align=center>
+		<br>
+		<form action="http://www.divxmovies.com/cgi-bin/vote.cgi" method=POST>
+		<table cellpadding=0 cellspacing=0 border=0>
+		<tr>
+			<td>
+				<b>Preferred movie format?</b><br>
+
+				<p style="font-size: 11px">
+					<input type="radio" name="vote" value="1">DivX<br>
+					<input type="radio" name="vote" value="2">XviD<br>
+					<input type="radio" name="vote" value="3">SVCD<br>
+					<br>
+				</p>
+			</td>
+		</tr>
+		</table>
+
+		<input type="submit" name="votebutton" style="font-size: 75%" value=" Vote ">
+		<input type="submit" name="resultsbutton" style="font-size: 75%" value=" Results ">
+		</form>
+	</td>
+</tr>
+</table>
+<br>
+		<br><br><br><br><br>
+	</td>
+	<td width="1%">
+		<br>
+	</td>
+</tr>
+</table>
+
+<table width="100%" cellpadding=0 cellspacing=0 border=0>
+<tr>
+	<td height=80 class="middle" align=center>
+		<small>
+		DivX is a trademark of <a href="http://www.divxnetworks.com/">DivXNetworks</a>, and used with permission.<br>
+		&copy; 2000-2003 DivXMovies.com. All rights reserved.<br>
+		</small>
+	</td>
+</tr>
+</table>
+
+</body>
+</html>
+

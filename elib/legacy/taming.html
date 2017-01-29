@@ -1,0 +1,203 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>A Theory of Taming</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">legacy</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="api-legend.html" title="On to: API Legend"><img src="../../images/next.gif" width="64" height="32" alt="On to: API Legend" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><B><FONT SIZE="7">A
+              Theory of Taming</FONT><p>
+              <font size="5"><i>Retroactive Theories are Seldom Sound</i><br>
+              --Norm Hardy</font></B><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p ALIGN="left"><i>(We recommend reading <a href="http://www.combex.com/papers/darpa-review/security-review.html#taming">Taming
+        the Java Interface</a> first.)</i></p>
+      <hr>
+      <P ALIGN="left">Despite Norm's insightful caution, taming is about the construction
+        of retroactive theories. Taming works when the retroactive theories are
+        sound <i>enough</i>. A proper theory of taming requires us to identify
+        when we should and should not expect to be able to create sound retroactive
+        theories.
+      <P ALIGN="left">Work on taming to date has been on taming the Java API in 
+        order to obtain, in effect, a capability-oriented class library for <i><b><font color="#009000">E</font></b></i>. 
+        (Though the same principle should apply for other libraries.) Other approaches 
+        to creating such a library are 1) creating one from scratch, or 2) wrapping 
+        the Java API in a wholly new API. While both of these approaches are likely 
+        safer than taming, they are also a lot more work -- in the case of user 
+        interface toolkits, unaffordably more work. The capability-approach to 
+        API design is the theory being retroactively imposed, and the Java APIs 
+        are the system they are being imposed on -- a system not designed according 
+        to capability principles. 
+      <P ALIGN="left">We expected to largely succeed at taming Java APIs, and
+        we largely have succeeded; modulo the many problems pointed out by the
+        <a href="http://www.combex.com/papers/darpa-review/security-review.html#taming">Taming
+        the Java Interface</a> section of the Darpa Security Review. Why was much
+        success possible in this area? Because well-done, highly modular object
+        design already often resembles good capability design. Where the Java
+        APIs were better by normal oo design principles, they were generally easy
+        to tame. Where they weren't, it was often a mistake to try to tame them.
+        On our next pass over the Java API, we will either wrap (KeyMap) or reimplement
+        (HTML Widget) these, rather than trying to tame them.
+      <P ALIGN="left">There are two kinds of properties that a well designed capability-oriented
+        API written in a capability language would have -- <i>imposed properties</i>
+        and <i>designed properties</i>. Taming should result in an API exhibiting
+        the equivalent of both of these properties.
+      <h1 ALIGN="left">Imposed Properties</h1>
+      <p ALIGN="left">Were the system to be tamed instead written in a capability
+        language, each object would have a certain measure of capability discipline
+        imposed on it, independent of its internal workings. Specifically, it
+        would have some limited set of capabilities it could wield, which determine
+        the limits on the authorities it can exercise. Our first retroactive theory
+        component is to assign to each object a theory of what capabilities it
+        is assumed to be able to hold. When the tamer (the human making taming
+        decisions) has access to the implementation, the object's instance variables
+        (as tamed according to their imposed and designed properties, see below)
+        are often a good initial draft of this theory, to be refined according
+        to other considerations.</p>
+      <p ALIGN="left">Once such a fictional assignment of authority to an object 
+        is made, the first and simplest taming decision is to simply disallow 
+        any methods on its interface that could cause it to exceed its theorized 
+        authorities. For example, <i><b><font color="#009000">E</font></b></i> 
+        disallows <tt><a href="../../javadoc/java/lang/Boolean.html#getBoolean(java.lang.String)">Boolean.getBoolean(String)</a></tt> 
+        because this can only be implemented by access to the System properties, 
+        and such access exceeds the authorities presumed to be held by the tamed 
+        <tt>&lt;import:java.lang.Boolean&gt;</tt>.</p>
+      <h1 ALIGN="left">Designed Properties</h1>
+      <p ALIGN="left">Each object reference to a tamed object is a capability.
+        As a capability, it provides its client (an object holding it) some authority
+        -- the ability to effect or be effected by the world outside of oneself
+        that the client doesn't otherwise necessarily have. Our second retroactive
+        theory component is to say, for each object type, what authority it provides.
+        This must be a simple and intuitive statement that programmers can think
+        in terms of when using a capability to such an object, and especially
+        when deciding to hand this capability to something else. This statement
+        should also not exceed in authority what a programmer would naturally
+        guess without reading the documentation, though it can be a subset of
+        the natural guess.</p>
+      <p ALIGN="left">Once such a fictional theory of the authority provided by
+        a kind of object is determined, then all methods which would allow a client
+        to exceed this fiction must be diallowed.</p>
+      <h3 ALIGN="left">The File Example</h3>
+      <p ALIGN="left">The taming of <tt><a href="../../javadoc/java/io/File.html">java.io.File</a></tt> 
+        is the clearest example of why taming according to imposed properties 
+        is insufficient. <tt>java.io.File</tt> objects represent files or directories 
+        in the directory tree of a file system. If these <tt>File</tt> objects 
+        were interpreted as capabilities, then it would be as if each designated 
+        a place in the file system, but each gave access (by navigation) to the 
+        whole file system. Since one can indeed build such a file system abstraction 
+        in a pure capability system, an analysis purely in terms of imposed properties 
+        will not fix the situation.</p>
+      <p ALIGN="left">However, though the above design is possble in a capability
+        system, it isn't a capability-oriented design. Just as the design of the
+        file system itself provides for the division of storage into a named hierachy,
+        a capability-oriented design should leverage this to provide a corresponding
+        division of the right to access this storage. Starting from the existing
+        Java API, we impose the retroactive theory that a <tt>java.io.File</tt>
+        instance, if it represents a non-directory normal file, provides the authority
+        to read and write this one file, but no further access to the file system.
+        If it represents a directory, it gives authority to read and edit that
+        directory, and any files and subdirectories transitively under that directory.</p>
+      <p ALIGN="left">This is a purely retroactive theory. It is not in any way
+        related to any of the goals the designers of java.io.File had in mind.
+        Nevertheless, we can succeed at it merely by preventing upward navigation.
+        To do this, we need to</p>
+      <ul>
+        <li>Suppress <tt><a href="../../javadoc/java/io/File.html#getParentFile()">getParentFile()</a></tt> 
+          (which we failed to do by the time of the review -- <a href="https://sourceforge.net/tracker/?group_id=75274&atid=551529&func=detail&aid=1238671">a 
+          taming bug</a>)</li>
+        <li>Suppress resolution of &quot;<tt>..</tt>&quot; in paths. This cannot
+          be done by taming alone, since it involves altering the behavior of
+          an existing method. This is an example of a technique intermediate between
+          taming and wrapping -- virtualization. In our &quot;sugaring&quot;,
+          the wrapping method that imposes this restriction presents the same
+          API as the original. From the perspective of the client, its as if the
+          original interface were changed to impose this restriction.</li>
+        <li>Decide on our stance regarding hard and symbolic links. Our initial
+          theory was phrased in terms of &quot;hierarchy&quot;, but these links
+          require us to expand our theory somehow.</li>
+      </ul>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">legacy</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="api-legend.html" title="On to: API Legend"><img src="../../images/next.gif" width="64" height="32" alt="On to: API Legend" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

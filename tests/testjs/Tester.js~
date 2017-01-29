@@ -1,0 +1,232 @@
+
+
+var Tester = (function(global) {
+  "use strict";
+
+  var hop = Object.prototype.hasOwnProperty;
+  var toString = Object.prototype.toString;
+  var slice = Array.prototype.slice;
+
+  var isExtensible = Object.isExtensible;
+  if (!isExtensible) {
+    isExtensible = function(obj) {
+      try {
+        obj.___probe___ = '___probe___';
+      } catch (err) {
+        if (err instanceof TypeError) { return false; }
+        throw err;
+      }
+      if (obj.___probe___ === '___probe___') {
+        delete obj.___probe___;
+        return true;
+      }
+      return false;
+    };
+  }
+
+  var keys = Object.keys;
+  if (!keys) {
+    keys = function(obj) {
+      var result = [];
+      for (var name in obj) {
+        if (hop.call(obj, name)) { result.push(name); }
+      }
+      return result;
+    };
+  }
+
+  var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+  if (!getOwnPropertyDescriptor) {
+    getOwnPropertyDescriptor = function(obj, name) {
+      if (!hop.call(obj, name)) { return undefined; }
+      // Assumes below that it's a data property, because general
+      // checking of that is hard.
+      return {
+        value: obj[name],
+        writable: (function() {
+                     var oldVal = obj[name];
+                     try {
+                       var unique = {};
+                       obj[name] = unique;
+                       return obj[name] === unique;
+                     } catch (err) {
+                       return false;
+                     } finally {
+                       obj[name] = oldVal;
+                     }
+                   })(),
+        enumerable: (function() {
+                       for (var i in obj) {
+                         if (i === name) { return true; }
+                       }
+                       return false;
+                     })(),
+        configurable: (function() {
+                         var oldVal = obj[name];
+                         try {
+                           delete obj[name];
+                           return !hop.call(obj, name);
+                         } catch (err) {
+                           return false;
+                         } finally {
+                           obj[name] = oldVal;
+                         }
+                       })()
+      };
+    };
+  }
+
+  var getPrototypeOf = Object.getPrototypeOf;
+  if (!getPrototypeOf) {
+    getPrototypeOf = function(obj) {
+      if (obj === Object.prototype) { return null; }
+      var result = obj.__proto__;
+      if (!result) { throw new Error("Can't get prototypes"); }
+      return result;
+    };
+  }
+
+  var isArray = Array.isArray;
+  if (!isArray) {
+    isArray = function(obj) {
+      return toString.call(obj) === '[object Array]';
+    };
+  }
+
+  var log;
+  var logElement;
+  var sectionRef = (/^([\w\. ]*)\(([\d\.]*)\)( .*)$/);
+  var base = 'http://es5.github.com/#x';
+  //var base = 'http://people.mozilla.org/~jorendorff/es5.html#sec-';
+  //var base = 'http://ecma262-5.com/ELS5_HTML.htm#Section_';
+  if (typeof document !== 'undefined' &&
+      typeof document.getElementById === 'function' &&
+      (logElement = document.getElementById('logid'))) {
+    log = function(str) {
+      var match = sectionRef.exec(str);
+      var p = document.createElement('div');
+      if (match !== null) {
+        p.appendChild(document.createTextNode(match[1]));
+        var a = document.createElement('a');
+        a.setAttribute('href', base + match[2]);
+        a.setAttribute('target', '_blank');
+        a.appendChild(document.createTextNode(match[2]));
+        p.appendChild(a);
+        str = match[3];
+      }
+      p.appendChild(document.createTextNode(str));
+      logElement.appendChild(p);
+    };
+  } else if (typeof console !== 'undefined' && console.log) {
+    log = function(str){ console.log(str); };
+  } else if (typeof print !== undefined) {
+    log = print;
+  } else {
+    throw new Error("Can't figure out where to log to");
+  }
+
+  function assert(cond, var_args) {
+    if (!cond) {
+      var str = slice.call(arguments, 1).join('');
+      if (str === '') { str = 'assertion failed'; }
+      log('Error: ' + str);
+      Tester.errors++;
+      throw new Error(str);
+    }
+  }
+
+  // See http://wiki.ecmascript.org/doku.php?id=harmony:egal
+  function eq(x, y) {
+    if (x === y) {
+      return x !== 0 || 1/x === 1/y;
+    }
+    return x !== x && y !== y;
+  }
+
+  function makeCheck(prefix) {
+    function check(str, should, did, opt_shouldStr, opt_didStr) {
+      if (eq(should, did)) {
+        Tester.passed++;
+        return true;
+      }
+      Tester.failed++;
+      var shouldStr = opt_shouldStr || should;
+      var didStr = opt_didStr || did;
+      if (typeof shouldStr === 'boolean' && typeof didStr === 'boolean') {
+        log(prefix + str);
+      } else if (typeof shouldStr === 'string' &&
+                 typeof didStr === 'string') {
+        log(prefix + str +
+            ': should be "' + shouldStr + '" but was "' + didStr + '"');
+      } else {
+        log(prefix + str +
+            ': should be ' + shouldStr + ' but was ' + didStr);
+      }
+      return false;
+    };
+    return check;
+  }
+
+  function badProgram(prefix, program) {
+    try {
+      new Function(program);
+    } catch (err) {
+      if (err instanceof SyntaxError) {
+        Tester.passed++;
+        return true;
+      }
+      Tester.failed++;
+      log(prefix + 'Unexpected ' + err + ': ' + program);
+      return false;
+    }
+    Tester.failed++;
+    log(prefix + 'Failed to fail: ' + program);
+    return false;
+  }
+
+  function goodProgram(prefix, program) {
+    try {
+      new Function(program);
+    } catch (err) {
+      Tester.failed++;
+      log(prefix + 'failed with ' + err + ': ' + program);
+      return false;
+    }
+    Tester.passed++;
+    return true;
+  }
+
+
+
+  function reportResults() {
+    log('passed: ' + Tester.passed);
+    log('failed: ' + Tester.failed);
+    log('errors: ' + Tester.errors);
+    log('skipped: ' + Tester.skipped);
+  }
+
+  return {
+    hop: hop,
+    toString: toString,
+    slice: slice,
+    isExtensible: isExtensible,
+    keys: keys,
+    getOwnPropertyDescriptor: getOwnPropertyDescriptor,
+    getPrototypeOf: getPrototypeOf,
+    isArray: isArray,
+
+    log: log,
+    assert: assert,
+    eq: eq,
+    makeCheck: makeCheck,
+    badProgram: badProgram,
+    goodProgram: goodProgram,
+    reportResults: reportResults,
+
+    passed: 0,
+    failed: 0,
+    errors: 0,
+    skipped: 0
+  };
+
+})(this);

@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Game Turns as MicroTransactions</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">concurrency</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="msg-passing.html" title="Back to: Message Passing"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Message Passing" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="partial-order.html" title="On to: Partial Order"><img src="../../images/next.gif" width="64" height="32" alt="On to: Partial Order" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Game
+              Turns as<br>
+              <font size="4">Micro</font>Transactions</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p align="left">Taken together, <i><b><font color="#009000">E</font></b></i>'s <a href="msg-passing.html">Message Passing
+        rules</a> impose the familiar LIFO stack discipline within an turn. All
+        synchronously accessible side effects brought about by the callee are
+        done before the caller continues. In the example code above, result is
+        not bound to a value until and unless the callee returns successfully,
+        and the "stuff after call" will execute in the context of whatever synchronous
+        side effects were caused by the callee. </p>
+      <p align="left">The synchronous processing of a pending delivery, an event
+        of our event loop, we call a <i>turn</i>. If the state of a vat is like
+        the state of a game board, then in both cases, the state evolves only
+        because of a sequence of turns, and each turn executes with mutually exclusive
+        access to this state, and it executes to completion before before the
+        next turn starts. </p>
+      <p align="left">Although other Vats are executing concurrently, a caller
+        will only see synchronous side effects caused by its callee. Because Vats
+        are only asynchronously coupled to each other, an E turn implicitly has
+        full mutual exclusion on all state to which it has synchronous access
+        -- which is only state within its Vat. As a result, E execution is not
+        observably distinguishable (except for timing and the effects of infinite
+        loops) from an implementation in which, across the universe, only one
+        Vat at a time takes a turn. <i><b><font color="#009000">E</font></b></i>'s turns are therefore atomic serializable
+        micro-transactions, and E is strongly consistency preserving in the face
+        of concurrency, without any error-prone fine-grained locking.
+      <p align="left">We say <i>micro-transaction</i> above because we purposely
+        unbundle or avoid the features combined by the classic ACID transaction:
+      <p align="left">
+      <ol>
+        <li>While a Vat is only committed to stable storage (checkpointed) between
+          turns, because disk seeks are so expensive compared to computation,
+          a Vat is checkpointed much less often than once per turn.
+          <p>
+        </li>
+        <li>Unlike many systems, E doesn't claim to provide distributed atomic
+          transactions. But seeing as how these are provably unimplementable (see
+          the <a href="http://hpc.serc.iisc.ernet.in/%7Ekama/lec7/sld013.htm">Coordinated
+          Attack Problem</a>), this might not be the loss it seems. Although one
+          can build distributed mutual exclusion protocols on top of E, good E
+          style is to avoid these like the plague. Indeed, we have so far only
+          encountered one practical application that demanded it (ref ** The Communities.com
+          Containership problem). <a href="../distrib/partial-failure.html">Handling
+          Partial Failures</a> explains <i><b><font color="#009000">E</font></b></i>'s very different approach to recovering
+          distributed consistency following network partitions or rollbacks.
+          <p>
+        </li>
+        <li>There is no facility for aborting a turn and automatically undoing
+          its side effects. Instead, one can manually use the <a href="../../elang/kernel/FinallyExpr.html">try-finally
+          expession</a> to undo some side effects while unwinding a non-local
+          exit. </li>
+      </ol>
+      <h1 align="left">Chronological Encapsulation</h1>
+      <p align="left">
+        <blockquote><i><b>Event loops are better even than purely sequential programming
+          at maintaining consistency</b></i></blockquote>
+      <p align="left">To illustrate this radical claim, consider the classic Observer
+        pattern (or "Listener" in Java, "Dependent" in Smalltak). In the Observer
+        pattern, an object interested in the occurrence of some condition (an
+        observer) requests of some object in a position to know when that condition
+        comes about (the observable), that the observable notify it when this
+        happens. A simple example is an observable variant of the Slots used by
+        <i><b><font color="#009000">E</font></b></i>'s scopes to hold the values of variables, and is written in E as follows:
+      <p align="left">
+      <blockquote>
+        <pre>def observableSlot {
+    to makeSlot(var value, _) :near {
+        var observers := []
+        def self {
+            to addObserver(observer) {
+                observers += [observer]
+            }
+            to getValue() :any {value}
+            to setValue(newValue) {
+                for observer in observers {
+                    observer &lt;- valueChanged(newValue)
+                }
+                value := newValue
+            }
+        }
+    }
+}</pre>
+      </blockquote>
+      <p align="left"><tt>observableSlot</tt> can be used for one-way eventual
+        constraint programming, as it allows a perpetually evaluating expression
+        to be informed when one of its inputs change. It's definition looks much
+        as we'd expect in other object languages, but with differences. First,
+        we are using a send rather than a call, even though the problem we're
+        trying to solve doesn't mention concurrency. If we wrote it as a call,
+        then the side effects produced by the observers would occur before the
+        observable variable's assigner returned from the assignment. The code
+        containing the assignment was likely written without taking the possibility
+        of such side effects in mind, and this is as it should be.
+      <p align="left">When Alice passes a message to Bob in order to subcontract
+        part of her plan to Bob, she is invoking Bob on her own behalf, and so
+        would often want to wait for Bob's side effects and outcome. The immediate
+        call does precisely this. When Alice passes a message to Bob on Bob's
+        behalf, as when Alice is an observable and Bob is an observer, this courtesy
+        provided to Bob should be minimally disruptive to Alice. The send above
+        queues, on the queue of the observer's vat, a pending delivery of a <tt>valueChanged()</tt>
+        message to this observer. This delivery will happen in its own separate
+        turn, and cannot affect the turn from which it was sent.
+      <p align="left">We can now understand why the other peculiar thing in the
+        above code is harmless: To illustrate our point, we put the actual assignment
+        after the loop notifying the observers. If we were calling the observers
+        instead, we'd need to remember to be careful to change to the new state
+        first, before allowing any of the observers to run, lest they interact
+        with the observable prior to this internal assignment. Even without concurrency
+        in the picture, this worry still has the form "but what if, while I'm
+        proceeding with plan X, someone else proceeds with a conflicting plan
+        Y which messes me up?" Whether it comes from concurrency or not, the need
+        for such worries just makes programming too hard. (It also makes it much
+        harder for security reviews to check for <a href="http://www.combex.com/papers/darpa-review/security-review.html#concurrency">TOCTTOU
+        errors</a>.)
+      <p align="left">The eventual send enables us to isolate conceptually separate
+        plans into separate atomic turns, enabling us to avoid more cases of <a href="event-loop.html#safety">plan
+        interference</a>. We term this the principle of <i>chronological encapsulation</i>.
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">concurrency</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="msg-passing.html" title="Back to: Message Passing"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Message Passing" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="partial-order.html" title="On to: Partial Order"><img src="../../images/next.gif" width="64" height="32" alt="On to: Partial Order" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

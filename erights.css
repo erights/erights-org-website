@@ -1,0 +1,26 @@
+.glossary {
+	text-decoration: none;
+	font-variant: normal;
+	text-transform: none;
+	color: #003399;
+	cursor: help;
+}
+.stdout {  color: #009900}
+.stdin {  }
+.stderr {  color: #990000}
+.pagebr {  page-break-after: always}
+.defvar {  font-style: italic; color: #000099}
+.defobj {  font-style: italic; font-weight: bold; color: #000099}
+.defverb {  font-weight: normal; color: #000099}
+.keyword {  color: #993366}
+.comment {  font-family: "Times New Roman", Times, serif; color: #666666}
+.litchars {  color: #336666}
+.org {
+	visibility: hidden;
+}
+.adr {
+	visibility: hidden;
+}
+.tel {
+	visibility: hidden;
+}

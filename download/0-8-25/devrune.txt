@@ -1,0 +1,224 @@
+#!/usr/bin/env bash
+
+# Copyright 2002 Combex, Inc. under the terms of the MIT X license
+# found at http://www.opensource.org/licenses/mit-license.html ................
+
+# Development-time E Driver Script (or E Driver Script Template)
+# based on rune-template.txt
+#
+# If you are looking at "devrune-template.txt", then you are looking at a
+# template to be used to construct "devrune".
+# In this case, for some variable definitions, you should instead see
+# text of the form, for example,
+#
+#     EDEV="$<<e.dev.home>>"
+#
+# but with curly brackets instead of angle brackets.
+#
+# In the comment preceding this, you should see an example of a
+# possible value of this property, such as
+# "c:/e/".  Were this variable to have this value in the "devrune"
+# file, it would appear as 
+#
+#     EDEV="c:/e/"
+#
+# All these variables except EDEV come from eprops.txt.  See that
+# file for more complete documentation.
+#
+# @author Mark S. Miller
+# @author Tyler Close
+# @author with contributions by Ben Laurie and Zooko
+
+set -e
+
+
+# Where is the root of the E development tree. This is the parent
+# directory of the "src" directory, and is typically named "e".
+#
+# For example, "c:/e"
+
+EDEV="c:/Documents and Settings/MILLERM1/e"
+
+
+# What executable Java command should be used?
+#
+# For example, "d:/jdk1.3/bin/java.exe" or simply "java"
+
+# JCMD="java"
+JCMD="c:/jdk1.3.1_07/bin/java.exe"
+
+
+# OSDIR is the local subdirectory name used for files specific to
+# this platform.
+#
+# For example, "win32"
+
+OSDIR="win32"
+
+
+# MACHDIR is the local subdirectory name used for files specific to
+# this hardware architecture (instruction set).
+#
+# For example, "x86"
+
+MACHDIR="x86"
+
+
+###########################################################################
+# Given that the above variables are set, the rest of this file should
+# work as is.
+###########################################################################
+
+
+# Ensure that EDEV ends with a slash, even if not supplied.
+
+EDEV="${EDEV%/}/"
+
+
+# SEP is the platform dependent pathlist separator.  On
+# MSWindows/cygwin/win32, it's ";".  Everywhere else it's ":".
+#
+# Used to build the -cp value to passed to java.
+
+if [ "$OSDIR" = "win32" ]
+then
+    SEP=";"
+else
+    SEP=":"
+fi
+
+
+# The initial classpath (which is actually a pathlist -- a list of
+# filepaths).
+#
+# If you change this definition to have more than one element, be sure
+# to use the separator for your platform.  See the definition of "SEP"
+# above.  This initial setting is added on to by -cpa and -cpb.
+#
+# Since SWT is still optional, perhaps this definition should only include
+# swt.jar conditionally.  However, including it unconditionally doesn't seem
+# to hurt.
+
+EPATH=${EDEV}src/safej${SEP}${EDEV}src/esrc${SEP}${EDEV}src/bin/resources${SEP}${EDEV}classes${SEP}${EDEV}src/bin/${OSDIR}/swt.jar
+
+
+# This function normalizes a file path so that bash will recognize it
+# in command position.  In the Cygwin environment (a Unix-like
+# compatibility environment for MSWindows), this just uses
+# "cygpath -u" to convert to Cygwin's idea of a Unix-like path.
+#
+# In all other environments, this is an identity function
+
+function normalizeBashPath {
+    if (type -p cygpath.exe > /dev/null); then
+        cygpath -u -- "$1"
+    else
+        echo "$1"
+    fi
+}
+
+# This function normalizes a file path so E will recognize it.  In the
+# Cygwin environment, this needs to undo the funny path prefix
+# manipulation done by cygwin, such as turning "d:" into "//d/", or
+# "d:/cygwin/bin" into "/usr/bin".  However, we still use only forward
+# slashes, not backslashes, as path separators, in order for the
+# normalized path to pass through bash without needing further escapes.
+#
+# In all other environments, this is an identity function
+
+function normalizeEPath {
+    if (type -p cygpath.exe > /dev/null); then
+        path=`cygpath -w -- "$1"`
+        echo "${path//\\\\//}"
+    else
+        echo "$1"
+    fi
+}
+
+JCMD=`normalizeBashPath "$JCMD"`
+
+
+# What to say if I'm confused
+
+function usage {
+    echo "usage: devrune <s-option>* --? (<fname> <arg>*)?"
+    echo "For more usage help, say \"devrune --help\""
+    exit -1
+}
+
+
+# JOPTS are options to Java
+
+declare -a JOPTS
+
+function jpush {
+    JOPTS[${#JOPTS[@]}]=$1
+}
+
+
+jpush "-Xfuture"
+
+jpush "-De.safej.bind-var-to-varName=true"
+jpush "-De.safej.bind-var-to-propName=true"
+jpush "-De.enable.no-dot-call=warn"
+
+# Note that the java.library.path must be provided on the command line
+# rather than by eprops.txt, since eprops.txt is processed after the
+# ClassLoader caches the value of this property.
+#
+# Since SWT is still optional, and since the java.library.path is currently
+# only needed for SWT, perhaps this statement should only jpush
+# java.library.path conditionally.  However, including it unconditionally
+# doesn't seem to hurt, and we may have more native code at a later time.
+
+jpush "-Djava.library.path=${EDEV}src/bin/$OSDIR/$MACHDIR"
+
+
+# EOPTS are options to Rune
+declare -a EOPTS
+
+function epush {
+    EOPTS[${#EOPTS[@]}]=$1
+}
+
+
+# Either zero or one long
+declare -a FNAME
+
+
+EXECFLAG=exec
+
+while [ $(($# >= 1)) = 1 ]; do
+    case $1 in
+        -cpa)         shift
+                      if [ $(($# < 1)) = 1 ]; then usage; fi
+                      EPATH=${EPATH}${SEP}$1
+                      shift;;
+        -cpb)         shift
+                      if [ $(($# < 1)) = 1 ]; then usage; fi
+                      EPATH=$1${SEP}${EPATH}
+                      shift;;
+        -D*)          jpush "$1"; shift;;
+        -J*)          jpush "${1#-J}"; shift;;
+        -show)        EXECFLAG=show; shift;;
+        --)           shift;
+                      if [ $(($# < 1)) = 1 ]; then break; fi
+                      FNAME[0]=`normalizeEPath "$1"`; shift;
+                      break;;
+        --*)          epush "$1"; shift;;
+        *)            FNAME[0]=`normalizeEPath "$1"`; shift;
+                      break;;
+    esac
+done
+
+CMD=("${JCMD}" -cp "${EPATH}" "${JOPTS[@]}" \
+    org.erights.e.elang.interp.Rune "${EOPTS[@]}" \
+    "${FNAME[@]}" "$@")
+
+if [ $EXECFLAG = exec ]; then
+    exec "${CMD[@]}"
+else
+    for i in "${CMD[@]}"; do
+        echo $i
+    done
+fi

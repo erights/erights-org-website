@@ -1,0 +1,440 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Representing Characters</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">data</a>&nbsp;/&nbsp;<a href="index.html">common-syntax</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="conformance.html" title="Back to: Conformance"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Conformance" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="wysiwyg-ascii.html" title="On to: The Wysiwyg-ASCII Format"><img src="../../images/next.gif" width="64" height="32" alt="On to: The Wysiwyg-ASCII Format" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><B>Representing
+              Characters</B><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> <i>This page can be safely skipped by
+      readers concerned only with ASCII source texts.</i>
+      <h1 ALIGN="left"><a name="background"></a>Background</h1>
+      <p ALIGN="left">Because we do not yet have any personal experience with
+        non-<a href="http://www.unicode.org/glossary/#ASCII">ASCII</a> Unicode
+        characters at the time of this writing, we considered specifying that
+        source text for <i><font color="#009000"><b>E</b></font></i> 0.9 be restricted
+        to ASCII, and therefore that all non-ASCII source characters may only
+        be expressed using <a href="#backslash_u">Backslash-u Decoding</a>. However,
+        this would be too great a burden on non-English-based programmers wishing
+        to use <i><font color="#009000"><b>E</b></font></i>. We obtain a very
+        similar effect indirectly.</p>
+      <p align="left">The following text from the <a href="http://java.sun.com/docs/books/jls/second_edition/html/lexical.doc.html#100850">Java
+        Language Specification</a> (the JLS) effectively defines a <a href="http://www.unicode.org/glossary/#character_encoding_form">character
+        encoding form</a> for Unicode:</p>
+      <blockquote>
+        <p align="left">The Java programming language specifies a standard way
+          of transforming a program written in Unicode into ASCII that changes
+          a program into a form that can be processed by ASCII-based tools. The
+          transformation involves converting any Unicode escapes in the source
+          text of the program to ASCII by adding an extra u -- for example, \uxxxx
+          becomes \uuxxxx -- while simultaneously converting non-ASCII characters
+          in the source text to a \uxxxx escape containing a single u.</p>
+      </blockquote>
+      <p ALIGN="left">The JLS defines a <i>Unicode escape</i> effectively as </p>
+      <blockquote>
+        <pre align="left">'\\' 'u'+ &lt;hexDigit&gt; &lt;hexDigit&gt; &lt;hexDigit&gt; &lt;hexDigit&gt;</pre>
+      </blockquote>
+      <p ALIGN="left">where the total number of slashes (if any) immediately preceding
+        this sequence is even.</p>
+      <p ALIGN="left"><a name="JLS_bug"></a>[Spec] The following <b>Bug</b> MUST
+        be fixed:<i> What if a non-ASCII character occurs immediately after an
+        odd number of slashes? The above encoding will produce a Unicode escape
+        sequence immediately following this odd number of slashes, which will
+        therefore no longer be considered an actual Unicode escape. Is this also
+        a bug in the JLS?</i></p>
+      <p ALIGN="left">Written out at one byte per resulting ASCII character, this
+        encoding form also defines a <a href="http://www.unicode.org/glossary/#character_encoding_scheme">character
+        encoding scheme</a>. We call this encoding form/scheme <i>UTF-J2</i>,
+        since the Unicode escape defined above can only represent a 16 bit (2
+        byte) code point. The same section of the JLS also defines two ways of
+        decoding such text back into a sequence of 16 bit code points. The first
+        reverses the above encoding with no loss of information:</p>
+      <blockquote>
+        <p> The exact Unicode source can later be restored from this ASCII form
+          by converting each escape sequence where multiple u's are present to
+          a sequence of Unicode characters with one fewer u, while simultaneously
+          converting each escape sequence with a single u to the corresponding
+          single Unicode character.</p>
+      </blockquote>
+      <p>The other decoding method simply decodes each Unicode escape into the
+        Unicode code point it encodes. The first decoding method would be used
+        to preserve appearance of the source to those using Unicode editors and
+        mixing Unicode characters with Unicode escape sequences. We call this
+        first decoding method a <i>UTF-J2 presentational decode</i>, and consider
+        it no further. The second would be used prior to all other forms of further
+        processing, which we call simply a <i>UTF-J2 decode</i>.</p>
+      <h2><a name="utf_j4"></a>UTF-J4</h2>
+      <p>To handle any Unicode character, we extend the above scheme by defining
+        a Unicode escape to be a sequence of characters accepted either by the
+        above pattern, or:</p>
+      <blockquote>
+        <pre align="left">'\\' 'u'+ '{' '0' 'x' &lt;hexDigit&gt;+ '}'</pre>
+      </blockquote>
+      <p>We call this extended encoding scheme <i>UTF-J4</i>. A UTF-J4 encode,
+        when generating a Unicode escape for a non-ASCII code point, SHOULD always
+        use the first form for 16 bit code points, and SHOULD always use the shortest
+        encoding in the second form for supplemetary characters. </p>
+      <blockquote>
+        <blockquote>
+          <h2><a name="regularities"></a>Rationale: Pleasing Regularities</h2>
+          <p> In the second form of Unicode escape, we include the <tt>'0' 'x'</tt>
+            prefix so the string between the curlies will appear to be a numeric
+            literal. This leaves us open to eventually allowing, for example,
+            a character name to appear between the curlies instead of a hex code
+            point. </p>
+          <p>For purposes of specification, we suppose the following functions
+          </p>
+          <ul>
+            <li><tt>utfJ4Encode(CodePoint[]) -&gt; AsciiByte[]</tt> </li>
+            <li><tt>utfJ4Decode(CodePoint[]) -&gt; CodePoint[]</tt></li>
+            <li><tt>utf8Decode(UTF8Byte[]) -&gt; CodePoint[]</tt></li>
+          </ul>
+          <p>[Src] The octet sequence input to <tt>utf8Decode</tt> MAY optionally
+            begin with the UTF-8 BOM sequence: <tt>0xEF 0xBB 0xBF</tt>, which
+            <tt>utf8Decode</tt> MUST skip.</p>
+          <p>Since ASCII is the 7-bit byte subset of both UTF-8 code units and
+            Unicode code points, we consider <tt>AsciiByte[]</tt> to be a subtype
+            of both <tt>CodePoint[]</tt> and <tt>UTF8Byte[]</tt>.</p>
+          <p>For all sequences of Unicode code points <tt>u</tt>:<tt> <br>
+            utfJ4Decode(u) == utfJ4Decode(utfJ4Encode(u)) == </tt>... # and so
+            on, for any number of UTF-J4 encodings prior to the UTF-J4 decoding.
+          </p>
+          <p>Therefore, given that we're going to do a <tt>utfJ4Decode</tt> prior
+            to further processing, we don't care whether our input is the true
+            source, or is a UTF-J4 encoding of the source. (If we change the spec
+            below to track source positions on one of the representations prior
+            to the <tt>utfJ4Decode</tt>, then these alternatives would no longer
+            be strictly equivalent, so under some circumstances we would care.)</p>
+        </blockquote>
+      </blockquote>
+      <h1 ALIGN="left"><a name="to_text"></a>From Bytes (Octets) to Source Text</h1>
+      <ul>
+        <li>[*] When <tt>f</tt> is a sequence of octets to be decoded into source
+          (such as the contents of a file), <tt>f</tt> MUST be double-decoded
+          as follows:
+          <pre>sourceText == utfJ4Decode(utf8Decode(f))</pre>
+        </li>
+      </ul>
+      <p>The double-decode above yields the same result as
+      <blockquote>
+        <pre>utfJ4Decode(utfJ4Encode(utf8Decode(f))). </pre>
+      </blockquote>
+      <p>If <tt>f</tt> is in ASCII, then <tt>utfJ4Decode(f)</tt> also yields the
+        same result.
+      <ul>
+        <li>
+          <p>[Src] When <tt>f</tt> is a sequence of octets to be decoded into
+            source, <tt>utfJ4Encode(utf8Decode(f)))</tt> SHOULD be in <a href="wysiwyg-ascii.html">Wysiwyg-ASCII</a>
+            Format.</p>
+        </li>
+        <li>
+          <p>[Src] When a source language's grammar uses matched brackets to indicate
+            nesting structure, source text in this language SHOULD use spaces
+            for indentation to signal this nesting structure accurately to the
+            human eye. Further, source text SHOULD NOT include any tab characters
+            at all. </p>
+        </li>
+        <li>
+          <p>When rendering text in a fixed width font, tab characters SHOULD
+            be rendered as whitespace extending to the next modulo-8 tab stop.</p>
+        </li>
+      </ul>
+      <p>&nbsp;[Advisor] An advisor therefore SHOULD alert reviewers of violations
+        of the above Src RECOMMENDATIONS.</p>
+      <blockquote>
+        <blockquote>
+          <h2><a name="raven"></a>Rationale: <a href="../irrelevance.html">Adversarial
+            Code Reviews</a></h2>
+          <p>Depending on the density of Unicode escape sequences, the UTF-J4
+            encoding of the source may or may not be adequately readable for a
+            review. If this format is adequately readable, reviewers are advised
+            to look at a rendering of this encoding in a font in which ASCII printing
+            characters may be easily distinguished. For example, the following
+            are distinct ASCII printing characters, and should each be unambiguously
+            recognizable:</p>
+          <blockquote>
+            <pre>1l|!oO0`'</pre>
+          </blockquote>
+          <p>If Raven the reviewer is looking at a readable UTF-J4 encoding of
+            conforming sources in Wysiwyg-ASCII format, in a font in which all
+            ASCII printing characters are unambiguously recognizable, then Raven
+            has grounds for some confidence that the appearance of the text encodes
+            all the meaning of the text as it will be interpreted by a conforming
+            language processor. Of course, Arthur the author can still write code
+            that will confuse Raven the reviewer. But we hope we've made it hard
+            for Arthur to also confuse Raven about whether she's confused. If
+            Raven knows she's confused, she can simply reject Arthur's code.</p>
+        </blockquote>
+      </blockquote>
+      <h2 align="left"><a name="baking"></a>Newline Canonicalization</h2>
+      <p ALIGN="left">Once we have source text that passes the above checks, the
+        following transformations are then applied, logically in order, to create
+        the source text used for lexical analysis:</p>
+      <ol>
+        <li>
+          <p><b><a name="newlines"></a>MS-DOS Newline Canonicalization.</b> All
+            occurrences of the sequence '\r' '\n' (or CRLF) are replaced with
+            '\n' (LF).</p>
+        </li>
+        <li>
+          <p><b><a name="newlines"></a>Mac OS &lt;= 9 Newline Canonicalization.</b>
+            All remaining occurrences of '\r' (or CR) are replaced with '\n' (LF).</p>
+        </li>
+        <li>
+          <p><b><a name="numbering"></a>Line and Column Numbering</b>. Line and
+            column numbers designate positions in the source text after the above
+            steps. The first line is line number 1. The first column is column
+            number 0.</p>
+        </li>
+      </ol>
+      <p><i><a name="order_controversy"></a>(The JLS also says that newline canonicalization
+        happens after interpreting Unicode escapes. Is this really true? It seems
+        silly, but I'd rather follow Java's lead on this than to try reversing
+        the order. What does Java do about source positions? Does it say anywhere?)</i></p>
+      <h2 ALIGN="left"><a name="only_bmp"></a>Only BMP Characters</h2>
+      <ul>
+        <li>
+          <p>[Src] Following the above double-decode, the source text MUST consist
+            only of a sequence of Unicode <a href="http://www.unicode.org/glossary/#encoded_character">encoded
+            characters</a>.</p>
+        </li>
+        <li>
+          <p>[Src] As of <i><font color="#009000"><b>E</b></font></i> 0.9, source
+            text MUST contain only <a href="http://www.unicode.org/glossary/#BMP_character">BMP
+            characters</a>, i.e., only those Unicode <a href="http://www.unicode.org/glossary/#encoded_character">encoded
+            characters</a> whose <a href="http://www.unicode.org/glossary/#code_point">code
+            points</a> fit within 16 bits. (From <a href="http://www.dbis.informatik.uni-goettingen.de/Teaching/oracle-doc/server.920/a96529/ch5.htm#1019814">this</a>,
+            it would seem that UCS-2 characters might be what I mean, but I'm
+            not sure.) </p>
+        </li>
+      </ul>
+      <p><i>(Is this too strict? Should we say instead only that source text MUST
+        contain only 16-bit code points and MUST NOT contain surrogate code points?
+        Should we demote the other RULES to RECOMMENDATIONS? That would seem to
+        be the minimal restriction needed to satisfies the following issue.)</i></p>
+      <blockquote>
+        <blockquote>
+          <h2 ALIGN="left"><a name="indecision"></a>Rationale: Indecision is the
+            mother of convention</h2>
+          <p align="left">Unicode has had a complex but understandable history.
+            As of the Unicode 3.0 standard or so, it was thought that Unicode
+            could fit all the world's characters into a 16 bit character set.
+            Based on this, the Java and Python language s defined a &quot;<tt>char</tt>&quot;
+            as 16 bits. Java provided good support for handling Unicode, and became
+            a leading platform for developing Unicode-ready software. Unfortunately,
+            the Unicode consortium found that 16 bits was too tight, and expanded
+            Unicode into a 21-bit character set. It was then unclear what to do
+            about legacy formerly-Unicode-ready libraries. The litmus test is
+            <a href="http://www.w3.org/TR/charmod/#sec-Indexing">indexing</a>:
+            How does one interpret a source position? What is a counting unit
+            for determining the length of a string? Currently, the dominant approaches
+            are:</p>
+          <table width="50%" align="right" cellpadding="12" bgcolor="#FFFFFF">
+            <tr>
+              <td><p> Java further defines and uses &quot;<a href="http://jcp.org/en/jsr/detail?id=204">Modified
+                  UTF-8</a>&quot; rather than standard UTF-8. In Java's modified
+                  UTF-8, a supplementary characters is represented by UTF-8 encoding
+                  each of the surrogate code points in the UTF-16 encoding of
+                  the character. This is explicitly forbidden by the <a href="http://www.unicode.org/versions/Unicode4.0.0/ch03.pdf">Unicode
+                  spec</a> (D36):</p>
+                <blockquote> Because surrogate code points are not Unicode scalar
+                  values, any UTF-8 byte sequence that would otherwise map to
+                  code points D800..DFFF is ill-formed.</blockquote>
+                <p>We thanks David Hopwood for <a href="http://www.eros-os.org/pipermail/e-lang/2004-April/009773.html">pointing
+                  this out</a>.</p></td>
+            </tr>
+          </table>
+          <ul>
+            <li>
+              <p>The <a href="http://www.w3.org/TR/xpath#strings">XPath</a> and
+                Python way (see <a href="http://www.python.org/peps/pep-0263.html">PEP
+                0263</a>, <a href="http://www.python.org/peps/pep-0261.html">PEP
+                261</a>): A counting unit is a Unicode encoded character.</p>
+            </li>
+            <li>
+              <p>The <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-C74D1578">DOM</a>
+                and <a href="http://java.sun.com/j2se/1.5.0/docs/guide/intl/index.html">Java
+                1.5</a> way: A counting unit is a UTF-16 code unit. A Java <tt>char</tt>
+                no longer represents a character -- it represents a UTF-16 code
+                unit.</p>
+            </li>
+            <li>
+              <p>IBM's ICU library <a href="http://icu.sourceforge.net/apiref/icu4j/com/ibm/icu/text/UTF16.html#findCodePointOffset(java.lang.String,%20int)">supports 
+                both</a>, although it's heavily biased towards the Java way.</p>
+            </li>
+          </ul>
+          <p align="left">Although the XPath and Python approach is clearly more
+            right (and is <a href="http://www.w3.org/TR/charmod/#sec-Indexing">recommended
+            by CharMod</a>), we wish to postpone choosing sides until it's clear
+            who the winner will be. Therefore</p>
+          <ul>
+            <li>
+              <p>[Spec] The <i><font color="#009000"><b>E</b></font></i> 0.9 specs
+                must be downward compatible from any of the above choices.</p>
+            </li>
+            <li>
+              <p>[Producer][Validator][Advisor] Until a decision is made, programs
+                written to handle text SHOULD be compatible with any of these
+                choices being made in the future.</p>
+            </li>
+          </ul>
+          <p align="left">The <i><font color="#009000"><b>E</b></font></i> 0.9
+            requirement that the source text MUST contain only <a href="http://www.unicode.org/glossary/#BMP_character">BMP
+            characters</a> implies that it MUST NOT contain any</p>
+          <ul>
+            <li>
+              <p><a href="http://www.unicode.org/glossary/#supplementary_character">supplementary
+                characters</a> -- characters whose code points are larger than
+                16 bits, i.e., are in the range 0x1_0000..0x10_FFFF.</p>
+            </li>
+            <li>
+              <p><a href="http://www.unicode.org/glossary/#surrogate_code_point">surrogate_code_points</a>
+                -- code points in the range 0xD800 through 0xDFFF. The <a href="http://www.unicode.org/glossary/#general_category">general
+                category</a> of these is &quot;Cs&quot;.</p>
+            </li>
+            <li>
+              <p><a href="http://www.unicode.org/glossary/#undesignated_code_point">undesignated
+                code points</a> -- also called reserved or unassigned code points.
+                These are either <a href="http://www.unicode.org/glossary/#noncharacters">noncharacters</a>,
+                or code points whose interpretation is not yet specified as of
+                that version of Unicode. The general category of these is &quot;Cn&quot;.</p>
+            </li>
+            <li>
+              <p><a href="http://www.unicode.org/glossary/#private_use_code_point">private-use
+                code points</a> -- those whose interpretation will not be specified
+                by the Unicode consortium. The general category for these is &quot;Co&quot;.</p>
+            </li>
+          </ul>
+          <p>A validator MUST therefore statically reject source text containing
+            code points that are not encodings of BMP characters.</p>
+          <blockquote>
+            <pre><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">makeChar</span> := &lt;import:<span class="litchars">java.lang.makeCharacter</span>&gt;
+
+? <span class="keyword">def</span> <span class="defobj">isBMPChar</span>(<span class="defvar">codePoint</span> :(0..0x10_FFFF)) :boolean {
+<span class="stdout">&gt; </span>    <span class="comment"># If it's not in the range 0..0x10_FFFF, then it's not a valid Unicode code point</span>
+<span class="stdout">&gt; </span>
+<span class="stdout">&gt; </span>    <span class="keyword">if</span> (codePoint &gt; 0xFFFF) {
+<span class="stdout">&gt; </span>        <span class="comment"># If it's larger than 0xFFFF, then it's a supplemental code point, </span>
+<span class="stdout">&gt; </span>        <span class="comment">#  rather than in the BMP</span>
+<span class="stdout">&gt; </span>        <span class="keyword">return</span> false
+<span class="stdout">&gt; </span>    }
+<span class="stdout">&gt; </span>    <span class="comment"># If it's in the BMP, then, even in E 0.9, we can convert it to a char.</span>
+<span class="stdout">&gt; </span>    <span class="keyword">def</span> <span class="defvar">ch</span> := codePoint.asChar()
+<span class="stdout">&gt; </span>    <span class="keyword">def</span> <span class="defvar">cat</span> := ch.getCategory()
+<span class="stdout">&gt; </span>
+<span class="stdout">&gt; </span>    <span class="comment"># If it's general category isn't SURROGATE (Cs)  or UNASSIGNED (Cn), </span>
+<span class="stdout">&gt; </span>    <span class="comment"># does that mean it must be a Unicode  encoded character? </span>
+<span class="stdout">&gt; </span>    <span class="comment"># What about Private Use (Co)?
+</span><span class="stdout">&gt; </span>    <span class="keyword">return</span> !([&quot;<span class="litchars">Cs</span>&quot;, &quot;<span class="litchars">Cn</span>&quot;, &quot;<span class="litchars">Co</span>&quot;].contains(cat))
+<span class="stdout">&gt; </span>}
+<span class="stdout"># value: &lt;isBMPChar&gt;</span></pre>
+          </blockquote>
+        </blockquote>
+      </blockquote>
+      <h2><a name="only_nfc"></a>Source Text SHOULD be in NFC</h2>
+      <p>[Src] source text SHOULD conform to <a href="http://www.w3.org/TR/charmod/">CharMod</a>
+        and <a href="http://www.w3.org/TR/charmod-norm/">CharNorm</a>. In particular,
+        it SHOULD be in <a href="http://www.unicode.org/reports/tr15/">Unicode
+        Normalized Form C (NFC)</a>, and SHOULD NOT contain <a href="http://www.unicode.org/unicode/reports/tr20/#Suitable">Characters
+        not Suitable for use With Markup</a>.
+      <p><i> (Should we further recommend that source text be <a href="http://www.w3.org/TR/charmod-norm/#sec-IncludeNormalized">include
+        normalized</a> or <a href="http://www.w3.org/TR/charmod-norm/#sec-FullyNormalized">fully
+        normalized</a>? What would these mean in this context?)</i>
+      <blockquote>
+        <blockquote>
+          <h2 ALIGN="left"><a name="web"></a>Rationale: Caught in the Web</h2>
+          <p align="left"><i><font color="#009000"><b>E</b></font></i> is a distributed
+            programming language. <i><font color="#009000"><b>E</b></font></i>
+            code is often mobile code. Therefore, it could be considered like
+            a kind of web content, even though it is not a kind of markup. For
+            possible ease of integration with other tools, and to reduce cases,
+            it would be good to stay within the W3C's character model.</p>
+        </blockquote>
+      </blockquote>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">data</a>&nbsp;/&nbsp;<a href="index.html">common-syntax</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="conformance.html" title="Back to: Conformance"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Conformance" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="wysiwyg-ascii.html" title="On to: The Wysiwyg-ASCII Format"><img src="../../images/next.gif" width="64" height="32" alt="On to: The Wysiwyg-ASCII Format" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

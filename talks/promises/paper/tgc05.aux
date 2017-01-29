@@ -1,0 +1,165 @@
+\relax 
+\citation{Hayek:1945:UKS}
+\citation{miller:agoric,tulloh:abstraction}
+\@writefile{toc}{\contentsline {title}{Concurrency Among Strangers}{1}}
+\@writefile{toc}{\contentsline {author}{Mark S. Miller\unskip {} \and E. Dean Tribble \and Jonathan Shapiro\unskip {}}{1}}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}}
+\citation{miller:ode,miller:myths,miller:paradigm,miller:struct-auth}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Overview}{2}}
+\citation{Englander:beans}
+\citation{Englander:beans}
+\citation{gamma:patterns}
+\@writefile{toc}{\contentsline {section}{\numberline {3}The Sequential {StatusHolder}}{3}}
+\citation{VanRoyHaridi}
+\citation{IBM:POO}
+\citation{boehm:threads}
+\citation{hoare:monitors,hansen:monitors}
+\citation{hoare:csp}
+\citation{birman:vsync,amir:thesis,lamport:paxos}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Why Not Shared-state Concurrency}{5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Preserving Consistency}{5}}
+\citation{Englander:beans}
+\citation{Englander:beans}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces A correct program must both remain consistent and continue to make progress. The sequence above represents our search for a {statusHolder} which supports both well: (1) The sequential {statusHolder}. (2) The sequential {statusHolder} in a concurrent environment. (3) The fully synchronized {statusHolder}. (4) Placing the for-loop outside the synchronized block. (5) Spawning a new thread per listener notification. (6) Using communicating event-loops}}{6}}
+\newlabel{fig:seesaw}{{1}{6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Avoiding Deadlock}{6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Race Conditions}{7}}
+\citation{zooko:hell}
+\citation{stiegler:ewalnut}
+\citation{goldberg:purplebook}
+\citation{hewitt:actors}
+\citation{goldberg:smalltalk72}
+\citation{hoare65}
+\citation{shroff:match}
+\@writefile{toc}{\contentsline {section}{\numberline {5}A Taste of E}{8}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Two Ways to Postpone Plans}{9}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Simple E Execution}{10}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces An E vat consists of a heap of objects and a thread of control. The stack and queue together record the postponed plans the thread needs to process. An immediate-call pushes a new frame on top of the stack, representing the delivery of a message ({\it  arrow}) to a target object ({\it  dot}). An eventual-send enqueues a new pending delivery on the right end of the queue. The thread proceeds from top to bottom and then from left to right}}{10}}
+\newlabel{fig:stackvat}{{2}{10}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Communicating Event-Loops}{11}}
+\citation{chandy:snapshots}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces If the account manager and the spreadsheet are in separate vats, when the account manager (1) tells the {statusHolder} that represents its balance to immediately update, this (2) transfers control to the {statusHolder}, which (3) notes that its listeners should eventually be notified. The message is (4) sent to the spreadsheet's vat, which queues it on arrival and eventually (5) delivers it to the listener, which updates the display of the spreadsheet cell}}{12}}
+\newlabel{fig:2vat}{{3}{12}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Issues with Event-loops}{13}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Protection from Misbehavior}{13}}
+\citation{hardy:keykos}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Defensive Correctness}{14}}
+\citation{stiegler:polaris}
+\citation{dvh}
+\citation{hardy:keykos,shapiro:eros}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Principle of Least Authority (POLA)}{16}}
+\citation{miller:paradigm}
+\citation{SaltzerSc75}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}A Taste of E across a Network}{17}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Promise Pipelining}{18}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Promises}{18}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Pipelining}{18}}
+\citation{bogle:batched}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces The three messages in {\tt  {def {\textsl  {r3}} := x <- a() <- c(y <- b())}} are streamed out together, with no round trip. Each message box ``rides'' on the reference it is sent on. References {\tt  {x}} and {\tt  {y}} are shown with solid arrowheads, indicating that their target is known. The others are \emph  {promises}, whose open arrowhead represents their \emph  {resolvers}, which provide the right to choose their promises' value}}{19}}
+\newlabel{fig:pipeline}{{4}{19}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}Datalock}{20}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.4}Explicit Promises}{20}}
+\citation{tribble:channels}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.5}Broken Promise Contagion}{21}}
+\@writefile{toc}{\contentsline {section}{\numberline {9}Partial Failure}{21}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces A resolved reference's target is known. Near references are resolved and local; they carry both immediate-calls and eventual-sends. Promises and vat-crossing references are eventual; they carry only eventual-sends. Broken references carry neither. Promises may \emph  {resolve} to near, far or broken. \emph  {Partition} may break vat-crossing references}}{22}}
+\newlabel{fig:refstates}{{5}{22}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}Handling Failure}{23}}
+\citation{tyler:yurl}
+\citation{jed:dccs}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.2}Offline Capabilities}{24}}
+\citation{bejar:gc}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.3}Persistence}{25}}
+\@writefile{toc}{\contentsline {section}{\numberline {10}The When-Catch Expression}{26}}
+\@writefile{toc}{\contentsline {section}{\numberline {11}From Objects to Actors and Back Again}{27}}
+\citation{kay:smallhistory}
+\citation{hewitt:actors}
+\citation{hewitt:challenge}
+\citation{udi:objects}
+\citation{kahn:vulcan}
+\citation{tr003,Saraswat93}
+\citation{Shapiro:merge}
+\citation{tribble:channels}
+\citation{tribble:joule}
+\citation{hardy:keykos}
+\citation{gold:promises}
+\citation{liskov:promises}
+\citation{bogle:batched}
+\citation{birman:vsync,amir:thesis}
+\citation{lamport:paxos}
+\@writefile{toc}{\contentsline {section}{\numberline {12}Related Work}{29}}
+\citation{partition-aware,bancomat}
+\citation{castro:bft}
+\citation{reed:namos}
+\citation{lamport:paxos}
+\citation{tyler:webcalc}
+\citation{fielding:rest}
+\citation{fielding:rest,tyler:webcalc}
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.1}Work influenced by E's concurrency control}{30}}
+\citation{VanRoyHaridi}
+\citation{oze}
+\citation{twisted}
+\citation{reid:e-on-cl}
+\citation{tgc}
+\citation{kay:ma}
+\@writefile{toc}{\contentsline {section}{\numberline {13}Discussion and Conclusions}{31}}
+\bibdata{common}
+\bibcite{amir:thesis}{Ami95}
+\bibcite{bejar:gc}{Bej96}
+\bibcite{hansen:monitors}{BH93}
+\bibcite{birman:vsync}{BJ87}
+\bibcite{bogle:batched}{BL94}
+\@writefile{toc}{\contentsline {section}{\numberline {14}Acknowledgements}{32}}
+\bibcite{boehm:threads}{Boe05}
+\bibcite{chandy:snapshots}{CL85}
+\bibcite{castro:bft}{CL02}
+\bibcite{tyler:yurl}{Clo04a}
+\bibcite{tyler:webcalc}{Clo04b}
+\bibcite{dvh}{DH65}
+\bibcite{jed:dccs}{Don76}
+\bibcite{Englander:beans}{Eng97}
+\bibcite{fielding:rest}{Fie00}
+\bibcite{gamma:patterns}{GHJV94}
+\bibcite{goldberg:smalltalk72}{GK76}
+\bibcite{goldberg:purplebook}{GR83}
+\bibcite{hardy:keykos}{Har85}
+\bibcite{hewitt:actors}{HBS73}
+\bibcite{hewitt:challenge}{Hew85}
+\bibcite{hoare65}{Hoa65}
+\bibcite{hoare:monitors}{Hoa74}
+\bibcite{hoare:csp}{Hoa78}
+\bibcite{IBM:POO}{{IBM}68}
+\bibcite{kay:smallhistory}{Kay93}
+\bibcite{kay:ma}{Kay98}
+\bibcite{kahn:vulcan}{KTMB87}
+\bibcite{lamport:paxos}{Lam98}
+\bibcite{twisted}{Lef}
+\bibcite{liskov:promises}{LS88}
+\bibcite{miller:agoric}{MD88}
+\bibcite{gold:promises}{Mil92}
+\bibcite{miller:ode}{MMF00}
+\bibcite{miller:paradigm}{MS03}
+\bibcite{miller:struct-auth}{MTS04}
+\bibcite{miller:myths}{MYS03}
+\bibcite{partition-aware}{OBDMS98}
+\bibcite{reed:namos}{Ree78}
+\bibcite{reid:e-on-cl}{Rei05}
+\bibcite{Saraswat93}{Sar93}
+\bibcite{tr003}{Sha83}
+\bibcite{stiegler:polaris}{SKYM04}
+\bibcite{Shapiro:merge}{SM87}
+\bibcite{bancomat}{SM03}
+\bibcite{SaltzerSc75}{SS75}
+\bibcite{shroff:match}{SS04}
+\bibcite{shapiro:eros}{SSF99}
+\bibcite{udi:objects}{ST83}
+\bibcite{stiegler:ewalnut}{Sti04}
+\bibcite{oze}{SV05a}
+\bibcite{tgc}{SV05b}
+\bibcite{tulloh:abstraction}{TM02}
+\bibcite{tribble:joule}{TMHK95}
+\bibcite{tribble:channels}{TMK{$^{+}$}87}
+\bibcite{Hayek:1945:UKS}{vH45}
+\bibcite{VanRoyHaridi}{VH04}
+\bibcite{zooko:hell}{WO01}
+\bibstyle{alpha}

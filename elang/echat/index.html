@@ -1,0 +1,582 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Secure EChat</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="../tools/index.html" title="Back to: E Tools"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: E Tools" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="../help.html" title="On to: Help Using E"><img src="../../images/next.gif" width="64" height="32" alt="On to: Help Using E" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>Secure
+              EChat</b></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p>To demonstrate the power of E for building distributed secure software,
+        we have built a simple chat system that allows two people to set up a
+        secure conversation that cannot be penetrated or eavesdropped by any known
+        technology. This entire chat system, written in E, takes only 5 pages
+        if printed on paper, and as such is short enough to be discussed in detail.
+      <p> The procedure for using Secure EChat is as follows:
+      <ul>
+        <li> Turn on your Secure EChat program.
+        <li> Set the name by which you wish to be referred during this chat session
+          <font color="#ff0000">(NOTE: Fix program so this is not required!)</font>
+        <li> Log in to the Internet.
+        <li> Offer yourself for a chat session by writing out a reference file.
+          The reference file contains the URI of your EChat controller object,
+          which is described in detail below, though as a user, you only need
+          to give the program a file name and it will do the rest.
+        <li> Email your reference file to the friend with whom you wish to chat
+        <li> Your friend mimics most of these steps, turning on a copy of the
+          Secure EChat program, <font color="#ff0000">sets their name,</font>
+          logging into the Internet. But instead of offering themselves for chat
+          by writing a reference file, they find you by reading your reference
+          file.
+        <li> The software sets up a secure connection and each of you can start
+          sending the other messages.
+      </ul>
+      <p> The only step in this process that is vulnerable to outsiders is the
+        step wherein you email the reference file to your friend. I.e., if a malicious
+        third party intercepted the email, such a person could pick up the reference
+        and present himself as your friend. This security hole can be easily closed
+        by using a secure email system, for example by using the very easy to
+        install PGP upgrade to Netscape Communicator <font color="#ff0000">***?</font>,
+        Outlook Express, or Eudora.
+      <p> Logging in to the Internet before creating your reference file is important
+        only if you are using a conventional ISP connection to the Web, wherein
+        your IP address is assigned by the ISP when you log in. If you have a
+        preconfigured IP address, the sequencing is not important.
+      <p> As explained in the discussion of capability-based security, the key
+        architectural concept for maintaining security is to be careful about
+        who gets a reference to an object in the first place, because if the trespasser
+        cannot get a reference, he cannot breach your security. This architectural
+        philosophy is employed in the way Secure EChat sets up a connection, wherein
+        the only way for someone to find you is to get their hands on the reference
+        document. By ensuring that only your friend can get the reference document,
+        you ensure security (as long as the friend can be trusted; but if he cannot
+        be trusted, no technique could give you security anyway).
+      <p> The general strategy of only enabling a capability or eright when someone
+        needs it and can be trusted with it is also found in the user interface
+        of the Secure EChat program. Note that, until you have filled your name,
+        all other buttons in the program are disabled. Similarly, the Send button
+        is not enabled until a connection is in place. Although E can in principle
+        allow the sending of messages to a friend who does not yet have a connection
+        (by sending the message through the promise of a friend), in practice
+        in the 2-person EChat program it makes little sense for the user to do
+        so.
+      <p> This technique of denying the user a capability until he can use it
+        effectively is well understood by user interface designers and is quite
+        commonly employed. One way of describing E's security architecture is
+        to say that E rigorously employs this technique throughout every layer
+        of software, down to the level where software meets hardware and acquires
+        the ability, for example, to reset the system clock.
+      <p> With that introduction, here is the source for Secure EChat:
+      <p> <font color="#FF0000">This code is rather out of date, so to prevent 
+        it from being updoc'ed, we start by exiting with success:</font> 
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+<font color="#FF0000">? interp.exitAtTop()</font></pre>
+      </blockquote>
+      <p>First we set up abbreviations that allow us to easily access the parts 
+        of the Java API most frequently used in the program, the Swing and AWT 
+        packages: </p>
+      <blockquote>
+        <pre><font class="comment"># set up imports
+</font>? def swing := &lt;import:com.sun.java.swing.*&gt;
+? def awt := &lt;import:java.awt.*&gt;
+
+</pre>
+      </blockquote>
+      <p>
+      <p> Next, we put the introducer on the air so our connection operations
+        can come to life, and create a couple of utility routines that convert
+        URIs to and from sturdy references:
+      <blockquote>
+        <pre>? introducer.onTheAir()
+
+
+<font class="comment"># return the object represented by the URI
+</font>? def getObjectFromURI(uri) :any {
+&gt;     introducer.sturdyFromURI(uri).getRcvr()
+&gt; }
+
+? def makeURIFromObject(obj) :any {
+&gt;     introducer.sturdyToURI(sturdyRef.temp(obj))
+&gt; }
+</pre>
+      </blockquote>
+      <p> More utility routines for reading and writing the reference document,
+        opening the dialogs and putting them in usable form
+      <blockquote>
+        <pre><font class="comment"># return path to the friend file
+</font>? def findFriendFileName(chatWin) :any {
+&gt;     def theDialog := awt("FileDialog")(chatWin,"Select a Friend")
+&gt;     theDialog.show()
+&gt;     def path := theDialog.getFile()
+&gt;     if (path != null) {
+&gt;         path := theDialog.getDirectory() + path
+&gt;     }
+&gt;     return path
+&gt; }
+
+<font color="#ff0000" class="comment">replace with drag/drop the file?</font><font class="comment">
+# return a pathName for a file to be saved
+</font>? def requestSaveFileName(chatWin) :any {
+&gt;     def theDialog := awt("FileDialog")(chatWin,
+&gt;                                        "Save File with Your Name",
+&gt;                                        awt("FileDialog").getSAVE())
+&gt;     theDialog.show()
+&gt;     def addressName := theDialog.getFile()
+&gt;     if (addressName != null) {
+&gt;         addressName := theDialog.getDirectory() + addressName
+&gt;     }
+&gt;     return addressName
+&gt; }
+<font color="#ff0000">
+? def offerMyAddress(fileName, theURI) {</font>
+<font color="#ff0000">&gt;     &lt;file&gt;[fileName].setText(theURI)</font>
+<font color="#ff0000">&gt; }</font> </pre>
+      </blockquote>
+      <p> The set1LineComponentParameters is a utility for setting up buttons
+        and textfields so they'll resize in an intelligent fashion when the user
+        resizes the chat window.
+      <blockquote>
+        <pre>? def set1LineComponentParameters(theComponent) {
+&gt;     theComponent setPreferredSize(awt("Dimension") new (150,25))
+&gt;     theComponent setMaximumSize(awt("Dimension") new(1000,25))
+&gt;     theComponent setAlignmentX(0.5)
+&gt; } </pre>
+      </blockquote>
+      <p> The addComponent routine is a utility for dealing with a subtlety in
+        E's interaction with Java objects: the Java Container class has many methods
+        with the signature "add(object)", for which Java discriminates among the
+        choices by looking at the type of the object. Since E is not strongly
+        typed, it cannot make the same discrimination. Hence when using the add
+        method for Containers, you have to revert to the primitive E method
+        E.call(...). Here we encapsulate the usage of this low level E method for
+        adding components to containers. <font color="#ff0000">XXX no longer true now that we have verb-string syntax</font>
+      <blockquote>
+        <pre>? def addComponent(container, component) {
+&gt;     E.call(container, "add(Component)", [component])
+&gt; }
+</pre>
+      </blockquote>
+      <p> The first of the two big classes in EChat is the chatUI class, which
+        constructs the chat window, its buttons, and the listener objects. Though
+        there is a lot of code here, little of it is new; it is mostly just calls
+        from E to the elements of Java's awt and swing classes needed to construct
+        a window. The flow of control is essentially identical to the flow one
+        would build in Java to achieve the same purpose. In some situations it
+        could make sense to use a Java GUI builder to create the window code in
+        Java itself, and then hook it up to E with <tt>import:</tt>. But since
+        we wanted the chat window to be intelligently resizable, it was beyond
+        the abilities of current Java GUI builders to provide it, and it turned
+        out to be easier to construct such resizable windows in a directly-executable
+        scripting language like E than in Java.
+      <p> One element of chatUIMaker that is worth examining is the definition
+        of myWindowListener. In Java, WindowListener is an interface that defines
+        several methods to respond to different events. We are only interested
+        in one event, the windowClosing event, so our windowListener simply uses
+        a match _ {} statement to intercept and ignore all the messages other
+        than windowClosing. A Java programmer would achieve a similar, though
+        still larger and more complex effect, by creating a subclass of the WindowAdapter
+        class and overriding the one method that interested him.
+      <p> The other interesting feature of myWindowListener is that, after telling
+        the chatController to leave (i.e., to terminate the conversation), it
+        tells the interpreter to continue at top. This statement undoes the blockAtTop
+        initiated as the last line of the program that keeps the interpreter from
+        rushing off to the end of the program and terminating everything before
+        things have hardly started; the strategy is identical to that introduced
+        at the end of the (???) chapter.
+      <p> The one important feature of the chatUIMaker for the other components
+        of the program is the chatUI object constructed at the end of the chatUIMaker.
+        This object gives outside objects (notably the chatController object)
+        access to the widgets which it must manipulate (for example by enabling
+        and disabling the buttons, and putting new messages into the chatTextArea).
+        The chatUIMaker must receive a chatController so that the Listeners can
+        send appropriate messages to the chatController when the user interacts
+        with the window; this requirement for the chatUI to have a reference to
+        the chatController imposes interesting design considerations on the chatControllerMaker,
+        as described below.
+      <blockquote>
+        <pre>? def chatUIMaker(chatController) :any {
+&gt;     <font class="comment"># chatWin
+</font>&gt;     <font class="comment"># Lay out the chat window, create its components</font>
+&gt;     def chatWin := swing("JFrame")("Secure EChat")
+&gt;     def chatPane := chatWin.getContentPane()
+&gt;     def myBorder := swing("BoxLayout")(chatPane,1)
+&gt;     chatPane.setLayout(myBorder)
+&gt;     def myWindowListener {
+&gt;         to windowClosing(theEvent) {
+&gt;             chatController.leave()
+&gt;             interp.continueAtTop()
+&gt;         }
+&gt;         match _ {}
+&gt;     }
+&gt;     chatWin.addWindowListener(myWindowListener)
+&gt;
+&gt;     <font class="comment"># setNameButton</font>
+&gt;     def setNameButton := swing("JButton")("Set Your Name")
+&gt;     set1LineComponentParameters(setNameButton)
+&gt;     addComponent(chatPane, setNameButton)
+&gt;     def myNameButtonListener {
+&gt;         to actionPerformed(theEvent) {
+&gt;             chatController.setMyName()
+&gt;         }
+&gt;     }
+&gt;     setNameButton.addActionListener(myNameButtonListener)
+&gt;
+&gt;     <font class="comment"># offerChatButton</font>
+&gt;     def offerChatButton := swing("JButton")("Offer Chat")
+&gt;     offerChatButton.setEnabled(false)
+&gt;     set1LineComponentParameters(offerChatButton)
+&gt;     addComponent(chatPane, offerChatButton)
+&gt;     def myOfferButtonListener {
+&gt;         to actionPerformed(theEvent) {
+&gt;             chatController.offerSelf()
+&gt;         }
+&gt;     }
+&gt;     offerChatButton.addActionListener(myOfferButtonListener)
+&gt;
+&gt;     <font class="comment"># findFriendButton
+</font>&gt;     def findFriendButton := swing("JButton")("Find Friend")
+&gt;     findFriendButton.setEnabled(false)
+&gt;     set1LineComponentParameters(findFriendButton)
+&gt;     addComponent(chatPane, findFriendButton)
+&gt;     def myFriendButtonListener {
+&gt;         to actionPerformed(theEvent) {
+&gt;             chatController.findFriend()
+&gt;         }
+&gt;     }
+&gt;     findFriendButton.addActionListener(myFriendButtonListener)
+&gt;
+&gt;     <font class="comment"># chatScroller that holds chatTextArea</font>
+&gt;     def chatScroller := swing("JScrollPane")()
+&gt;     chatScroller setMaximumSize(awt("Dimension")(2000,1000))
+&gt;     chatScroller setPreferredSize(awt("Dimension")(200,60))
+&gt;     addComponent(chatPane, chatScroller)
+&gt;
+&gt;     <font class="comment"># chatTextArea
+</font>&gt;     def chatTextArea := swing("JTextArea")()
+&gt;     chatTextArea.setLineWrap(true)
+&gt;     addComponent(chatScroller.getViewport(), chatTextArea)
+&gt;
+&gt;     <font class="comment"># nextMessageBox
+</font>&gt;     def nextMessageBox := swing("JTextField")("Type your message here",30)
+&gt;     addComponent(chatPane, nextMessageBox)
+&gt;
+&gt;     <font class="comment"># sendMessageButton
+</font>&gt;     def sendMessageButton := swing("JButton")("Send")
+&gt;     sendMessageButton.setEnabled(false)
+&gt;     set1LineComponentParameters(sendMessageButton)
+&gt;     addComponent(chatPane, sendMessageButton)
+&gt;     def mySendButtonListener {
+&gt;         to actionPerformed (theEvent) {
+&gt;             chatController.send()
+&gt;         }
+&gt;     }
+&gt;     sendMessageButton.addActionListener(mySendButtonListener)
+&gt;
+&gt;     chatWin.pack()
+&gt;     chatWin.show()
+&gt;
+&gt;     def chatUI {
+&gt;         to getChatWin(){chatWin}
+&gt;         to getNameButton(){setNameButton}
+&gt;         to getOfferChatButton() {offerChatButton}
+&gt;         to getFindFriendButton() {findFriendButton}
+&gt;         to getChatTextArea() {chatTextArea}
+&gt;         to getNextMessageBox() {nextMessageBox}
+&gt;         to getSendMessageButton() {sendMessageButton}
+&gt;     }
+&gt; }
+
+</pre>
+      </blockquote>
+      <p> The chatController contains all the interesting concurrency behavior.
+        It is also the only object in Secure EChat that is exposed to another
+        person's software, and as such, the only object that gives other people
+        any erights inside your computer, and thus the only object that must be
+        inspected in this system for security issues. We discuss the security
+        issues of the Secure EChat program later. For now, let's look at the interesting
+        architectural features. First, note that there are 2 definitions of chatController
+        (<font color="#ff0000">note, get rid of inner and outer chatcontroller</font>),
+        one enclosed at the end of the definition of the other. Why?
+      <p> As you recall from the chatUI discussion, to compose a chatUI object,
+        you first need a chatController. However, to compose a chatController,
+        you first need a chatUI object (note that the first thing done in the
+        chatController is the definition of a chatUI). This is a classic case
+        of 2 objects needing references to each other essentially as soon as they
+        come to life, a problem that has plagued programmers ever since the invention
+        of the object. Here we use the E technique presented in chapter <font color="#ff0000">???
+        </font>of immediately using a variable's name inside the scope of the
+        code block that defines the object: the chatController being defined is
+        passed to the chatUIMaker as the first step in the chatController's definition.
+        And since the second definition of chatController is the last step in
+        the definition of the first chatController, at the end of the definition,
+        the first chatController effectively becomes the second chatController,
+        and everything works out cleanly.
+      <p> Interesting methods in the chatController include
+      <ul>
+        <li> <tt>offerSelf</tt>, which creates the file containing the chatController's
+          URI. </li>
+        <li><tt>findFriend</tt>, which creates a live reference to a friend
+          based on a URI found in a file, and sets up the connection, </li>
+        <li><tt>send</tt> and <tt>receive</tt>, which simply pass messages
+          across and are indeed as simple as their job suggests--receive is just
+          one line long, while send is long enough to both send the message to
+          the friend and to post the message locally on the sender's chat window.
+          All the effort to encrypt and decrypt these messages are performed invisibly
+          by E for the programmer, it is simply and marvelously invisible. Here
+          is the code:
+          <pre>? def chatControllerMaker() {
+&gt;     def outerChatController := {
+&gt;         def chatUI := chatUIMaker(outerChatController)
+&gt;         def myName := null
+&gt;         def myFriend := null
+&gt;         def myFriendName := null
+&gt;         def myAddressFileName := null
+&gt;         def showMessage(senderName, theMessage) {
+&gt;             chatUI.getChatTextArea().append(senderName)
+&gt;             chatUI.getChatTextArea().append(" says:\t")
+&gt;             chatUI.getChatTextArea().append(theMessage + "\n")
+&gt;         }
+&gt;         def innerChatController {
+&gt;             # transmitting functions
+&gt;             to send() {
+&gt;                 def nextMessage := chatUI getNextMessageBox getText
+&gt;                 println("next message" + nextMessage)
+&gt;                 myFriend &lt;- receive(nextMessage)
+&gt;                 showMessage(myName,nextMessage)
+&gt;             }
+&gt;             to setMyName() {
+&gt;                 myName := swing("JOptionPane").showInputDialog(
+&gt;                         "Please give me your name for this chat session");
+&gt;                 # myName := "marcs"
+&gt;                 if (myName != null) {
+&gt;                     chatUI.getNameButton().setLabel(myName)
+&gt;                     chatUI.getNameButton().setEnabled(false)
+&gt;                     chatUI.getFindFriendButton().setEnabled(true)
+&gt;                     chatUI.getOfferChatButton().setEnabled(true)
+&gt;                 }
+&gt;             }
+&gt;             to offerSelf() {
+&gt;                 myAddressFileName := requestSaveFileName(chatUI getChatWin)
+&gt;                 if (myAddressFileName != null) {
+&gt;                     offerMyAddress(myAddressFileName,
+&gt;                                    makeURIFromObject(outerChatController))
+&gt;                 }
+&gt;             }
+&gt;             to leave() {
+&gt;                 if (myAddressFileName != null) {
+&gt;                     &lt;file&gt;[myAddressFileName].delete()
+&gt;                 }
+&gt;                 myFriend &lt;- friendIsLeaving()
+&gt;                 innerChatController.friendIsLeaving()
+&gt;             }
+&gt;             to receive(theMessage) {
+&gt;                 showMessage(myFriendName,theMessage)
+&gt;                 1
+&gt;             }
+&gt;             to receiveFriend(theFriend) {
+&gt;                 myFriend := theFriend
+&gt;                 chatUI.getSendMessageButton().setEnabled(true)
+&gt;                 1
+&gt;             }
+&gt;             to receiveFriendName(theName) {
+&gt;                 myFriendName := theName
+&gt;                 # chatUI.getChatTextArea().append(myFriendName + " has arrived\n")
+&gt;                 1
+&gt;             }
+&gt;             to sendName {
+&gt;                 myName
+&gt;             }
+&gt;             to findFriend {
+&gt;                 def fileName := findFriendFileName(chatUI getChatWin)
+&gt;                 if (fileName != null) {
+&gt;                     def friendURI := &lt;file&gt;[fileName].getText()
+&gt;                     showMessage("me", "uri" + friendURI)
+&gt;                     myFriend := getObjectFromURI(friendURI)
+&gt;                     showMessage("me", "obj" + myFriend)
+&gt;                     def result := myFriend &lt;- receiveFriend(innerChatController)
+&gt;                     Ref.whenResolved(result, def observer(r) {
+&gt;                         if (Ref.isBroken(r)) {
+&gt;                             showMessage("me", "got clobbered")
+&gt;                         } else {
+&gt;                             showMessage("me", "won against all odds")
+&gt;                         }
+&gt;                     })
+&gt;                     showMessage("me","sent me")
+&gt;                     myFriend &lt;- receiveFriendName(myName)
+&gt;                     myFriendName := myFriend &lt;- sendName()
+&gt;                     chatUI.getSendMessageButton().setEnabled(true)
+&gt;                 }
+&gt;             }
+&gt;             to friendIsLeaving() {
+&gt;                 myFriend := null
+&gt;                 myFriendName := null
+&gt;             }
+&gt;         }
+&gt;     }
+&gt; }
+</pre>
+        </li>
+      </ul>
+      <p> The last part of the program is the lines that start up the entire world
+        of EChat objects, and then block the interpreter from terminating before
+        the user is done with the program:
+      <blockquote>
+        <pre>? def controller := chatControllerMaker()
+
+? interp.blockAtTop()
+</pre>
+      </blockquote>
+      <p> And that is the whole program.
+      <p> <b>Security considerations</b>
+      <p> As noted earlier, the total security analysis of Secure EChat boils
+        down to an assessment of the appropriateness of the erights granted by
+        the 10 public methods of the chatController. If these 10 methods grant
+        only erights that are appropriate for the person at the other end of the
+        conversation, even if your friend turns out to be less than trustworthy,
+        little harm can come to you or your computer. But if, for example, there
+        were methods in chatController to ReadADirectory and WriteAFile, your
+        computer would be exposed to considerable danger, because a malicious
+        chatter could destroy your hard disk, steal your company proprietary data,
+        and install a virus that would watch for your password the next time you
+        turned on your Quicken checkbook. (<font color="#ff0000">unless you were
+        running Secure EChat on top of the SafeEMachine, described elsewhere,
+        in which case a malicious access to these abilities would throw an alert
+        out to the user)</font>.
+      <p> How secure is this version of EChat? The answer is, probably secure
+        enough for this application, but still not as secure as a purist might
+        prefer. This chatController mixes 2 different sets of methods in its public
+        interface: methods that must be public so the listeners in the chat window
+        can call them, and methods that must be public so that the friend's chat
+        program can call them. Let's look at a couple of things pernicious friends
+        might do with a modified version of the Secure EChat program: they might
+        issue a setMyName command to your computer, which would be irritating
+        because it would pop up a dialog box on your computer, though beyond that
+        the damage is negligible. Similarly friends could tell your program to
+        offerSelf, again popping a dialog box. They could also make you send repeatedly,
+        but this would only make you send whatever you had in your nextMessage
+        text field, so again the harm is quite limited. Really, the worst harm
+        such a &nbsp;"friend" could do is persuade you that the Secure EChat program
+        itself was unreliable (because it would pop dialog boxes and send incomplete
+        messages for no visible reason).
+      <p> How difficult is it to fully secure this program, so that even a friend
+        who was sent by Satan (or the Internal Revenue Service... is there a difference?)
+        could not do anything except chat? The answer is, it takes ??? additional
+        lines of code, and the modification of one existing line of code.
+      <p> The solution is to create a chatReceiver object that acts as a facet
+        for the chatController, passing through only those messages that the friend
+        is allowed to send. The chatReceiver looks like this:
+      <pre>def chatReceiverMaker new(chatController) {
+    def chatReceiver {
+        to receive(theMessage) {chatController.receive(theMessage)}
+        to receiveFriend(theFriend) { chatController.receiveFriend(theFriend)}
+        to receiveFriendName(theName) {chatController.receiveFriendName(theName) }
+        to sendName {chatController.sendName() }
+	to friendIsLeaving{chatController.friendIsLeaving()}
+        match _ { }
+    }
+}
+...
+# (now inside the chatController definition)
+def myChatReceiver := chatReceiverMaker(chatController)
+</pre>
+      <p> The parts of the chatController public interface that are strictly for
+        local usage simply don't appear in the chatReceiver, so the friend's program
+        has no access to them--as long as we send the friend a reference to the
+        chatReceiver rather than the chatController, by replacing the reference
+        to the chatController with a reference to the chatReceiver, in the following
+        line of code from the chatController's offerSelf method:
+      <pre># (inside of offerSelf)
+offerMyAddress(myAddressFileName, makeURIFromObject(myChatReceiver))
+
+
+</pre>
+      <p> That's it! Secure EChat is now secure even from your friends who are
+        in cahoots with the CIA! :-)
+      <P ALIGN="left">&nbsp;
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="../tools/index.html" title="Back to: E Tools"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: E Tools" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="../help.html" title="On to: Help Using E"><img src="../../images/next.gif" width="64" height="32" alt="On to: Help Using E" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

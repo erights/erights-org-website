@@ -1,0 +1,218 @@
+# This Makefile is hereby placed in the public domain.
+#
+# Makefile for $(TOP)/doc
+# Note that we now depend on Java JDK >= 1.2
+
+default: all
+
+TOP=..
+
+include $(TOP)/src/build/makerules.mk
+
+# all: buttons ode javadocs tarballs
+all: buttons javadocs tarballs
+
+buttons:
+	$(STLE) $(TOP)/src/esrc/scripts/ButtonPointer.e $(TOP)/doc
+
+ode:
+	(cd elib/capability/ode; ./compose.e)
+
+javadocs: _packages _javadocs _impldocs fixdocs
+
+edocs: _imports _unsafes fix_imports fix_unsafes
+
+
+# HEADER="'<a href=\"http://www.erights.org\"><img src=\"http://www.erights.org/images/e-lambda.gif\" border=\"0\"></a>'"
+# BOTTOM="'<center>comments? <i><a href=\"mailto:bugs@erights.org\">bugs@erights.org</a></i> or <a href=\"http://www.blindpay.com/crit-me-now.cgi\"><img src=\"http://www.erights.org/images/cmn.gif\" border=\"0\"></a></center>'"
+
+HEADER=<a href=\"{@docroot}/../index.html\"  target=\"_top\"><img src=\"{@docroot}/../images/e-lambda.gif\" border=\"0\"></a>
+BOTTOM=<center>comments? <i><a href=\"mailto:bugs@erights.org\">bugs@erights.org</a></i> or <a href="http://www.blindpay.com/crit-me-now.cgi"><img src="{@docroot}/../images/cmn.gif" width="98" height="21" border="0" align="middle"></a></center>
+
+ER=org.erights.e
+
+_imports:
+	-rm -rf imports
+	mkdir imports
+	$(JAVACMD) -Xmx256m \
+		-cp "$(RUN_PATH)$(SEP)$(JAVA_HOME)/lib/tools.jar" \
+		org.quasiliteral.edoc.EDocMain \
+		-unser $(TOP)/edoc.ser \
+		-tamedir $(TOP)/src/safej \
+		-use \
+		-version \
+		-author \
+		-splitindex \
+		-windowtitle 'Caplet API' \
+		-doctitle "Caplet API importable by &lt;import:...&gt;" \
+		-group "ELib: Using E from Java" \
+	"$(ER).elib.*" \
+		-group "ELib Support" \
+	"$(ER).develop.*:$(ER).extern.*" \
+		-group "Pluribus: Cryptographic Distributed Capabilities" \
+	"net.vattp.*:net.captp.*" \
+		-group "ELang: Implementing The E Language" \
+	"$(ER).elang.*" \
+		-group "ELang Support" \
+	"org.erights.build:org.capml.*:org.quasiliteral*" \
+		-group "Elmer: An Interactive E command line & scratchpad" \
+	"$(ER).ui.*" \
+		-group "ERTP: Transfering Assayable Electronic Rights" \
+	"net.ertp*" \
+		-group "Meta: Sugaring and Deflecting Java Classes" \
+	"$(ER).meta.*" \
+		-group "Third Party Tools" \
+	"org.apache.oro.text.regex:antlr*" \
+		-header "$(HEADER)" \
+		-bottom "$(BOTTOM)" \
+		-safe \
+		-d imports
+
+fix_imports:
+	$(STLE) $(TOP)/src/esrc/scripts/fixdoc.e imports
+
+_unsafes:
+	-rm -rf unsafes
+	mkdir unsafes
+	$(JAVACMD) -Xmx256m \
+		-cp "$(RUN_PATH)$(SEP)$(JAVA_HOME)/lib/tools.jar" \
+		org.quasiliteral.edoc.EDocMain \
+		-unser $(TOP)/edoc.ser \
+		-tamedir $(TOP)/src/safej \
+		-use \
+		-version \
+		-author \
+		-splitindex \
+		-windowtitle 'ELib API' \
+		-doctitle "ELib API importable by &lt;unsafe:...&gt;" \
+		-group "ELib: Using E from Java" \
+	"$(ER).elib.*" \
+		-group "ELib Support" \
+	"$(ER).develop.*:$(ER).extern.*" \
+		-group "Pluribus: Cryptographic Distributed Capabilities" \
+	"net.vattp.*:net.captp.*" \
+		-group "ELang: Implementing The E Language" \
+	"$(ER).elang.*" \
+		-group "ELang Support" \
+	"org.erights.build:org.capml.*:org.quasiliteral*" \
+		-group "Elmer: An Interactive E command line & scratchpad" \
+	"$(ER).ui.*" \
+		-group "ERTP: Transfering Assayable Electronic Rights" \
+	"net.ertp*" \
+		-group "Meta: Sugaring and Deflecting Java Classes" \
+	"$(ER).meta.*" \
+		-group "Third Party Tools" \
+	"org.apache.oro.text.regex:antlr*" \
+		-header "$(HEADER)" \
+		-bottom "$(BOTTOM)" \
+		-d unsafes
+
+fix_unsafes:
+	$(STLE) $(TOP)/src/esrc/scripts/fixdoc.e unsafes
+
+
+_packages:
+	(cd $(TOP)/src/jsrc; find antlr net org -name '*.java') | \
+		grep -v "/CVS/" | \
+		sed 's@/[^/]*$$@@' | sort|uniq | sed 's@/@.@g' \
+		> packages.tmp
+
+_javadocs: 
+	-rm -rf javadoc
+	-rm $(TOP)/tarballs/javadoc.tar.gz
+	mkdir javadoc
+	$(JAVADOC) \
+		-public \
+		-sourcepath $(TOP)/src/jsrc \
+		-d javadoc \
+		-use \
+		-version \
+		-author \
+		-splitindex \
+		-windowtitle 'ELib API' \
+		-doctitle "E's Java API" \
+		-overview "$(TOP)/src/jsrc/overview.html" \
+		-link \
+	http://java.sun.com/products/jdk/1.3/docs/api/ \
+		-group "ELib: Using E from Java" \
+	"$(ER).elib.*" \
+		-group "ELib Support" \
+	"$(ER).develop.*:$(ER).extern.*" \
+		-group "Pluribus: Cryptographic Distributed Capabilities" \
+	"net.vattp.*:net.captp.*" \
+		-group "ELang: Implementing The E Language" \
+	"$(ER).elang.*" \
+		-group "ELang Support" \
+	"org.erights.build:org.capml.*:org.quasiliteral*" \
+		-group "Elmer: An Interactive E command line & scratchpad" \
+	"$(ER).ui.*" \
+		-group "ERTP: Transfering Assayable Electronic Rights" \
+	"net.ertp*" \
+		-group "Meta: Sugaring and Deflecting Java Classes" \
+	"$(ER).meta.*" \
+		-group "Third Party Tools" \
+	"org.apache.oro.text.regex:antlr*" \
+		-header "$(HEADER)" \
+		-bottom "$(BOTTOM)" \
+		@packages.tmp
+
+_impldocs: 
+	-rm -rf impldoc
+	-rm $(TOP)/tarballs/impldoc.tar.gz
+	mkdir impldoc
+	$(JAVADOC) \
+		-private \
+		-sourcepath $(TOP)/src/jsrc \
+		-d impldoc \
+		-use \
+		-version \
+		-author \
+		-serialwarn \
+		-splitindex \
+		-windowtitle 'ELib Implementation' \
+		-doctitle "E's Java Implementation" \
+		-overview "$(TOP)/src/jsrc/overview.html" \
+		-link \
+	http://java.sun.com/products/jdk/1.3/docs/api/ \
+		-group "ELib: Using E from Java" \
+	"$(ER).elib.*" \
+		-group "ELib Support" \
+	"$(ER).develop.*:$(ER).extern.*" \
+		-group "Pluribus: Cryptographic Distributed Capabilities" \
+	"net.vattp.*:net.captp.*" \
+		-group "ELang: Implementing The E Language" \
+	"$(ER).elang.*" \
+		-group "ELang Support" \
+	"org.erights.build:org.capml.*:org.quasiliteral*" \
+		-group "Elmer: An Interactive E command line & scratchpad" \
+	"$(ER).ui.*" \
+		-group "ERTP: Transfering Assayable Electronic Rights" \
+	"net.ertp*" \
+		-group "Meta: Sugaring and Deflecting Java Classes" \
+	"$(ER).meta.*" \
+		-group "Third Party Tools" \
+	"org.apache.oro.text.regex:antlr*" \
+		-header "$(HEADER)" \
+		-bottom "$(BOTTOM)" \
+		@packages.tmp
+	cp impldoc/serialized-form.html javadoc/serialized-form.html
+
+fixdocs:
+	$(STLE) $(TOP)/src/esrc/scripts/fixdoc.e javadoc impldoc
+
+tarballs:
+	mkdir $(TOP)/tarballs
+	tar czf $(TOP)/tarballs/javadoc.tar.gz javadoc
+	tar czf $(TOP)/tarballs/impldoc.tar.gz impldoc
+
+untarj:
+	-rm -rf javadoc
+	-rm -rf impldoc
+	tar xzf $(TOP)/tarballs/javadoc.tar.gz
+	tar xzf $(TOP)/tarballs/impldoc.tar.gz
+
+clean clobber: clobber-javadocs
+
+clobber-javadocs:
+	-rm -rf javadoc
+	-rm -rf impldoc

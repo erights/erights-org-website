@@ -1,0 +1,898 @@
+ 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>The Pencil, the Brick, and the Law</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">talks</a>&nbsp;/&nbsp;<a href="../index.html">pisa</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../../images/prev-gray.gif" width="64" height="32"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" -->x<!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><img src="../../../images/next-gray.gif" width="64" height="32"><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><font size="6">The 
+              Pencil, the Brick, and the Law:</font><font size="5"><br>
+              Smart Contracts and the Third World<br>
+              <br>
+              <font size="4">by Mark S. Miller and Marc Stiegler</font></font><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <p align="center"><i>Draft paper to be submitted to &quot;<a href="http://panoramix.univ-paris1.fr/AHTEA/colloques.html">Austrian 
+        Perspective on the New Economy</a>&quot;.<br>
+        Please comment.</i></p>
+      <h3>Abstract</h3>
+      <p><font color="#FF0000">*** To be written</font></p>
+      <h3><a name="intro"></a>Introduction</h3>
+      <p>As Hernando de Soto explains in &quot;The Mystery of Capital&quot; [<a href="#deSoto00">deSoto00</a>], 
+        the poor of the third world (including much of the former communist world) 
+        do not suffer from, in his terminology, a lack of <i>assets</i>; rather, 
+        they suffer from a lack of <i>capital</i>. Many of the poor around the 
+        world do, surprisingly enough, have assets. In a simple exercise, in which 
+        de Soto's associates drove around neighborhoods in various poor countries, 
+        assessing the value of buildings which were not formally titled, de Soto 
+        extrapolated that the value of just the informally owned buildings in 
+        the third world amounted to $9.3 trillion -- more than half the combined 
+        value of all publicly traded U.S. companies.</p>
+      <p>De Soto's focus is on the <i>informal</i> sector -- that sphere of economic 
+        activity that occurs outside the official <i>formal</i> legal system. 
+        Most of the economic activity of the third world's poor occurs in the 
+        informal sector. Despite the non-official status of the informal systems 
+        of laws and property in this sector, they are nevertheless quite real, 
+        and form the foundations on which these informal economies function. However, 
+        the formal and informal sectors are not otherwise equivalent. The poor 
+        pay a great price for informality -- most of all in the difficulty of 
+        capital formation.</p>
+      <p>As a simple example, the house you live in, from which no one would attempt 
+        to evict you, is an asset. The recognition and sense of legitimacy in 
+        your local community of your claim to the house makes this asset effectively 
+        your property. A mortgage on that house would be capital. (In the countries 
+        that have become rich, mortgages in particular have been a major source 
+        of highly decentralized investment, seeding many family businesses.) But 
+        just because no one can evict you from your house, this does not mean 
+        a bank dares accept it as collateral for a loan. The distinction is one 
+        of <i>credibility of property rights transfer at a distance</i>, i.e., 
+        the ability to engage in binding contracts such that the new owners could 
+        be confident they could indeed evict you as part of the contract, despite 
+        their distance from your community.</p>
+      <p>De Soto's offer of hope for the poor is to transition into today's official 
+        formal system of law and property, backed by national governments, in 
+        order to obtain the benefits of capital formation. De Soto documents well 
+        both the high comparative costs of operating formally, and the difficulties 
+        of bringing about the transition, but successfully makes the case that 
+        the benefits outweigh the costs. Today, there are only these two choices 
+        -- informal <i>vs.</i> governmental. Given only these choices, we believe 
+        de Soto is advocating the right one, we wish him great luck with his program, 
+        and we do not wish to distract those who are able to make this transition 
+        successfully. Indeed, we can imagine few more effective programs for improving 
+        the overall condition of humanity.</p>
+      <p>Despite our admiration, this paper takes a different approach; it explores 
+        a third alternative, one openned up by new technologies. Because binding 
+        contracts for ownership transfer lie at the heart of capital formation, 
+        if traditional contracts were supplemented and/or supplanted with <i>smart 
+        contracts</i>, which leverage the Net and cryptography for mediating disputes 
+        and enabling cooperation among suspicious parties, could such instruments(**?) 
+        dramatically increase capital liquidity, spawning a flood of new wealth 
+        in the poorest areas of the world? (Given the exponential rate at which 
+        the cost of electronics is falling, the cost of the tecnology itself should 
+        rapidly become a non-issue, even for the world's poorest.)</p>
+      <h3><a name="personal-bricks"></a><img src="images/1-engelbart.gif" width="365" height="168" align="right">Removing 
+        the Next Brick</h3>
+      <p>The new technologies of the Net and cryptography present tremendous opportunities 
+        for improving the nature of society. But improving society is a difficult 
+        task. More generally, improving complex systems is a difficult task. If 
+        you cannot figure out which way is up, see if you can figure out which 
+        way is down. Doug Engelbart, back in the early 1960s [<a href="#Engelbart62">Engelbart62</a>], 
+        wanted to explain to people why interactive systems would make a significant 
+        difference to their lives, and augment their ability to express ideas. 
+      </p>
+      <p>In Figure 1, the origin on the axis is what people were doing at the 
+        time--writing with pencil and paper. When he found himself unable to communicate 
+        how much better things could be, he contrasted their current experiences 
+        with how much <i>worse </i>things could be. He tied a pencil to a brick, 
+        handed it to people and said, &quot;Okay, now write.&quot; People found 
+        it very difficult. The unwieldy nature of the tool interfered with their 
+        ability to express ideas. With the pencil and brick for contrast, he effectively 
+        asked two questions: &quot;What made the difference?&quot; and, &quot;How 
+        can we move further in the other direction?&quot; This experiment showed 
+        people how important their tools and their media were to their effectiveness, 
+        and helped them start to see the next brick to remove. This thought experiment 
+        led directly to seminal work responsible for much of the modern world 
+        of interactive systems that we now take for granted.</p>
+      <div align="center"> 
+        <table cellpadding="12">
+          <tr> 
+            <td> <p align="center"><i>It is easy to turn an aquarium into fish 
+                soup,<br>
+                but not so easy to turn fish soup back into an aquarium.</i></p>
+              <p align="right">--Lech Walesa</p></td>
+          </tr>
+        </table>
+      </div>
+      <p>The 20th century performed a similar experiment on a grand scale, tying 
+        large bricks to large societies with the best of intentions, but with 
+        vastly tragic consequences. Only by learning from this experiment may 
+        our good intentions yield better results, and this vast human tragedy 
+        will at least not have been in vain. Once we can see the bricks that were 
+        tied to these societies, and understand how they precipitated these tragic 
+        outcomes, we may see clearly the bricks that remain, and start to imagine 
+        their removal as well. Not just to bring the rest of the world up to the 
+        standard enjoyed by the first world, but to move past this point as well. 
+      <h3><a name="openness"></a>The Brick of Constrained Speech</h3>
+      <p><img src="images/2-soviet.gif" width="381" height="145" align="right">The 
+        most obvious contrast between these two societies is summed up by their 
+        common labels: <i>closed societies</i> and <i>open societies</i>. Knowledge 
+        evolves well only through a process of open discourse and criticism, in 
+        which no <i>official truth</i> is held beyond skeptical re-examination 
+        [<a href="#Bartley62">Bartley62</a>]. Economic activities spontaneously 
+        organize through a process of decentralized plan coordination. Open discourse 
+        is a crucial part (together with prices) of the means by which economic 
+        agents coordinate their plans with each other [<a href="#Lavoie01">Lavoie01</a>]. 
+        Constraints on speech in the closed societies placed a burden not only 
+        on the individuals in those societies -- this brick made those societies 
+        as a whole stupider. When authority can be used to prevent open questioning 
+        or negotiation, simple disbelief of officials truths is all that remains.</p>
+      <p>The brick of constrained speech is in the process of being removed yet 
+        again as we speak. The right of free speech, which underpins so much of 
+        the strength of western civilization, is being transformed by the Net. 
+        In today's Net-enhanced society, freedom of speech is no longer a right 
+        which needs to be negotiated between citizen and state; rather, it is 
+        a technological fact that accepts no compromise. This new Net-empowered 
+        right to free speech is effectively a law, but is a completely <i>jurisdiction 
+        free law</i>--even if all the nations of the world agreed that speech 
+        should be constrained, no constraint would prevail, as none would be enforceable.</p>
+      <h3><a name="tech-law"></a>Technological, Jurisdiction-Free Law</h3>
+      <p>The advent of technologically-based, jurisdiction-free law has many ramifications 
+        [<a href="#Lessig99">Lessig99</a>]. Even in the US, where free speech 
+        has historically been not merely respected but worshipped, free speech 
+        was by common consent still somewhat constrained. The obvious example 
+        was the duty not to shout &quot;Fire!&quot; in a movie theater, but the 
+        enduring example has been copyright law. Historically America had a good 
+        balance between copyright and free speech. But a technological fact has 
+        no ability to compromise: there is no one to negotiate a compromise with. 
+        So copyright becomes unenforceable even though it has the universal support 
+        of all the world's major jurisdictions [<a href="#Kelsey99">Kelsey99</a>].</p>
+      <p>Technological facts would seem to be morally neutral. Should we expect 
+        technological laws in general to be either good or bad? Taken by itself, 
+        the loss of copyright is probably an example of a bad consequence. Copyright 
+        addresses a genuine externality problem in the creation of new knowledge. 
+        Although copyright addresses the problem imperfectly, all the alternatives 
+        that remain enforceable seem much worse. The world will probably be poorer 
+        for the loss of copyright. (Though it's worth noting that the Net seems 
+        to be vastly accelerating the creation and disemmination of knowledge, 
+        even as it destroys the conventional incentives for engaging in these 
+        activities.)</p>
+      <p>Despite this negative example, we can expect the new technological laws 
+        produced by the Net to be, on the whole, beneficial. Interaction through 
+        the Net is inherently coercionless: no one can point a gun at you through 
+        your monitor screen. You could <i>send</i> someone a virus, and under 
+        today's law that would be considered a use of force. After all, the virus 
+        does cause harm to the recipient. But sending viruses is also a form of 
+        speech, and under the technological law of the Net, ultimately cannot 
+        be constrained. The logic of John Stuart Mill's defense of free speech 
+        [<a href="#Mill69">Mill69</a>] applies perfectly to this situation.</p>
+      <p>John Stuart Mill never claimed that &quot;bad&quot; speech could not 
+        harm the listener. Rather, he observed a crucial difference between the 
+        harm done by speech and the harm done by force. Speech does harm only 
+        by virtue of the reaction of the listener. If the listener learns to react 
+        differently to a certain pattern of speech, that pattern is rendered harmless. 
+        After all, it's only information; it cannot by itself cause damage. The 
+        only effective answer to bad speech is more speech, as only this enables 
+        the listener to grow from gullibility or cynicism into skepticism.</p>
+      <p>Likewise, the Net only transmits information -- including viruses. A 
+        virus can only do harm based on the reaction -- the means of processing 
+        and operation -- of the computer receiving the virus [<a href="#Hardy99">Hardy99</a>]. 
+        The good news is that the damage done by computer viruses (or any malicious 
+        bit pattern) is not mandated by technological law, since computer security 
+        is possible. The disemmination of viruses cannot be prevented, so the 
+        only effective response to their bad bits are other bits -- the software 
+        of virus-invulnerable secure operating systems [<a href="#Hardy85">Hardy85</a>, 
+        <a href="#Shapiro99">Shapiro99</a>], programming languages [<a href="#Hewitt73">Hewitt73</a>, 
+        <a href="#Tribble95">Tribble95</a>, <a href="#Rees96">Rees96</a>, <a href="#Miller00">Miller00</a>], 
+        and user interfaces [<a href="#Walker">Walker</a>]. Only such software 
+        enables our computers to grow from fatal gullibility or safe-but-useless 
+        seclusion into rich <i>cooperation-without-vulnerability</i> with the 
+        rest of the electronic world. This growth in turn will enable the removal 
+        of the next brick.</p>
+      <p>(In contrast to a common misunderstanding, the cited works demonstrate 
+        that secure computer systems need not be less capable or harder to use 
+        than insecure systems. Indeed, it seems the only significant comparative 
+        cost paid for security is incompatibility with the installed base. Although 
+        this cost is not to be underestimated, the current situation -- in which 
+        13 years olds easily compromise hundreds of fatally gullible computers 
+        used by others -- may not be stable, once knowledge of an alternative 
+        becomes widespread.)</p>
+      <h3><a name="nohubs"></a>The Brick of Missing Hubs</h3>
+      <p>So many bricks have been removed, how can third world poverty remain 
+        as persistently intractable as ever? Free speech was not enough. The end 
+        of socialism was not enough. The universal desire for capitalism has proven 
+        to be not enough. The naive view held by many people, including this author 
+        when the Berlin Wall fell, was that, once government was out of the way, 
+        the market would bloom and take care of the people. This has proven tragically 
+        wrong. What else is missing, what other bricks must be removed?</p>
+      <p>Another important brick is the one that distinguishes low-trust from 
+        high-trust societies [<a href="#Fukuyama95">Fukuyama95</a>]. Complex cooperative 
+        arrangements require trust. The kinds of trust relationships that are 
+        possible directly impact what types of business arrangements are possible. 
+        Fukuyama makes many highly perceptive observations about different <i>cultural</i> 
+        attitudes and proclivities towards trust, and shows how these differences 
+        seem to explain some of the observed differences in the patterns of businesses 
+        that arise in these cultures.</p>
+      <p>But to understand how first world societies can successfully function 
+        requires something missing from Fukuyama's analysis. After all, in the 
+        first world massive numbers of strangers meet, trade, do business, negotiate 
+        and sign contracts, despite lack of any prior knowledge of, or reasons 
+        to trust in, each other. How is this possible?</p>
+      <p></p>
+      <p>De Soto's earlier book, <i>The Other Path</i> [<a href="#deSoto89">deSoto89</a>], 
+        tells a complementary story. De Soto can also be understood as explaining 
+        differences in economic organization according to differences in the possibilities 
+        for trust. However, de Soto's emphasis is not culture but institutions, 
+        and their lack. De Soto's portrayal of the poor within a the third world 
+        village is not one of culturally-based low trust. Rather, it is the painful 
+        lack of the various widely trusted intermediate institutions (or WTIIs) 
+        that catalyze commerce at a distance in the first world, and that we normally 
+        take for granted.</p>
+      <p><b><img src="images/3-hubs.gif" width="347" height="212" align="right"></b>Trust 
+        relationships can be thought of as analogous to the airport hub and spoke 
+        pattern. (Figure 3). Many small local networks are interconnected on a 
+        wider scale through major hubs. Although this pattern is a partial centralization, 
+        it is not a hierarchy -- there is, for example, no central hub of hubs. 
+        Logically, it is peer to peer, but it is built with a backbone architecture 
+        due to the economics of the system. The Net itself has mostly the same 
+        architecture, as does the highway system. In all cases, a sparsely connected 
+        actual network acts for most purposes like a densely connected network. 
+        For example, from any airport you can fly to any other airport, almost 
+        as if there were flights between every pair of airports.</p>
+      <p>Similarly, in the first world, two strangers can meet and conduct business 
+        as if they had prior knowledge of and trust in each other, by virtue of 
+        their reliance on a mutually recognizing backbone of WTIIs. These WTIIs 
+        are both in the business of securing these relationships to minimize the 
+        risks their customers face from each other, sometimes requiring it to 
+        absorb some of these risk onto itself. The economies of scale available 
+        to a WTII can help tremendously with these risks. Historically, western 
+        societies have developed specialized WTIIs that bundle trust with other 
+        expertise: one trusts Citibank not only because Citibank has a demonstrated 
+        history of reliably backing their loans, but also because they are experts 
+        in loan and risk management, which are necessary elements of reliability 
+        in that field: an organization that attempted to engage in banking without 
+        expertise in these fields could not be trustworthy no matter how honorable 
+        the employees and executives of the organization might be.</p>
+      <p>Other examples of familiar WTIIs include title companies, insurance, 
+        escrow, exchanges and auction houses, underwriters, Consumer Reports, 
+        Roger Ebert, notaries, arbiters, courts and cops, money, etc... The list 
+        is endless. </p>
+      <p>From a simple graph-theoretic point of view [<a href="#Granovetter73">Granovetter73</a>], 
+        we can analyze the Fukiyama low-trust world (in which the fanout from 
+        each node is small) and the de Soto missing-WTII world (in which the hubs 
+        are absent), and immediately recognize which brick has the greater impact 
+        on a society's effectiveness: it is the absence of the WTIIs that ultimately 
+        prevent society-wide trust relationships from forming. No matter what 
+        the culture, cognitive limitations prevent each of us from even knowing 
+        about, much less trusting, more than a tiny fraction of the members of 
+        our society. Even with high cultural proclivity for individual-to-individual 
+        trust, in the absence of hubs, the resulting virtual network would at 
+        best form small islands of densely connected networks, only loosely connected 
+        to each other. The resulting picture resembles both Fukuyama's portrayal 
+        of familial trust societies, and de Soto's portrayal of networks of villages 
+        of informals.</p>
+      <div align="center"> 
+        <table cellpadding="12">
+          <tr> 
+            <td> <p align="center"><i>The division of labor is limited by the 
+                extent of the market.</i></p>
+              <p align="right">--Adam Smith</p></td>
+          </tr>
+        </table>
+      </div>
+      <p>The virtual network of Figure 3 forms one large market with great extent, 
+        enabling a great division of knowledge and labor. The virtual network 
+        of Figure 4 is one of many separate markets, barely connected to each 
+        other, and each individually of minor extent.</p>
+      <p><img src="images/4-low-trust.gif" width="350" height="218" align="right">But 
+        shouldn't this situation be an ideal growth medium for WTIIs? If there 
+        is great market need for them, then surely there is great demand and great 
+        opportunity. Indeed, this is the situation from which the WTII backbone 
+        grew spontaneously in the west. Absent government oppression we should 
+        indeed expect it to grow here as well. However, Western-style WTII infrastructures 
+        are the result of slow growth processes; they build slowly over time. 
+        These widespread trust needed by these institutions can be seen as a form 
+        of capital that takes a long time to accumulate. </p>
+      <p>One of the depressing features of the pictures painted by both Fukiyama 
+        and de Soto is that the only hope they see for these societies is home-grown, 
+        with each individual third world nation bootstrapping itself through all 
+        these steps, including the evolution of their own WTIIs; or the reform 
+        and transformation of each society's national government into a system 
+        of widely trusted institutions. Well, it took a long time for the west. 
+        If they must recapitulate our path, it will take them a long time as well, 
+        a time during which desperate poverty will remorselessly prevail. What 
+        enablers are available now that were unavailable when the west made this 
+        transition? Might these enablers be used to help accelerate today's poor 
+        through this part of the process of capital formation?</p>
+      <h3><a name="title"></a>The Special Role of Title</h3>
+      <p>In <i>The Other Path</i>, de Soto explained the informal economy and 
+        its lack of institutions in general. Eleven years later, after much investigation 
+        both of the phenomenon of persistent poverty, and an extraordinary uncovering 
+        of the history of how the west overcame these problems, in <i>The Mystery 
+        of Capital</i> de Soto has narrowed his focus to the crucial role played 
+        by the institution of title.</p>
+      <p>While all these WTIIs are valuable for the fomation of wealth creating 
+        societies, not all are equally crucial. De Soto's analysis suggests that 
+        the institution most needed to get the ball rolling, and which are most 
+        painfully absent in the informal sectors of the third world, are credible 
+        systems of title transfer. It is through widely trusted title agencies 
+        that banks can become confident that the collateral against which they 
+        make a loan will indeed become theirs in the event of default. This requires 
+        not just trust in the title company itself, but credibility that a transfer 
+        of title on the books will be honored as a transfer of ownership in reality. 
+        Title registries with this level of credibility enable <i>rights transfer 
+        at a distance</i>: people who have never met one another and probably 
+        never will can engage in asset transfers and capital formation with the 
+        confidence that they will acquire the goods specified in the contract.</p>
+      <p>Although de Soto documents the independent creation of title companies 
+        in the informal sector, these do not currently seem to be able to provide 
+        the credibility at a distance needed for this transition.</p>
+      <h3><a name="govt"></a>The Governmental Paths</h3>
+      <p>Among currently existing choices, perhaps the only organization that 
+        can fill this crucial titling role in a nation is the government itself. 
+        This is the strategy de Soto has adopted, converting extra-legal assets, 
+        village by village, into officially acknowledged parts of the formal economy. 
+        The strategy has been wildly successful in bringing the poor into the 
+        modern world. Working with the government of Peru, over four years, de 
+        Soto's organization has formalized ??? worth of assets for a quarter of 
+        a million people, creating ??? amount of capital and $2.1 billion of new 
+        tax revenues for the government of Peru. One may hope and expect that 
+        these demonstrated tax revenues, if nothing else, will tempt other governments 
+        to follow suit.</p>
+      <p>De Soto's isn't the first attempt to title the informal's property and 
+        bring them into the formal sector, but it is the first such attempt in 
+        the third world to work. De Soto documents previous well intentioned efforts, 
+        with surveyors, geographic information systems, interviews of informals 
+        to ascertain who owns what, and formal title registries backed by the 
+        formal legal system -- all the obviously necessary ingredients. Why did 
+        these previous attempts all fail? </p>
+      <p>Because the formals did not appreciate that the informals already had 
+        worked out system of law, rights, and obligations, negotiated over time 
+        and idiosyncratic village by village -- <i>the people's law</i>. Instead, 
+        the formals approach to the situation was <i>We have a legal system. You 
+        don't. Here's ours. </i>Although the title listings reflected a snapshot 
+        of who-owns-what, the legal system governing these title listing did nothing 
+        to reflect the complex negotiated informal arrangements needed to understand 
+        what rights someone actually held to a particular asset. Given this mismatch, 
+        the informals proceeded to ignore the formal title registries and trade 
+        assets in the way they always had. The title registries were not updated 
+        to reflect changes of actual ownership, and so rapidly became even more 
+        irrelevant. De Soto's special insight in this situation has been that 
+        the government must discover and respect the local laws, and work out, 
+        at considerable cost in time and effort, a way to integrate those local 
+        laws with the national systems.</p>
+      <p> The difficulty comes from an inherent tension between <i>local knowledge</i> 
+        and <i>global credibility</i> -- local knowledge of the idiosyncratic 
+        people's law, conventions, and negotiated arrangements in force in each 
+        village, <i>vs.</i> the need to move the governance of title transfer 
+        to WTIIs, whose wide scope requires them to operate from a more homogenized 
+        set of rules. This tension is acute on the governmental path, as the homogenized 
+        set of rules is not even per title company, but rather the official legal 
+        system itself. Governmental legal systems are hardly the wonders of adaptability 
+        de Soto's program would seem to require. Even with the best of intentions, 
+        an accommodation between the two must rapidly turn into a Procrustean 
+        bed. However, de Soto offers no alternative. Though difficult, he is successfully 
+        making this path work, and he documents how it did work when formal U.S. 
+        law, slowly and painfully, absorbed the informal wild west.</p>
+      <p>As if this path were not difficult enough, this whole process faces enormous 
+        obstacles from many different factions, notably bureaucracies and lawyers 
+        within the national sphere that see this as an assault on their prerogatives, 
+        as de Soto also documents. The process never becomes easy: each step of 
+        progress is another major upheaval in the perceptions and preferences 
+        of entrenched groups dedicated to protecting the status quo.</p>
+      <h3><a name="bootstrapping"></a>The Digital Path</h3>
+      <div align="center"> 
+        <table cellpadding="12">
+          <tr> 
+            <td> <p align="center"><i>National borders aren't even speed bumps 
+                on the information superhighway.</i></p>
+              <p align="right"><i>--Tim May</i></p></td>
+          </tr>
+        </table>
+      </div>
+      <p>Can we sidestep this brutally painful process? Perhaps eventually with 
+        the Net. </p>
+      <p><font color="#000000"><img src="images/5-bootstrap.gif" width="366" height="214" align="right">Due 
+        to the Net, purely electronic goods and services can now be purchased 
+        from across the world as easily as from next door. Consumers of these 
+        goods and services have already escaped old limits of geography and jurisdiction. 
+        If the functions provided by various WTIIs were offered by prominent first 
+        world trust hubs as purely electronic services, those in need of such 
+        widely trusted intermediary services could escape as well -- escape from 
+        the crushing assumption that such services can only be provided by institutions 
+        beholden to their own governments. Instead, they could reach across the 
+        Net to use these services, and begin to bootstrap themselves out of their 
+        poverty by participating in the global networks of commerce. (Figure 5) 
+        </font></p>
+      <p>Many first world trust hubs are already widely known and plausibly trusted 
+        in the third world because of the frenetic distribution efforts of western 
+        media: shows ranging from CNN to Dallas and Baywatch have granted an aura 
+        of respectability to first world organizations that most governments can 
+        only envy. (However one may feel about this process, it is occurring, 
+        so we may as well put it to good use.) Using first world WTIIs, villages 
+        on a global scale could become part of a global trust network. For example, 
+        if a person in village A wants to sell a tractor to a person in village 
+        D, a couple of villages away, they could easily use a title registry run 
+        by Citibank in New York to execute the transfer. In a similar fashion, 
+        the tractor may be securitized, transforming it into capital. And in a 
+        state such as Russia, a title listing with Citibank would, ironically, 
+        have more legitimacy because the titling institution is beyond the reach 
+        of their own government.</p>
+      <p>O<font color="#000000">nce the villages of the world join this global 
+        village, it will be much easier for them to grow jurisdiction-free high-trust 
+        hubs as well: an entity becomes widely trusted by consistently and visibly 
+        performing in accordance with various contracts -- contracts being managed 
+        by hubs that are already widely trusted. With a working trust backbone, 
+        highly trustworthy behavior gets the visibility it needs to more rapidly 
+        accumulate its own reputation-capital. </font></p>
+      <h3><font color="#000000"><a name="smart-contracts"></a>Smart Contracts</font></h3>
+      <p>How might such WTIIs deal with the idiosyncracies of each village's <i>people's 
+        law</i>, the idiosyncracies that sabotage traditional governmental attempts 
+        to capitalize village assets, without taking on the impossible burden 
+        of learning all this local knowledge itself, without imposing the costs 
+        of homogenization? By the use of smart contracts.</p>
+      <p><font color="#000000">In smart contracts, the program code is an operational 
+        embodiment of the contract [<a href="#Szabo97">Szabo97</a>]. A drink vending 
+        machine is a very primitive example of a smart contract, being executed 
+        on a contract host: it is the partially trusted intermediary between the 
+        drink manufacturer and the purchaser. It escrows drinks and money, and 
+        performs an exchange of those goods when both have been presented. There 
+        is even a rollback process, in which it returns the money if the drink 
+        cannot be delivered. Traditional contracts are understood to be backed 
+        by a coercive enforcement system made of courts and cops. However, the 
+        vending machine does not have the option of such recourse following a 
+        breach. In what sense is it a contract?</font></p>
+      <p>The vending-machine-as-contract would indeed require separate enforcement 
+        if it dispensed the drink first and then demanded payment. However, by 
+        escrowing both drinks and payment before dispensing either, it also dispenses 
+        with the need for separate enfocement. Instead of enforcement, the contract 
+        creates an <i>inescapable arrangement</i>. It cannot prevent the customer 
+        from walking away before the game is over, but a customer who walks away 
+        from a contract in progress leaves behind any assets escrowed by the contract 
+        at that point [<font color="#000000"><a href="#Miller00">Miller00</a>]</font>. 
+        The terms of the contract are enforced by the contract itself -- by the 
+        behavior of the contract when executed as a program.</p>
+      <p>Although conventional coercive recourse is still often possible on the 
+        Net, for more and more Net commerce these costs are too great, and the 
+        jurisdictional issues potentially too messy. Instead, Net businesses have 
+        been engaging in rich and rapid experimentation with cooperative arrangements 
+        that require no coercive recourse [<a href="#WhatsHerName"><font color="#FF0000">WhatsHerName</font></a>]. 
+        The most common arrangements involve not actual escrow, but reputation 
+        feedback and credit [<a href="#Steckbeck01">Steckbeck01</a>]. This has 
+        a similar logic, in that a partcipant effectively secures their good performance 
+        with the value of their reputation capital. Such arragements are messier 
+        and less amenable to automation than escrow, but they do substantially 
+        reduce capital costs. Both kinds of arrangements have their place and 
+        will compete in the market. Here, I will explore escrow-based smart contracts, 
+        not because I expect this form to dominate, but because their logic is 
+        vastly easier to explain; because they're easier to build, and so will 
+        occur sooner; and because they apply to participants with no prior reputation, 
+        which helps for bootstrapping the transition. Likewise, for the electronic 
+        systems of title (or <i>issuers</i> below), in this paper I assume systems 
+        that provide for instant settlement [<a href="#e-gold">e-gold</a>]. Although 
+        delayed settlement may substantially reduce capital costs [<a href="#Selgin01" target="_top">Selgin01</a>], 
+        they turn smart contracts into explosions of complexity.</p>
+      <h3><font color="#000000"><img src="images/6-exchange.gif" width="390" height="247" align="right"></font>Contracts 
+        as Games</h3>
+      <p><font color="#000000">A basic metaphor for smart contracts is the board 
+        game. When two people negotiate a contract, they are jointly designing 
+        the rules of a game they would both be willing to play. Once they commit 
+        to playing this game, the players may then make moves, but only moves 
+        judged legal by the rules given the current board state. Each move potentially 
+        changes the board state, changing which moves are legal during the next 
+        turn.</font></p>
+      <p><font color="#000000">For example, Figure 6 shows the six possible board 
+        states of a simple negotiation and exchange game. Let's say Alice is playing 
+        the left side of the board and Bob the right. The initial board state 
+        is the one shown on the far left, in which neither of the pieces is on 
+        the board. The gold bar, representing money, is off the board on the left, 
+        which portrays its possession by Alice at this time. For concreteness, 
+        let's say the knight represents stock. Bob might offer a certain amount 
+        of stock to Alice by placing it on the right square of the board. This 
+        takes us to the board state that's up and right from the initial state. 
+        Alice might not respond soon enough, in which case Bob may withdraw his 
+        offer by taking back the knight, bringing us back to the initial state. 
+        That's why the first transition arrow is shown as bidirectional.</font></p>
+      <p><font color="#000000">Or Alice may respond to Bob's offer with a certain 
+        amount of money, by placing it on the left square of the board. This takes 
+        us to the upper right board state. At this point, either party may still 
+        decide they're unsatisfied, withdraw their piece, and reenter the loop 
+        of bidirectional arrows. Or, in the upper right board state, Bob may pick 
+        up the money offered by Alice. Bob has accepted Alice's offer. This is 
+        the irreversible commitment step shown by the bold unidirectional arrow, 
+        and takes us to the board state down one. From here, the only possible 
+        move is for Alice to pick up Bob's knight.</font></p>
+      <p>How is this contract self enforcing? What prevents cheating? Who needs 
+        to trust whom with what? To answer these questions, we must start by explaining 
+        what is happening on whose computer. We assume that each player trusts 
+        their own computer (a dangerous assumption, but we cannot proceed without 
+        it). We also assume that player A cannot not trust player B's computer 
+        any more or less than they trust player B. Under these assumptions, we 
+        can treat a computer and its proprietor as a single unit for purposes 
+        of analysis.</p>
+      <p><font color="#000000"><img src="images/7-duties.gif" width="297" height="299" align="right">The 
+        execution of this game actually involves five parties. The two players 
+        of course, Alice and Bob. The contract host serves the same role as our 
+        vending machine -- it is the third party mutually trusted to execute the 
+        contract/program faithfully. The contract can be any program Alice and 
+        Bob mutually agree on, written in a safe language suitable for writing 
+        smart contracts, that functions as the <i>board manager</i> for the game 
+        they have agreed to play. (A <i>board manager</i> for, for example, chess, 
+        is a program that enables two people to play with each other, maintains 
+        the board state, and only allows legal moves. A board manager does not 
+        itself play the game.)</font></p>
+      <p><font color="#000000">Unlike the vending machine, the contract host need 
+        not have any prior knowledge of the contract.</font> Once Alice and Bob 
+        agree on the text of a board manager and on a mutually trusted contract 
+        host, they upload the board manager to the contract host, which then verifies 
+        for them that they've agreed on the same contract, and dispenses to each 
+        the right to play their respective sides of the game, shown as the arrows 
+        pointing at the respective chairs. The contract can embody the knowledge 
+        of acceptable arrangements local to Alice and Bob, local custom, prior 
+        handshakes, etc... If the contract host can be trusted at all, it can 
+        be trusted to run this contract faithfully, despite its ignorance of the 
+        local knowledge that gives this contract meaning. The tension between 
+        local knowledge and widespread trust is partially resolved.</p>
+      <p>(In the vast majority of cases, one would expect Alice and Bob to select 
+        a &quot;boilerplate&quot; contract/program off the shelf and fill in the 
+        blanks, rather than write a contract/program from scratch. However, the 
+        story of the custom contract better shows the logic by which the system 
+        operates, and may explain how these shelves will come to be stocked.)</p>
+      <p>The &quot;$-Issuer&quot; and the &quot;Stock-Issuer&quot; turns the movement 
+        of the pieces into a transfer of erights. A $-Issuer, or more conventionally 
+        a bank, is effectively a title company for money. For money on record 
+        at the bank, the rights to the money changes hands by the transfer of 
+        quantity between accounts -- shown above as <i>purses</i> within the issuers. 
+        When Alice places the gold bar on the board, her computer, the $-Issuer, 
+        and the contract host engage in a three-way cryptographic transaction 
+        that bring about the transfer of title, at the $-Issuer, of that much 
+        money from Alice to the contract host. An honest contract host would consider 
+        this money to be only a piece on the board, which can be picked up (transfered 
+        to the possession of a player) according to whatever may be the rules 
+        of the game. We refer to this as <i>oblivious escrow</i>.</p>
+      <p>A dishonest contract host could abscond with the money instead, which 
+        is why contract hosts needs to be widely trusted. A widely trusted contract 
+        host presumably has a valuable reputation at stake, and this risk helps 
+        secure honest behavior. (More sophisticated cryptographic protocols are 
+        possible which further limit the player's vulnerability to a dishonest 
+        contract host or issuer, but these are beyond the scope of this paper.) 
+      </p>
+      <p>In the arrangement shown here, the $-Issuer, the Stock-Issuer, and the 
+        contract host need not have any prior knowledge or trust of any of the 
+        other four players. For the game to be meaningful, Alice and Bob must 
+        have prior knowledge and trust in both issuers and the contract host, 
+        but not in each other. Even if Alice and Bob are both use-once pseudonymous 
+        identities with no apparent physical location [<a href="#Vinge84">Vinge84</a>], 
+        under these conditions, they can transact with each other <i>as if</i> 
+        they fully trust each other.</p>
+      <h3>Assets + Contracts x Time = Capital</h3>
+      <p><font color="#000000"><img src="images/8-option.gif" width="379" height="235" align="right">The 
+        Smart Contracts explained so far, the vending machine and the exchange 
+        game, cannot turn assets into capital. To do so requires contracts that 
+        unfold over time, like a mortgage. To explain how such unfolding creates 
+        ever more abstract forms of property, a good clear example is the <i>covered 
+        call option</i>. (Such instruments are kindergarden finance for many, 
+        so excuse us while we belabor the obvious. Re-explaining the familiar 
+        is often necessary when translating into a different medium.)</font></p>
+      <p><font color="#000000">Alice has an <i>option</i> when she has the right, 
+        but not the obligation, to engage in some action at some agreed price 
+        before some deadline. Alice has a <i>call</i> option when she has the 
+        right to buy some agreed asset, let's say stock, at some agreed price 
+        before the deadline. The option is a <i>covered</i> call option when Alice's 
+        counterparty, Bob, escrows up front the stock Alice may decide to purchase.</font></p>
+      <p>We may visualize this as the game shown in Figure 8. In the initial board 
+        state, shown in the top left, the stock is already on the board. While 
+        in this state, neither Alice nor Bob may pick up the stock. Another &quot;player&quot; 
+        in the game, so to speak, is the game clock. Should the deadline expire 
+        while in this initial state, the clock causes a transition to a state 
+        from which Bob can now pick up his stock and go home.</p>
+      <p>Or, before the deadline expires, Alice may decide to <i>exercise</i> 
+        the option. She may place a gold piece on the left square. Unlike in the 
+        previous game, in this game the acceptable amounts are predetermined by 
+        the rules. The left square only accepts a certain amount of money. If 
+        Alice places this amount of money on the board, this is the irrevocable 
+        commitment step shown as the bold unidirectional arrow. After this move, 
+        the only remaining legal moves are for Alice to pick up the stock, and 
+        for Bob to pick up the money.</p>
+      <p>What is so different about this contract? During the time between when 
+        the game starts (when Alice gets access to her chair) and the time when 
+        the game transitions to a new board state (either by expiration of the 
+        deadline or by exercise of the option), Alice a something valuable. During 
+        this interval, Alice has the option to buy this stock. This is a very 
+        different kind of value to have than the stock or money themselves. The 
+        value of this new right <i>derives</i> from the value of the stock and 
+        the money, but whereas they are very simple literal kinds of rights, this 
+        new right is somehow more abstract. In Wall Street terminology, the new 
+        right is a <i>derivative</i> of the more literal <i>underlying</i> rights. 
+        In de Soto's terminology, if the literal instruments are physical <i>assets</i>, 
+        then abstract rights derived by contracts about these instruments are 
+        <i>capital</i>. </p>
+      <p>But there's something missing from this picture. Through the system so 
+        far depicted, Alice can trade those rights managed by issuers -- money 
+        and stock. The contract host, despite its complete ignorance that it has 
+        done so, has created a new valuable right, owned by Alice. But in the 
+        picture so far, Alice has no ability to trade this new right. This needs 
+        to be repaired, in order for these new rights to truly be capital, and 
+        in order for yet more abstract forms of capital to be derived from them.</p>
+      <h3><img src="images/9-layering.gif" width="324" height="304" align="right">Networks 
+        of Games</h3>
+      <p>What we need, quite simply, is an issuer of this new right Alice holds 
+        -- the right to sit in the left chair, in order to be able to play the 
+        left side of this on-going game. Since the contract host is already managing 
+        access to this chair, it seems natural to have it double as the issuer 
+        for the right to sit in this chair. Just as Alice could tell the $-Issuer 
+        to transfer some of her money from her purse to some else's, we can enable 
+        Alice to tell the contract host to transfer her right to sit in this chair 
+        to someone else. The contract host would then revoke Alice's access to 
+        the chair, and issue fresh access to the new player, much as the $-Issuer 
+        does with Alice's money.</p>
+      <p>With this ability to compose networks of games, it seems we have the 
+        ability to express the full range of contract layering used in modern 
+        finance. Not that modern finance is directly relevant to the needs of 
+        the poor, but it is a good test of the generality of our framework.</p>
+      <p>But wait. This structure decouples knowledge in a way quite different 
+        than anything in the financial world. We have the contract host issuing 
+        rights it does not understand, since these rights are produced by games 
+        it runs, but does not understand. The contract host is not in a position 
+        to vouch for any meaningful property of the rights it is issuing, so how 
+        can widespread trust in the contract host translate into credible global 
+        transferability of derived rights? Let's walk through the example depicted 
+        in Figure 9.</p>
+      <p>Alice starts out simply as a player of the original options game, hosted 
+        by contract host #1. While Alice finds herself in the resulting valuable 
+        situation, she manages to find Fred, who would also find this position 
+        valuable. Fred, were he convinced that Alice's chair sitting rights mean 
+        what Alice says they mean, would be willing to play a game on contract 
+        host #3 in which this right, issued by contract host #1, appears as a 
+        movable piece. Unfortunately, having just met, Fred and Alice don't trust 
+        each any more than Alice and Bob do. Fortunately, Fred does have prior 
+        knowledge and trust of contract host #1. Unfortunately, contract host 
+        #1 has no idea if the right to sit in this chair of this game means what 
+        Alice claims it means, or anything else. </p>
+      <p>Fortunately, with Alice's consent, Fred can ask contract host #1 for 
+        the text of the contract/program and the current state of the board. In 
+        theory, this should be sufficient for Fred to figure out what these derived 
+        rights are. Alice, who presumably understands the game she's playing, 
+        can help Fred figure this out, and Fred can accept this help, with any 
+        trust required between Fred and Alice. Should the contract truly be idiosyncratic 
+        to local knowledge shared by Alice and Bob, knowledge to which Fred has 
+        no access, he may not find the derived rights comprehensible at reasonable 
+        cost and move on. More commonly, if the contract is understandable to 
+        some number of others, including some Fred trusts, Fred may turn to them 
+        for advice on the contract's meaning -- the computational analog of legal 
+        advice.</p>
+      <p>This provides for a much more complete resolution of the tension between 
+        local knowledge and widespread trust. Previous attempts to title the assets 
+        of the informals failed because of the illusion that these assets were 
+        merely literal simple property -- physical objects or plots of land. De 
+        Soto found instead that these assets were already enmeshed in complex 
+        negotiated systems of rights, rules, and obligations that needed to be 
+        accomodated, in order for a title listing to be considered meaningful. 
+        They are more like our option -- a right produced by a negotiated contractual 
+        arrangement -- then they are like the underlying physical objects one 
+        would point at. Smart contract can capture some sense of these negotiated 
+        arrangements. They will still form a procrustean bed of a sort, because 
+        not all terms will be expressible to this new language. But homogenization 
+        is not needed -- vast variation is expressible within this language, and 
+        we may hope that leaves room enough to capture much of the local knowledge 
+        and arrangements that would otherwise have been lost.</p>
+      <p>For whatever aspect of these arrangements does get captured in these 
+        smart contracts, by uploading these contracts into widely trusted contract 
+        hosts, we achieve credibility of title transfer at a distance. These will 
+        create their own pressures for homogenization: Alice did not lose the 
+        sale to Fred from lack of trust -- under the stated assumptions, our architecture 
+        took care of that. Rather, she may have lost him through her inability 
+        to explain what she was selling. But these pressures for homogenization 
+        can exerpt their influence, or not, after the basic transition is made. 
+      </p>
+      <p>(If this tale seems implausibly complex, please keep in mind that each 
+        of the player is presumed to be participating through a software system 
+        well engineered to hide complexity when it can, and make the issues intuitive 
+        when it can't. Vastly more complex internal architectures have been made 
+        to seem simple and come to be widely used.)</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <h3><a name="blockbuster"></a>Smart Contracting for the First World</h3>
+      <p>Smart Contracting is not just a good idea for the third world. In technological 
+        western civilization as well, smart contracts can wring new efficiencies 
+        from the economy. An example can be seen in the way a new special-purpose 
+        contract host was able to change the dynamics of the videotape rental 
+        industry in the 90s: </p>
+      <p>When videotape rental first emerged as a business, movie producers charged 
+        the rental stores extremely high prices for movies. The rental stores 
+        inevitably responded by buying as small a number of copies of each movie 
+        as they could, and reusing those tapes as long as they dared. The consequence 
+        for the consumer was that videos of newly-released movies were scarce, 
+        and the videos of long-released movies were in poor condition.</p>
+      <p>How did we get to the current state of affairs, in which BlockBuster 
+        routinely guarantees availability of brand new movies? By bringing out 
+        a new cash register: a cash register that automatically tracked a per-rental 
+        fee and transmitted it to the studio. With these cash registers acting 
+        as trusted third party contract hosts, the rental stores were able to 
+        persuade the producers to change their pricing model. Since the actual 
+        manufacture of the video tape was inexpensive, and since the studios were 
+        confident that their cut each transaction was protected, the studios began 
+        giving the rental stores movies at nominal prices, encouraging the rental 
+        stores to maintain quantity and quality at dramatically higher levels. 
+      </p>
+      <h3><a name="ruleoflaw"></a>The Rule of Law, Not Of Men</h3>
+      <p>What does smart contracting do to the next brick? The next brick that 
+        must be removed from the world is the brick that prevents the long-distance 
+        credible right of property transfer. We remove this brick by moving the 
+        village to Cyberspace: placing the local village on the Net, adjacent 
+        to the globally recognized WTIIs already present there, and enabling the 
+        implementation of smart contracts filled with local knowledge on an impartial 
+        contract host continents away. Once this transition takes place, we will 
+        see that jurisdiction-based law, even when nation-wide, is crippled in 
+        the same way that village-wide law is crippled. The third world will then 
+        ironically lead the first world into a brighter place with fewer bricks 
+        than society has ever had before. Just as in phone systems, if you have 
+        no land line system, you are more likely to leap over such infrastructure 
+        development and go directly to cell phones, so too is the third world 
+        more likely to leap across national jurisdictional systems, and go directly 
+        to the high-efficiency, low friction, strongly impartial, extremely corruption-resistant, 
+        non-jurisdictional legal systems of the future. It will bring us a giant 
+        step closer to a world governed by the rule of law, not of men.</p>
+      <h3><a name="acks"></a>Acknowledgements</h3>
+      <p>These ideas have formed over much time and many valuable conversations, 
+        for which we thank K. Eric Drexler, Charles Evans, Ian Grigg, Robin Hanson, 
+        Doug Jackson, Don Lavoie, Zooko (Bryce&nbsp;Wilcox-O'Hearn), Gayle Pergamit, 
+        Chris Peterson, Terry Stanley, Nick Szabo, E-Dean Tribble, Bill Tulloh, 
+        Ka-Ping Yee, and the members of the e-lang mailing list.</p>
+      <h3><a name="refs"></a>References</h3>
+      <p><a name="WhatsHerName"></a>[<font color="#FF0000">WhatsHerName</font>] 
+        &quot;<font color="#FF0000">some title about law on the internet</font>&quot; 
+        Proceedings of <i><a href="http://panoramix.univ-paris1.fr/AHTEA/colloques.html">Austrian 
+        Perspective on the New Economy</a></i>, 2001.</p>
+      <p><a name="Bartley62"></a>[Bartley62] William W. Bartley, III, <i><b>The 
+        Retreat to Commitment</b> </i>Open Court Publishing, 1962.</p>
+      <p><a name="Birch"></a>[Birch] Greg Birch, personal communication.</p>
+      <p><a name="deSoto89"></a>[deSoto89] Hernando de Soto, &quot;<b>The Other 
+        Path</b>&quot;, Harper &amp; Row, 1989.</p>
+      <p><a name="deSoto00"></a>[deSoto00] Hernando de Soto, &quot;<b>The Mystery 
+        of Capital</b>&quot;, Basic Books, 2000. Chapter 1 online at <a href="http://www.ild.org.pe/tmoc/language.htm">http://www.ild.org.pe/tmoc/language.htm</a>.</p>
+      <p><a name="e-gold"></a>[e-gold] See <a href="http://www.e-gold.com/e-gold.asp?cid=101791">http://www.e-gold.com/e-gold.asp?cid=101791</a>.</p>
+      <p><a name="Engelbart62"></a>[Engelbart62] Doug Engelbart &quot;<b>Augmenting 
+        Human Intellect: A Conceptual Framework</b>&quot;, SRI Project no. 3578, 
+        October 1962.</p>
+      <p><a name="Fukuyama95"></a>[Fukuyama95] Francis Fukuyama, &quot;<b>Trust</b>&quot;, 
+        Free Press Paperbacks, 1995. </p>
+      <p><a name="Granovetter73"></a>[Granovetter73] Mark Granovetter, &quot;<b>The 
+        Strength of Weak Ties</b>&quot;, in: American Journal of Sociology (1973) 
+        Vol. 78, pp.1360-1380.</p>
+      <p><a name="Hardy85"></a>[Hardy85] Norm Hardy, &quot;<b>The KeyKOS Architecture</b>&quot;, 
+        Operating Systems Review, September 1985, pp. 8-25. Updated at <a href="http://www.cis.upenn.edu/%7EKeyKOS/OSRpaper.html">http://www.cis.upenn.edu/~KeyKOS/OSRpaper.html</a>.</p>
+      <p><a name="Hardy99"></a>[Hardy99] Norm Hardy, &quot;<b>Computer Security, 
+        the Very Idea</b>&quot;. Online at <a href="http://www.cap-lore.com/Dual.html">http://www.cap-lore.com/Dual.html</a>.</p>
+      <p><a name="Hewitt73"></a>[Hewitt73] Carl Hewitt, Peter Bishop, Richard 
+        Stieger, &quot;<b>A Universal Modular Actor Formalism for Artificial Intelligence</b>&quot;, 
+        Proceedings of the 1973 International Joint Conference on Artificial Intelligence, 
+        pp. 235-246.</p>
+      <p><a name="Kelsey99"></a>[Kelsey99] John Kelsey, Bruce Schneier, &quot;<b>The 
+        Street Performer Protocol and Digital Copyrights</b>&quot;, First Monday, 
+        vol 4, no 6, 1999. Online at <a href="http://www.firstmonday.dk/issues/issue4_6/kelsey/index.html">http://www.firstmonday.dk/issues/issue4_6/kelsey/index.html</a>.</p>
+      <p><a name="Lavoie01"></a>[Lavoie01] Don Lavoie, &quot;<b>Subjective Orientation 
+        and Objective Wealth: Entrepreneurship and the Convergence of Groupware 
+        and Hypertext Capabilities</b>&quot;, Proceedings of <i><a href="http://panoramix.univ-paris1.fr/AHTEA/colloques.html">Austrian 
+        Perspective on the New Economy</a></i>, 2001.</p>
+      <p><a name="Lessig99"></a>[Lessig99] Larry Lessig, &quot;<b>Code, and Other 
+        Laws of Cyberspace</b>&quot;, Basic Books, 1999. Excepts online at <a href="http://code-is-law.org/">http://code-is-law.org/</a>.</p>
+      <p><a name="Mill69"></a>[Mill69] John Stuart Mill, &quot;<b>On Liberty</b>&quot;, 
+        London: Longman, Roberts &amp; Green, 1869. Online at <a href="http://www.bartleby.com/130/2.html">http://www.bartleby.com/130/2.html</a>.</p>
+      <p><a name="Miller95"></a>[Miller95] Mark S. Miller, E. Dean Tribble, Ravi 
+        Pandya, Marc Stiegler, &quot;<b>The Open Society and its Media</b>&quot;, 
+        in Prospects in Nanotechnology, ed. Markus Krummenacker, James Lewis; 
+        Wiley, 1995. Proceedings of the 1992 <i>First General Conference on Nanotechnology: 
+        Development, Applications, and Opportunities</i>.</p>
+      <p></p>
+      <p><a name="Miller00"></a>[Miller00] Mark S. Miller, Chip Morningstar, Bill 
+        Frantz, &quot;<b>Capability-based Financial Instruments</b>&quot;, Proceedings 
+        of Financial Cryptography 2000, Springer Verlag. Online at <a href="http://www.erights.org/elib/capability/ode/index.html">http://www.erights.org/elib/capability/ode/index.html</a>.</p>
+      <p><a name="Rees96"></a>[Rees96] Jonathan Rees, &quot;<b>A Security Kernel 
+        Based on the Lambda-Calculus</b>&quot;, (MIT, Cambridge, MA, 1996) MIT 
+        AI Memo No. 1564. <a href="http://mumble.net/jar/pubs/%20secureos/">http://mumble.net/jar/pubs/ 
+        secureos/</a>.</p>
+      <p><a name="Selgin01"></a>[Selgin01] George Selgin, personal communication.</p>
+      <p><a name="Shapiro99"></a>[Shapiro99] Jonathan S. Shapiro, &quot;<b>EROS: 
+        A Capability System</b>&quot;, Ph.D. thesis, University of Pennsylvania, 
+        1999. Online at <a href="http://www.cis.upenn.edu/%7Eshap/EROS/thesis.ps">http://www.cis.upenn.edu/~shap/EROS/thesis.ps</a></p>
+      <p><a name="Steckbeck01"></a>[Steckbeck01] Mark Steckbeck, Peter Boettke, 
+        &quot;<b>Akerlof Problems, Hayek Solutions: Local knowledge and self-enforcement 
+        in E-Commerce</b>&quot;, Proceedings of <i><a href="http://panoramix.univ-paris1.fr/AHTEA/colloques.html">Austrian 
+        Perspective on the New Economy</a>, </i>2001.</p>
+      <p><a name="Stiegler98"></a>[Stiegler98] Marc Stiegler, &quot;<b>Introduction 
+        To Capability Based Security</b>&quot;, Online at <a href="http://www.skyhunter.com/marcs/capabilityIntro/index.html">http://www.skyhunter.com/marcs/capabilityIntro/index.html</a>.</p>
+      <p><a name="Szabo97"></a>[Szabo97] Nick Szabo, &quot;<b>Formalizing and 
+        Securing Relationships on Public Networks</b>&quot;, First Monday, vol 
+        2 no 9, 1997. Updated copy at <a href="http://szabo.best.vwh.net/formalize.html">http://szabo.best.vwh.net/formalize.html</a>.</p>
+      <p><a name="Tribble95"></a>[Tribble95] Eric Dean Tribble, Mark S. Miller, 
+        Norm Hardy, Dave Krieger, &quot;<b>Joule: Distributed Application Foundations</b>&quot;, 
+        <a href="../../../history/joule/index.html">http://www.erights.org/history/joule/</a>, 
+        1995.</p>
+      <p><a name="Vinge84"></a>[Vinge84] Vernor Vinge, &quot;True Names&quot;, 
+        Bluejay Books, 1984, Online at <a href="http://progoth.resnet.gatech.edu/truename/truename.htm">http://progoth.resnet.gatech.edu/truename/truename.htm</a></p>
+      <p><a name="Walker"></a>[Walker] Miriam Walker, Ka-Ping Yee, &quot;<b>Interaction 
+        Design for End-User Security</b>&quot;, in preparation.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="Prev"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" -->x<!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --> <img src="../../../images/next-gray.gif" width="64" height="32" alt="Next"><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

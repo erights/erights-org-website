@@ -1,0 +1,254 @@
+ 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>Computing Securely</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">capability</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="deadman.html" title="Back to: Dead-Man Switch"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Dead-Man Switch" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" -->x<!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><img src="../../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b>Computing 
+              Securely</b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <P ALIGN="center"><b><i><font color="#FF0000">Draft -- do not cite. But 
+        please comment.</font></i></b>
+      <h2 ALIGN="left">Computing Securely </h2>
+      <p>K. Eric Drexler<br>
+        14 March 2003<br>
+        Second draft of general-audience version, ~1670 words<br>
+        FOR COMMENT ONLY</p>
+      <p>It seems odd that our computers are such an insecure mess. Modern computation 
+        got its start from mathematicians such as Alan Turing and John von Neumann 
+        in the 1930s and 40s; at the chip level, computers to this day are conceived 
+        and built as mathematically precise engines. Why, then, do these mathematical 
+        gems get infested with viruses and worms and run amok? To understand origin 
+        of the problem we must take a peek at computer (in)security and its history. 
+        To understand how radical reforms might be possible, we must look at some 
+        added mathematical structure that makes computers better behaved. The 
+        ideas aren't new, but their current renaissance could transform both the 
+        desktop and internet.</p>
+      <p>In Turing's day, there was no computer security problem, provided you 
+        kept burglars from the computer room. Each run of each program started 
+        with a clean, empty machine and a set of data. At the end, it left processed 
+        data and a clean, empty machine. Machines had no operating systems, no 
+        files to corrupt, no internet connections to transmit mysterious messages, 
+        no way for one program to tamper with another. Thus, there could be no 
+        viruses or worms: just ordinary bugs in programs that could give correct 
+        or incorrect results.</p>
+      <p>By the 1960s and 70s, much had changed. Computers now had operating systems 
+        and files that lived on from run to run. Time-sharing computers stored 
+        files for multiple users, and operating system designers had to protect 
+        each user's files from snooping or tampering by unauthorized others. A 
+        flurry of research and development led to multiple approaches, all of 
+        which begin by chopping up the machine into separate but linked parts.</p>
+      <p>This chopping works with mathematical precision. It can create virtual 
+        machines, each acting much like the whole, but running with a fraction 
+        of its processor time, memory, and disk space. If each user has a separate 
+        virtual machine, most sorts of mutual interference simply can't happen. 
+        Aside from login issues, this would pretty much be the end of the security 
+        story -- except that users would like to communicate, to share some data 
+        and programs, but not all. How can sharing be controlled? One could make 
+        the machine track who has permission to do what, and check for permission 
+        before letting anyone do anything: I give you permission to read or write 
+        my files only if I trust you. This user-centered approach, based on &quot;access 
+        control lists&quot; (ACLs) got an early start and dominated the field.</p>
+      <p>This focus on users initially made sense. We commonly think of people 
+        -- not tools -- as doing things, and in the early days, programs were 
+        little more than tools for their users. Controlling actions meant limiting 
+        people; whatever they were allowed to do, their tools were allowed to 
+        do. This seemed natural then, and few question the practice even now. 
+        ACLs are central to security in all the popular operating systems.</p>
+      <p>Yet today, the ACLs approach yields strange consequences. When you run 
+        a program with ACLs, it operates with your authority. If you can send 
+        email or erase your hard drive, then so can &quot;your&quot; code -- even 
+        if it just arrived in an email attachment sent by a stranger overseas. 
+        To limit what the code can do, ACLs must limit you. It is as if, to keep 
+        stray dogs from biting people on your property, you yourself had to wear 
+        a muzzle.</p>
+      <p>This muzzle-the-user approach makes tight security crippling. But looser, 
+        more tolerable security lets any bit of rogue code compromise almost everything, 
+        because users demand broad powers which the code can then exploit. Relying 
+        on user-centered access control forces terrible tradeoffs, yielding terrible 
+        security. Fortunately, a radically different approach, long misunderstood, 
+        is now gaining attention.</p>
+      <h2>Secure objects</h2>
+      <p>An approach termed &quot;capability security&quot; can make computing 
+        more secure by its very nature. Where ACLs wrap a layer of user-based 
+        permission-checking around computing, capabilities organize computing 
+        differently on the inside, in accord with a simple mathematical pattern. 
+        This basic pattern is so natural that developers have repeatedly built 
+        it into computer systems to solve problems unrelated to security (but 
+        then have usually ruined it for security by adding other patterns that 
+        don't fit).</p>
+      <p>Mathematicians use the term &quot;graph&quot; for a structure represented 
+        by a set of dots linked by arrows. A capability system corresponds to 
+        a dynamic graph in which bundles of code and data (&quot;objects&quot;) 
+        are the dots, and references from one object to another (&quot;capabilities&quot;) 
+        are the arrows. Objects hold outgoing arrows by their tails, and can send 
+        messages to the objects they designate. Messages to objects are what make 
+        things happen.</p>
+      <p>A capability graph can change in just two basic ways: an object can make 
+        a new object and get a new arrow to it, or an object holding an arrow 
+        can send a copy in a message. These two simple rules ensure that the capability-arrows 
+        to an object are held first by its creator, and later only by those given 
+        a capability by a previous holder. Objects can only communicate if they've 
+        been properly introduced, and messages requesting actions naturally introduce 
+        the objects to be acted upon. Since capabilities move only though existing 
+        capabilities, they can't be stolen or sent to parties unknown. </p>
+      <p>Since nothing can happen except through capabilities, a piece of rogue 
+        code can do nothing unless granted capabilities by another object. These 
+        grants will typically be narrow. An email reader, for example, might routinely 
+        enable an attachment tto display its contents in a window. No sane programmer 
+        or user would routinely grant it the ability to read an address book and 
+        send forged email under a user's name. Since a muzzle on the intruder 
+        needn't disable the user, security can be both tight and painless. And 
+        so, in a capability security world, standard email viruses simply wouldn't 
+        work.</p>
+      <p>In a capability-based computational world, each object is much like an 
+        independent machine. Built on a large scale, the objects are like the 
+        processes run by modern operating systems; built on a smaller scale, they 
+        are like the objects of modern object-oriented programming. Splitting 
+        systems into separate objects has been a strong trend ins software enginering: 
+        it makes code more reliable by keeping unconnected parts from interfering 
+        with one another accidentally. Capability security extends this principle 
+        to make even deliberate interference entirely impossible. It provides 
+        a basis for computation in which ability and permission are one. Since 
+        it follows patterns already developed to make programming simpler and 
+        more productive, it doesn't get in the way.</p>
+      <p>Any complex piece of software will, at least at first, have bugs. In 
+        capability-based software a bug can only make an object misuse whatever 
+        powers it is granted, which are typically quite limited. In today's less 
+        structured software, however, a bug can open the door to complete takeover 
+        of programs and machines by rogue code.</p>
+      <p>For example, we now often hear of intruders seizing control of machines 
+        through &quot;buffer overflow&quot;. The problem is this: pieces of code 
+        routinely accept input data and write it down, step by step, into a block 
+        of memory space (a &quot;buffer&quot;). But often the code has too much 
+        power -- feed it a big chunk of data and it may keep writing, step by 
+        step, past the end of its block and into the space beyond. If an intruder 
+        can overwrite a space that holds code, then the surplus data, read as 
+        code, can seize control (acting with the full authority of the user). 
+        In a capability based world, the buffer-writing code would have no capability 
+        to write elsewhere, hence no bug in it could enable it to do so. End of 
+        threat.</p>
+      <h2>Capabilities lost and regained</h2>
+      <p>The capability security idea dates back to the 1970s, when for example 
+        Roger Needham and Mauricc Wilkes built the CAP machine at Cambridge University. 
+        It then went into a long eclipse. Problems were different in the 1970s, 
+        with less need of the capabilities solution, but researchers then also 
+        had muddled ideas which confuse thinking to this day.</p>
+      <p>Some said that efficient capability security at the operating system 
+        level -- secure processes -- required special hardware, like that of the 
+        CAP machine. Experience shows otherwise: In the late 1970s, a team led 
+        by capabilities guru Norm Hardy built an operating system for conventional 
+        IBM machines that actually ran faster than its less-secure competitors. 
+        An open-source project led by Dr. Jonathan Shapiro of Johns Hopkins University 
+        has moved Mr. Hardy's fast technology to modern microprocessors.</p>
+      <p>In 1970, before object-oriented programming emerged, one could scarcely 
+        have imagined programming languages with capability security built into 
+        their mathematical structure. Today, these look like cleaner relatives 
+        of familiar best-practice object-oriented languages, such as Sun's Java 
+        and Microsoft's .net. A open source project led by Mark S. Miller offers 
+        the capability-secure E language, which has already inspired efforts to 
+        clean up and secure such widspread languages as Python.</p>
+      <p>An old misconception continues to pit capabilities against ACLs, describing 
+        them as fundamentally similar alternatives. Today, we can see that capabilities 
+        provide a basis for computation itself, while ACLs are an add-on. Indeed, 
+        capability systems can serve as a basis for building ACLs and other other 
+        familiar systems used to implement security policies.</p>
+      <p>Capabilities organize computation in terms of communicating objects. 
+        As one might expect, they apply also to networks with communicating computers. 
+        When stretched over public data channels, capabilities take the form of 
+        cryptographic keys. An ideal capability system would use a capability-based 
+        language to program capability-based processes communicating over a capability-based 
+        network. Each level works well by itself and fits naturally with the others. 
+        At the operating system level, capability systems can even wrap insecure 
+        legacy code in a way that makes it harmless to its neighbors.</p>
+      <p>The capabilities concept, long neglected and still widely misunderstood, 
+        now appears fundamental to progress in building secure networked systems. 
+        Capability systems make the basis of computation itself more secure by 
+        adding a crucial bit of mathematical structure. Turing and von Neumann 
+        would have approved.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="Prev"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" -->x<!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --> <img src="../../images/next-gray.gif" width="64" height="32" alt="Next"><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

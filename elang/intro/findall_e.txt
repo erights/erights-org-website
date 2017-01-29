@@ -1,0 +1,39 @@
+#!/usr/local/bin/e
+
+pragma.syntax("0.9")
+
+##
+# The find function from the E Tutorial, modified to show the
+# pathname.
+# Prints all lines of a given file that contains a given substring.
+#
+def find(file, substring) {
+    for num => line in file {
+        if (line.indexOf(substring) != -1) {
+            print(`${file.getPath()}:$num:$line`)
+        }
+    }
+}
+ 
+##
+# The findall function from the E Tutorial, modified to take an
+# extension parameter.
+# Recursively walks a directory tree, and prints all lines in .txt
+# files that contain the given substring.
+#
+def findall(dirfile, ext, substring) {
+    if (dirfile.isDirectory()) {
+        for file in dirfile {
+            findall(file, ext, substring)
+        }
+    } else if (dirfile.getName().endsWith(ext)) {
+        find(dirfile, substring)
+    }
+}
+ 
+def args := interp.getArgs()
+if (args.size() != 3) {
+    throw("usage: findall.e rootname extension substring")
+}
+def root := <file>[args[0]]
+findall(root, args[1], args[2])

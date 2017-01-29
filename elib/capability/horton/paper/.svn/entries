@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   name=""
+   url="svn://svn.synchrona.org/erights/doc/elib/capability/horton/paper"
+   kind="dir"
+   schedule="add"
+   revision="0"/>
+<entry
+   name="horton-nn.svg"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="13.svg"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="01.png"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="protocol.png"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="13.png"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="29.svg"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="horton.html"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="send.png"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="29.png"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="deliver.png"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="01.svg"
+   kind="file"
+   schedule="add"/>
+</wc-entries>

@@ -1,0 +1,408 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>TermL Embedding Examples</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">data</a>&nbsp;/&nbsp;<a href="index.html">terml</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="terml-spec.html" title="Back to: TermL Specification"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: TermL Specification" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><img src="../../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>TermL 
+              Embeddings</b></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <p>In order to be suitable for use as a universal language for representing 
+        trees of symbols, TermL must be able to naturally represent the major 
+        other widespread universal trees-of-symbol languages, such as XML, S-Expressions, 
+        and tree-oriented object serialization.</p>
+      <p><i>The embedding of XML into TermL owes a tremendous debt to Oleg Kiselyov's 
+        <a href="http://okmij.org/ftp/Scheme/SXML.html">SXML</a>.</i></p>
+      <p><i>The style shown below for serializing object graphs into TermL is 
+        inspired by Tyler Close's XML-based object serialization.</i></p>
+      <h1><a name="xmlattrs"></a>Embedding XML </h1>
+      <h2>XML Attributes and Elements</h2>
+      <p>Like TermL terms, an XML Element contains a sequence of child Elements, 
+        so these concepts can map directly. An XML Element also contains a set, 
+        not a sequence, of name-value pairs, or <i>attributes</i>. An example 
+        valid in HTML and XHTML (HTML4 encoded in XML):</p>
+      <blockquote> 
+        <pre>&lt;font size=&quot;3&quot; color=&quot;#FF0000&quot;&gt;foo&lt;b&gt;bar&lt;/b&gt;baz&lt;/font&gt;</pre>
+      </blockquote>
+      <p>This can be written in TermL as follows:</p>
+      <blockquote> 
+        <pre>font({size: &quot;3&quot;, color: &quot;#FF0000&quot;},
+     &quot;foo&quot;, b(&quot;bar&quot;), &quot;baz&quot;)</pre>
+      </blockquote>
+      <p>The curly brackets indicate that order should not be taken as significant 
+        among the terms within the curly brackets. The ':' shorthand is used for 
+        attributes to emphasize that the attribute isn't of self-contained meaning, 
+        but is rather an encoding of properties of the enclosing Element.</p>
+      <p>The above is syntactic shorthand for:</p>
+      <blockquote> 
+        <pre>font(.bag.(.attr.(size(&quot;3&quot;)), .attr.(color(&quot;#FF0000&quot;))),
+     &quot;foo&quot;, b(&quot;bar&quot;), &quot;baz&quot;)</pre>
+      </blockquote>
+      <p>Since the <tt>.bag.</tt> functor cannot correspond to any XML-QName, 
+        an XML-oriented interpreter of this term-tree knows that this first argument 
+        is to be interpreted as holding attributes. If an Element has no attributes, 
+        this optional first argument may be omitted. If an Element has no children, 
+        such as the following XHTML,</p>
+      <blockquote> 
+        <pre>&lt;img alt=&quot;ELM architecture&quot; src=&quot;eLanguageMachine.gif&quot; /&gt;</pre>
+      </blockquote>
+      <p>then the parentheses which would enclose only the attributes can be left 
+        out:</p>
+      <blockquote> 
+        <pre>img{alt: &quot;ELM architecture&quot;, src: &quot;eLanguageMachine.gif&quot;}</pre>
+      </blockquote>
+      <p>which is shorthand for</p>
+      <blockquote> 
+        <pre>img(.bag.(.attr.(alt(&quot;ELM architecture&quot;)), .attr.(src(&quot;eLanguageMachine.gif&quot;))))</pre>
+      </blockquote>
+      <h3><a name="namespaces"></a>XML Namespaces</h3>
+      <p>A tag can be used to represent both unresolved and resolved <a href="http://www.w3.org/TR/REC-xml-names/#NT-QName">XML-QName</a>s. 
+        An unresolved XML-QName is written as it is in XML -- as a Prefix, a separator, 
+        and a LocalPart. However, in TermL the separator is '::' instead of ':'. 
+        As explained by <a href="http://www.jclark.com/xml/xmlns.htm">XML Namespaces</a>, 
+        the semantics of an unresolved XML-QName is represented by the corresponding 
+        resolved XML-QName. An XML-QName is resolved by substituting for the Prefix 
+        the URI which is the namespace name found by evaluating this Prefix in 
+        the current namespace scope. An example from <a href="http://www.w3.org/TR/REC-xml-names/">XML-NS</a>:</p>
+      <blockquote> 
+        <pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!-- both namespace prefixes are available throughout --&gt;
+&lt;bk:book xmlns:bk='urn:loc.gov:books'
+         xmlns:isbn='urn:ISBN:0-395-36341-6'&gt;
+    &lt;bk:title&gt;Cheaper by the Dozen&lt;/bk:title&gt;
+    &lt;isbn:number&gt;1568491379&lt;/isbn:number&gt;
+&lt;/bk:book&gt;</pre>
+      </blockquote>
+      <p>Written manually in TermL without resolving XML-QNames:</p>
+      <blockquote> 
+        <pre>xml(.pi.(&quot;version&quot;, &quot;1.0&quot;),
+    .comment.(&quot;both namespace prefixes are available throughout&quot;),
+    .letns.({bk: &lt;urn:loc.gov:books&gt;,
+             isbn: &lt;urn:ISBN:0-395-36341-6&gt;},
+            bk::book(bk::title: &quot;Cheaper by the Dozen&quot;,
+                     isbn::number: 1568491379)))</pre>
+      </blockquote>
+      <p>As seen above, we follow <a href="http://okmij.org/ftp/Scheme/SXML.html">SXML</a>'s 
+        example and represent additional XML node types, like processing instructions 
+        or comments, by using <a href="terml-spec.html#special">special</a> tags 
+        as functors, like <tt>.pi.</tt> or <tt>.comment.</tt>.</p>
+      <p><i>An automated translation would need some kind of schema or type information 
+        in order to translate the isbn number to </i><tt>1568491379</tt><i> rather 
+        than </i><tt>&quot;1568491379&quot;</tt><i>.</i></p>
+      <p>Despite the syntax of XML, modern XML infosets (<a href="http://www.w3.org/TR/xpath">XPath</a> 
+        and <a href="http://www.w3.org/TR/xml-infoset/">XML-Infoset</a>) do not 
+        treat namespace definitions as attributes. Rather, the set of namespace 
+        definitions in scope at an Element is yet another first-class part of 
+        the Element, in addition to the Element's tag, attributes, and child Elements. 
+        Namespace defintions are lexically scoped and shadowed in the conventional 
+        manner, though the syntax of XML obscures this as well -- in the XML example 
+        above, the &quot;<tt>bk</tt>&quot; in the first &quot;<tt>bk:book</tt>&quot; 
+        is resolved in the scope of the &quot;<tt>bk</tt>&quot; defintion that 
+        occurs textually to its right. To embedding XML in TermL, we emphasize 
+        the conventional lexical semantics of these definitions by introducing 
+        a separate <tt>.letns.</tt> construct, similar to the Scheme <tt>let</tt>.</p>
+      <p>Transforming the above term-tree through a (yet to be written) <tt>.letns.</tt> 
+        resolver tool, we'd get:</p>
+      <blockquote> 
+        <pre>xml(.pi.(&quot;version&quot;, &quot;1.0&quot;),
+    .comment.(&quot;both namespace prefixes are available throughout&quot;),
+    &lt;urn:loc.gov:books&gt;::book(&lt;urn:loc.gov:books&gt;::title: &quot;Cheaper by the Dozen&quot;,
+                              &lt;urn:ISBN:0-395-36341-6&gt;::number: 1568491379))</pre>
+      </blockquote>
+      <p>The first form is easier for humans to read and (especially) write. The 
+        second is easier for programs to manipulate. </p>
+      <p><i>Note that the latter does not retain all the information defined to 
+        be significant by modern XML infosets. These require that the Prefix and 
+        redundant namespace definitions be retained. Therefore, it is an application-specific 
+        decision to employ the resolver tool. Most applications do not care about 
+        the information that would be thrown away by such a tool.</i></p>
+      <p>Speculative: With this embedding of XML into TermL, an XML DTD or a <a href="http://www.oasis-open.org/committees/relax-ng/">Relax-NG 
+        Schema</a> can be translated into a TermL Schema (yet to be defined), 
+        such that an XML document D1 valid according to Schema S1 would translate 
+        to a TermL term-tree D2 valid according to translated Schema S2.</p>
+      <p><i><font color="#FF0000">*** We have yet to specify the embedding of 
+        the definition and use of the XML default namespace.</font></i></p>
+      <h1><a name="json"></a>Embedding <a href="http://json.org">JSON</a> in TermL</h1>
+      <p>TermL is now a superset of JSON, and so all of JSON embeds trivially. 
+        As of this writing, TermL parsed all examples on <a href="http://www.crockford.com/JSON/example.html">the 
+        JSON examples page</a>, and detected that the third example was missing 
+        a close-curly.</p>
+      <h1><a name="sexprs"></a>Embedding S-Expressions in TermL</h1>
+      <p>Readers already familiar with S-Expressions may be puzzled at this point. 
+        Why is any embedding needed at all? Aren't term-trees and S-Expressions 
+        equivalent except for syntax? Surprisingly, the answer is no. There are 
+        four differences altogether, of which the first is syntax.</p>
+      <table cellpadding="12" bgcolor="#80ffff">
+        <tr> 
+          <th>S-Expressions</th>
+          <th>TermL</th>
+          <th align="left"> <p>Differences from S-Expressions</p></th>
+        </tr>
+        <tr> 
+          <td> <pre>(f a b)</pre></td>
+          <td> <pre>f(a, b)</pre></td>
+          <td>The open paren is to the right of the functor, and the arguments 
+            are separated by commas</td>
+        </tr>
+        <tr> 
+          <td> <pre>((a b) (c d)</pre></td>
+          <td> <pre><i>can't</i></pre></td>
+          <td>The functor must be atomic.</td>
+        </tr>
+        <tr> 
+          <td> <pre>f != (f)</pre></td>
+          <td> <pre>f == f()</pre></td>
+          <td>Leaves are just childless nodes. (This statement makes use of the 
+            <a href="terml-spec.html#bareFunctor"> shorthand</a> introduced earlier.)</td>
+        </tr>
+        <tr> 
+          <td> <pre>(a . rest)</pre></td>
+          <td> <pre><i>can't</i></pre></td>
+          <td>All lists must be proper lists</td>
+        </tr>
+      </table>
+      <p>By this table, it seems that S-Expressions are more expressive than term-trees. 
+        Indeed, this is the case, in the sense that an embedding of TermL into 
+        S-Expressions is more trivial than the reverse. To embed S-Expressions 
+        into TermL we translate lists into square-bracketed lists, which is really 
+        a shorthand for use of the <tt>.tuple.</tt> functor. </p>
+      <table cellpadding="12" bgcolor="#80ffff">
+        <tr> 
+          <th>S-Expressions</th>
+          <th align="left">TermL Embedding</th>
+        </tr>
+        <tr> 
+          <td> <pre>(f a b)</pre></td>
+          <td> <pre>[f, a, b]</pre></td>
+        </tr>
+        <tr> 
+          <td> <pre>((a b) (c d)</pre></td>
+          <td> <pre>[[a, b], [c, d]]</pre></td>
+        </tr>
+        <tr> 
+          <td> <pre>f != (f)</pre></td>
+          <td> <pre>f != [f]</pre></td>
+        </tr>
+        <tr> 
+          <td> <pre>(a . rest)</pre></td>
+          <td> <pre>.cons.(a, rest)</pre></td>
+        </tr>
+      </table>
+      <p>This takes care of all cases but the dotted pair, for which we introduce 
+        the <tt>.cons.</tt> functor. By this embedding, the S-Expression</p>
+      <blockquote> 
+        <pre>(lambda (a b) (plus a b))</pre>
+      </blockquote>
+      <p>translates to</p>
+      <blockquote> 
+        <pre>[lambda, [a, b], [plus, a, b]]</pre>
+      </blockquote>
+      <p>However, this embedding is besides the point. Most actual <i>uses</i> 
+        of S-Expressions can be described by a Schema of some sort. For example, 
+        in the Scheme language, if the first member of a list is one of a distinguished 
+        set of symbols, then the list is interpreted as a primitive special form. 
+        Otherwise, it is interpreted as a function call. A more useful embedding 
+        of Scheme into TermL would be based on recognizing the &quot;Schema&quot; 
+        describing how Scheme is represented in S-Expressions. Using such a Schema, 
+        and taking the above S-Expression to be a Scheme program, we may instead 
+        translate it as:</p>
+      <blockquote> 
+        <p>lambda(params(a, b), apply(plus, a, b))</p>
+      </blockquote>
+      <p>or</p>
+      <blockquote> 
+        <p>lambda(params(var(&quot;a&quot;), var(&quot;b&quot;)), apply(var(&quot;plus&quot;), 
+          var(&quot;a&quot;), var(&quot;b&quot;)))</p>
+      </blockquote>
+      <p>Although the first is less readable than the original, it is still sufficiently 
+        readable for human manipulation. Unfortunately, only the second is in 
+        the form of a proper AST of the Scheme program that could be validated 
+        against a Scheme Schema. Why? A Schema should use a finite number of tags 
+        to describe a finite number of functor kinds. Only the latter form uses 
+        tags only to distinguish AST node types. Because of the inherent tradeoff 
+        here, the TermL Schema language should include an optional default-tag 
+        clause, specifying the translation of unrecognized leaf tags into a normalized 
+        form. (The kind of translation implied above would not work for a non-leaf 
+        tag, but then again, a Schema-based translation could not produce an unrecognized 
+        non-leaf tag.)</p>
+      <p><font color="#FF0000"><i>*** Should investigate how the explicit for 
+        relates to Brian Smith's 2-Lisp.</i></font></p>
+      <h1><a name="serial"></a>Serializing Object Graphs</h1>
+      <p><i><font color="#FF0000">*** We are now planning to serialize object 
+        graphs using <a href="../serial/jhu-paper/index.html">Data-E</a> instead. 
+        Nevertheless, the following hypothetical serialization style is interesting.</font></i></p>
+      <p>XML has the four main features needed for a human manipulable upgradeable 
+        embedding of object graphs into a tree-oriented textual notation:</p>
+      <ol>
+        <li> 
+          <p><b>Typed nodes</b>. XML Elements are &quot;typed&quot; by the Element 
+            tag name. </p>
+        </li>
+        <li> 
+          <p><b>An unordered set of name-value pairs</b>. A programmer's view 
+            of an object's state is a mapping from instance variable names to 
+            the values of those instance variables. The order of the instance 
+            variables is not part of the semantics of the program, is not memorable, 
+            and so should not be relied on for the textual encoding. By using 
+            an order-independent name-based encoding, serialized data is more 
+            likely to remain valid for latter versions of the object's definition. 
+            XML attributes have exactly these properties.</p>
+        </li>
+        <li> 
+          <p><b>Recursive data definition</b>. Just as object A can refer to object 
+            B, which can refer to object C, to any depth, so a serialization format 
+            should be based on nodes that can refer to other nodes and so on to 
+            any depth. XML Elements are the primary nodes of an XML tree, and 
+            they can indeed be recursively embedded to any depth.</p>
+        </li>
+        <li> 
+          <p><b>Non-local references</b>. In order to embed a tree in a graph, 
+            some form of non-local reference is needed, so that the same subtree 
+            may be referred to from multiple places (ie, have multiple parents). 
+            XML provides for this with ID and IDREF type attributes.</p>
+        </li>
+      </ol>
+      <p>Unfortunately, XML is defined so that the virtues of #2 and #3 cannot 
+        be used together. Since #3 is a requirement, the virtues of #2 have to 
+        be independently recreated as an encoding in terms of Elements. For example, 
+        many XML-based serialization formats use Element tags for instance variable 
+        names, as in</p>
+      <blockquote> 
+        <pre>&lt;org.erights.example.Point&gt;
+    &lt;x&gt;33&lt;/x&gt;
+    &lt;y&gt;44&lt;/y&gt;
+&lt;/org.erights.example.Point&gt;</pre>
+      </blockquote>
+      <p>In TermL, we would instead write:</p>
+      <blockquote> 
+        <pre>org.erights.example.Point{x: 33,
+                          y: 44}</pre>
+      </blockquote>
+      <p>The correspondence between these examples closely follows that of the 
+        XML-to-TermL embedding presented previously. However, by the logic of 
+        that previous embedding, we are treating the set of instance variables 
+        as attributes. Since TermL has no primitive notion of attributes, the 
+        value of such an &quot;attribute&quot; can be any term, so we naturally 
+        combine virtues #2 and #3 from the above list.</p>
+      <h4>Non-local References</h4>
+      <p align="center"><img src="../../elang/concurrency/images/mvc.gif" width="282" height="278"></p>
+      <p>Starting at View, the depicted object graph may be represented as</p>
+      <blockquote> 
+        <pre>.id.(1, View{model: .id.(2, Model{...}),
+             contrl: Controller{model: .idref.(2),
+                               view: .idref.(1)}})</pre>
+      </blockquote>
+      <p>We introduce the special functor of two arguments <tt>.id.</tt>, which, 
+        like an XML ID-typed attribute, causes the second argument (the value) 
+        to be identified by the first argument (the index). The index should be 
+        an integer, and be unique among all indexes in this serialization. The 
+        scope of the index extends from its defining occurrence, left-to-right 
+        for the rest of the term-tree. We also introduce the special functor <tt>.idref.</tt>, 
+        whose one argument is an in-scope index, that decodes into another reference 
+        to the value already associated with that index.</p>
+      <p><i>By contrast, an XML ID-typed attribute's scope is the entire document, 
+        enabling forward as well as backwards references. For ease of unserializing, 
+        the embedding described here uses the more restrictive left-to-right scope 
+        that allows only backwards references.</i></p>
+      <p>Previously, our hypothetical <tt>.letns.</tt> resolver tool above could 
+        be used for TermL representations other than the XML embedding, so long 
+        as they follow the <tt>.letns.</tt> convention. Likewise, a converter 
+        between TermL trees and TermL graphs could be used for any TermL representations 
+        that follow the <tt>.id.</tt> and <tt>.idref.</tt> conventions, whether 
+        or not these graphs are ultimately an encoding of objects. For such TermL 
+        representations, Schema validations should be applied to the graph form 
+        rather than the tree form.</p>
+      <p>To serialize a typed object graph (eg, for Java) into a validating TermL 
+        representation, for each type of object serialized, the corresponding 
+        representation type is added to the schema as the constraints for that 
+        type tag. The resulting schema can only be used to validate a TermL graph. 
+        This is a perfect example where tree-valiadtion would be completely useless.</p>
+      <h4>Primitive Types</h4>
+      <p>Primitive integer, float64, character, and string data are just encoded 
+        with the corresponding literals. A ConstList is encoded using the square 
+        bracket shorthand, or the <tt>.tuple.</tt> tag when written out in longhand.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">data</a>&nbsp;/&nbsp;<a href="index.html">terml</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="terml-spec.html" title="Back to: TermL Specification"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: TermL Specification" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><img src="../../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

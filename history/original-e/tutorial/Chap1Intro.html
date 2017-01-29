@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+   <TITLE>Introduction to E</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.0Gold (Win95; I) [Netscape]">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+
+<PRE><IMG SRC="midi_e.gif" ALT="Electric Communities: E Programming Language" HEIGHT=30 WIDTH=30>  <A HREF="index.html">Contents</A>  <A HREF="../index.html">Home Page</A>
+</PRE>
+
+<P>
+<HR></P>
+
+<H1>Introduction to E</H1>
+
+<BLOCKQUOTE>
+<P>This section introduces you to E programming concepts. For more information,
+refer to the E Programmer's Manual.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="What is E?"></A>What is E? </H1>
+
+<BLOCKQUOTE>
+<P>E is a set of extensions to Java designed for writing distributed applications.
+It enhances your Java code by offering security and communications extensions.
+</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="Who are E users?"></A>Who are E users? </H1>
+
+<BLOCKQUOTE>
+<P>E is designed for programmers writing network applications, such as
+groupware, publishing systems, games and multimedia. </P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="What does E offer?"></A>What does E offer? </H1>
+
+<BLOCKQUOTE>
+<P>E enhances and improves your Java code in the following areas:</P>
+
+<UL>
+<LI>Security</LI>
+
+<LI>Communication</LI>
+
+<LI>Optimistic programming</LI>
+</UL>
+
+<P>These features mean that you will not have to work as hard to maintain
+security and communication when designing networked applications. E does
+it for you.</P>
+
+<P>This tutorial introduces you to these concepts while you learn E. </P>
+
+<H2>Security</H2>
+
+<P>Java's security model is based on an &quot;all-or-nothing&quot; approach:
+it assumes that all code that originated on the local hard disk is trusted,
+and all code that originated from the network is not trusted. This model
+can be very secure, but it does have loopholes. For example, since local
+code is &quot;trustworthy&quot;, it is given access to resources that it
+may not need. This can increase the chances of viruses and trojan horses
+infecting your machine. Also, Java does not allow you to assign access
+selectively, on an as-needed basis. </P>
+
+<P>E closes many of these security holes by letting you selectively assign
+privileges. &quot;Trustedness&quot; is granted in as much or as little
+detail as you choose. For example, you could deny your application the
+ability to write anywhere in the file system, but allow it to add a limited
+number of records to a database. Since you assign these privileges directly
+in the application, they are preserved regardless of where the application
+originates-whether on the network or on your local drive.</P>
+
+<P>By creating a trusted object that implements limited capabilities, and
+giving an untrusted object the ability to send messages to this new object,
+you can obtain more functionality from the untrusted code without compromising
+security. You also do not have to rely on third-party security mechanisms
+to assign privileges for your application.</P>
+
+<H2>Communication</H2>
+
+<P>E features a built-in model for remote object communications. It lets
+you automatically establish connections between objects without having
+to deal directly with the underlying network protocols. This lets machines
+talk directly, with messages directed only to specific objects. </P>
+
+<P>Other languages can require a lot of effort to establish remote communications.
+For example, Java requires many sockets to be built just to establish a
+pipe between two machines, and the result is not as secure. In contrast,
+E lets you do this easily with just a few keywords. </P>
+
+<H2>Optimistic Computation</H2>
+
+<P>All distributed systems experience the problems of deadlock and race
+conditions. E resolves this by letting your program send a message and
+still continue execution in other code blocks, letting that message's associated
+code block execute later when a reply is received. This functionality forms
+the basis for E's model of optimistic computation. </P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<ADDRESS>Copyright (c) 1996 Electric Communities. All rights reserved worldwide.<BR>
+Most recent update: 5/29/96<BR>
+</ADDRESS>
+
+</BODY>
+</HTML>

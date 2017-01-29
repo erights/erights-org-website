@@ -1,0 +1,222 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Defining Variables</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">blocks</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="forKVExpr.html" title="Back to: Iterating by Key-Value Pairs"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Iterating by Key-Value Pairs" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="defFunc.html" title="On to: Defining Functions"><img src="../../images/next.gif" width="64" height="32" alt="On to: Defining Functions" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b>Defining
+              Variables</b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <div> </div>
+      <div>
+        <div align="center">
+          <pre><b>def</b> <i>pattern</i> <b>:=</b> <i>init-expression</i></pre>
+        </div>
+        The most common use of this construct just has a variable name as the
+        pattern:</div>
+      <blockquote>
+        <pre class="updoc"><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">i</span> := 2 + 3
+<span class="stdout"># value: 5</span></pre>
+      </blockquote>
+      <p class="Body"> As should be familiar, the value of the init-expression
+        becomes the initial value of the variable.</p>
+      <p class="Body"> <i><b><font color="#009000">E</font></b></i> adds power
+        to this construct, not by adding new features, but by removing three restrictions.
+        In <i><b><font color="#009000">E</font></b></i>,</p>
+      <ol>
+        <li class="Numbered1"><a href="#defIsExpr">Definitions are also expressions
+          with values</a></li>
+        <li><a href="#defPattern">Any pattern can appear as the left hand side</a></li>
+        <li><a href="#scopeConsistency">Variables defined in the left are in scope
+        on the right</a>
+      </ol>
+      <h3><a name="defIsExpr">Definitions Are Also Expressions</a></h3>
+      <p>The define expression has a value -- the value of the init-expression.
+        Thus enabling idioms like</p>
+      <blockquote>
+        <pre class="updoc"><span class="keyword">while</span> ((<span class="keyword">def</span> <span class="defvar">c</span> := reader.readChar()) != null) {</pre>
+      </blockquote>
+      <h3><a name="defPattern">Definition By Pattern Match</a></h3>
+      <p> Besides a simple variable name, the pattern on the left can be any pattern.
+        This pattern is matched against the value of the init-expression. If this
+        match fails, a <font color="#FF0000">***to be specified***</font> exception
+        is thrown, causing us to leave this scope. If the match succeeds, execution
+        continues sequentially, and all the variable definitions produced by the
+        pattern match are in scope. Most commonly, this is used when calling a
+        function that effectively returns multiple results.</p>
+      <p> For example, in the <i> Concurrency</i> Chapter, we'll encounter a function
+        <i> Ref.promise()</i> that returns a two element list containing two related
+        values. The zero element of this list is a Promise, and the one element
+        is a corresponding Resolver. We might first think to write the following
+        <i><b><font color="#009000">E</font></b></i> code to receive these two
+        values</p>
+      <blockquote>
+        <pre class="updoc"><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">pair</span> := Ref.promise()
+<span class="stdout"># value: [&lt;Promise&gt;, &lt;Resolver&gt;]</span></pre>
+        <pre class="updoc"><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">promise</span> := pair[0]
+<span class="stdout"># value: &lt;Promise&gt;</span></pre>
+        <pre class="updoc"><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">resolver</span> := pair[1]
+<span class="stdout"># value: &lt;Resolver&gt;</span></pre>
+      </blockquote>
+      <p class="updoc">While this works, it's clearer and more concise if you
+        just use a List-pattern on the left</p>
+      <blockquote>
+        <pre class="updoc">? <span class="keyword">def</span> [<span class="defvar">promise</span>, <span class="defvar">resolver</span>] := Ref.promise()
+<span class="stdout"># value: [&lt;Promise&gt;, &lt;Resolver&gt;]</span></pre>
+        <pre class="updoc"><span class="stdout">? </span>promise
+<span class="stdout"># value: &lt;Promise&gt;</span></pre>
+        <pre class="updoc"><span class="stdout">? </span>resolver
+<span class="stdout"># value: &lt;Resolver&gt;</span></pre>
+      </blockquote>
+      <p> The List-pattern on the left extracts the elements of the list returned
+        by Ref.promise(), and defines the two variables, <i> promise</i> and <i>
+        resolver</i> to hold these values.</p>
+      <p> More conventionally, pattern matching can be used to define typed variables</p>
+      <blockquote>
+        <pre class="updoc"><span class="stdout">? </span><span class="keyword">var</span> <span class="defvar">i</span> :int := 2 + 3
+<span class="stdout"># value: 5</span></pre>
+        <pre class="updoc"><span class="stdout">? </span><span class="keyword">var</span> <span class="defvar">j</span> :char := 2 + 3
+<span class="stderr"># problem: &lt;ClassCastException: Integer \
+#           doesn't coerce to a Character&gt;</span>
+<span class="stdout">
+? </span><span class="keyword">def</span> <span class="defvar">k</span> :int := 2 + 3
+<span class="stdout"># value: 5
+
+? </span>i := 7
+<span class="stdout"># value: 7
+
+? </span>k := 7
+<span class="stderr"># problem: Failed: Can't assign to final variable: k</span></pre>
+      </blockquote>
+      <p> &quot;<tt class="keyword">def</tt>&quot; defines an immutable variable
+        (&quot;<span class="keyword">final</span>&quot; in Java terminology).
+        This means that the variable's initial value is also its final value --
+        that it may not be reassigned. &quot;<tt class="keyword">var</tt>&quot;
+        defines a mutable variable -- one that can be assigned to. See <i> <a href="../grammar/patterns.html">Pattern
+        Matching</a></i> for the full set of possibilities.</p>
+      <h3><a name="scopeConsistency">Consistent Scopes Enable Cyclic Initialization</a></h3>
+      <p>As is usually true in E, the scope of any variable names defined by the
+        pattern on the left lasts left-to-right until the end of the enclosing
+        scope box. In <i><b><font color="#009000">E</font></b></i> the init-expression
+        is not exempt from this rule -- the variables defined on the left are
+        available on the right. This allows the definition of cyclic data structures:
+      </p>
+      <blockquote>
+        <pre class="updoc"><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">a</span> := [1, a, 3]
+<span class="stdout"># value: [1, &lt;***CYCLE***&gt;, 3]</span></pre>
+        <pre class="updoc"><span class="stdout">? </span>a[1][1][1][0]
+<span class="stdout"># value: 1</span>
+</pre>
+      </blockquote>
+      <p class="updoc"> This defines &quot;a&quot; to be the infinite tree of
+        lists:</p>
+      <blockquote>
+        <pre class="updoc">
+[1, [1, [1, ..., 3], 3], 3]</pre>
+      </blockquote>
+      <p> <img src="../concurrency/images/mvc.gif" width="282" height="278" align="right">which
+        is implemented by the obvious cyclic data structure. Though this example
+        is simple but silly, the same technique allows us to naturally create
+        a set of objects that need to be initialized to point at each other. A
+        classic example is the Smalltalk model-view-controller triple. The model
+        is born not knowing about the view or controller, but the view needs to
+        know the model and the controller, and the controller needs to know the
+        model and the view. If our three construction functions are <i> makeModel</i>,
+        <i> makeView</i>, and <i> makeController</i>, we can construct our three
+        objects as follows</p>
+      <blockquote>
+        <pre class="updoc"><span class="keyword">def</span> <span class="defvar">model</span> := makeModel(...)
+<span class="keyword">def</span> [<span class="defvar">view</span>, <span class="defvar">controller</span>] := [
+    makeView(model, controller),
+    makeController(model, view)
+]</pre>
+      </blockquote>
+      <p><font color="#ff0000">***show the expansion of cyclic definitions to
+        non-cyclic definitions. </font></p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">blocks</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="forKVExpr.html" title="Back to: Iterating by Key-Value Pairs"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Iterating by Key-Value Pairs" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="defFunc.html" title="On to: Defining Functions"><img src="../../images/next.gif" width="64" height="32" alt="On to: Defining Functions" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

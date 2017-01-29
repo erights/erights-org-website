@@ -1,0 +1,794 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>The Data-E Manual - Appendix A</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">data</a>&nbsp;/&nbsp;<a href="../index.html">serial</a>&nbsp;/&nbsp;<a href="index.html">jhu-paper</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="acks-n-refs.html" title="Back to: Acks and Refs"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Acks and Refs" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><img src="../../../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B><font size="5">Appendix
+              A:</font><br>
+              The Data-E Manual</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <h1><a name="as-eval"></a>Unserialization as Evaluation</h1>
+      <p>(This is approximately an unabridged form of the <a href="deconstructing.html#as-eval">Unserialization 
+        as Evaluation</a> section presented previously.)</p>
+      <p>As shown above, unserialization can be thought of, or even implemented 
+        as, expression evaluation [ref Rees, XMLEncoder]. A depiction is an expression 
+        in some programming language, the unserializer is the eval function, the 
+        exit references to be reconnected are free variable references, the values 
+        to reconnect them to come from the scope (i.e., environment) provided 
+        to eval, and the root of the reconstructed subgraph is the value the expression 
+        evaluates to. Serialization is the logically inverse process, in which 
+        an uneval function is applied to a root and an unscope, and writes out 
+        an expression that, were it evaluated in the corresponding scope, would 
+        reconstruct the subgraph. </p>
+      <p>Data-E is the subset of <i><b><font color="#009000">E</font></b></i> 
+        used for depicting a subgraph as an expression. Ignoring precedence, it 
+        consists of the following productions:</p>
+      <h2><a name="data-e-fund"></a>Fundamental Data-E Constructs</h2>
+      <div align="center"> 
+        <table cellpadding="6">
+          <tr valign="top"> 
+            <td> <div align="right"><tt><span class="defvar">expr</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left"><tt>literal | varName | tempName | <br>
+                call | define | defrec</tt></div></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <div align="right"><tt><span class="defvar">literal</span>&nbsp;::=</tt></div></td>
+            <td> <p align="left"><tt>LiteralInt | LiteralFloat64 | <br>
+                LiteralChar | LiteralString</tt></p>
+              <p align="left"><tt><span class="comment"># Each are written as 
+                they are in Java.<br>
+                # Examples: </span>37, 42.3, '<span class="litchars">c</span>', 
+                &quot;<span class="litchars">What me worry?</span>&quot;</tt></p></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <div align="right"><tt><span class="defvar">varName</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left"> 
+                <p><tt>Identifier <span class="comment"># but not of the form 
+                  &quot;t__&quot;Digit*</span></tt></p>
+                <p><tt><span class="comment"> # These variable names are only 
+                  used freely.<br>
+                  # Example: </span>foo</tt></p>
+              </div></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <div align="right"><tt><span class="defvar">tempName</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left"> 
+                <p><tt>&quot;<span class="litchars">t__</span>&quot;Digit* </tt></p>
+                <p><tt><span class="comment"># These variable names are never 
+                  used freely.<br>
+                  # Example: </span>t__12</tt></p>
+              </div></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <div align="right"><tt><span class="defvar">call</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left"> 
+                <p><tt>expr &quot;<span class="litchars">.</span>&quot; Identifier 
+                  &quot;<span class="litchars">(</span>&quot; exprs &quot;<span class="litchars">)</span>&quot;</tt></p>
+                <p><tt><span class="comment"># Example: </span>__makeList.run(&quot;<span class="litchars">foo</span>&quot;, 
+                  49)</tt></p>
+              </div></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <div align="right"><tt><span class="defvar">define</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left"> 
+                <p><tt>&quot;<span class="litchars">def</span>&quot; tempName 
+                  &quot;<span class="litchars">:=</span>&quot; expr</tt></p>
+                <p><tt><span class="comment"># Where expr does not refer to tempName<br>
+                  # Example: </span><span class="keyword">def</span> <span class="defvar">t__12</span> 
+                  := makePoint.run(3, 5)</tt></p>
+              </div></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <div align="right"><tt><span class="defvar">defrec</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left"> 
+                <p><tt>&quot;<span class="litchars">def</span>&quot; tempName 
+                  &quot;<span class="litchars">:=</span>&quot; expr</tt></p>
+                <p><tt><span class="comment"># Where expr may refer to tempName<br>
+                  # Example: </span><span class="keyword">def</span> <span class="defvar">t__0</span> 
+                  := __makeList.run(1, t__0, 3)</tt></p>
+              </div></td>
+          </tr>
+          <tr valign="top"> 
+            <td colspan="2"> <div align="left">(The difference between <tt>define</tt> 
+                and <tt>defrec</tt> is not apparent in the textual source language, 
+                but becomes significant in the other representations of Data-E, 
+                as explained below.)</div></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <div align="right"><tt><span class="defvar">exprs</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left"><tt>(expr (&quot;<span class="litchars">,</span>&quot; 
+                expr)*)?</tt></div></td>
+          </tr>
+        </table>
+      </div>
+      <p>&nbsp;</p>
+      <h2><i><font color="#009000"><a name="data-e-shorthands"></a>E</font></i> 
+        Syntactic Shorthands generated by <tt>deSrcKit</tt></h2>
+      <p> Since we use <tt>deSrcKit</tt> to build the depictions we present for 
+        expository purposes, we need to know the shorthands it builds, which are 
+        a subset of the shorthands recognized and expanded by <i><b><font color="#009000">E</font></b></i>. 
+        Going the other way, all <i><b><font color="#009000">E</font></b></i> 
+        syntactic shorthands, including those below, are recognized by <tt>deSrcKit</tt>, 
+        since it uses the <i><b><font color="#009000">E</font></b></i> parser 
+        to parse and expand its input. </p>
+      <p>Any valid <i><b><font color="#009000">E</font></b></i> expression that 
+        expands only into the above Data-E primitives is a valid Data-E expression 
+        with the same meaning. Likewise any valid Data-E expression is a valid 
+        <i><b><font color="#009000">E</font></b></i> expression with the same 
+        meaning. </p>
+      <div align="center"> 
+        <table cellpadding="6">
+          <tr valign="top"> 
+            <td> <p align="right"><tt>expr&nbsp;&quot;(&quot;&nbsp;exprs&nbsp;&quot;)&quot;</tt> 
+              </p></td>
+            <td> <p align="left"><i><span class="comment">is shorthand for</span><br>
+                </i><tt>expr &quot;.run(&quot; exprs &quot;)&quot;</tt></p>
+              <p align="left"><i><span class="comment">If the message name is 
+                left out, it defaults to &quot;<tt>run</tt>&quot;. For example,<br>
+                </span></i> <tt>__makeList(&quot;<span class="litchars">foo</span>&quot;, 
+                49)</tt> <i class="comment">is shorthand for<br>
+                </i><tt>__makeList.run(&quot;<span class="litchars">foo</span>&quot;, 
+                49)</tt>.</p></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <p align="right"><tt>&quot;[&quot;&nbsp;exprs&nbsp;&quot;]&quot;</tt></p></td>
+            <td> <p align="left"> <i><span class="comment">is shorthand for</span><br>
+                </i><tt>&quot;__makeList.run(&quot; exprs &quot;)&quot;</tt></p>
+              <p align="left"><i><span class="comment">Square brackets can be 
+                used to express lists. For example,<br>
+                </span></i> <tt>[&quot;<span class="litchars">foo</span>&quot;, 
+                49]</tt><i class="comment"> is shorthand for</i> <tt><br>
+                __makeList.run(&quot;<span class="litchars">foo</span>&quot;, 
+                49)</tt>.</p></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <p align="right"><tt>expr&nbsp;&quot;[&quot;&nbsp;exprs&nbsp;&quot;]&quot;</tt> 
+              </p></td>
+            <td> <p align="left"><i><span class="comment">is shorthand for</span><br>
+                </i><tt>expr &quot;.get(&quot; exprs &quot;)&quot;</tt></p>
+              <p align="left"><i><span class="comment"> For example,<br>
+                </span></i> <tt>vec[i]</tt> <i class="comment">is shorthand for<br>
+                </i><tt>vec.get(i)</tt>.</p></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <p align="right"><tt>&quot;&lt;&quot;Identifier&quot;&gt;&quot;</tt></p></td>
+            <td> <p align="left"> <i><span class="comment">is shorthand for</span><br>
+                </i><tt>Identifier&quot;__uriGetter&quot;</tt></p>
+              <p align="left"><i><span class="comment">For example,<br>
+                </span></i><tt>&lt;file&gt;</tt> <i><span class="comment">is shorthand 
+                for</span></i><br>
+                <tt>file__uriGetter</tt><span class="comment"><br>
+                </span></p></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <p align="right"><tt>&quot;&lt;&quot;Identifier&quot;:&quot;URIC*&quot;&gt;&quot;</tt></p></td>
+            <td> <p align="left"> <i><span class="comment">is shorthand for</span><br>
+                </i><tt>Identifier&quot;__uriGetter.get(&quot; URIBody &quot;)&quot;</tt></p>
+              <p align="left"><i><span class="comment">Where the URIBody is a 
+                literal string whose value is the sequence of URI characters. 
+                As explained earlier in <a href="#uri-exprs"><b><font color="#009000">E</font></b>'s 
+                URI Expressions</a>,<br>
+                </span></i><tt>&lt;file:<span class="litchars">/foo/bar</span>&gt;</tt> 
+                <i><span class="comment">is shorthand for</span></i><br>
+                <tt>file__uriGetter.get(&quot;<span class="litchars">/foo/bar</span>&quot;)</tt><span class="comment"><br>
+                </span></p></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <p align="right"><tt>&quot;-&quot;&nbsp;exprs</tt></p></td>
+            <td> <p align="left"> <i><span class="comment">is shorthand for</span><br>
+                </i><tt>exprs &quot;.negate()&quot;</tt></p>
+              <p align="left"><i><span class="comment">Allows negative numbers 
+                to be written as concisely as literals. For example, </span></i> 
+                <tt><br>
+                -5 </tt> <i class="comment">is shorthand for</i> <tt>5.negate()</tt>.</p></td>
+          </tr>
+        </table>
+      </div>
+      <p>Using several cases together:</p>
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">root</span> := [1, root, 1, &lt;import:java.lang.makeStringBuffer&gt;]
+<span class="stdout"># value: [1, &lt;***CYCLE***&gt;, 1, &lt;makeStringBuffer&gt;]
+
+? </span><span class="keyword">def</span> <span class="defvar">surgeon</span> := &lt;elib:<span class="litchars">serial.makeSurgeon</span>&gt;.withSrcKit(&quot;<span class="litchars">de: </span>&quot;)<span class="stdout">
+
+? </span><span class="keyword">def</span> <span class="defvar">depiction</span> := surgeon.serialize(root)
+<span class="stdout"># value: &quot;de: def t__0 := [def t__2 := 1,
+#                          t__0,
+#                          t__2,
+#                          &lt;import:java.lang.makeStringBuffer&gt;]&quot;
+
+? </span>surgeon.unserialize(depiction)
+<span class="stdout"># value: [1, &lt;***CYCLE***&gt;, 1, &lt;makeStringBuffer&gt;]</span></pre>
+      </blockquote>
+      <ul>
+        <li>The value of the <i><b><font color="#009000">E</font></b></i> expression 
+          <tt>&lt;import:java.lang.makeStringBuffer&gt;</tt> 
+          serializes as the Data-E expression <tt>import__uriGetter.get(&quot;<span class="litchars">java.lang.makeStringBuffer</span>&quot;)</tt>, 
+          as will be explained in the <a href="recog-n-build.html#uncalling">next 
+          chapter</a>. The <tt>deSrcKit</tt> shows this expression using the URI 
+          shorthand.</li>
+        <li> The <tt><span class="keyword">def</span>&nbsp;<span class="defvar">t__2</span>&nbsp;:=&nbsp;1</tt> 
+          is an instance of the <tt>define</tt> production, since <tt>t__2</tt> 
+          is not used on its right hand side. </li>
+        <li>The <tt><span class="keyword">def</span>&nbsp;<span class="defvar">t__0</span>&nbsp;:=&nbsp;...</tt> 
+          is an instance of the <tt>defrec</tt> production, since t__0 is used 
+          on its right hand side, expressing a cyclic data structure.</li>
+        <li>The square brackets for forming a list are shorthand for calling __makeList 
+          with those same arguments.</li>
+      </ul>
+      <p>For those familiar with Java, Data-E should be mostly familiar, but with 
+        a few important differences:</p>
+      <ul>
+        <li> 
+          <p>In <i><b><font color="#009000">E</font></b></i>, a variable definition 
+            is an expression. Like assignment, the value of a definition expression 
+            is the value of the right hand side.</p>
+        </li>
+        <li> 
+          <p><tt>null</tt>, <tt>false</tt>, and <tt>true</tt> are not keywords 
+            in <i><b><font color="#009000">E</font></b></i>, but rather are variable 
+            names in <i><b><font color="#009000">E</font></b></i>'s universal 
+            scope and in Data-E's default scope and unscope. This means an expression 
+            can count on them having their normal values, so these don't need 
+            to be literals. Likewise for <tt>Infinity</tt> and <tt>NaN</tt>, which 
+            hold these floating point values that can't be written as literals. 
+            The &quot;<tt>false</tt>&quot; in the first example of <a href="deconstructing.html#previews">Previews 
+            of Data-E Serialization</a> above was a variable reference, not a 
+            literal, just as it is in <i><b><font color="#009000">E</font></b></i>.</p>
+        </li>
+        <li> 
+          <p>Using only the <tt>literal</tt>, <tt>varName</tt>, and <tt>call</tt> 
+            productions, we can write Data-E expressions that will evaluate to 
+            new tree structures whose leaves are reattached exit points.</p>
+        </li>
+        <li> 
+          <p>In <i><b><font color="#009000">E</font></b></i>, a variable is in 
+            scope starting from its defining occurrence, left-to-right, until 
+            the close-curly that closes the <a href="../../../elang/blocks/ifExpr.html">scope 
+            box</a> (lexical contour) in which it is defined, and not counting 
+            regions of nested scope boxes where it is shadowed by a definition 
+            of the same name. Ignoring <tt>defrec</tt> for a moment, this is a 
+            straightforward generalization of behavior familiar from Java and 
+            many other block structured languages. In Data-E, since there are 
+            no constructs that introduce scope boxes (no constructs with curly 
+            brackets), every variable is in scope from its defining occurrence 
+            until the end of the top-level expression as a whole. </p>
+        </li>
+        <li> 
+          <p>With the <tt>tempName</tt> and <tt>define</tt> productions, we can 
+            use Data-E to represent DAGs. For those values that are multiply referenced, 
+            we can write out the subexpression for calculating this value at the 
+            first position it needs to appear, as the right hand side of a <tt>define</tt>, 
+            capturing its value in a temp variable (<tt><span class="keyword">def</span>&nbsp;<span class="defvar">t__2</span>&nbsp;:=&nbsp;1</tt>). 
+            Everywhere else this value is needed, we use <tt>tempName</tt> to 
+            reuse this captured value (<tt>t__2</tt>).</p>
+        </li>
+        <li> 
+          <p>With <tt>defrec</tt>, we can use Data-E to represent graphs. Unlike 
+            other block structured languages, even when the name being defined 
+            on the left is used on the right, <i><b><font color="#009000">E</font></b></i> 
+            still holds strictly to the left-to-right scoping rule. But what value 
+            does the name on the right evaluate to, before its actual value has 
+            been determined? The answer is an <i>unresolved promise</i>, similar 
+            to a logic variable or a future. An unresolved promise is an object 
+            reference whose designation has not yet been determined. For every 
+            unresolved promise, there's a Resolver used to determine what object 
+            the promise designates. Once a promise is resolved, it becomes like 
+            any normal reference to the object it designates. </p>
+          <p>The <tt>defrec</tt> expression evaluates by defining a promise/Resolver 
+            pair, defining the value of <tt>tempName</tt> to be the promise, evaluating 
+            the right hand expression in the scope of this definition, and resolving 
+            the promise to the value of the right hand side. This value is also 
+            the value of the <tt>defrec</tt> expression as a whole. At the moment 
+            the above list is created, <tt>t__0</tt> is still an unresolved promise. 
+            Afterwards, once the <tt><span class="keyword">def</span>&nbsp;<span class="defvar">t__0</span>&nbsp;:=&nbsp;...</tt> 
+            executes, the promise becomes the list itself. <font color="#FF0000">(*** 
+            unclear. Explain that defrec has right-to-left execution order, while 
+            maintaining left-to-right scoping order.)</font></p>
+          <p>Most other serialization systems [ref JOSS, XMLEncoder, BOSS, ...] 
+            are defined in systems without any kind of postponed references (promises, 
+            logic variables, futures), but which still allow user-defined unserialize-time 
+            behavior by the objects being unserialized. In any such system, when 
+            unserializing a cycle, user-defined behavior may interact with graph 
+            neighbors that are not yet fully initialized. In a conventional system 
+            this is only a minor source of bugs. But in a graph of mutually suspicious 
+            objects this would be a major opportunity for an adversary. By referring 
+            to an object only with promises until its fully initialized, we make 
+            such bugs safely fail-stop, enabling an adversary in the graph only 
+            to mount a denial-of-unserialization attack, which it can trivially 
+            do anyway, and which we make no effort or claim to prevent. <font color="#FF0000">(*** 
+            Need earlier section on security claims, non-claims, scenarios, threat 
+            models, etc. *)</font></p>
+        </li>
+      </ul>
+      <table cellpadding="12" align="right" bgcolor="#FFFFE8" border="1"  width="30%">
+        <tr> 
+          <td> <p>Although Data-E and Kernel-E are both subsets of <i><b><font color="#009000">E</font></b></i>, 
+              neither is a subset of the other, since Kernel-E does not support 
+              the <tt>defrec</tt> expression.</p></td>
+        </tr>
+      </table>
+      <p>Data-E is a true subset of <i><b><font color="#009000">E</font></b></i>, 
+        both syntactically and semantically. Since <i><b><font color="#009000">E</font></b></i> 
+        is a secure object-capability language, the security issues surrounding 
+        evaluation of <i><b><font color="#009000">E</font></b></i> programs are 
+        already well understood. By using a subset of <i><b><font color="#009000">E</font></b></i> 
+        in this way, we get to leverage this understanding.</p>
+      <h1 ALIGN="left">Recognizers and Builders</h1>
+      <p>The following table shows all the current representations of Data-E and 
+        the kits that support them.</p>
+      <div align="center"> 
+        <table cellpadding="12">
+          <tr> 
+            <th>&nbsp;</th>
+            <th>recognizing</th>
+            <th>building</th>
+            <th rowspan="2">Kit Name</th>
+          </tr>
+          <tr> 
+            <td>&nbsp;</td>
+            <th colspan="2">Some Common Names</th>
+          </tr>
+          <tr> 
+            <th> <div align="right">Data-E source</div></th>
+            <td> <div align="left">parsing</div></td>
+            <td> <div align="left">pretty-printing</div></td>
+            <td> <div align="left"><tt>deSrcKit</tt></div></td>
+          </tr>
+          <tr> 
+            <th> <div align="right">Data-E AST</div></th>
+            <td> <div align="left">visiting</div></td>
+            <td> <div align="left">expansion</div></td>
+            <td> <div align="left"><tt>deASTKit</tt></div></td>
+          </tr>
+          <tr> 
+            <th> <div align="right">DataECode assembly</div></th>
+            <td> <div align="left">assembling</div></td>
+            <td> <div align="left">disassembling</div></td>
+            <td> <div align="left"><tt>deAssemblyKit</tt></div></td>
+          </tr>
+          <tr> 
+            <th> <div align="right">DataECode bytecodes</div></th>
+            <td> <div align="left">dispatching</div></td>
+            <td> <div align="left">generating</div></td>
+            <td> <div align="left"><tt>deBytecodeKit</tt></div></td>
+          </tr>
+          <tr> 
+            <th> <div align="right"><i>Delimited Subgraph</i></div></th>
+            <td> <p align="left"><i>traversing<br>
+                unevaluating </i></p></td>
+            <td> <div align="left"><i>constructing<br>
+                evaluating </i></div></td>
+            <td> <div align="left"><tt><i>deSubgraphKit</i></tt></div></td>
+          </tr>
+        </table>
+      </div>
+      <p>We have already encountered the first and last row. Like the first row, 
+        the middle rows are all depictions -- they contain nothing but portable 
+        bits. All the depiction rows are just straightforward engineering, and 
+        operate in a canonical way with no policy choices. All expression of policy 
+        and mixing of intent occurs on the subgraph row, mostly during recognition.</p>
+      <ul>
+        <li>The second row, <b>Data-E AST</b>, is simply the abstract syntax tree 
+          representation corresponding to Data-E source -- it represents the same 
+          information in the same abstract way, but optimized for machine rather 
+          than human processing. </li>
+        <li>The third row, <b>DataECode assembly</b>, is the assembly language 
+          for the DataECode instruction set. DataECode is a traditional form of 
+          reverse-polish instruction set for a stack machine, designed solely 
+          as a &quot;compilation&quot; target for Data-E, for the purpose of evaluating 
+          such compiled Data-E expressions.</li>
+        <li>Finally, <b>DataECode bytecodes</b>, represents DataECode for machine 
+          rather than human processing. It is designed to be relatively compact, 
+          quick to generate, and quick to process. This is the default depiction 
+          for production use of serialization. Because it can easily be converted 
+          to and from the other forms of depiction, we gain the benefits of an 
+          efficient binary form with no real penalty in debuggability.</li>
+      </ul>
+      <p> For all the depiction kits other than <tt>deASTKit</tt>, what you get 
+        out (during recognition) is the same as what you put in (during building). 
+        The <tt>deASTKit</tt> has one special feature of benefit to the readability 
+        of the other depictions -- it compacts and simplifies its input a bit, 
+        removing unnecessary temporary variables and turning <tt>defrec</tt>s 
+        into <tt>define</tt>s when it can. </p>
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">cycle</span> := ['<span class="litchars">a</span>', cycle, '<span class="litchars">a</span>', -3]
+<span class="stdout"># value: ['a', &lt;***CYCLE***&gt;, 'a', -3]
+
+? </span><span class="keyword">def</span> <span class="defvar">deSubgraphKit</span> := &lt;elib:<span class="litchars">serial.deSubgraphKit</span>&gt;
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">deSrcKit</span> := &lt;elib:<span class="litchars">serial.deSrcKit</span>&gt;
+
+<span class="stdout">? </span>deSubgraphKit.recognize(cycle, deSrcKit.makeBuilder())
+<span class="stdout"># value: &quot;def t__0 := [def t__2 := \'a\', t__0, t__2, def t__4 := -3]&quot;</span></pre>
+      </blockquote>
+      <p>In our <a href="deconstructing.html#previews">first preview example</a>, 
+        several temporary variables were defined but none were used. Here, all 
+        but <tt>t__4</tt> are used. <tt>deASTKit</tt> removes the definition of 
+        <tt>t__4</tt> and weakens the <tt>defrec</tt> of <tt>t__2</tt> into a 
+        <tt>define</tt>.</p>
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">deASTKit</span> := &lt;elib:<span class="litchars">serial.deASTKit</span>&gt;
+<span class="stdout"># value: &lt;deASTKit&gt;
+
+? </span><span class="keyword">def</span> <span class="defvar">ast</span> := deSubgraphKit.recognize(cycle,
+<span class="stdout">&gt; </span>                                   deASTKit.makeBuilder())
+<span class="stdout"># value: term`defrec(0,
+#                    call(import(&quot;__makeList&quot;),
+#                         &quot;run&quot;,
+#                         [define(2, 'a'),
+#                          ibid(0),
+#                          ibid(2),
+#                          -3]))`</span></pre>
+      </blockquote>
+      <p>The result is a kind of tree structure known as a <a href="../../terml/terml-spec.html">term 
+        tree</a>, but for present purposes may as well be S-Expressions, XML, 
+        or any other adequate system for representing trees of symbols. In this 
+        case, we can ignore it, as it is just an intermediate representation on 
+        the way to the simplification we're interested in:</p>
+      <blockquote> 
+        <pre><span class="stdout">? </span>deASTKit.recognize(ast, deSrcKit.makeBuilder())
+<span class="stdout"># value: &quot;def t__0 := [def t__2 := \'a\', t__0, t__2, -3]&quot;</span></pre>
+      </blockquote>
+      <p>This shows the chaining of recognizers and builders, much as one chains 
+        Unix filters using pipes. Because <tt>deASTKit</tt> is particularly useful 
+        as a &quot;filter&quot;, it provides a convenient <tt>wrap(..)</tt> method 
+        which takes a builder and returns a similar builder, but with <tt>deASTKit</tt>'s 
+        simplifications interposed in front of the argument builder:</p>
+      <blockquote> 
+        <pre><span class="stdout">? </span>deSubgraphKit.recognize(cycle,
+<span class="stdout">&gt; </span>                        deASTKit.wrap(deSrcKit.makeBuilder()))
+<span class="stdout"># value: &quot;def t__0 := [def t__2 := \'a\', t__0, t__2, -3]&quot;</span></pre>
+      </blockquote>
+      <p>We make a reasonably compact binary serialization as follows:</p>
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">deBytecodeKit</span> := &lt;elib:<span class="litchars">serial.deBytecodeKit</span>&gt;
+<span class="stdout"># value: &lt;deBytecodeKit&gt;
+
+? </span>(<span class="keyword">def</span> <span class="defvar">builder</span> := deASTKit.wrap(deBytecodeKit.makeBuilder())
+<span class="stdout">&gt; </span> <span class="keyword">def</span> <span class="defvar">code</span> := deSubgraphKit.recognize(cycle, builder)
+<span class="stdout">&gt; </span> code.size())
+<span class="stdout"># value: 34</span></pre>
+      </blockquote>
+      <p>The variable <tt>code</tt> now holds a list of 34 bytes. To see what 
+        it says, we can disassemble it:</p>
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">deAssemblyKit</span> := &lt;elib:<span class="litchars">serial.deAssemblyKit</span>&gt;
+<span class="stdout"># value: &lt;deAssemblyKit&gt;
+
+? </span>deBytecodeKit.recognize(code, deAssemblyKit.makeBuilder())
+<span class="stdout"># value: &quot;OP_PROMISE # [t__0, t__1]
+#        OP_IMPORT(\&quot;__makeList\&quot;)
+#        OP_LIT_CHAR(\'a\')
+#        OP_DEFINE # t__2
+#        OP_IBID(0)
+#        OP_IBID(2)
+#        OP_LIT_NEGINT(3)
+#        OP_CALL(\&quot;run\&quot;, 4)
+#        OP_DEFREC(1)
+#        OP_ROOT
+#        &quot;</span></pre>
+      </blockquote>
+      <table cellpadding="6" align="center">
+        <tr> 
+          <th>Instruction</th>
+          <th>Does</th>
+          <th>Leaving the Stack as</th>
+        </tr>
+        <tr> 
+          <td> <pre>
+OP_PROMISE
+OP_IMPORT(&quot;<span class="litchars">__makeList</span>&quot;)
+OP_LIT_CHAR('<span class="litchars">a</span>')
+OP_DEFINE
+OP_IBID(0)
+OP_IBID(2)
+OP_LIT_NEGINT(3)
+OP_CALL(&quot;<span class="litchars">run</span>&quot;, 4)
+OP_DEFREC(1)
+OP_ROOT</pre> 
+          </td>
+          <td > <pre class="comment">
+def [t__0,t__1] := Ref.promise()
+push __makeList
+push 'a'
+def t__2 := tos
+push t__0
+push t__2
+push -3
+call run with three args
+t__1.resolve(tos)
+return pop()</pre> </td>
+          <td> <pre class="comment">()
+()
+(__makeList)
+(__makeList, 'a')
+(__makeList, 'a')
+(__makeList, 'a', t__0)
+(__makeList, 'a', t__0, 'a')
+(__makeList, 'a', t__0, 'a', -3)
+(['a', t__0, 'a', -3])
+(['a', ['a', ... -3], 'a', -3])
+()</pre> </td>
+        </tr>
+      </table>
+      <p>or decompile it:</p>
+      <blockquote> 
+        <pre><span class="stdout">? </span>deBytecodeKit.recognize(code, deSrcKit.makeBuilder())
+<span class="stdout"># value: &quot;def t__0 := [def t__2 := \'a\', t__0, t__2, -3]&quot;</span></pre>
+      </blockquote>
+      <p>We can unserialize by interpreting these instructions:</p>
+      <blockquote> 
+        <pre><span class="stdout">? </span>deBytecodeKit.recognize(code, deSubgraphKit.makeBuilder())
+<span class="stdout"># value: ['a', &lt;***CYCLE***&gt;, 'a', -3]</span></pre>
+      </blockquote>
+      <h2><a name="DEBuilder"></a>The Event-Based <tt>DEBuilder</tt> API</h2>
+      <p>We see above that we effectively have many converters between different 
+        representations of our subgraphs: serialization, unserialization, assembly, 
+        disassembly, decompilation, etc. We define each converter by composing 
+        a recognizer with a builder for the same reason many compiler suites compose 
+        a compiler front-end (lexer, parser, etc) with a compiler back-end (code 
+        generator) -- to provide all needed converters with n+m code rather than 
+        n*m code. (Or, in our case, 2n rather than n**2.)</p>
+      <p>We do this with the same trick used by many compilers: we define a reusable 
+        API which sits between multiple front ends and multiple back ends [ref 
+        gcc]. A front-end <i>recognizes</i> patterns in the input representation, 
+        and reports by calling this API. A backend implements this API. In response 
+        to being called, it <i>builds</i> an output representation. Our reusable 
+        API is what Data-E <i>builders</i> all implement, so it defines the interface 
+        type <tt>DEBuilder</tt>. (For present purposes, we ignore the differences 
+        between guards and types.)</p>
+      With the <tt>DEBuilder</tt> API in the middle, we can convert from any of 
+      these representations to any other by composing any recognizer with any 
+      builder. This provides some novel flexibility. For example, sometimes the 
+      need for serialization and for unserialization are not separated in space 
+      or time, as when we only want a deep-copy-with-differences operation. In 
+      this case we can cut out the middle-man, and hook a subgraph recognizer 
+      directly to a subgraph builder, without ever creating an intermediate depiction. 
+      <p><tt>DEBuilder</tt> is actually a parameterized type defined by the following 
+        <i><b><font color="#009000">E</font></b></i> code:</p>
+      <blockquote> 
+        <pre><span class="keyword">def</span> <span class="defobj">DEBuilderOf</span>(<span class="defvar">Node</span> :Guard, <span class="defvar">Root</span> :Guard) :Guard {
+    <span class="keyword">interface</span> <span class="defobj">DEBuilder</span> {
+
+        <span class="keyword">to</span> <span class="defverb">getNodeType</span>() :Guard
+        <span class="keyword">to</span> <span class="defverb">getRootType</span>() :Guard
+
+        <span class="keyword">to</span> <span class="defverb">buildRoot</span>(<span class="defvar">top</span> :Node) :Root
+
+        <span class="keyword">to</span> <span class="defverb">buildLiteral</span>(<span class="defvar">value</span> :(int | float64 | char | String)) :Node
+        <span class="keyword">to</span> <span class="defverb">buildImport</span>(<span class="defvar">varName</span> :String) :Node
+        <span class="keyword">to</span> <span class="defverb">buildIbid</span>(<span class="defvar">tempIndex</span> :int) :Node
+        <span class="keyword">to</span> <span class="defverb">buildCall</span>(<span class="defvar">rec</span> :Node, <span class="defvar">verb</span> :String, <span class="defvar">args</span> :Node[]) :Node
+
+        <span class="keyword">to</span> <span class="defverb">buildDefine</span>(<span class="defvar">rValue</span> :Node) :Tuple[Node, int]
+        <span class="keyword">to</span> <span class="defverb">buildPromise</span>() :int
+        <span class="keyword">to</span> <span class="defverb">buildDefrec</span>(<span class="defvar">resolverIndex</span> :int, <span class="defvar">rValue</span> :Node) :Node
+    }
+}</pre>
+      </blockquote>
+      <table cellpadding="12" bgcolor="#FFFFE8" border="1">
+        <tr> 
+          <td> <p>The values that may be given to <tt>buildLiteral</tt> are any 
+              integer, floating point number, character, or bare (unannotated) 
+              String. Not all of instances of these can be represented literally 
+              in all Data-E representations, for example, the Data-E source text 
+              representation. When the builder <tt>b</tt> is made by the <tt>deSrcKit</tt>, 
+              it copes as follows:</p>
+            <ul>
+              <li>Negative numbers: <tt>b.buildLiteral(-5)</tt> becomes <tt>b.buildCall(5, 
+                &quot;<span class="litchars">negate</span>&quot;, [])</tt> </li>
+              <li>Floating point <tt>NaN</tt> and positive <tt>Infinity</tt>:<br>
+                <tt>b.buildLiteral(NaN)</tt> becomes <tt>b.buildImport(&quot;<span class="litchars">NaN</span>&quot;)</tt><br>
+                <tt>b.buildLiteral(Infinity)</tt> becomes <tt>b.buildImport(&quot;<span class="litchars">Infinity</span>&quot;)</tt></li>
+              <li> Floating point negative Infinity combines these cases<br>
+                <tt>b.buildLiteral(-Infinity)</tt> becomes <tt>b.call(.buildImport(&quot;<span class="litchars">Infinity</span>&quot;), 
+                &quot;<span class="litchars">negate</span>&quot;, [])</tt></li>
+            </ul>
+            <p>The scope used for unserialization is assumed to have standard 
+              bindings from the names <tt>null</tt>, <tt>false</tt>, <tt>true</tt>, 
+              <tt>NaN</tt>, <tt>Infinity</tt> to the corresponding scalars. This 
+              covers the representation of all <i><b><font color="#009000">E</font></b></i> 
+              scalars. During serialization, the default unscope also has bindings 
+              for these, so some of these cases will typically be handled by the 
+              unscope lookup farther below, rather than by a special case in <tt>buildLiteral</tt>.</p>
+            <p>Because integers used for crypto can be insufferably long when 
+              written in decimal, we have also included <tt>__makeInt</tt> in 
+              the default scope and unscope. For integers over a certain size, 
+              the deSrcKit writes them out as an expression of the form:</p>
+            <blockquote> 
+              <pre>__makeInt.fromString64(&quot;<span class="litchars">UwFaUVGcc2HtxA...</span>&quot;)</pre>
+            </blockquote>
+            where the literal string is a <a href="../../../javadoc/org/erights/e/meta/java/math/BigIntegerSugar.html#toString64(java.math.BigInteger)">string64 
+            encoding</a> of the integer (six bits per character).</td>
+        </tr>
+      </table>
+      <table cellpadding="12" align="right" bgcolor="#FFFFE8" border="1"  width="30%">
+        <tr> 
+          <td>For Data-E to be a practical system, <tt>buildLiteral</tt> and the 
+            DataECode instruction set would need to be enhanced to accept lists 
+            of scalars of the same type, in order to support a packed binary representation.</td>
+        </tr>
+      </table>
+      <p><tt>Node</tt> and <tt>Root</tt> are type parameters of the function <tt>DEBuilderOf</tt>. 
+        When this function is called with two actual type arguments, it returns 
+        a <tt>DEBuilder</tt> type defined in terms of those types arguments.</p>
+      <h2>Grammar of Valid Sequences of Data-E Building Calls</h2>
+      <p><tt>DEBuilder</tt> must deal well both with sequence-based and with tree-based 
+        representations. Were we only building sequences, the Nodes returned by 
+        the build methods might not matter, but the sequence of calls would matter. 
+        In particular, to easily generate instructions for a stack machine, these 
+        methods must be called in postfix order (reverse polish). When generating 
+        a tree, the sequence might not matter, but the returned and argument Nodes 
+        would. To build a node of an AST, one would first build the children. 
+        The Nodes returned from those build calls would be the arguments to the 
+        call to build their parent. Therefore, since this interface can be used 
+        to generate either a tree or a sequence, its clients must obey both constraints, 
+        and the builder can make use of either regularity.</p>
+      <p> The allowed sequences of calls are described by the following &quot;grammar&quot;: 
+      </p>
+      <div align="center"> 
+        <table cellpadding="12">
+          <tr valign="top"> 
+            <td> <div align="right"><tt><span class="defvar">start</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left"><tt>expr0 buildRoot(node0)</tt></div></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <div align="right"><tt><span class="defvar">expr</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left"><tt>literal | varName | tempName | call | define 
+                | defrec</tt></div></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <div align="right"><tt><span class="defvar">literal</span>&nbsp;::=</tt></div></td>
+            <td> <p align="left"><tt>buildLiteral(value :(int | float64 | char 
+                | String))</tt></p></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <div align="right"><tt><span class="defvar">varName</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left"><tt>buildImport(varName :String)</tt></div></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <div align="right"><tt><span class="defvar">tempName</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left"><tt>buildIbid(tempIndex :int)</tt></div></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <div align="right"><tt><span class="defvar">call</span>&nbsp;::=</tt></div></td>
+            <td> <p align="left"><tt>expr0 expr1..exprN <br>
+                buildCall(node0, verb :String, [node1..nodeN])</tt></p></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <div align="right"><tt><span class="defvar">define</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left"><tt>expr0 buildDefine(node0)</tt></div></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <div align="right"><tt><span class="defvar">defrec</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left"><tt>promise0 expr1 buildDefrec(resolver0 :int, 
+                node1)</tt></div></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <div align="right"><tt><span class="defvar">promise</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left"><tt>buildPromise()</tt></div></td>
+          </tr>
+        </table>
+      </div>
+      <p>Where nodeN is the value returned by exprN, and <tt>resolverN</tt> is 
+        one more than the integer returned by <tt>promiseN</tt>. In other words, 
+        if promise0 is from a buildPromise() which returned a 37, then resolver0 
+        would be 38. The 37'th temporary variable will hold a promise, and the 
+        38th will hold the corresponding Resolver. It is the responsibility of 
+        the builder to maintain a counter of temporary variable indices, and have 
+        <tt>buildDefine(..)</tt> and <tt>buildPromise()</tt> allocate and return 
+        the next sequential number. It is the responsibility of the caller to 
+        feed previous results back in as arguments according to this numbering.</p>
+      <p> Rather than burdening each individual recognizer and builder with the 
+        task of checking that its counterparty obeys this grammar, we expect instead 
+        to create a transparent validating builder wrapper that both does this 
+        checking and forwards these calls to its wrapped builder. We may then 
+        code the other recognizers and builders assuming the counterparty is correct. 
+        When this assumption in inappropriate, we can interpose the validator. 
+      <p> This kind of <i>event-based</i> interface for generating or consuming 
+        trees is in a tradition most prominently represented by SAX -- the&quot; 
+        Simple API for XML&quot; [ref <a href="http://www.saxproject.org/?selected=event">SAX 
+        events</a>]. If DEBuilder is like SAX, then Data-E AST is like DOM and 
+        Data-E Source is like XML surface syntax. For tree structured data, or 
+        any syntax expressed in BNF, many of these issues are eternal and perpetually 
+        reinvented. 
+      <p>However, SAX -- and most of the APIs that call themselves event-based 
+        -- provide only the sequence of calls (both entry and exit events, allowing 
+        both prefix and postfix processing), but not the passing of previous results 
+        back in as construction arguments. To build a DOM tree from SAX events, 
+        the builder must keep track of the stack itself. A closer precedent is 
+        provided by parser generators such as yacc [ref], in which the (building) 
+        actions happen in postfix order, and each action is provided with the 
+        &quot;semantic value&quot; (our &quot;Node&quot;) returned by the actions 
+        associated with its child productions. A yacc generated parser calling 
+        semantic actions corresponds well to our notion of a recognizer calling 
+        a builder. 
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">data</a>&nbsp;/&nbsp;<a href="../index.html">serial</a>&nbsp;/&nbsp;<a href="index.html">jhu-paper</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="acks-n-refs.html" title="Back to: Acks and Refs"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Acks and Refs" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><img src="../../../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

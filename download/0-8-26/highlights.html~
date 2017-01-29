@@ -1,0 +1,266 @@
+ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Highlights of 0.8.26g</TITLE>
+<!-- #EndEditable -->
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<P>
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP">
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD>
+      <P>
+      <TABLE BORDER="0" WIDTH="100%">
+        <TR>
+          <TD ALIGN="LEFT" valign="top">
+            <table cellpadding="2">
+              <tr>
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a>
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">download</a>&nbsp;/&nbsp;<a href="index.html">0-8-26</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr>
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="swt-support.html" title="On to: SWT Support"><img src="../../images/next.gif" width="64" height="32" alt="On to: SWT Support" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table>
+          </TD>
+          <TD ALIGN="RIGHT">
+            <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Highlights
+              of 0.8.26g</B></FONT><!-- #EndEditable --></FONT>
+          </TD>
+        </TR>
+      </TABLE>
+      <hr>
+      <!-- #BeginEditable "LongBody" --> 
+      <p><a href="#install">New Unixoid Installer Script</a></p>
+      <p><a href="#non-up">Non-Upwards Compatible Changes</a></p>
+      <blockquote> 
+        <p><a href="#eprops">Where Are The Properties Settings? </a> </p>
+        <p><a href="#attr-syntax">Term Syntactic Shorthand Expansion</a></p>
+        <p><a href="#kill-depr">Retiring Previously Deprecated Features</a></p>
+        <p><a href="#fetch">Replaced <tt>get/2</tt> with <tt>fetch/2</tt></a></p>
+      </blockquote>
+      <p><a href="#new-depr">Newly Deprecated Features</a></p>
+      <p><a href="#build">Build Changes to help GCJ</a></p>
+      <p><a href="#causeway">First Draft Causeway Code Included</a></p>
+      <p><a href="#bugs">Bugs Closed</a></p>
+      <h1><a name="install"></a>New Unixoid Installer Script</h1>
+      <p>In the <b><i><font color="#009000">E</font></i></b> installation directory, 
+        or at <tt>e/src/csrc/setup/</tt> in the sources, you will find the bash 
+        script <tt>inst-e.bash</tt> for helping you install <b><i><font color="#009000">E</font></i></b> 
+        on Linux and other Unix-like platforms.</p>
+      <p>Thanks to Zooko. MarkM had problems trying to test it, so until further 
+        notice this isn't yet ready for prime time.</p>
+      <h1><a name="non-up"></a>Non-Upwards Compatible Changes</h1>
+      <h2><a name="eprops"></a>Where Are The Properties Settings?</h2>
+      <p><font color="#FF0000">XXX To be written...</font></p>
+      <h2><a name="attr-syntax"></a>Term Syntactic Shorthand Expansion</h2>
+      <p><tt>term`<span class="litchars">a=b</span>`</tt> used to be equivalent 
+        to <tt>term`<span class="litchars">a(b)</span>`</tt>. It's now equivalent 
+        to <tt>term`<span class="litchars">a(.attr.(b))</span>`</tt>.</p>
+      <p>Like the other term syntactic shorthands, with this change, the '=' shorthand 
+        is now practically reversible in a context independent manner.</p>
+      <p> Derived from a suggestion of Dean Tribble's. Thanks!</p>
+      <h2><a name="kill-depr"></a>Retiring Previously Deprecated Features</h2>
+      <ul>
+        <li><tt>e.enable.<b>no-dot-call</b></tt> property has been retired. Rather 
+          than the old &quot;<tt>bob foo(carol)</tt>&quot;, one must now write 
+          &quot;<tt>bob.foo(carol)</tt>&quot;.</li>
+        <li><tt>e.enable.<b>explicit-result-guard</b></tt> default setting changed 
+          from &quot;<tt>warn</tt>&quot; to &quot;<tt>true</tt>&quot;. To prepare 
+          for changing to the easy-return style, we are going to go through a 
+          transition in which the hard-return style is required by default. The 
+          hard return style demands that a result guard always be declared. To 
+          prepare for requiring the hard-return style by default, we currently 
+          require an explicit result guard by default. This can be turned off 
+          on a per-module basis by saying <span class="keyword"><tt>pragma</tt></span><tt>.disable(&quot;<span class="litchars">explicit-result-guard</span>&quot;)</tt>.</li>
+        <li><tt>e.safej.<b>bind-var-to-varName</b></tt> default setting changed 
+          from &quot;<tt>true</tt>&quot; to &quot;<tt>false</tt>&quot;. Enabled 
+          public static and instance fields (member variables) of Java classes 
+          and objects, by default, may now only be accessed using the Java standard 
+          property name mangling convention. For example, a mutable field named 
+          &quot;<tt>foo</tt>&quot; becomes a getter method named &quot;<tt>getFoo()</tt>&quot; 
+          and a setter method named &quot;<tt>setFoo(<i>newValue</i>)</tt>&quot;</li>
+        <li>The <tt>e.persist.<b>useJOSS</b></tt> switch and feature is no longer 
+          supported. Persistence now supports only <a href="../../data/serial/jhu-paper/index.html">Data-E 
+          serialization</a>.</li>
+      </ul>
+      <h2><a name="fetch"></a>Replaced <tt>get/2</tt> with <tt>fetch/2</tt></h2>
+      <p>We are not going to be making the <a href="http://www.eros-os.org/pipermail/e-lang/2002-June/006750.html">agreed 
+        operator renamings</a>, because I don't know how to do it without breaking 
+        our code base in a reasonable time frame. Therefore, &quot;<tt>m[argsList,...]</tt>&quot; 
+        continues to expand to &quot;<tt>m.get(argList,...)</tt>&quot;. This is 
+        problematic for all the reasons mentioned in <a href="http://www.eros-os.org/pipermail/e-lang/2001-April/005069.html">these 
+        threads</a>, but we can live with it.</p>
+      <p>Given this, what we can't live with is the old two argument <tt>get</tt>, 
+        where the second argument is an &quot;instead&quot; value to be returned 
+        if the lookup fails. The problem is that &quot;<tt>m[3,7]</tt>&quot; expands 
+        to &quot;<tt>m.get(3,7)</tt>&quot;, which doesn't correspond to any sensible 
+        interpretation of the earlier syntax. One should define get/n methods 
+        only for objects that are conceptually like n-dimensional arrays or something. 
+        All the arguments should be taken as keys for the lookup. Rather than 
+        deprecating <tt>get/2</tt>, we are getting rid of it now.</p>
+      <p>As discussed <a href="http://www.eros-os.org/pipermail/e-lang/2003-December/009387.html">here</a>, 
+        the old get/2 wasn't general enough anyway. The new replacement fetch/2 
+        takes an <tt>insteadThunk</tt> as an argument. On lookup failure, it does 
+        a &quot;<span class="keyword"><tt>return</tt></span><tt> insteadThunk()</tt>&quot;. 
+        This provides all the flexibility of Smalltalk's <tt>#at:ifFail:</tt>. 
+        In particular, the <tt>insteadThunk</tt>, rather than returning a replacement 
+        value, can instead do a non-local exit.</p>
+      <p>Since <tt>fetch/2</tt> invokes the <tt>insteadThunk</tt> using an immediate 
+        call, remote use would normally need to pass a <tt>PassByCopy</tt> insteadThunk. 
+        However, as we don't have auditors yet, we instead provide <tt>ValueThunk</tt> 
+        as a convenience. It's a <tt>PassByCopy</tt> thunk constructed with one 
+        value, that returns that value when invoked.</p>
+      <h1><a name="new-depr"></a>Newly Deprecated Features</h1>
+      <ul>
+        <li>&quot;<tt>^</tt>&quot; as synonym for the &quot;<tt class="keyword">return</tt>&quot; 
+          keyword is now deprecated. Use &quot;<tt class="keyword">return</tt>&quot; 
+          instead. </li>
+        <li>&quot;<tt class="comment">//</tt>&quot;, used to start a line comment, 
+          is no longer supported. Use &quot;<tt class="comment">#</tt>&quot; instead.</li>
+        <li><tt><b>JPanelQParserMaker</b>.emaker</tt> is now deprecated. Use <tt>JPanel__quasiParser.emaker</tt> 
+          instead. This is already present in the privileged scope (the scope 
+          *.e files, *.updoc files, and command line expressions are evaluated 
+          in), so you only need to import this explicitly in *.emaker and *.caplet 
+          files. </li>
+      </ul>
+      <h1><a name="build"></a>Build Changes to help GCJ</h1>
+      <p>These are based on an earlier successful experiment by Kevin Smathers 
+        of HP Labs to build a local (non-distributed) headless (no ui) <b><i><font color="#009000">E</font></i></b> 
+        under GCJ.</p>
+      <p>Reordered <tt>e/src/jsrc/Makefile</tt> to place at the end of the build 
+        sequence things one may want to leave out, to ensure one can:</p>
+      <ul>
+        <li>The Antlr parser</li>
+        <li>The ORO regular expression matcher</li>
+        <li>Most of the things dependent on AWT, Swing, or SWT. In particular, 
+          <tt>AWTRunner</tt> and <tt>SWTRunner</tt> have been moved from <tt>org.erights.e.elib.vat.*</tt> 
+          to under <tt>org.erights.e.ui.*</tt>.</li>
+      </ul>
+      <p>In particular, we are trying to facilitate the porting of a local headless 
+        subset of <font color="#009000"><i><b>E</b></i></font> onto GCJ.</p>
+      <p>VatTP was currently depends on a <tt>sun.*</tt> package to do its ASN1 
+        parsing. With the exception of this one issue, VatTP depends only on the 
+        Java standard libraries. GCJ, of course, doesn't provide <tt>sun.*</tt> 
+        packages. We've changed VatTP to use ELib to access this <tt>sun.*</tt> 
+        library reflexively, so that if it isn't available, we'll get a runtime 
+        error rather than a build-time error. This allows us to maintain one set 
+        of sources while trying to build the rest of <b><i><font color="#009000">E</font></i></b> 
+        under GCJ.</p>
+      <p>Similarly, if you try to make a <tt>Vat</tt> or <tt>Runner</tt> with 
+        a runnerKind of &quot;awt&quot; or &quot;swt&quot;, if the <tt>AWTRunner</tt> 
+        or <tt>SWTRunner</tt> isn't available, we'll now get a runtime error rather 
+        than a build-time error.</p>
+      <p>Finally, Kevin and I identified a bug in the libgcj of gcc 3.3.3. The 
+        statement 
+      <blockquote> 
+        <pre>java.lang.reflect.Array.set(<i>array</i>, <i>i</i>, null)</pre>
+      </blockquote>
+      <p>throws an exception even when array is an array of reference types (ie, 
+        not an array of scalars). The internal isntanceof check being used forgot 
+        to allow a <tt>null</tt> in this context. This release of <b><i><font color="#009000">E</font></i></b> 
+        should successfully workaround this bug so long as the flag <tt>GCJ_WORKAROUND</tt> 
+        in <tt>ArrayHelper.java</tt> is set to <tt>true</tt>.</p>
+      <h1><a name="causeway"></a>First Draft Causeway Code Included</h1>
+      <p>Not yet ready for prime time. Stay tuned. See <a href="http://www.eros-os.org/pipermail/e-lang/2002-November/007811.html">Distributed 
+        Space-Time Debugging</a> for the basic idea.</p>
+      <h1><a name="bugs"></a>Bugs Closed</h1>
+      <table cellpadding="12">
+        <tr> 
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <th>Thanks to...</th>
+        </tr>
+        <tr> 
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125574&group_id=16380">e.safej.bind-var-to-varName=false 
+            breaks universal scope's ???</a></td>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125574&group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+          <td> Kevin Reid</td>
+        </tr>
+        <tr> 
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125595&group_id=16380">CapDesk 
+            fails on new simple__quasiParser bug</a></td>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125595&group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr> 
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125591&group_id=16380">stray 
+            no-dot-call in ScopeSetup</a></td>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125591&group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+          <td>Kevin Reid</td>
+        </tr>
+      </table>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%">&nbsp;</TD>
+  </TR>
+  <TR VALIGN="TOP">
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD>
+      <hr>
+      <div align="center">
+        <table cellpadding="4" cellspacing="0">
+          <tr>
+            <td>
+              <div align="left"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a></div>
+            </td>
+            <td>
+              <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr>
+                  <td>
+                    <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a>
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a>
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a>
+                      </font></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div align="center"><font size="-1"><a href="../index.html">Download</a>
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a>
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp;
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <table width="100%" border="0" cellspacing="0" cellpadding="4">
+        <tr>
+          <td><i>email webmaster-at-erights.org</i> <br>
+            or <a href="http://bugs.sieve.net/bugs/?func=addbug&amp;group_id=16380"><i>report
+            bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid
+            html</a>)</td>
+          <td>
+            <div align="right">
+              <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a> <a href="http://www.stoppoliceware.org/"><img src="../../images/stoppoliceware_gray_88x32.gif" width="88" height="32" border="0" alt="Stop Policeware Campaign"></a>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </TD>
+    <TD WIDTH="10%" valign="bottom">&nbsp;</TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

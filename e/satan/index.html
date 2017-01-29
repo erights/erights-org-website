@@ -1,0 +1,735 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Satan Comes to Dinner in E</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">e</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="../e-vb-oid-scripting.html" title="Back to: VB-Like E World Scripting"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: VB-Like E World Scripting" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="../ejbind.html" title="On to: Binding E to Java"><img src="../../images/next.gif" width="64" height="32" alt="On to: Binding E to Java" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Satan
+              Comes to<br>
+              Dinner in E</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <p align="CENTER"><a href="http://thecan.org/in/communities.html">&copy;1997 
+        Communities.com<br>
+        All Rights Reserved</a> </p>
+      <p><i><font color="#990000" size="+1">Note: This paper was written in a 
+        very old version of the E language, and not <b>all</b> the code will run 
+        in any of the currently supported versions. (Though most of the code should 
+        still work.) Nevertheless, it's a great example for illustrating the principles 
+        of E. If you work through these examples and convert them to work in a 
+        modern version of E, please send them to me, the webmaster-at-erights.org, 
+        and I will update this document. Thanks.</font></i></p>
+      <h1>Abstract</h1>
+      <p>A solution to Dijkstra's Dining Philosophers Problem which provides for 
+        deadlock avoidance and fairness. It does not require that the philosopher 
+        classes be trusted. Satan is invited to supply a class. An example of 
+        the failure of class-signing. The classes are written in E, a secure, 
+        distributed scripting language. </p>
+      <h1>The Dining Philosophers Problem</h1>
+      <p>The Dining Philosophers Problem is one of the standard exercises in the 
+        teaching of concurrent programming. It is instructive in the design of 
+        things like operating systems and distributed systems. It is an interesting 
+        problem because it introduces management of scarce, shared resources. 
+        It is tricky because most naive implementations will result in deadlock. 
+        The statement of the problem usually goes like this: 
+      <blockquote> 
+        <p>There is a group of philosophers (usually 5) who eat together at a 
+          round table. There are forks placed between the philosophers. Philosophers 
+          spend their time either thinking or eating. In order to eat, a philosopher 
+          must pick up exactly two forks, one on his immediate left, and the other 
+          on his immediate right. When he is done eating, he will put his forks 
+          down so that his neighbors may use them, and he thinks again. </blockquote>
+      <p>The Dining Philosophers Problem (aka The Dining Quintuple Problem) was 
+        designed in 1965 by Edsger W. Dijkstra to demonstrate the horror that 
+        is deadlock. In some versions of the problem, the forks are replaced with 
+        chopsticks. This change does not substantively alter the problem, although 
+        it can simplify the graphics. Some versions have the philosophers eating 
+        spaghetti or rice. In this version, they are dining on shrimp.</p>
+      <p>The programming problem is to construct a simulation which will allow 
+        philosophers to move between their eating and thinking states while properly 
+        controlling the forks.</p>
+      <p>A typical solution has each philosopher doing something like this:</p>
+      <pre>    loop {
+        busy thinking
+        wait for left fork
+        wait for right fork
+        busy eating
+        drop left fork
+        drop right fork
+    }</pre>
+      <p>The busy statements will consume time. The length of time is often random. 
+        The wait statements are often implemented using semaphores or other mutual 
+        exclusion gadgets, causing the program to block until the fork becomes 
+        available.</p>
+      <p>If every philosopher picks up his left fork and then waits for the right 
+        fork to become available, then the system will deadlock. Computation cannot 
+        go forward because the philosophers will never get their second forks. 
+        The fact that the busy periods are of random duration may reduce the occurrence 
+        of deadlock, but it does not prevent it. Occasional deadlock is actually 
+        a bigger problem, because it is much more difficult to replicate, diagnose, 
+        and fix. Deadlock is one of the greatest programming hazards in concurrent 
+        systems.</p>
+      <p>Some solutions modify some of the philosophers, so that they always pick 
+        up their right forks first. This does avoid deadlock, but it is a special 
+        solution. It cannot be generalized to avoid deadlock in other situations. 
+        Other implementations introduce waiters, rooms, chairs, tokens, and other 
+        objects to help manage the deadlock problem. These solutions are complex, 
+        and also not sufficiently generalizable.</p>
+      <p>Most solutions depend on the philosophers behaving correctly. For example, 
+        if a philosopher picks up his forks and never puts them down, the philosophers 
+        sitting beside him will die of starvation. If either happens to be holding 
+        a fork (which is likely), then all of the other philosophers will starve, 
+        too.</p>
+      <p>So we will redefine the problem. We still want to avoid deadlock, but 
+        we also want to be able to invite anyone to code their own philosopher 
+        class, and to have it run fairly with others. </p>
+      <h1>An Example of the Failure of Class Signing</h1>
+      <p>Suppose that you invite Satan to contribute one of the philosopher classes. 
+        How can you be confident that his code will not contaminate the shared 
+        environment, will not cause starvation among the other philosophers, and 
+        will not spoil everyone else's fun? Even more important, how can you be 
+        sure that Satan's code will not run amok and drain your bank account, 
+        reveal your private key, and trash your hard disk?</p>
+      <p>It is not sufficient to simply stuff Satan's code into a sandbox. He 
+        is not giving you an applet. He is giving you a class which needs to work 
+        cooperatively, even under the cloud of mutual suspicion, with other objects.</p>
+      <p>The goal is not to keep Satan out. You want to invite Satan in, but without 
+        compromising your security. You don't want to choose between safety and 
+        the benefits of openness. You want both.</p>
+      <p>Satan offers to prove to you that his class is safe by presenting an 
+        Authenticode certificate which will certify that Satan signed the class. 
+        You could verify that the signature is truly Satan's, but proof that it 
+        came from Satan is not proof that it is safe.</p>
+      <p>Satan, pretending to be offended by your skepticism, asks &quot;Whose 
+        signature do you trust? Just say the name, and I will have them sign my 
+        class. Would you like Microsoft to sign it? There's a guy over there who 
+        owes me a favor.&quot;</p>
+      <p>You come to the conclusion that a signature cannot by itself transform 
+        a suspect class into a fully trusted class, so you decide that you need 
+        a more credible security mechanism. </p>
+      <h1>Capabilities</h1>
+      <p>That mechanism is <i>capabilities</i>. A capability is the unforgable, 
+        transferable, non-revocable right to communicate with an object. We will 
+        create a framework which will support anyone's Philosopher code, certified 
+        or not. By relying on good capability-based design, rather than certification, 
+        we have less overhead and a better system.</p>
+      <p align="CENTER"><img src="fig1.gif" width="435" height="68" align="BOTTOM" border="0"> 
+        <center>
+          (fig. 1) 
+        </center>
+      </p>
+      <p>In fig. 1 we see an example of a capability relationship. The ovals represent 
+        objects. The arrow indicates an object reference. Object C has a reference 
+        to Object A, and therefore Object C has the capability to communicate 
+        with Object A. An object can receive a reference to an object by having 
+        the reference passed to it, or by instantiating a new object.</p>
+      <p>Assuming that Object C is not trusted, we cannot be certain that it will 
+        destroy its reference to Object A when requested to. Capabilities are 
+        not directly revokable. But they can be indirectly revocable, as can be 
+        seen in fig. 2:</p>
+      <p align="CENTER"><img src="fig2.gif" width="439" height="168" align="BOTTOM" border="0"> 
+        <center>
+          (fig. 2) 
+        </center>
+      </p>
+      <p>Object C is given a reference to Object T. Normally, Object T will pass 
+        Object C's messages on to Object A. Object B can send a message to Object 
+        T which will cause Object T to destroy its own reference to Object A. 
+        Object C will be left with a reference to the now useless Object T. Object 
+        C's capability to communicate with Object A has been revoked. Object B 
+        doesn't need to trust Object C if it can trust Object T. </p>
+      <h1>The Cast</h1>
+      <p>The traditional cast in The Dining Philosophers includes the philosophers, 
+        the forks, and the plates of shrimp. We will now introduce a new object 
+        to the Dining Philosophers: The Fork Dispenser. It is not safe to share 
+        forks, so the Fork Dispenser will dispense new disposable forks. As fig. 
+        3 shows, each philosopher must interact with two fork dispensers in order 
+        to interact with the plate of shrimp. Each fork dispenser is shared by 
+        two philosophers.</p>
+      <p align="CENTER"><img src="fig3.gif" width="453" height="462" align="BOTTOM" border="0"> 
+        <center>
+          (fig. 3) 
+        </center>
+      </p>
+      <p>Each philosopher is assigned two fork dispensers. Philosophers do not 
+        have the capabilities necessary to interact directly with the other philosophers, 
+        the plates of shrimp, or with the system in general.</p>
+      <p>A philosopher sends requests to its fork dispensers, which respond by 
+        sending fork capabilities. The forks contain capabilities to the plate 
+        of shrimp, which the fork dispenser can revoke.</p>
+      <p align="CENTER"><img src="fig4.gif" width="405" height="339" align="BOTTOM" border="0"> 
+        <center>
+          (fig. 4) 
+        </center>
+        &nbsp; 
+      <h1>Fork Dispenser</h1>
+      <p>To make a ForkDispenser, pass a reference to a trusted source to ForkDispenserMaker.</p>
+      <pre>def ForkDispenserMaker(mySource) {</pre>
+      <p>The ForkDispensers instance variables are defined here.</p>
+      <pre>    def nowServing := null
+    def firstPhilosopher  := null
+    def secondPhilosopher := null
+    def firstPlate  := null
+    def secondPlate := null
+    def theFork := null
+    def myTimer := TimerMaker()
+    def timerSerialNr := 0
+    def otherIsWaiting := false</pre>
+      <p>serveOther is a subroutine which will be called by the forkPlease and 
+        forkReturn methods. Issue a fork to the other philosopher. Because a fork 
+        dispenser serves two philosophers, each with its own plate, figure out 
+        which plate to use.</p>
+      <pre>    def serveOther() {
+        def thePlate := null
+        if (nowServing == firstPhilosopher) {
+            nowServing := secondPhilosopher
+            thePlate := secondPlate
+        } else {
+            nowServing := firstPhilosopher
+            thePlate := firstPlate
+        }
+        theFork := ForkMaker(nowServing, thePlate)
+        nowServing &lt;- hereIsYourFork(theFork)
+        otherIsWaiting := false
+    }
+&nbsp;</pre>
+      <p>The def self below generates an object containing the methods service, 
+        forkPlease, and forkReturn, and returns a reference to that object.</p>
+      <pre>    def self {</pre>
+      <p>The service message transmits a philosopher and plate pair. The philosopher 
+        must never get a direct capability to the plate. This information allows 
+        the fork dispenser to determine which plate to use. The service message 
+        should only come from the trusted source that created the fork dispenser. 
+        Checking this prevents Satan from trying to confuse the fork dispenser 
+        by sending his own service messages.</p>
+      <p>The fork dispenser sends its own reference to the philosopher. This gives 
+        the philosopher the capability to interact with the fork dispenser.</p>
+      <pre>        to service(theSource, thePhilosopher, thePlate) {
+            if (theSource == mySource) {
+                thePhilosopher &lt;- hereIsYourForkDispenser(self)
+                if (firstPhilosopher == null) {
+                    firstPhilosopher := thePhilosopher
+                    firstPlate := thePlate
+                } else {
+                    secondPhilosopher := thePhilosopher
+                    secondPlate := thePlate
+                }
+            }
+        }
+&nbsp;</pre>
+      <p><a name="2"></a>A philosopher requests a fork. Determine which plate 
+        he uses. If the requester is not associated with either plate, then ignore 
+        the request. (This will prevent Satan from pretending that he is both 
+        philosophers.)</p>
+      <p>If a fork is not in use, then dispense one. If the requester is the same 
+        as current fork holder, then remind him that he already has a fork. (This 
+        can occur in some recovery strategies.)</p>
+      <p>Otherwise, the situation is that a request was made for a fork while 
+        a fork is in use by another philosopher. Make a note that the other philosopher 
+        is waiting and set a watchdog timer which will start the revocation of 
+        the current fork in 10,000 milliseconds. (All timer messages except the 
+        one with a serial number matching timerSerialNr have been canceled.)</p>
+      <pre>        to forkPlease(who) {
+            if (who == firstPhilosopher) {
+                thePlate := firstPlate
+            } else if (who == secondPhilosopher) {
+                thePlate := secondPlate
+            } else {
+                return()
+            }
+
+<a name="3"></a>            if (nowServing == null) {
+                nowServing := who
+                theFork := ForkMaker(nowServing, thePlate)
+                nowServing &lt;- hereIsYourFork(theFork)
+            } else if (nowServing == who) {
+                nowServing &lt;- hereIsYourFork(theFork)
+            } else {
+                otherIsWaiting := true
+                timerSerialNr += 1
+                def messageSerialNr := timerSerialNr
+                myTimer.after(10_000, def listener.noticeTimeout() {
+                    if (messageSerialNr == timerSerialNr) {
+                    theFork &lt;- revoke()
+                    serveOther()
+                    }
+                ))
+            }
+        }</pre>
+      <p>A philosopher returns a fork, allowing someone else to eat. The protocol 
+        does not require this kind of politeness, but it is nice, isn't it?</p>
+      <p>First, check that the person returning the fork is the recorded holder 
+        of the fork. (This prevents Satan from pretending to be the other philosopher.) 
+        Then revoke the fork. (This prevents Satan from holding on to the capability.) 
+        If the other philosopher was waiting, then issue him a new fork and cancel 
+        the timer.</p>
+      <pre>        to forkReturn(thePhilosopher) {
+            if (nowServing == thePhilosopher) {
+                theFork &lt;- revoke
+                if (otherIsWaiting) {
+                    timerSerialNr += 1
+                    serveOther()
+                } else {
+                    nowServing := null
+                    theFork := null
+                }
+            }
+        }
+    }
+}
+</pre>
+      <h1>Fork</h1>
+      <p>Forks are disposable objects which give a philosopher indirect access 
+        to a plate of shrimp.</p>
+      <pre>def ForkMaker(myPhilosopher, myPlate) {
+    def previousSerialNr := 0
+    def self {</pre>
+      <p><a name="5"></a>The philosopher requested a shrimp. To assist the plate 
+        in pairing the messages, the fork verifies that the message contains a 
+        serial number that is larger than the previous serial number. If the number 
+        is ok, then a message is sent to the plate. If not, disconnect from the 
+        plate. (This prevents the sending of consecutive messages with the same 
+        serial number.)</p>
+      <p>The fork will be unable to forward the message if its reference to the 
+        plate has been revoked.</p>
+      <pre>        to shrimpPlease(serialNr) {
+            if (previousSerialNr &lt; serialNr) {
+                previousSerialNr := serialNr
+                if (myPlate != null) {
+                    myPlate &lt;- shrimpPlease(self, serialNr)
+                } else {
+                    myPhilosopher &lt;- noShrimp()
+                }
+            } else {
+                myPlate := null
+                myPhilosopher &lt;- noShrimp()
+            }
+        }</pre>
+      <p><a name="7"></a>A shrimp is delivered successfully from the plate of 
+        shrimp. If this fork has not been revoked, pass the message on to the 
+        philosopher. This indirection assures that the philosopher was holding 
+        two valid forks at the same time.</p>
+      <pre>        to hereIsYourShrimp(serialNr) {
+            if (myPlate != null) {
+                myPhilosopher &lt;- hereIsYourShrimp(serialNr)
+            } else {
+                myPhilosopher &lt;- noShrimp()
+            }
+        } </pre>
+      <p>Revoke the fork by making it useless. By erasing the fork's reference 
+        to the plate, it is no longer able to send the messages that make shrimp 
+        for the philosopher. This emethod is intended to be used by the fork dispenser.</p>
+      <pre>        to revoke() {
+            myPlate := null
+        }
+    }
+}
+</pre>
+      <h1>Plate</h1>
+      <pre>def PlateMaker() {
+&nbsp;
+    def firstSerialNr := 0
+    def firstFork := null
+&nbsp;</pre>
+      <p>Respond to a request for a shrimp. The philosopher sends a message through 
+        each of his forks.</p>
+      <p><a name="6"></a>An object receives one message at a time. After the plate 
+        has seen two matching serial numbers, it sends a piece of shrimp. Because 
+        a fork is unable to send the same serial number twice in succession, the 
+        plate can determine that two forks were used. We prove that the first 
+        fork is still valid by using it to return the shrimp.</p>
+      <pre>    def self {
+        to shrimpPlease(theFork, serialNr) {
+            if (firstSerialNr != serialNr) {
+                firstSerialNr := serialNr
+                firstFork := theFork
+            } else {
+                firstFork &lt;- hereIsYourShrimp(serialNr)
+                firstFork := null
+                firstSerialNr := 0
+            }
+        }
+    }
+}</pre>
+      <p>It might seem that a hereIsYourShrimp message is not a suitable payoff. 
+        A better payoff would be to have the plate send a reference to a shrimp 
+        object. </p>
+      <h1>Nice Philosopher</h1>
+      <p>The Nice Philosopher puts down his forks and spends at least part of 
+        his time thinking.</p>
+      <pre>def NicePhilosopherMaker() {
+    def firstForkDispenser  := null
+    def secondForkDispenser := null
+    def firstFork  := null
+    def secondFork := null
+    def serialNr := 0
+    def timerSerialNr := 0
+    def myTimer := TimerMaker()
+    def eatingMode := false  </pre>
+      <p>To think, set up a timer to send startEating in 10 seconds.</p>
+      <pre>    def busyThinking() {
+        eatingMode := false
+        timerSerialNr += 1
+        def messageSerialNr := timerSerialNr
+        myTimer.after(10_000, def listener.noticeTimeout() {
+            if (messageSerialNr == timerSerialNr) {
+                self.startEating(timerSerialNr)
+            }
+        })
+    }  </pre>
+      <p><a name="4"></a>Eat by requesting shrimp from the forks. Dijkstra requires 
+        that two forks be used. A serial number is added to the request to help 
+        the plate pair up the messages.</p>
+      <pre>    def eat() {
+        serialNr += 1
+        firstFork  &lt;- shrimpPlease(serialNr)
+        secondFork &lt;- shrimpPlease(serialNr)
+    }
+&nbsp;
+    def self {  </pre>
+      <p>Once the fork dispenser references arrive, leap into action and begin 
+        to think.</p>
+      <pre>        to hereIsYourForkDispenser(theForkDispenser) {
+            if (firstForkDispenser == null) {
+                firstForkDispenser := theForkDispenser
+            } else {
+                secondForkDispenser := theForkDispenser
+                busyThinking()
+            }
+        }</pre>
+      <p><a name="1"></a>Request a fork from each of the fork dispensers. Set 
+        up a timer to stop eating in 20 seconds.</p>
+      <pre>        to startEating {
+            firstFork  := null
+            secondFork := null
+            firstForkDispenser  &lt;- forkPlease(self)
+            secondForkDispenser &lt;- forkPlease(self)
+            serialNr := 0
+            timerSerialNr += 1
+            def messageSerialNr := timerSerialNr
+            myTimer.in(20_000, def noticer.noticeTimeout() {
+                if (messageSerialNr == timerSerialNr) }
+                    self.stopEating(timerSerialNr)
+                }
+            })
+        }</pre>
+      <p>Receive the forks. After both have arrived, serious eating can begin.</p>
+      <pre>        to hereIsYourFork(theFork) {
+            if (firstFork == null) {
+                firstFork := theFork
+            } else {
+                secondFork := theFork
+                eatingMode := true
+                eat()
+            }
+        }</pre>
+      <p>A shrimp is delivered successfully from the plate of shrimp. What to 
+        do next? Get more shrimp!</p>
+      <pre>        to hereIsYourShrimp(serialNr) {
+            if (eatingMode) {
+                eat()
+            }
+        }</pre>
+      <p>A noShrimp message can occur if a fork was revoked. If that happens, 
+        cancel the timer and stop eating.</p>
+      <pre>        to noShrimp()  {
+            timerSerialNr += 1
+            stopEating()
+        }</pre>
+      <p>The time has come to put down the forks and stop eating. It isn't really 
+        necessary to put down the forks, because the fork dispenser will revoke 
+        them anyway. But returning the forks allows the other philosophers to 
+        begin eating a little sooner, so it is a polite thing to do. Revocation 
+        may already have occurred. That's ok.</p>
+      <pre>        to stopEating  {
+            firstForkDispenser  &lt;- forkReturn(self)
+            secondForkDispenser &lt;- forkReturn(self)
+            busyThinking()
+        }
+    }
+}
+</pre>
+      <h1>Evil Philosopher</h1>
+      <p>This is Satan's own implementation of Philosopher. It is so constrained 
+        by capability security that it is not really very evil. About the worst 
+        you can say about it is that it is very impolite. It is an infernal eating 
+        machine. It never rests. It never sets down its forks. Even so, the fork 
+        dispensers can guarantee fairness (starvation avoidance). As nasty as 
+        Satan is, he cannot prevent the other philosophers from getting their 
+        turns.</p>
+      <pre>def EvilPhilosopherMaker() {
+    def firstForkDispenser := null
+    def secondForkDispenser := null
+    def firstFork := null
+    def secondFork := null
+    def serialNr := 0</pre>
+      <p>Request a fork from each of the fork dispensers. It does no good to request 
+        two forks from a single dispenser, because the plate of shrimp can tell 
+        the difference.</p>
+      <pre>    def startEating() {
+        firstFork  := null
+        secondFork := null
+        firstForkDispenser  &lt;- forkPlease(self)
+        secondForkDispenser &lt;- forkPlease(self)
+        serialNr := 0
+    }</pre>
+      <p>Eat by requesting shrimp from the forks.</p>
+      <pre>    def eat() {
+        serialNr += 1
+        firstFork  &lt;- shrimpPlease(serialNr)
+        secondFork &lt;- shrimpPlease(serialNr)
+    }
+&nbsp;
+    def self {</pre>
+      <p>First collect two fork dispensers. Then begin to eat. Without the fork 
+        dispensers, he can't get plate-aware forks, and without those forks, he 
+        cannot get shrimp.</p>
+      <pre>        to hereIsYourForkDispenser(theForkDispenser) {
+            if (firstForkDispenser == null) {
+                firstForkDispenser := theForkDispenser
+            } else {
+                secondForkDispenser := theForkDispenser
+                startEating()
+            }
+        }</pre>
+      <p>Receive the forks. After both have arrived, serious eating can begin.</p>
+      <pre>        to hereIsYourFork(theFork) {
+            if (firstFork == null) {
+                firstFork := theFork
+            } else {
+                secondFork := theFork
+                eat()
+            }
+        }
+&nbsp;</pre>
+      <p>This philosopher has no thinking mode, so eventually the noShrimp message 
+        will arrive when one of the fork dispensers revokes a fork. When that 
+        happens, startEating again.</p>
+      <pre>        to noShrimp() {
+            startEating()
+        }</pre>
+      <p>A shrimp is delivered successfully from the plate of shrimp. What to 
+        do next? More shrimp!</p>
+      <pre>        to hereIsYourShrimp(serialNr) {
+            eat()
+        }
+    }
+}
+</pre>
+      <h1>Begin</h1>
+      <p>This Begin is sufficient to get everything running on a single machine. 
+        In the next chapter, we will distribute this over a number of machines.</p>
+      <pre>def Begin(nrDiners) {
+    def forkDispensers := []
+    for i in (0..!nrDiners) {
+        forkDispensers += [ForkDispenserMaker(self)]
+    }
+
+    for i in (0..!nrDiners) {
+        def philosopher := if (i == 0) {
+            EvilPhilosopherMaker()
+        } else {
+            NicePhilosopherMaker()
+        }
+        plate := PlateMaker()
+        forkDispensers [i] &lt;-  service(self, philosopher, plate)
+        forkDispensers [(i + 1) %% nrDiners] &lt;-  service(self, philosopher, plate)
+    }
+}
+</pre>
+      <h1>Flow</h1>
+      <p>Fig. 5 shows the flow of messages as a philosopher engages in the main 
+        part of the dining protocol.</p>
+      <p align="CENTER"><img src="fig5.gif" width="456" height="291" align="BOTTOM" border="0"> 
+        <center>
+          (fig. 5) 
+        </center>
+        &nbsp; 
+      <ol>
+        <li>The philosopher sends <a href="#1"><tt>forkPlease</tt></a> requests 
+          to both fork dispensers. 
+        <li>The fork dispenser creates a <a href="#2">new fork</a> object with 
+          capabilities to the philosopher and the plate of shrimp. 
+        <li>The fork dispenser sends a capability to the fork in a <a href="#3"><tt>hereIsYourFork</tt></a> 
+          message to the philosopher. 
+        <li>The philosopher sends a <a href="#4"><tt>shrimpPlease</tt></a> message 
+          to each fork. 
+        <li>The fork determines that it has not been revoked, and that it has 
+          never seen the current serial number. If all is ok, it sends a <a href="#5"><tt>shrimpPlease</tt></a> 
+          message containing a capability to itself to the plate of shrimp. 
+        <li>The plate of shrimp will receive two messages. If the serial numbers 
+          on the messages match, then it knows that two different forks were used. 
+          It sends a <a href="#6"><tt>hereIsYourShrimp</tt></a> message to the 
+          fork that sent the first of the two messages to prove that the first 
+          fork is still valid. 
+        <li>If the fork has not been revoked, then send a <a href="#7"><tt>hereIsYourShrimp</tt></a> 
+          message to the philosopher. 
+      </ol>
+      <p>The fork dispenser is able to revoke a fork at any time by sending a 
+        revoke message. In this way, the fork dispenser can impose a scheduling 
+        policy which resembles time slicing. This assures fairness, in that all 
+        philosophers will get chances to eat.</p>
+      <p>The only capabilities granted to a philosopher are the fork dispensers 
+        and forks. This prevents Satan's philosopher class from doing anything 
+        harmful. </p>
+      <h1>Consumption of Resources Attack</h1>
+      <p>Java is vulnerable to Consumption of Resources Attacks, in which Satan's 
+        class attempts to consume all of the available memory or compute time. 
+        This can degrade performance, and in many cases cause your machine crash. 
+        This can be minimized if Satan is required to host this philosopher on 
+        his own machine. Then the worst thing he can do is attempt to flood the 
+        network with messages.</p>
+      <p>A later version of E will provide a remedy to Consumption of Resources 
+        Attacks. </p>
+      <h1>Collusion</h1>
+      <p>Suppose that Satan is allowed to provide two philosophers. Can they collude 
+        to prevent the nice philosophers from eating?</p>
+      <p>If the philosophers are run in a machine which is not under Satan's control, 
+        then the answer is no. E's containment mechanism assures that the philosophers 
+        cannot communicate directly with each other. They can only communicate 
+        with fork dispensers (and the forks they dispense), which do not support 
+        collusion.</p>
+      <p>The answer is less clear if Satan is allowed to execute his philosopher 
+        code remotely. Because Satan can hack his own machine, he can locally 
+        break containment, allowing the evil philosophers to communicate with 
+        each other. Suppose there is a nice philosopher sitting between the two 
+        evil philosophers. By sharing information about the condition of their 
+        forks, they can play a synchronized game in which the one on the left 
+        puts his fork down then immediately requests another when the one on the 
+        right gets a fork. When it is issued, the one on the right puts down his 
+        fork and immediately requests another. In this way, they can prevent the 
+        philosopher in the middle from getting two forks at the same time.</p>
+      <p>A similar kind of collusion can be found in an online poker game. While 
+        we can have confidence that the cards are dealt fairly, we cannot be confident 
+        that some of the players will not collude. The cheaters may be communicating 
+        by telephone, or may even be a single person pretending to be multiple 
+        people. By colluding, they have more information about the distribution 
+        of cards and the state of the deck, and so may be able to shave the odds 
+        in their favor. This kind of collusion could occur without the hacking 
+        of software.</p>
+      <p>Similarly, collusion in the Dining Philosopher example could occur without 
+        the hacking of software. The conspirators are able to speak to each other, 
+        and so can say things like &quot;I just received my fork. Put down yours 
+        and request a new one.&quot;</p>
+      <p>ForkDispenser can be modified to make such collusion less effective. 
+        If every dispenser used a different time out value, or random time out 
+        values, then the attack will fail at least occasionally, and starvation 
+        will be prevented. </p>
+      <h1>References</h1>
+      <p>Campione, Mary and Walrath, Kathy. <a href="http://www.javasoft.com/docs/books/tutorial/java/threads/deadlock.html">Deadlock 
+        and the Dining Philosophers. &lt;URL: http://www.javasoft.com/docs/books/tutorial/java/threads/deadlock.html 
+        &gt;</a> from <a href="http://www.javasoft.com/docs/books/tutorial/"><i>The 
+        Java Tutorial: Object-Oriented Programming for the Internet</i></a>. Addison-Wesley.</p>
+      <p>Englin, Jessica. <a href="http://cda.mrs.umn.edu/~englinjm/EWD.html">Edsger 
+        W. Dijkstra. &lt;URL: http://cda.mrs.umn.edu/~englinjm/EWD.html &gt;</a></p>
+      <p>Communities.com. <a href="http://www.communities.com/products/tools/e/devil.html">Dicing 
+        with the Devil. &lt;URL: http://www.communities.com/products/tools/e/devil.html&gt;</a></p>
+      <p>Communities.com. <a href="http://www.communities.com/products/tools/e/programmers/">The 
+        E Programmer's Manual. &lt;URL: http://www.communities.com/products/tools/e/programmers/&gt;</a></p>
+      <p>Communities.com. <a href="http://www.skyhunter.com/marcs/capabilityIntro/index.html">Introduction 
+        To Capability Based Security. &lt;URL: http://www.skyhunter.com/marcs/capabilityIntro/index.html&gt;</a></p>
+      <p>Falk, Bennett. <a href="http://www.dnai.com/~bfalk/dining.html">Table 
+        Manners. &lt;URL: http://www.dnai.com/~bfalk/dining.html&gt;</a></p>
+      <p>Feldman, M.B. <a href="http://www.seas.gwu.edu/faculty/mfeldman/cs2-book/chap15.html">Introduction 
+        to Concurrent Programming &lt;URL: http://www.seas.gwu.edu/faculty/mfeldman/cs2-book/chap15.html&gt;</a> 
+        from <a href="http://www.seas.gwu.edu/faculty/mfeldman/concurrency"><i>Software 
+        Construction and Data Structures with Ada 95</i></a>. Addison-Wesley.</p>
+      <p>Gloyer, Brian. <a href="http://www.javasoft.com/applets/contest/DiningPhilosophers/">The 
+        Dining Philosophers. &lt;URL: http://www.javasoft.com/applets/contest/DiningPhilosophers/&gt;</a></p>
+      <p>Hardy, Norm. <a href="http://cap-lore.com/CapTheory/">Capability Theory. 
+        &lt;URL: http://cap-lore.com/CapTheory/&gt;</a></p>
+      <p>Herring, Charles. <a href="http://csl.ncsa.uiuc.edu/~herring/java.html">Implementing 
+        Discrete-Event Simulation in Java. &lt;URL: http://csl.ncsa.uiuc.edu/~herring/java.html&gt;</a></p>
+      <p>Holdsworth, D. <a href="http://www.leeds.ac.uk/ucs/people/DHoldsworth/diners/diners.html">Dijkstra's 
+        Dining Philosophers. &lt;URL: http://www.leeds.ac.uk/ucs/people/DHoldsworth/diners/diners.html&gt;</a></p>
+      <p>Miller, Mark. <a href="http://www.caplet.com/security/taxonomy/index.html">Taxonomy 
+        of Computer Security Problems. &lt;URL: http://www.caplet.com/security/taxonomy/index.html 
+        &gt;</a></p>
+      <p>McGregor, Tony. <a href="http://byerley.cs.waikato.ac.nz/~tonym/201/sync/node15.html">The 
+        Dining Philosophers Problem &lt;URL: http://byerley.cs.waikato.ac.nz/~tonym/201/sync/node15.html&gt;</a> 
+        from <a href="http://www.cs.waikato.ac.nz/cs/studies/0657.201/">201 - 
+        Computer Systems</a>. 
+      <P ALIGN="left">&nbsp; <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">e</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="../e-vb-oid-scripting.html" title="Back to: VB-Like E World Scripting"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: VB-Like E World Scripting" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="../ejbind.html" title="On to: Binding E to Java"><img src="../../images/next.gif" width="64" height="32" alt="On to: Binding E to Java" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

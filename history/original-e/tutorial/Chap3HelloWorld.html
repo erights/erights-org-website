@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+   <TITLE>Hello World</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.0Gold (Win95; I) [Netscape]">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+
+<PRE><IMG SRC="midi_e.gif" ALT="Electric Communities: E Programming Language" HEIGHT=30 WIDTH=30>  <A HREF="index.html">Contents</A>  <A HREF="../index.html">Home Page</A>
+</PRE>
+
+<H1>Hello World</H1>
+
+<P>
+<HR></P>
+
+<BLOCKQUOTE>
+<P>This first tutorial provides annotated code for the familiar Hello World
+application. This introductory application introduces you to basic E concepts:</P>
+
+<P> </P>
+
+<UL>
+<LI>How to create E-objects. </LI>
+
+<LI>How to send messages. </LI>
+
+<LI>How E blends with Java. </LI>
+</UL>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H2>Hello World</H2>
+
+<BLOCKQUOTE>
+<P>To run this tutorial, enter the following code and study the walkthrough
+that accompanies it. This example is also available in the online example
+suite as <I>HelloE.e.</I></P>
+
+<P> </P>
+
+<PRE>
+<TT>/*</TT></PRE>
+
+<P><TT>HelloE.e Introductory hello world application to demonstrate E basics.
+Copyright Electric Communities */ </TT></P>
+
+<P><TT>public class HelloE { public static void main(String args[]) { HelloWorld
+first = new HelloWorld(); first &lt;- hello(); } } </TT></P>
+
+<P><TT>eclass HelloWorld { emethod hello() { System.out.println(&quot;Hello
+World&quot;); } } </TT></P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H2>The Walkthrough</H2>
+
+<BLOCKQUOTE>
+<P>E-objects function by sending messages to one another, and operate optimistically.
+Messages can have parameters, just like a regular Java method call. When
+Object A communicates with Object B, Object A sends a message <I>through</I>
+the Channel to Object B. Object B would have the proper E-code to handle
+that message.</P>
+
+<P> When run, the code executes in the following order:</P>
+
+<P> </P>
+
+<OL>
+<LI><TT>main</TT> instantiates the E-object <TT>first</TT>, an instance
+of the E-class <TT>HelloWorld</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>main</TT> sends the message <TT>hello</TT> to <TT>first</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>first</TT> executes the <TT>HelloWorld</TT> E-method <TT>hello</TT>
+to handle the message.</LI>
+
+<P> </P>
+
+<LI><TT>hello</TT> prints out, ``Hello World''.</LI>
+
+<P> </P>
+</OL>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H2><A NAME="Compiling and Running"></A>Compiling and Running</H2>
+
+<BLOCKQUOTE>
+<P>To compile source code for the E runtime, use the <I>ecomp</I> compiler:</P>
+
+<P> </P>
+
+<PRE><TT>  ecomp</TT> <I>filename</I></PRE>
+
+<P>The <I>ecomp</I> command compiles E and Java source files directly into
+Java bytecodes. You can then run your compiled program with the E Java
+interpreter (the<TT> javaec</TT> command):</P>
+
+<P> </P>
+
+<PRE><TT>  javaec</TT> <I>filename</I></PRE>
+
+<P>For more information on these commands, see the <I>E Tools and Utilities
+</I>section in the <I>E Programmer's Guide</I>.</P>
+
+<P> </P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<ADDRESS>Copyright (c) 1996 Electric Communities. All rights reserved worldwide.<BR>
+Most recent update: 5/29/96</ADDRESS>
+
+<P> </P>
+
+</BODY>
+</HTML>

@@ -1,0 +1,257 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+   <TITLE>The E Extensions to Java: Distributed Commerce Demo</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.0Gold (Win95; I) [Netscape]">
+</HEAD>
+<BODY bgcolor="#ffffff">
+<P>
+<HR><p></P>
+
+<H1>The E Extensions to Java:</H1>
+
+<H2>Distributed Commerce Demo</H2>
+
+<P>
+<HR><p></P>
+
+<P><A NAME="1025453"></A></P>
+
+<BLOCKQUOTE>
+<P>For commerce to flourish on the Internet, it's becoming clear that developers
+need efficient tools to build secure commercial applications. This demo,
+while simple in design, is a metaphor for the larger picture of how to
+implement distributed commerce on the Internet using E. The E Extensions
+to Java from Electric Communities provide essential resources for writing
+secure, distributed applications. </P>
+</BLOCKQUOTE>
+
+<P><A NAME="1028992"></A></P>
+
+<H2>Elements of the Demo </H2>
+
+<P><A NAME="1029382"></A></P>
+
+<BLOCKQUOTE>
+<P>This demo implements a secure, distributed, commercial environment that
+is easy to create using the E Extensions to Java. There are several main
+components of this demo:</P>
+
+<P> </P>
+
+<UL>
+<LI>There is one virtual space that simulates a single commercial environment.
+This environment is shared by three machines running different platforms:
+Sun Solaris, Windows NT, and Windows 95. Shared objects (owned by the participating
+machines) are traded in this virtual space. <A NAME="1029426"></A></LI>
+
+<LI>The machines sharing this virtual space are able to communicate over
+the network with no central server. If any machine is shut down, the virtual
+space is still retained in the two surviving machines, minus the objects
+that were owned by the downed machine. <A NAME="1028897"></A></LI>
+
+<LI>The machines can create objects that are shared in the virtual space,
+yet retain ownership of the individual objects they create. Each machine
+knows not only about its own objects, but also the objects on the other
+machines. <A NAME="1028920"></A></LI>
+
+<LI>Objects can be owned and traded. A machine creating an object has trusted
+ownership of that object, and can transfer that ownership to another machine.
+<A NAME="1028899"></A></LI>
+
+<LI>Trading takes place according to a set of established rules on how
+ownership is determined and transferred. </LI>
+</UL>
+
+<P><A NAME="1029158"></A></P>
+</BLOCKQUOTE>
+
+<H2>Where to obtain E and this demo code</H2>
+
+<P><A NAME="1029159"></A></P>
+
+<BLOCKQUOTE>
+<P>All the code for this demo will be made available online at the Electric
+Communities web site at <TT>http://www.communities.com</TT>, along with
+the E extensions themselves and documentation. The objects in this demo
+are fully inheritable, and you can use them as a foundation for building
+your own applications.</P>
+
+<P> <A NAME="1029736"></A></P>
+</BLOCKQUOTE>
+
+<H2>Demo overview</H2>
+
+<P><A NAME="1029737"></A></P>
+
+<BLOCKQUOTE>
+<P>In this demo, a single virtual space (representing a commercial environment)
+has a representation on three machines, each running a different platform.
+The machines can communicate with each other, yet each is fully independent
+of the others.</P>
+
+<P> <A NAME="1029738"></A>A machine can create an object to be shared in
+this virtual space. It creates an object by choosing it from a pulldown<B>
+</B>menu. Any machine creating an object owns that object. When a machine
+creates an object, a <I>presence</I>, or representation of that object,
+is also instantiated on the other machines. Any action taken by the object
+(for example, moving it around) is mirrored by the presences on the other
+machines. A window at the bottom of the screen shows what objects the machine
+owns. This window is updated each time the machine either creates or trades
+an object.</P>
+
+<P> <A NAME="1029739"></A>To trade an object, the machines use the <B>Trading
+Table</B> dialog. The Trading Table is an object itself that is independent
+of the machines; none of the machines own it. Any machine can propose a
+trade. For example, assume machine A wants to buy a red dot from Machine
+B. Machine A can see the red dot, since it appears as a presence on its
+workspace. However, to have actual ownership, it proposes a trade with
+Machine B. </P>
+
+<P><A NAME="1029740"></A>To do this, Machine A brings up the <B>Trading
+Table</B> and drags its presence of the red dot to it, and any objects
+it offers to trade in turn (for example, a green square). The <B>Trading
+Table</B> with this proposed trade then appears on Machine B. Machine B
+can either ignore this trade proposal, or counter it by offering other
+objects to exchange (for example, it can propose that Machine A trade 2
+green squares in exchange for the red dot). When both machines are satisfied
+by the offer, they click the <B>Trade</B> button. The objects then exchange
+ownership, which is reflected in the bottom window.</P>
+
+<P> <A NAME="1029741"></A>Note that in order to trade an object, the machine
+must actually have ownership of that object. Machine A could not have traded
+its two green squares if it did not own them. </P>
+
+<P><A NAME="1028333"></A></P>
+</BLOCKQUOTE>
+
+<H2>The benefits of a decentralized commercial environment</H2>
+
+<P><A NAME="1028336"></A></P>
+
+<BLOCKQUOTE>
+<P>Building commercial applications is nothing new. Many programmers today
+are coding programs similar to the one modeled by this demo. However, these
+applications generally operate on a strict client/server model--there is
+one central server machine, and multiple client machines. The server owns
+all the objects, and must ``approve'' all transactions among the clients.
+</P>
+
+<P><A NAME="1028636"></A>Using a client/server approach can work for many
+situations. However, a major advantage to a decentralized commercial environment
+is its scalability. It's much easier to scale a decentralized environment
+to a larger community because processing can be distributed among the various
+machines; you don't have the problem of a central server eventually overloading
+as your system grows larger.</P>
+</BLOCKQUOTE>
+
+<P><A NAME="1029782"></A></P>
+
+<H2>Using E to build decentralized applications</H2>
+
+<P><A NAME="1029116"></A></P>
+
+<BLOCKQUOTE>
+<P>The E Extensions to Java are ideal for creating distributed applications
+such as the decentralized commercial environment in this demo. This is
+because E has built-in functionality for secure remote object communications.
+Any Java or E-object (which is a Java object with added E functionality)
+can send a message to another E-object, even if that E-object is on a different
+machine on the network; the objects do not need to know anything about
+underlying network protocols. </P>
+
+<P><A NAME="1028343"></A>Because many of the communications details are
+already built into E, you don't have to manually code things like:</P>
+
+<P> </P>
+
+<UL>
+<P><A NAME="1028471"></A></P>
+
+<LI>Streams and threads <A NAME="1028481"></A></LI>
+
+<LI>Network access details like socket interfaces, pipes, or any other
+underlying network protocol. </LI>
+</UL>
+
+<P><A NAME="1030396"></A>For example, in some systems, if different nodes
+on a network need to communicate, you must explicitly include the addresses
+of those nodes and their communications protocols in the code. E, on the
+other hand, does this automatically.</P>
+
+<P> <A NAME="1029813"></A>And E lets you do things that are very difficult
+to program in other languages. For example, consider some these technical
+highlights of this demo (for more information on E concepts, see the <I>E
+Programmer's Guide</I>):</P>
+
+<P> </P>
+
+<UL>
+<P><A NAME="1030610"></A></P>
+
+<LI>When an object is created, the demo code automatically creates not
+only the original E-object on the owner machine, but also a remote presence
+of this object on all the other machines at the same time. It gives these
+presences a reference back to the original object in the form of a <I>channel</I>.
+A channel is a conduit object that carries messages from one object to
+another. Using this channel, each presence ``reports back'' to the original
+object to register itself. <A NAME="1029832"></A></LI>
+
+<LI>Since all the remote presences register themselves with the original
+object in this manner, the object has a list of all its remote instantiations.
+It can then simultaneously broadcast various messages to all of its presences
+at once (for example, a <TT>move</TT> message). <A NAME="1029892"></A></LI>
+
+<LI>In this demo, ownership is denoted by having the registrar of remote
+presences. When the machine trades an object, the trade message is broadcast
+to all remote presences. The presences then know to subsequently register
+themselves with and report to the object on the new machine. The registrar
+is thus transferred to the new machine, which means that it is now the
+owner of the object. <A NAME="1029847"></A></LI>
+
+<LI>The <B>Trading Table</B> is an independent E-object that can be instantiated,
+but not owned, on any of the machines. It uses E's <I>deferring statements</I>
+(such as <TT>eif</TT>) to ensure that it can wait for resolution on a proposed
+trade, and still be able to reject other trade offers while waiting for
+this resolution. </LI>
+
+<P><A NAME="1030333"></A>E's deferring statements let your program continue
+executing even if a certain code block is waiting for a value to be furnished.
+If it receives a value, that code block executes.</P>
+
+<P> </P>
+</UL>
+
+<P><A NAME="1029146"></A>In addition to this distributed application functionality,
+E is built on Java. You can take full advantage of E's distributed communication
+functionality and easily integrate it with your Java code. </P>
+
+<P><A NAME="1029721"></A></P>
+</BLOCKQUOTE>
+
+<P>
+<HR><FONT SIZE=-1>(C) 1996 Electric Communities<BR>
+10101 North De Anza Boulevard, Suite 100<BR>
+Cupertino, California 95014<BR>
+(408) 342-9500<BR>
+http://www.communities.com</FONT><p></P>
+
+<P><FONT SIZE=-1> </FONT>Electric Communities and the E logo are trademarks
+of Electric Communities. Use of the E logo for commercial purposes without
+the prior written consent of Electric Communities may constitute trademark
+infringement and unfair competition in violation of federal and state laws.</P>
+
+<P> <A NAME="1024304"></A>This document is copyrighted by Electric Communities
+with all rights reserved worldwide. Under copyright laws, this document
+may not be copied, in whole or in part, without the written consent of
+Electric Communities. Under the law, copying includes translating into
+another language. </P>
+
+<P><A NAME="1024306"></A>Java(TM), and HotJava(TM) are trademarks of Sun
+Microsystems, Inc.</P>
+
+<P> Last Modified: 5/24/96<FONT SIZE=-1> </FONT></P>
+
+</BODY>
+</HTML>

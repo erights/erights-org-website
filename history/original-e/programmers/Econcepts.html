@@ -1,0 +1,377 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+   <TITLE>Getting Started with E</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.0Gold (Win95; I) [Netscape]">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+
+<PRE><IMG SRC="midi_e.gif" ALT="Electric Communities: E Programming Language" HEIGHT=30 WIDTH=30>  <A HREF="index.html">Contents</A>  <A HREF="../index.html">Home Page</A>
+</PRE>
+
+<P>
+<HR></P>
+
+<H1>Getting Started with E</H1>
+
+<BLOCKQUOTE>
+<P>This chapter introduces the concepts essential to understanding the
+E Extensions to Java. It also describes how to download E, and compile
+and run E programs.</P>
+
+<P>The features summarized in this chapter are explained in more technical
+detail in the <I><A HREF="Runtime.html">E Runtime</A></I> chapter. Also,
+see the <I><A HREF="../glossary.html">Glossary</A></I> for descriptions
+of E terms.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="What is E?"></A>What is E? </H1>
+
+<BLOCKQUOTE>
+<P>E is set of extensions to Java designed for writing distributed applications
+including databases, groupware, publishing systems, multimedia, and games.
+E is built on the Java Virtual Machine, and requires an existing operational
+and installed Java Development Kit (JDK). </P>
+
+<P>E classes are very similar to Java classes, and the two can coexist
+in the same program. However, E provides some powerful enhancements to
+Java, including: </P>
+
+<UL>
+<LI><B>Distributed communication.</B> E features a built-in model for remote
+object communications, allowing an object to send messages directly to
+remote objects that exist in other machines.</LI>
+
+<LI><B>Capability semantics.</B> E offers a sophisticated security model
+that allows convenient but extremely detailed control over sensitive functions
+within a single machine or across a network.</LI>
+
+<LI><B>Optimistic computation.</B> E implements a powerful method for reducing
+the effect of communications latency in distributed systems.</LI>
+
+<LI><B>Trust Management.</B> E provides a framework for cryptographic verification
+of the authorship and integrity of E classes and packages. <BR>
+</LI>
+</UL>
+
+<H2>Distributed communication </H2>
+
+<P>E's messaging facility provides a robust and transparent distributed
+communications model that is much more flexible and secure than other programming
+languages. For example, in some languages, if different nodes on a network
+need to communicate, you must explicitly include the addresses of those
+nodes and their communications protocols in the code. E, on the other hand,
+takes care of this for you.</P>
+
+<P>An E-object can send a message to any other E-object, even if the other
+object is on a different machine on the network; the objects do not need
+to know anything about underlying network protocols. </P>
+
+<P>E's transparent messaging feature makes it easy for a programmer to
+automatically establish connections between objects without having to deal
+directly with network access details. And the underlying access framework
+is not changed; it is still accessible to the programmer if necessary.</P>
+
+<H2>Capability semantics</H2>
+
+<P>The E extensions use a security model called <I>capability semantics</I>.
+This model is based on a very simple idea: object A can only access object
+B if it is passed a reference to B by something else that already has access
+to B. This type of reference is called a <I>capability</I>-it is a reference
+to an object that lets you perform some otherwise restricted action. </P>
+
+<P>E's security model is quite different from Java's. Java's security model
+is based on an all-or-nothing approach: it assumes that all code originating
+on the local hard disk is trusted, and all code originating from the network
+is not trusted. Based on this model, Java provides system security by checking
+the stack each time a potentially dangerous method is invoked. If no untrusted
+class is on the stack, the method is allowed to execute.</P>
+
+<P>E, on the other hand, lets you selectively assign privileges. &quot;Trustedness&quot;
+is granted in as much or as little detail as you choose. In E, you maintain
+security by restricting an object to sending only specific messages to
+other specific objects. It is impossible for an object to send an unauthorized
+message. Once the capability to reference an object or send a message has
+been granted, no further run-time check is required. You do not need to
+rely on third-party security mechanisms to assign privileges for your application.</P>
+
+<P>For example, consider a word processing application program running
+within an E-secured environment. In E, you can restrict the application
+to only prompt for a file through a dialog box. This dialog would then
+return a capability which gives access to that file alone; the word processing
+program would not be able to touch any other user file. You could restrict
+this application even further; for example, letting it edit only those
+files created on a certain date.</P>
+
+<H2>Optimistic computation</H2>
+
+<P>Optimistic computation is a methodology that helps prevent long delays
+when communicating across a network. E implements this with its asynchronous
+messaging model, deferring statements, and channels.</P>
+
+<P>E-objects always communicate by sending messages to one another. All
+E messages are unidirectional and asynchronous. When one object sends a
+message to another requesting a value, the requesting object does not need
+to stop computing and wait for a response. Instead, E provides statements
+to &quot;defer&quot; the requesting code block until the value is furnished,
+and allow the rest of the program to continue executing. The requesting
+object can continue to operate &quot;optimistically&quot;, as if it already
+has the answer it needs.</P>
+
+<P>When an object sends a message requesting a value to another object,
+it includes a <I>channel</I> as one of the message parameters. A channel
+is a conduit E-object that carries messages from one object to another
+E-object, and acts as a placeholder for any requested values that the recipient
+E-object may reveal to the sending object. </P>
+
+<H2>Trust management</H2>
+
+<P>In a networked world, users will want to download and run software from
+outside sources. To maintain system and application security in such an
+environment, E provides a Trust Manager. The Trust Manager does the following:</P>
+
+<UL>
+<LI>Verifies the originator of a class or package, and that the class has
+not been altered or tampered with. </LI>
+
+<LI>Loads classes and packages from unknown or untrusted sources only if
+they contain no references to capabilities the user has designated as restricted.</LI>
+
+<LI>Loads only classes and packages from sources trusted by the user. </LI>
+</UL>
+
+<P>These mechanisms help prohibit the spread of viruses or Trojan horses
+that may damage or &quot;embezzle&quot; user data.</P>
+
+<P>To help you create and manage trust relationships among objects, E provides
+a user interface called the Class Blesser. You can invoke the Class Blesser
+through either a graphical or command-line interface. </P>
+
+<P>For more information on E's trust management system, see the <I>Authentication</I>
+section in the <I>E Runtime</I> chapter. For information on the Class Blesser,
+see Appendix A, <I>E Tools and Utilities</I>.</P>
+
+<H2>Other features provided by E</H2>
+
+<P>In addition to the features described in the previous paragraphs, E
+provides the following:</P>
+
+<UL>
+<LI><B>Distributed references.</B> E lets you distribute references to
+E-objects over the network. </LI>
+
+<LI><B>Persistent objects.</B> E provides a persistent database object,
+that lets you store your objects to disk and later recall them to use in
+other applications.</LI>
+
+<LI><B>Distributed garbage collection.</B> E's distributed garbage collector
+can reclaim cycle structures, even when distributed across the network.</LI>
+
+<LI><B>Access controlled messages and objects.</B> E provides a set of
+standard classes and methods that let you restrict access to areas such
+as the file system and network environment, while retaining the level of
+features that you choose.</LI>
+</UL>
+
+<P>See the<I> E Runtime</I> chapter for descriptions of these features.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="How to obtain and install E"></A>How to obtain and install
+E </H1>
+
+<BLOCKQUOTE>
+<P>You can download the E extensions from either of the following:</P>
+
+<UL>
+<LI>The Electric Communities web site, <TT>http://www.communities.com</TT></LI>
+
+<LI>The Electric Communities FTP site, <TT>ftp://ftp.communities.com/pub/E</TT></LI>
+</UL>
+
+<P>To install E, follow the instructions from the online <TT>README.TXT</TT>
+file. From the online sites, you can also obtain the E documentation, both
+in HTML and Postscript format. Be sure to also read the online <TT>RELEASE.TXT</TT>
+file for any last minute updates.</P>
+
+<P>You must have Java 1.0 already installed and running in order to use
+E. To obtain Java 1.0, download it from the JavaSoft web site, <TT>http://java.sun.com</TT>.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="Creating, compiling, and running an E program"></A>Creating,
+compiling, and running an E program </H1>
+
+<BLOCKQUOTE>
+<P>The process of building and running E applications is almost identical
+to Java, since E is built on Java. What distinguishes E code from Java
+code is its functionality and purpose.</P>
+
+<P>The E extensions, by definition, are more suited for creating secure,
+stand-alone applications running on distributed systems. While it is possible
+to create simple applets and local applications in E, generally there is
+no great advantage to writing these in E versus Java. Indeed, Java code
+can be more efficient for these types of applications. See the section
+<I>Using Java and E code together</I> in the <I>E Runtime</I> chapter for
+more information.</P>
+
+<P>To implement E features, E provides its own classes and keywords. For
+a description of the E keywords, see the<I> E Language Specification </I>chapter.
+For a description of classes, methods, and interfaces provided by E, see
+the<I> E Class Library</I> chapter.</P>
+
+<P>Regardless of whether you use E or Java code to create an application,
+however, you can run your program in the E runtime, since E is completely
+backwards-compatible with Java.</P>
+
+<P>For examples of E programs, see the <I>E Language Tutorial</I>, and
+also the examples in the online E <TT>examples</TT> directory (in your
+downloaded version of E).</P>
+
+<H2>How to create an E program</H2>
+
+<P>Creating an E program is just like creating a Java program. You use
+a standard text editor to create a source file, which you then compile
+into Java bytecodes, and then run through a Java interpreter provided by
+E.</P>
+
+<P>Like Java, an E program is enclosed in a class definition, and the program
+body is contained in a routine called <TT>main</TT>, which is the first
+piece of code run in your program. An E program can contain both Java and
+E code. For example:</P>
+
+<PRE><TT>  public class HelloE
+  {
+    public static void main(String args[])
+    {
+      <I>&lt;HelloWorld code&gt;
+
+</I>    }
+  }
+<I>........</I></TT>
+
+</PRE>
+
+<P>For guidelines on using E and Java code in the same program, see the
+section the section <I>Using Java and E code together</I> in the <I>E Runtime</I>
+chapter.</P>
+
+<P>By convention, E source files have a <TT>.e</TT> suffix instead of <TT>.java</TT>,
+although this is not required. </P>
+
+<P>This manual assumes you are already familiar with creating programs
+in Java, and therefore does not describe how to do this. For information
+on how to create Java programs, see the JavaSoft documentation.</P>
+
+<H2>How to compile an E program</H2>
+
+<P>After you create an E application, you compile it using the <TT>ecomp</TT>
+E compiler. Like its Java counterpart, <TT>javac</TT>, <TT>ecomp</TT> compiles
+E and Java code into Java bytecode. For example:</P>
+
+<PRE><TT>  ecomp HelloE.e</TT>
+</PRE>
+
+<P>For information on this compiler, see Appendix A, <I>E Tools and Utilities</I>.</P>
+
+<H2>How to run an E program</H2>
+
+<P>You run an E <TT>.class</TT> file just as you do in Java, but with the
+<TT>javaec</TT> E Java interpreter. For example:</P>
+
+<PRE><TT>  javaec HelloE</TT>
+</PRE>
+
+<P>For information on running this command, see Appendix A, <I>E Tools
+and Utilities</I>.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="Naming conventions"></A>Naming conventions </H1>
+
+<BLOCKQUOTE>
+<P>This section describes the naming conventions used for E objects, E
+expressions, and EARLs (E Absolute Reference Locator). </P>
+
+<P>Objects created with E have capabilities different from ordinary Java
+objects. Because of these differences, this manual refers to such objects
+as <I>E-objects</I>, and their methods as <I>E-methods</I>, to distinguish
+them from conventional Java objects and methods. Similarly, E has <I>E-interfaces</I>,
+<I>E-exceptions,</I> and <I>E-classes</I>, which, while similar to their
+Java counterparts, implement additional E functionality. See the Glossary
+for descriptions of these terms.</P>
+
+<H2>Class Names</H2>
+
+<P>By convention, the names of E runtime classes (those that are descended
+from E's <I>EObject</I> rather than Java's <I>Object</I> class) begin with
+a capital E. This prefix distinguishes these E classes from Java classes;
+for example, <I>EBoolean</I> is distinguished from Java's <I>Boolean</I>
+class. </P>
+
+<P>Ordinary Java classes (those that are descended from Java's <I>Object</I>
+class) that are part of the E runtime environment, but are not E classes,
+generally have names that begin with <I>Rt</I>, as in <I>RtEnvelope</I>.</P>
+
+<P>See the <I>E Class Library</I> chapter for descriptions of these classes.</P>
+
+<H2>Keywords</H2>
+
+<P>Keywords that are unique to the E language begin with a lowercase letter
+&quot;e&quot;, as in the <TT>eif</TT> statement. Many of these keywords
+are similar to their Java counterparts.</P>
+
+<P>See the <I>E Language Specification</I> chapter for descriptions and
+examples of the E keywords.</P>
+
+<H2>EARL (E Absolute Reference Locator)</H2>
+
+<P>An EARL is the E equivalent to a Universal Resource Locator (URL), and
+references an E-object. Like a URL, an EARL is designated in terms of an
+abstract descriptor, which is registered in a directory with the server
+responsible for interpreting that EARL.</P>
+
+<PRE><TT>        e://&lt;domainname&gt;/&lt;objectdescriptor&gt;</TT>
+</PRE>
+
+<UL>
+<LI>The first element of the expression <TT>(e:</TT>) represents an access
+protocol, much like the current convention of using <TT>ftp</TT> or <TT>www</TT>
+for FTP or web servers.</LI>
+
+<LI><I>domainname</I> has the usual interpretation. </LI>
+
+<LI><I>objectdescriptor</I> indicates the specific object. Objects are
+organized into a name hierarchy that looks like a pathname, for example,<BR>
+</LI>
+
+<PRE><TT>        e://e.communities.com/edemos/pokerserver</TT>
+</PRE>
+</UL>
+
+<P>E-objects register themselves in the directory by sending messages to
+the directory services object. Each node in the name hierarchy has an associated
+capability that is necessary for registering an object in it. (There are
+also capabilities for unregistering, adding branches to the hierarchy,
+and so forth.)</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<ADDRESS>Copyright (c) 1996 Electric Communities. All rights reserved worldwide.<BR>
+Most recent update: 7/19/96<BR>
+</ADDRESS>
+
+</BODY>
+</HTML>

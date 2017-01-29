@@ -1,0 +1,309 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>Grant Matcher Puzzle</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">equality</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><a href="history.html" title="1st child: Puzzle History"><img src="../../../images/first.gif" width="32" height="64" alt="1st child: Puzzle History" border="0"></a><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="../after-both.html" title="On to: Four Party Partial Orders"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Four Party Partial Orders" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>The 
+              Grant Matcher<br>
+              Puzzle</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <P ALIGN="left">&nbsp;
+      <p>Many systems designers have wrestled with the notion of object identity. 
+        The issues must be resolved to design foundational equality primitives. 
+        Should an object system provide a means to tell whether two object references 
+        refer to the same object, without consulting either of the objects involved? 
+        Following Lisp, we call any such primitive <i>EQ</i>. Pure capability 
+        systems that are otherwise equivalent have come to different answers. 
+        The implications of these different answers were <a href="history.html">not 
+        understood</a> until the Grant Matcher Puzzle. 
+      <p> 
+      <hr width="100%">
+      <center>
+        <h2> <img src="images/intro.gif" height=271 width=212 align=RIGHT>Capability 
+          Foundations</h2>
+      </center>
+      Shown here is the fundamental step of capability computation. Alice, Bob, 
+      and Carol are three separate objects. In the initial conditions Alice holds 
+      an object reference--or <i>capability</i>--to both Bob and Carol, and neither 
+      hold a capability to the other two. 
+      <ul>
+        <li> The first rule of capabilities is that one object, here, Bob, can 
+          only get a access to another object, here, Carol, if the first is creates 
+          the second (not shown), or if someone, here, Alice, who validly has 
+          access to the Carol voluntarily passes a copy of this access to Bob. 
+          In order for Alice to give Bob access to Carol, Alice must already have 
+          access to Carol, and Alice must choose to give out this access. What 
+          does it mean for code to voluntarily choose? After all, the code may 
+          even execute deterministically, so some definitions of free will wouldn't 
+          work. By <i>voluntary</i> we mean: Were a different program substituted 
+          for Alice, but placed in the same exact external environment, that program 
+          would be able to choose not to give access to Carol. This is the basis 
+          for <i>discretionary security</i> in capability systems.</li>
+        <li> The second rule is that capabilities may only travel on paths provided 
+          by existing capabilities. In order for Alice to give Bob access to Carol, 
+          Alice also requires access to Bob. Even if Alice is coded to attempt 
+          to give this access to Bob, she cannot if there is no capability pathway 
+          of willing intermediaries leading from Alice to Bob. This is the basis 
+          for <i>mandatory security</i> in capability systems, especially <i><a href="../../capability/confinement.html">confinement</a></i>.</li>
+        <li> The third rule is that the access to Carol that Bob gets must be 
+          as good a reference to Carol as the reference Alice passed <i>as far 
+          as Alice is concerned</i>. The "Carol" that Bob gets must be the "Carol" 
+          that Alice <i>meant</i>.</li>
+      </ul>
+      <p>The subtleties in making this last issue precise are the heart of the 
+        Grant Matcher Puzzle. <i><a href="distrib-grant.html">Matching Distributed 
+        Grants</a></i>.explains how to avoid the capability equivalent of a <i>man 
+        in the middle attack</i>, otherwise a danger in a distributed cryptographic 
+        capability system. </p>
+      <center>
+        <h2> <img src="images/grant-matcher.gif" height=374 width=437 align=RIGHT>Setting 
+          up the Puzzle</h2>
+      </center>
+      <p>In the initial conditions of Grant Matcher Puzzle, the Grant Matcher 
+        itself plays the role of Bob, and a charity named KEQD plays the role 
+        of Carol. Dana's situation is exactly symmetric with Alice. Alice and 
+        Dana are both assumed to trust the Grant Matcher to perform its duties.</p>
+      <p>Their only protection against misbehavior by the Grant Matcher is the 
+        <i><a href="http://www.communities.com/company/papers/security/problems.html">principle 
+        of least authority</a></i> (called by Saltzer and Shroeder the <i>principle 
+        of least priviledge</i>). The Grant Matcher's protocol only requires Alice 
+        and Dana to give the Grant Matcher those capabilities it would require 
+        to honestly perform its duties. A protocol requiring more authority than 
+        this should raise eyebrows. In the context of the Grant Matcher Puzzle 
+        as posed, Alice and Bob are vulnerable to the misbehavior possible <i>within 
+        </i>these bounds, about which we will not concern ourselves further. </p>
+      <p> Money is itself an interesting problem, but should simply be assumed 
+        for this puzzle. <a href="../../capability/ode/ode-capabilities.html#simple-money">Here</a> 
+        is an implementation of money adequate for this example, given that we 
+        assume that the Grant Matcher itself already has prior knowledge of the 
+        currency being used by Alice and Dana. 
+      <p>Alice and Dana are assumed not to trust each other at all. That is why 
+        they are using the Grant Matcher as a mutually trusted third party. No 
+        system can enable cooperation in the absence of any trust. The Grant Matcher 
+        pattern, however, is supposed to bring about a particular kind of cooperation 
+        between Alice and Dana, requiring only that they both trust the Grant 
+        Matcher and a common monetary system. 
+      <center>
+        <h2> <img src="images/keqd-gets-it.gif" height=374 width=365 align=RIGHT>When 
+          it Works</h2>
+      </center>
+      The Grant Matcher provides the service of matching grants, to be given to 
+      a common destination. Alice wishes to use the Grant Matcher to give $10 
+      to KEQD, but only if $10 also goes to KEQD from Dana. Dana has the symmetric 
+      desire involving Alice. The Grant Matcher has no previous knowledge of KEQD, 
+      but if both Alice and Dana provide the same amount of money and designate 
+      the same destination, the Grant Matcher will take the money from each and 
+      give the sum to the destination. Otherwise, the Grant Matcher returns the 
+      money to the prospective donors. 
+      <p>The Grant Matcher is assumed to be coded to perform its duties if it 
+        is possible for it to do so. The puzzle is: Can the Grant Matcher determine 
+        if Alice and Dana are designating the same destination? Having made a 
+        determination, can the Grant Matcher reliably transport the money to the 
+        destination, in a way mutually acceptable to Alice and Dana? The Grant 
+        Matcher must operate so as to ensure that Alice will not lose $10 unless 
+        a destination acceptable to her gets $20. Similarly for Dana. 
+      <p>Let us assume there is no EQ primitive--that one can only gain information 
+        about a capability by sending messages over it. In that case, the Grant 
+        Matcher has to determine equality by sending messages over these capabilities 
+        in some equality determining protocol. Having determined--somehow--that 
+        both references are equivalent, the Grant Matcher can simply pick one 
+        and send the money.&nbsp; 
+      <center>
+        <h2> <img src="images/alice-steals.gif" height=375 width=437 align=RIGHT>Alice 
+          Gets Greedy</h2>
+      </center>
+      In Actor systems and in Joule, these equality protocols may eventually bottom 
+      out in an internal EQ primitive, but this primitive is hooked into the system 
+      in such a way as to prevent revealing a transparent forwarder interposed 
+      on a messaging path. If the primitive could be used to reveal the forwarder, 
+      then full transparency would be lost. In such a system, one could not have 
+      a <i>transparent</i> forwarder. 
+      <p>So, in a system in which forwarders can truly be transparent, Alice can 
+        send to the Grant Matcher instead a reference to a transparent forwarder 
+        to KEQD. This forwarder always transparently sends messages through to 
+        KEQD, unless those messages carry $20. In that latter circumstance, the 
+        forwarder will deposit the money to Alice's bank account. By assumption, 
+        the Grant Matcher cannot distinguish this situation from the earlier one, 
+        except at the price of the very $20 that is at stake. 
+      <p>Notice that Alice cannot really be said to have done anything dishonest. 
+        The cause that she is designating to the Grant Matcher is simply one that 
+        acts just like KEQD, except for where it puts $20 bills. If Dana were 
+        to designate this same forwarder object in its request to the Grant Matcher, 
+        it would be stating that this object is where it would like to see the 
+        money go as well. 
+      <p><img src="images/alice-gets-it.gif" height=373 width=365 align=RIGHT>Since 
+        Alice's object is forwarding messages to KEQD, including the messages 
+        that make up the equality protocol, the intermediate object could validly 
+        also be seen as part of the plumbing--as a message conduit for delivering 
+        messages to KEQD. In this sense, KEQD itself would also be a valid interpretation 
+        of <i>what Alice meant</i> by the capability she passed to the Grant Matcher. 
+        Were the Grant Matcher to give $20 directly to KEQD instead of her forwarder, 
+        Alice would have no grounds for complaint. 
+      <p>However, the Grant Matcher's situation is completely symmetrical, so 
+        it might still break the symmetry in Alice's favor, in which case Alice 
+        pockets the money. Dana has lost his $10 even though no destination acceptable 
+        to Dana got $20. By no stretch of semantics could one interpret Dana's 
+        actions so as to say that Alice's bank account was a valid interpretation 
+        of the destination Dana <i>meant </i>to designate. 
+      <p>&nbsp;
+      <hr width="100%">
+      <center>
+        <h2> <img src="images/refund.gif" height=316 width=388 align=RIGHT>How 
+          EQ Makes a Difference</h2>
+      </center>
+      Of all varieties of EQ primitive I am aware of, the simplest is the originally 
+      address equality primitive from Lisp, since then appearing in everything 
+      from Smalltalk to KeyKOS to Java. Were the Grant Matcher to use this primitive, 
+      EQ would say <i>false</i> in the "Alice Gets Greedy" scenario, and both 
+      would get their money back instead. This is a perfectly acceptable outcome, 
+      though it has some real costs, especially in the <a href="distrib-grant.html">distributed 
+      case</a>. 
+      <p>Here is an address-equality-based Grant Matcher. 
+      <ul>
+        <ul>
+          The following code implements the Grant Matcher as a single object. 
+          More complicated uses of the same basic pattern might make it a two 
+          facetted object--one each for Alice and Dana. Joule, KeyKOS, and Mach 
+          provide for multiple facets primitively. Marc Stiegler <a href="http://www.communities.com/company/papers/security/facade.html">explains</a> 
+          how to implement multiple facets in languages such as Java or E using 
+          the Facade pattern. 
+          <center>
+          </center>
+          <table cellspacing=0 cellpadding=4 >
+            <tr> 
+              <td align=CENTER valign=CENTER><a href="grantmatch/Charity.java">Charity.java</a></td>
+              <td width="100"></td>
+              <td>Interface to those, like KEQD, that can accept a donation.</td>
+            </tr>
+            <tr> 
+              <td align=CENTER valign=CENTER><a href="grantmatch/GrantStatus.java">GrantStatus.java</a></td>
+              <td></td>
+              <td>Interface for callbacks to be provided by Alice and Dana in 
+                their GrantMatcher requests so they can find out the status of 
+                their request, and receive a refund if needed.</td>
+            </tr>
+            <tr> 
+              <td align=CENTER valign=CENTER><a href="grantmatch/GrantMatcher.java">GrantMatcher.java</a></td>
+              <td></td>
+              <td>If everything goes well, The Grant Matcher accepts two messages, 
+                escrows the money from each, sees that they agree, gives the sum 
+                to the common charity, and lets both sides know the transaction 
+                completed. Otherwise, it refunds any money escrowed, and lets 
+                both sides know the transaction failed. This class is abstract, 
+                leaving subclasses to decide how to determine equality.</td>
+            </tr>
+            <tr> 
+              <td></td>
+              <td></td>
+              <td> 
+                <table cellspacing=0 cellpadding=4 >
+                  <tr> 
+                    <td align=CENTER valign=CENTER><a href="grantmatch/EQGrantMatcher.java">EQGrantMatcher.java</a></td>
+                    <td width="20"></td>
+                    <td>Determines equality via the Java EQ primitive, "==".</td>
+                  </tr>
+                  <tr> 
+                    <td align=CENTER valign=CENTER><a href="grantmatch/EqualsGrantMatcher.java">EqualsGrantMatcher.java</a></td>
+                    <td></td>
+                    <td>Determines equality via the Java Object.equals() message.</td>
+                  </tr>
+                </table>
+                &nbsp;</td>
+            </tr>
+            <tr> 
+              <td><a href="grantmatch/MalletCharity.java">MalletCharity.java</a></td>
+              <td></td>
+              <td>An <i>Charity-in-the-middle</i> that forwards all equality messages 
+                to the Charity it is trying to impersonate, while pocketing all 
+                donations.</td>
+            </tr>
+          </table>
+          &nbsp;
+        </ul>
+      </ul>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">equality</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><a href="history.html" title="1st child: Puzzle History"><img src="../../../images/first.gif" width="32" height="64" alt="1st child: Puzzle History" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="../after-both.html" title="On to: Four Party Partial Orders"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Four Party Partial Orders" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

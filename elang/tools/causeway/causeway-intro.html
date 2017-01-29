@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Causeway Distributed Debugger</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<p align="center"><font size="4" face="Arial, Helvetica, sans-serif"> 
+  Causeway: A post-mortem, distributed debugger</font></p>
+<p align="left"><font size="2" face="Arial, Helvetica, sans-serif">The Causeway 
+  distributed debugger presents a distributed program as a tree of partially ordered 
+  causal relations. Message sends are matched up with the corresponding receives 
+  to support a <em>"follow the conversation"</em> approach to debugging asynchronous 
+  message passing.</font></p>
+<p align="left">Causeway is an open source distributed debugger written in E 
+  using the tamed SWT GUI Toolkit. </p>
+<p></p>
+It is a post-mortem debugger for E programs that were run with causality tracing 
+on. A distributed program will have multiple trace files trace files to create 
+a partially ordered causality graph. a distributed, asynchronous message send 
+can be easily followed across address-space boundaries follow the conversation 
+these boundaries are crossed effortlessly 
+<center>
+  <img src="images/cw-screenshot.png" width="771" height="875"> 
+</center>
+<p></p>
+<p align="left"><font size="2" face="Arial, Helvetica, sans-serif"> </font> 
+<p align="left"><font size="2" face="Arial, Helvetica, sans-serif">
+As the screenshot above shows, Causeway presents several different views of the causal relations. 
+The views are coordinated such that, selecting an item in one view causes corresponding 
+selections in other views. 
+<p><u>Causality Tree View</u> This tree view contains the full graph built from 
+  the trace files.<br>
+  <br>
+  <u>Pruned Causality Tree View</u> This tree view is built by walking the full 
+  graph and applying a relevance function to each causal relation. The relations 
+  are either clipped, skipped, or kept, depending on how relevant, or interesting, 
+  they seem. Tree pruning is guided by relevance functions and filters. Currently, 
+  default options are selected, but we expect to support user-defined functions 
+  and filters in a future release. <br>
+  <br>
+  <u>Full-order View</u> The view to the left of the tree view lists the events 
+  from a single trace file, in full order. This is equivalent to the full order 
+  of events sent within a single process. <br>
+  <br>
+  <u>Stack Frame View</u> This view is not quite what you would expect. For a 
+  selected message in the tree view, the stack shows the state at the time the 
+  message was sent, not received. It's the stack of the cause, not the effect. 
+  Selecting an item in the stack view shows the corresponding source code.<br>
+  <br>
+  <u>Source Code View</u> This view shows the filename and E source code, if available.</font> 
+<p>
+<p align="left"><font size="3" face="Arial, Helvetica, sans-serif">Generating causality traces</font>
+
+<p align="left"><font size="2" face="Arial, Helvetica, sans-serif"> E supports 
+tracing and there are many options for turning on various kinds of traces, generated 
+at different levels of detail. The command below generates a causality trace of 
+<tt>seller.e</tt>. 
+<pre>          
+    rune -DTraceLog_causality=debug $c/e/src/esrc/scripts/causeway/seller.e
+</pre>
+By default, trace files are written to an inconvenient place and given names that 
+are difficult to work with. Use the <tt>TraceLog_dir</tt> property to change the 
+output directory, then, after the trace has completed, rename the trace files 
+to shorter, more memorable names. For example, <tt>etrace.2004-11-20T01_17_58.600Z.txt</tt> 
+could be renamed to <tt>seller.txt</tt>. 
+<pre>          
+    -DTraceLog_dir=c:/etrace
+</pre>
+Make use of E's support for turning tracing on/off in your program. Bracket the 
+code of interest with a call to turn tracing on and a call to turn tracing off. 
+In the code below, the trace begins with the eventual send to <tt>x</tt> and ends 
+when the promise to <tt>answer</tt> is resolved. The trace includes the message 
+sends (effects) caused by <tt>x &lt;- question()</tt> (the cause) and the message 
+sends caused by these effects, and so on. 
+<pre>    
+    # import tracing support
+    def tcr := &lt;unsafe:org.erights.e.develop.trace.TraceController&gt;
+
+    # &#8230;
+	
+    # turn causality tracing on
+    tcr.setProperty(&quot;TraceLog_causality&quot;, &quot;debug&quot;)
+
+    def answer := x &lt;- question()
+    when (answer) -&gt; done(_) :any {
+    } catch problem { 
+        # &#8230;
+    } finally {
+        # turn causality tracing off
+        tcr.setProperty(&quot;TraceLog_causality&quot;, &quot;warning&quot;)
+    }</pre>
+</font> 
+</body>
+</html>

@@ -1,0 +1,476 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd"> <!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>What's Updoc?</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">tools</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="causeway/index.html" title="Back to: Causeway: Message-oriented distributed debugging"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Causeway: Message-oriented distributed debugging" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="graph/index.html" title="On to: Doubly Linked Digraph"><img src="../../images/next.gif" width="64" height="32" alt="On to: Doubly Linked Digraph" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>What's
+              Updoc?</B></FONT><br>
+              <font size="4">by <a href="http://www.cocoon.com/">Terry Stanley</a>
+              &amp; Mark Miller</font><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <h1 ALIGN="left">Running Updoc &amp; Elmer</h1>
+      <p ALIGN="left">This chapter is an example of an <i>Updoc</i> script that
+        tests part of the <tt>java.util.Vector</tt> class. It is also an example
+        of what makes Updoc such a useful utility. The test cases defined in this
+        file ran successfully with some earlier version of the system. The question
+        now is: Do the tests still succeed or do they fail because they no longer
+        exercise the correct behavior?</p>
+      <p ALIGN="left">Let's find out. Let's ask Updoc to process this file and
+        tell us if the test cases (i.e., <i><b><font color="#009000">E</font></b></i>
+        code snippets) pass or fail. (Though please see &quot;<a href="#security">Security
+        Considerations</a>&quot; below before running this or any other Updoc
+        script.)</p>
+      <p ALIGN="left">In bash or MSDOS shell (or most other shells), you can do
+        this by entering the command <tt>updoc.e</tt> followed by the URL for
+        this web page. Enter this after the shell's prompt, shown below as a &quot;$&quot;.
+      </p>
+      <blockquote>
+        <pre><span class="stdout">$ </span><span class="stdin">updoc.e http://www.erights.org/elang/tools/updoc.html</span>
+<span class="stdout">
+http://www.erights.org/elang/tools/updoc.html:.............</span></pre>
+      </blockquote>
+      <p>The &quot;$&quot; represents your shell's prompt, whatever that may be.
+        The rest of the first line is what you type into your shell. Depending
+        on your configuration (see <font color="#ff0000">(*** need a link)</font>),
+        you may need to say &quot;<tt>rune&nbsp;updoc.e</tt>&quot; rather than
+        just &quot;<tt>updoc.e</tt>&quot;. </p>
+      <p>Following your command line, you see Updoc's output. First, there's a
+        blank line. This is followed by the name of the file that was processed.
+        Test cases that pass are shown as dots ('.'). (This is a simple visual
+        indication that Updoc is still cranking away. When the input is very large
+        and most tests succeed, the dots can be reassuring.) The report for failing
+        test cases includes the expression that failed and failure details.</p>
+      <p><font color="#FF0000">*** currently, Elmer no longer works ***</font></p>
+      <p>If you copy the contents of this chapter into a plain text file, let's
+        say, &quot;<tt>updoc.txt</tt>&quot;, you can interactively read it in
+        <i>Elmer</i>. Elmer allows you to try out these examples -- or variants
+        -- as dictated by your curiosity. You run Elmer by typing</p>
+      <blockquote>
+        <pre><span class="stdout">$ </span><span class="stdin">elmer.e updoc.txt</span></pre>
+      </blockquote>
+      <p>Elmer is a simple, Notepad-like text editor with one extra feature: If
+        you type the Enter key at the end of a line beginning with a question
+        mark (question mark is the E prompt), this line is evaluated as a line
+        of E script, and the resulting output shown. For example:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+<span class="stdout">? </span><span class="stdin">2 + 3</span>
+<span class="stdout"># value: 5</span></pre>
+      </blockquote>
+      <p>Try changing the example, putting the cursor at the end of the line,
+        and typing the Enter key. When you want to stop interacting with <i><b><font color="#009000">E</font></b></i>,
+        just backspace over the new question mark. You are now just editing text
+        again. </p>
+      <h1> <a name="example"></a>Example: Exploring Vectors</h1>
+      <p>To begin with, we need a sample Vector. Vectors can be instantiated with
+        the no-argument constructor, which we write in E as follows:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">v</span> := &lt;unsafe:java.util.makeVector&gt;()
+<span class="stdout"># value: Vec[]</span></pre>
+      </blockquote>
+      <p>In <i><b><font color="#009000">E</font></b></i>, a Vector prints by printing
+        its elements separated by commas, enclosed by square brackets, and prefixed
+        by &quot;Vec&quot;. Therefore &quot;<tt>Vec[]</tt>&quot; is how an empty
+        Vector prints. You can add elements to the end of a Vector like so:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>v.addElement(&quot;<span class="litchars">foo</span>&quot;)
+<span class="stdout">? </span><span class="stdin">v.addElement(3)</span><span class="stdout">
+? </span><span class="stdin">v</span><span class="stdout">
+# value: Vec[&quot;foo&quot;, 3]</span></pre>
+      </blockquote>
+      <p>A Vector has both a size and a capacity:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="stdin">v.size()</span>
+<span class="stdout"># value: 2</span>
+
+<span class="stdout">? </span><span class="stdin">v.capacity()</span>
+<span class="stdout"># value: 10</span></pre>
+      </blockquote>
+      <p>The size is how big it &quot;really&quot; is, ie, how many elements it
+        holds. The capacity is a behind-the-scenes implementation concept: it
+        says how big the size can get before the Vector implementation has to
+        do an expensive reallocate-and-copy operation.</p>
+      <p>You can also place values at particular positions within the Vector:</p>
+      <blockquote>
+        <pre><span class="stdin">? </span>v.setElementAt(&quot;<span class="litchars">bar</span>&quot;, 1)
+<span class="stdout">? </span><span class="stdin">v</span><span class="stdout">
+# value: Vec[&quot;foo&quot;, &quot;bar&quot;]
+
+? </span><span class="stdin">v.setElementAt(&quot;</span><span class="litchars">baz</span><span class="stdin">&quot;, 4)</span><span class="stdout">
+</span><span class="stderr"># problem: &lt;ArrayIndexOutOfBoundsException: 4 &gt;= 2&gt;</span><span class="stdout">
+
+? </span><span class="stdin">v.setSize(5)</span><span class="stdout">
+? </span><span class="stdin">v.setElementAt(&quot;</span><span class="litchars">baz</span><span class="stdin">&quot;, 4)</span><span class="stdout">
+? </span><span class="stdin">v</span><span class="stdout">
+# value: Vec[&quot;foo&quot;, &quot;bar&quot;, null, null, &quot;baz&quot;]</span></pre>
+      </blockquote>
+      <p>As you can see, you can only place values in the first &quot;<tt>size</tt>&quot;
+        positions of the Vector, independent of capacity. However, you can always
+        expand the Vector first using &quot;<tt>setSize</tt>&quot; to ensure that
+        it contains the position of interest. &quot;<tt>setSize</tt>&quot; will
+        initialize any new positions it creates with <tt>null</tt>.</p>
+      <h1><a name="purposes"></a>Executable Documentation and More...</h1>
+      <p>This vector example demonstrates the point of Updoc. Updoc enables this
+        one chapter to simultaneously serve four purposes.
+      <ul>
+        <li>
+          <p>The chapter serves as <i><b>checkable documentation</b></i> about
+            the Vector class, where you can always check whether the embedded
+            code examples are accurate. When they aren't, please complain!</p>
+        </li>
+        <li>
+          <p>The chapter serves as a <i><b>regression test</b></i>. Brian Marick
+            documents <font color="#ff0000">(*** need link)</font> that regression
+            tests normally degenerate over time <i>as a result of</i> maintenance.
+            To keep the tests running as the software is changed, the purpose
+            of the test is often lost, and the test is gradually changed into
+            one that always passes. When the regression tests are embedded examples
+            in readable documentation, the test-documentation combination would
+            be rendered noticably incoherent if the test were to become meaningless.</p>
+        </li>
+        <li>
+          <p>With this chapter, you can do <i><b>experimental reading</b></i>.
+            When reading a code example in a programming manual, how often have
+            you thought &quot;But what if we try it this other way?&quot; By bringing
+            an Updoc chapter into Elmer, the text serves as a &quot;user interface&quot;
+            for interactively poking at the API you're reading about, and trying
+            out hypothetical variants of the examples shown.</p>
+        </li>
+        <li>
+          <p>This chapter demonstrates <i><b>interactive</b></i>, or even <i><b>adversarial
+            writing</b></i>. I wrote the first draft of this chapter, not by intending
+            to write a chapter on Java's Vector class, but simply because I was
+            curious about the meaning of Vector's &quot;<tt>size()</tt>&quot;
+            <i>vs</i> &quot;<tt>capacity()</tt>&quot;, so I brought up Elmer to
+            try these out. By saving this Elmer transcript, I had my first draft.
+            This is interactive writing. When writing test cases, we should be
+            trying to creatively break the module being tested, by trying edge
+            cases or whatever. A live Elmer session gives us a sense of a live
+            adversary to break. The transcript of the resulting session will often
+            be a great first draft of the needed chapter/regression-test of the
+            module. This is adversarial writing.</p>
+        </li>
+      </ul>
+      <hr>
+      <h1><a name="command-line"></a>The Command Line</h1>
+      <blockquote>
+        <pre>updoc.e <i>options</i>... <i>files</i>...
+</pre>
+      </blockquote>
+      <p>The following options are planned, but not yet supported. Currently the
+        output is always directed to stdout.</p>
+      <blockquote>
+        <table cellpadding="12">
+          <tr>
+            <td>
+              <pre>-o <i>outputFileName</i></pre>
+            </td>
+            <td>Write the test results to the output file instead of stdout</td>
+          </tr>
+          <tr>
+            <td>
+              <pre>--help</pre>
+            </td>
+            <td>Prints usage information</td>
+          </tr>
+          <tr>
+            <td>
+              <pre>--quiet</pre>
+            </td>
+            <td>Prints problems but not successes</td>
+          </tr>
+        </table>
+      </blockquote>
+      <p>Following &quot;<tt>updoc.e</tt>&quot; you give a list of URLs, file
+        names, and directory names for it to check. If you give it a directory
+        name, it will check all <i>relevant</i> files in that directory tree.
+        Files not considered relevant are ignored. Updoc considers a URL or file
+        name relevant if it ends in one of the extensions it recognizes. Updoc
+        currently recognizes the following extensions:</p>
+      <blockquote>
+        <table cellpadding="12">
+          <tr>
+            <td>
+              <pre><i>filename</i>.updoc
+<i>filename</i>.emaker
+<i>filename</i>.txt </pre>
+            </td>
+            <td>Process the file as plain text</td>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>filename</i>.html
+<i>filename</i>.htm </pre>
+            </td>
+            <td>Extract text from HTML</td>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>directoryName</i></pre>
+            </td>
+            <td><a href="http://bugs.sieve.net/bugs/?func=detailbug&amp;bug_id=125426&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0" align="right"></a>Process
+              all relevant files in the directory tree.</td>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>url</i>.updoc
+<i>url</i>.emaker
+<i>url</i>.txt </pre>
+            </td>
+            <td>Process the web page as plain text</td>
+          </tr>
+          <tr>
+            <td>
+              <pre><i>url</i>.html
+<i>url</i>.htm </pre>
+            </td>
+            <td>Extract text from HTML</td>
+          </tr>
+        </table>
+      </blockquote>
+      <h2><a name="input-syntax"></a>Updoc Input Syntax</h2>
+      <p>Updoc parses plain text files, looking for an expression to evaluate.
+        A line whose first non-whitespace character is &quot;?&quot; is the first
+        line of an expression. If the expression spans multiple lines, the first
+        line starts with &quot;? &quot; and all subsequent lines start with &quot;&gt;
+        &quot;. Leading and trailing spaces are discarded.</p>
+      <p>Next, the parser looks for an <i>answer</i>: the result returned by the
+        E interpreter when the test script was written. These are the <i>original</i>
+        answers. An answer starts with &quot;# <i>keyword</i>:<i> value</i>&quot;.
+        If the answer spans multiple lines, all lines start with &quot;# &quot;.
+        A blank line follows the last line of an answer. Some answers will contain
+        run-dependent output, such as a stack trace. Updoc recognizes this output
+        and ignores it. A single expression can have multiple answers. </p>
+      <h2><a name="output"></a>Updoc Output</h2>
+      <p>After parsing the input, we have a list of test cases. Each test case
+        has an expression and its corresponding (original) answers. The expression
+        is parsed and evaluated to produce <i>new</i> answers. The new answers
+        are compared to the original, with five possible outcomes:</p>
+      <p>
+      <ul>
+        <li>New matches original -- success!</li>
+        <li>New answer is missing</li>
+        <li>Original answer is missing</li>
+        <li>New answer and original answer differ</li>
+        <li>Syntax error: the input expression didn't successfully parse.</li>
+      </ul>
+      <p></p>
+      <p>The output starts with the file name. For each successful test case,
+        a dot is shown. For the others, the original input expression and an explanation
+        of the problem are shown. In the case of a syntax error, the rest of the
+        test cases in this test script (this individual Updoc file) are skipped
+        -- since they may not be meaningful in the absence of evaluating that
+        expression -- and Updoc proceeds to the next test script.</p>
+      <hr>
+      <h1><a name="security"></a>Security Considerations</h1>
+      <p><i><b><font color="#ff0000">Danger Danger Warning Warning</font></b></i></p>
+      <p><i><a href="http://bugs.sieve.net/bugs/?func=detailbug&amp;bug_id=125387&amp;group_id=16380"><img src="../../images/bug3.gif" width="34" height="47" border="0" align="right"></a></i>Updoc
+        and Elmer by default run Updoc scripts with all their user's authority
+        -- just as <tt>*.e</tt> scripts are normally run. Actually, the situation
+        is currently worse than that -- this default is the only option currently
+        provided by these programs. This means that the decision to run an Updoc
+        script must be taken exactly as seriously as the decision of run a <tt>*.e</tt>
+        script, which is to say, as seriously as the decision to install a conventional
+        program on your computer.</p>
+      <h1><a name="future"></a>Future Directions</h1>
+      <h2><a name="bugs"></a>Bugs &amp; Other Correctness Issues</h2>
+      <p><i><a href="http://bugs.sieve.net/bugs/?func=detailbug&amp;bug_id=125388&amp;group_id=16380"><img src="../../images/bug3.gif" width="34" height="47" border="0" align="right"></a></i><a name="platform-depend-bug"></a><i><b>Platform
+        dependence</b></i>. While Updoc itself is as platform independent as E
+        (which, in turn, inherits Java's platform independence), Updoc scripts
+        may be as platform dependent as E or Java programs. Worse, Updoc scripts-as-documentation
+        tend toward platform dependence, since documentation (especially for beginners)
+        needs concrete examples, that, for example, uses concrete file names on
+        the file system. It would be hard to rewrite the chapter &quot;<a href="../intro/finding-text.html">Example:
+        Finding Text</a>&quot; from the E tutorial to be platform independent
+        while being just as readable. This issue is best addressed while also
+        addressing the above security issue, since the solutions will share much
+        mechanism. Until this issue is fixed, the existing Updoc test scripts
+        in the E source tree and on the erights.org website make no claims of
+        platform independence.</p>
+      <p><i><a href="http://bugs.sieve.net/bugs/?func=detailbug&amp;bug_id=125389&amp;group_id=16380"><font color="#009900"><img src="../../images/bug-check.gif" width="34" height="47" border="0" align="right"></font></a></i><font color="#009900"><a name="modularity-bug"></a>Internal
+        <b><i>modularity</i></b>. As with many E programs, Updoc was prototyped
+        as one long <tt>*.e</tt> file (&quot;<tt>updoc.e</tt>&quot;). Following
+        this prototyping phase, most of the logic of an E program should be moved
+        into <tt>*.emaker</tt> files, leaving the <tt>*.e</tt> file as a small
+        readable script that does little but evaluate the EMakers and authorize
+        (grant least authorities to) their instances. This allows one to understand
+        what authority may be used (or abused) by a utility by reading the (hopefully
+        small) <tt>*.e</tt> file, without needing to read the <tt>*.emaker</tt>
+        files. <font color="#FF0000">(**Move this explanation somewhere else and
+        link to it.)</font> Updoc has not yet entered this post-prototyping phase
+        -- it has not yet been separated into <tt>*.emaker</tt> files.</font></p>
+      <p><i><a href="http://bugs.sieve.net/bugs/?func=detailbug&amp;bug_id=125390&amp;group_id=16380"><img src="../../images/bug3.gif" width="34" height="47" border="0" align="right"></a></i><a name="cmd-line-bug"></a>We
+        need to implement the <i><b>command line options</b></i> explained <a href="#command-line">above</a>.</p>
+      <p><font color="#009900"><i><a href="http://bugs.sieve.net/bugs/?func=detailbug&amp;bug_id=125391&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0" align="right"></a></i><a name="interp-bug"></a>Which
+        <b><i>interpreter</i></b>?. Currently, each test script is evaluated in
+        an environment (scope) in which &quot;<tt>interp</tt>&quot;, &quot;<tt>stdout</tt>&quot;,
+        and &quot;<tt>stderr</tt>&quot; are bound to the same values as for Updoc
+        itself. Instead, each test script should be given a new interpreter, new
+        output streams, and a new instance of the trace system. The output sent
+        to the streams and to this trace instance by each test case should be
+        treated as additional answers produced by that test case, to be compared
+        along with the others.</font></p>
+      <p><font color="#009900"><i><a href="http://bugs.sieve.net/bugs/?func=detailbug&amp;bug_id=125392&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0" align="right"></a><b><a name="delay-bug"></a>Delaying
+        test cases</b></i>. The &quot;<tt>interp</tt>&quot; object seen by an
+        Updoc test case does not yet support the messages &quot;<tt>blockAtTop()</tt>&quot;
+        and &quot;<tt>continueAtTop()</tt>&quot;. These are currently supported
+        by the E interpreter, but need to be supported by Updoc as well, so that
+        a test script can pause between a test case that is supposed to cause
+        some effect to eventually happen and a test case written assuming the
+        effect has happened (such as a promise being resolved).</font></p>
+      <p><font color="#009900"><i><b></b></i></font><i><a href="http://bugs.sieve.net/bugs/?func=detailbug&amp;bug_id=125393&amp;group_id=16380"><img src="../../images/bug3.gif" width="34" height="47" border="0" align="right"></a><b><a name="nest-exit-bug"></a>Nesting
+        exiting</b></i>. The &quot;<tt>interp</tt>&quot; object seen by an Updoc
+        test case also needs to support the message &quot;<tt>exitAtTop(exitCode)</tt>&quot;,
+        as does the normal E interpreter. E programs should call this, rather
+        than &quot;<tt>System.exit(exitCode)</tt>&quot;, in order to terminate
+        early. By using &quot;<tt>interp.exitAtTop(exitCode)</tt>&quot;, an E
+        program being run by another E program (as with an Updoc test script)
+        may exit its nested interpreter without causing the JVM to exit. <font color="#ff0000">(**
+        Put this issue into documentation of the normal E interpreter.)</font>
+        <i>( Mostly fixed. )</i></p>
+      <p><i><a href="http://bugs.sieve.net/bugs/?func=detailbug&amp;bug_id=125394&amp;group_id=16380"><img src="../../images/bug3.gif" width="34" height="47" border="0" align="right"></a><b><a name="exitcode-bug"></a>Updoc's
+        own exitCode</b></i>. Updoc should remember whether any problems were
+        encountered during an Updoc run, or if instead all the test cases passed.
+        Only if all the cases passed should Updoc exit with an exitCode of 0.
+        Otherwise it should exit with a non-zero exitCode, indicating a problem.
+        This would allow shell scripts and makefiles to test or stop on a test
+        failure. (Currently, Updoc always returns an exitCode of 0.) Of course,
+        once the E interpreter supports <tt>exitAtTop(exitCode)</tt>, Updoc should
+        use it for this purpose.</p>
+      <p><font color="#009900"><i><a href="http://bugs.sieve.net/bugs/?func=detailbug&amp;bug_id=125395&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0" align="right"></a></i><a name="syntax-error-bug"></a>An
+        Updoc <b><i>syntax error</i></b> report doesn't yet conform to Updoc's
+        output format. In addition, because of the order in which Updoc processes
+        a test script, if a script contains a syntax error, no feedback from earlier
+        test cases in that script will be seen.</font></p>
+      <p><font color="#009900"><i><a href="http://bugs.sieve.net/bugs/?func=detailbug&amp;bug_id=125396&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0" align="right"></a><b><a name="continuation-bug"></a>Line
+        continuation</b></i>. Updoc should understand &quot;\&quot; at the end
+        of a line in the original answer to mean, ignore the following newline.
+        This would let answers in documentation (such as the ClassCastException
+        in &quot;<a href="../blocks/defVar.html">Defining Variables</a>&quot;)
+        to be broken into shorter lines for readability.</font></p>
+      <h2><a name="features"></a>Coming Attractions</h2>
+      <p><i><a href="http://bugs.sieve.net/bugs/?func=detailbug&amp;bug_id=125397&amp;group_id=16380"><img src="../../images/bug3.gif" width="34" height="47" border="0" align="right"></a></i><a name="matching-feature"></a><i><b>Pattern
+        matching</b></i>. Sometimes the output from one run to the next differs
+        in inconsequential ways. Sometimes the output contains more detail than
+        needs to be shown, and would make the text script less readable as documentation.
+        For both these purposes, Updoc should understand alternate keywords for
+        the original answers, to signal that the text of the original answer is
+        not literal text, but rather is a pattern to be matched against the corresponding
+        new answer. For example, in &quot;<a href="../blocks/forKVExpr.html">Iterating
+        by Key-Value Pairs</a>&quot;, the test case which defines the variable
+        &quot;<tt>capitals</tt>&quot; shows an answer with keyword &quot;<tt>match:</tt>&quot;.
+        This should match against an actual &quot;<tt>value:</tt>&quot; answer
+        by treating the &quot;<tt>...</tt>&quot; in the match-answer as a wildcard.</p>
+      <p><i><a href="http://bugs.sieve.net/bugs/?func=detailbug&amp;bug_id=125398&amp;group_id=16380"><img src="../../images/bug3.gif" width="34" height="47" border="0" align="right"></a><b><a name="elmer-feature"></a>Elmer
+        integration</b></i>. For each test case that fails you probably want to
+        find the file it's in, find the expression that failed, and fix the problem.
+        Interactively locating and fixing problems in scripts will be supported
+        when Updoc's functionality is integrated into Elmer.</p>
+      <p><i><a href="http://bugs.sieve.net/bugs/?func=detailbug&amp;bug_id=125399&amp;group_id=16380"><img src="../../images/bug3.gif" width="34" height="47" border="0" align="right"></a><b><a name="coverage-feature"></a>Interface
+        coverage</b></i>. An individual Updoc file will often be an explanation
+        of the API for a given abstraction, or a closely related set of abstractions.
+        Chapters in programming manuals often begin with a broad statement of
+        &quot;What will be covered in this chapter&quot;, and end with a detailed
+        &quot;What was covered in this chapter&quot;. We expect Updoc to provide
+        testable versions of these. For example, this chapter on the Vector class
+        might begin with something like </p>
+      <blockquote>
+        <pre>&quot;? def coverage := covering([&lt;unsafe:java.util.Vector&gt;])&quot;</pre>
+      </blockquote>
+      <p>This both tells the reader what abstraction is being covered, and intitializes
+        internal coverage flags, which are already present in ELib for this purpose.
+        At the end of this chapter might be a corresponding </p>
+      <blockquote>
+        <pre>&quot;? coverage.covered()&quot;</pre>
+      </blockquote>
+      <p>whose value would say what portions of Vector's public interface was
+        and wasn't exercised during the running of this test script. This both
+        tells the user what's been demonstrated and left out by this chapter,
+        and, because this coverage report would be shown as an Updoc answer, it
+        is automatically rechecked for accuracy.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">tools</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="causeway/index.html" title="Back to: Causeway: Message-oriented distributed debugging"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Causeway: Message-oriented distributed debugging" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="graph/index.html" title="On to: Doubly Linked Digraph"><img src="../../images/next.gif" width="64" height="32" alt="On to: Doubly Linked Digraph" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

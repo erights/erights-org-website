@@ -1,0 +1,12 @@
+? makeout
+P capability/overview.html
+P capability/pnml.html
+P capability/ode/ode-bearer.html
+P capability/ode/ode-capabilities.html
+P capability/ode/ode-objects.html
+P capability/ode/ode-protocol.html
+P concurrency/msg-passing.html
+P concurrency/partial-order.html
+P concurrency/turns.html
+P distrib/captp/index.html
+P distrib/captp/unibus.html

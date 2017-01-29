@@ -1,0 +1,699 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  
+  "http://www.w3.org/TR/html4/loose.dtd">  
+<html > 
+<head><title></title> 
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"> 
+<meta name="generator" content="TeX4ht (http://www.cse.ohio-state.edu/~gurari/TeX4ht/mn.html)"> 
+<meta name="originator" content="TeX4ht (http://www.cse.ohio-state.edu/~gurari/TeX4ht/mn.html)"> 
+<!-- html --> 
+<meta name="src" content="markm-thesis.tex"> 
+<meta name="date" content="2007-04-10 20:24:00"> 
+<link rel="stylesheet" type="text/css" href="markm-thesis.css"> 
+</head><body 
+>
+<!--l. 184--><p class="noindent">
+                                                                                   
+                                                                                   
+<div class="center" 
+>
+<!--l. 184--><p class="noindent">
+ <span 
+class="cmbx-12">Robust Composition:</span><br>
+<span 
+class="cmbx-12">Towards a Unified Approach to Access Control and Concurrency Control</span>
+<!--l. 184--><p class="noindent">by
+<div class="tabular"><table class="tabular" 
+cellspacing="0" cellpadding="0"  
+frame="void" id="TBL-1-" ><colgroup id="TBL-1-1g"><col 
+id="TBL-1-1"></colgroup><tr  
+ valign="baseline" id="TBL-1-1-"><td  align="center" style="white-space:nowrap; text-align:center;" id="TBL-1-1-1"  
+class="td11"><span 
+class="cmr-12">Mark Samuel Miller</span></td>
+</tr></table>
+</div>
+<!--l. 184--><p class="noindent">A dissertation&nbsp;submitted to Johns Hopkins University in conformity with the requirements for
+the degree of Doctor of Philosophy.
+<!--l. 184--><p class="noindent">Baltimore, Maryland
+<!--l. 184--><p class="noindent">May, 2006
+<!--l. 184--><p class="noindent">Copyright <span 
+class="cmsy-10x-x-109">&#169;</span>&nbsp;2006,&nbsp;Mark Samuel Miller.&nbsp;All rights reserved.
+<!--l. 184--><p class="noindent">Permission is hereby granted to make and distribute verbatim copies of this document without
+royalty or fee. Permission is granted to quote excerpts from this documented provided the original
+source is properly cited.</div>
+                                                                                   
+                                                                                   
+                                                                                   
+                                                                                   
+<!--l. 184--><p class="noindent">
+                                                                                   
+                                                                                   
+                                                                                   
+                                                                                   
+<!--l. 1--><p class="noindent"><span 
+class="cmbx-12x-x-207">Abstract</span>
+<a 
+ id="Q1-1-0"></a>
+<!--l. 3--><p class="indent">   <span 
+class="cmr-12">When separately written programs are composed so that they may cooperate, they may</span>
+<span 
+class="cmr-12">instead destructively interfere in unanticipated ways. These hazards limit the</span>
+<span 
+class="cmr-12">scale and functionality of the software systems we can successfully compose. This</span>
+<span 
+class="cmr-12">dissertation presents a framework for enabling those interactions between components</span>
+<span 
+class="cmr-12">needed for the cooperation we intend, while minimizing the hazards of destructive</span>
+<span 
+class="cmr-12">interference.</span>
+<!--l. 11--><p class="indent">   <span 
+class="cmr-12">Great progress on the composition problem has been made within the object paradigm,</span>
+<span 
+class="cmr-12">chiefly in the context of sequential, single-machine programming among benign</span>
+<span 
+class="cmr-12">components. We show how to extend this success to support robust composition of</span>
+<span 
+class="cmr-12">concurrent and potentially malicious components distributed over potentially malicious</span>
+<span 
+class="cmr-12">machines. We present E, a distributed, persistent, secure programming language, and</span>
+<span 
+class="cmr-12">CapDesk, a virus-safe desktop built in E, as embodiments of the techniques we</span>
+<span 
+class="cmr-12">explain.</span>
+<!--l. 27--><p class="noindent"><span 
+class="cmbx-12">Advisor: </span><span 
+class="cmr-12">Jonathan S. Shapiro, Ph.D.</span>
+<br class="newline"><span 
+class="cmbx-12">Readers: </span><span 
+class="cmr-12">Scott Smith, Ph.D., Yair Amir, Ph.D.</span>
+                                                                                   
+                                                                                   
+<!--l. 189--><p class="indent">
+                                                                                   
+                                                                                   
+<!--l. 189--><p class="indent">
+                                                                                   
+                                                                                   
+<div class="center" 
+>
+<!--l. 191--><p class="noindent">
+ This dissertation is dedicated to the number &#8220;3469&#8221; and the letter &#8220;E&#8221;.</div>
+                                                                                   
+                                                                                   
+                                                                                   
+                                                                                   
+<!--l. 1--><p class="indent">
+                                                                                   
+                                                                                   
+<!--l. 1--><p class="noindent"><span 
+class="cmbx-12x-x-207">Acknowledgements</span>
+<a 
+ id="Q1-1-0"></a>
+<!--l. 3--><p class="indent">   <span 
+class="cmr-12">Jonathan Shapiro, my advisor, for encouraging me to continue this work in an academic</span>
+<span 
+class="cmr-12">setting, and for providing insight, encouragement, and support way beyond the call of any</span>
+<span 
+class="cmr-12">duty.</span>
+<!--l. 7--><p class="indent">   <span 
+class="cmr-12">Terry Stanley, for her patient support, encouragement, and enthusiam for this</span>
+<span 
+class="cmr-12">project.</span>
+<!--l. 10--><p class="indent">   <span 
+class="cmr-12">My parents, Ann and Bernard Miller. Knowing the naches they would feel, helped</span>
+<span 
+class="cmr-12">motivate me to complete this dissertation (&#8220;Naches&#8221; is approximately &#8220;reflected</span>
+<span 
+class="cmr-12">pride&#8221;).</span>
+<!--l. 14--><p class="indent">   <span 
+class="cmr-12">Hewlett-Packard Laboratories for supporting portions of this research, and Alan Karp</span>
+<span 
+class="cmr-12">for helping to arrange this.</span>
+<!--l. 17--><p class="indent">   <span 
+class="cmr-12">Combex and Henry Boreen for investing in these ideas. I still hope to see this</span>
+<span 
+class="cmr-12">investment pay off.</span>
+<!--l. 20--><p class="indent">   <span 
+class="cmr-12">The Defense Advanced Research Projects Agency for sponsoring the security review of</span>
+<span 
+class="cmr-12">E, CapDesk, and the DarpaBrowser </span><span class="cite"><span 
+class="cmr-12">[</span><a 
+href="#Xdarpareview"><span 
+class="cmr-12">WT02</span></a><span 
+class="cmr-12">]</span></span><span 
+class="cmr-12">.</span>
+<!--l. 24--><p class="indent">   <span 
+class="cmr-12">Lauren Williams for rescue from crisis. I don&#8217;t know what would have happened without</span>
+<span 
+class="cmr-12">your help.</span>
+<!--l. 27--><p class="indent">   <span 
+class="cmr-12">The software systems explained in this dissertation are the results of collaborative</span>
+<span 
+class="cmr-12">efforts starting at Electric Communities, Inc. and continuing with the e-lang online</span>
+<span 
+class="cmr-12">community. Since the contributors are many and changing, they are accurately documented</span>
+<span 
+class="cmr-12">only by navigation from </span><a 
+href="http://erights.org" ><span 
+class="cmtt-12">erights.org</span></a><span 
+class="cmr-12">. Here, I&#8217;d like to single out and express my gratitude</span>
+<span 
+class="cmr-12">specifically to E&#8217;s most creative and prolific user, Marc Stiegler. He is the creator and</span>
+<span 
+class="cmr-12">primary developer of the systems documented in Part</span><span 
+class="cmr-12">&nbsp;</span><a 
+href="#x1-258r4"><span 
+class="cmr-12">IV</span><!--tex4ht:ref: part:robust --></a><span 
+class="cmr-12">: CapDesk, Polaris, and the</span>
+<span 
+class="cmr-12">DarpaBrowser. Without his contributions, the value of E would have remained inaccessibly</span>
+<span 
+class="cmr-12">abstract.</span>
+<!--l. 38--><p class="indent">   <span 
+class="cmr-12">This dissertation borrows liberally from several of my previous papers</span>
+<span class="cite"><span 
+class="cmr-12">[</span><a 
+href="#Xmiller:ode"><span 
+class="cmr-12">MMF00</span></a><span 
+class="cmr-12">,</span><span 
+class="cmr-12">&nbsp;</span><a 
+href="#Xmiller:myths"><span 
+class="cmr-12">MYS03</span></a><span 
+class="cmr-12">,</span><span 
+class="cmr-12">&nbsp;</span><a 
+href="#Xmiller:paradigm"><span 
+class="cmr-12">MS03</span></a><span 
+class="cmr-12">,</span><span 
+class="cmr-12">&nbsp;</span><a 
+href="#Xmiller:struct-auth"><span 
+class="cmr-12">MTS04</span></a><span 
+class="cmr-12">,</span><span 
+class="cmr-12">&nbsp;</span><a 
+href="#Xmiller:strangers"><span 
+class="cmr-12">MTS05</span></a><span 
+class="cmr-12">]</span></span><span 
+class="cmr-12">. Without further attribution, I&#8217;d like to</span>
+<span 
+class="cmr-12">especially thank my co-authors on these papers: Bill Frantz, Chip Morningstar, Jonathan</span>
+<span 
+class="cmr-12">Shapiro, E. Dean Tribble, Bill Tulloh, and Ka-Ping Yee. I cannot hope to enumerate all</span>
+<span 
+class="cmr-12">their contributions to the ideas presented here.</span>
+<!--l. 51--><p class="indent">   <span 
+class="cmr-12">I&#8217;d also like to thank again all those who contributed to these prior papers: Yair Amir,</span>
+<span 
+class="cmr-12">Paul Baclace, Darius Bacon, Howie Baetjer, Hans Boehm, Dan Bornstein, Per Brand, Marc</span>
+<span 
+class="cmr-12">&#8220;Lucky Green&#8221; Briceno, Michael Butler, Tyler Close, John Corbett, M. Scott Doerrie, Jed</span>
+<span 
+class="cmr-12">Donnelley, K. Eric Drexler, Ian Grigg, Norm Hardy, Chris Hibbert, Jack High, Tad Hogg,</span>
+                                                                                   
+                                                                                   
+<span 
+class="cmr-12">David Hopwood, Jim Hopwood, Ted Kaehler, Ken Kahn, Piotr Kaminski, Alan Karp,</span>
+<span 
+class="cmr-12">Terence Kelly, Lorens Kockum, Matej Kosik, Kevin Lacobie, Charles Landau, Jon Leonard,</span>
+<span 
+class="cmr-12">Mark Lillibridge, Brian Marick, Patrick McGeer, Eric Messick, Greg Nelson, Eric</span>
+<span 
+class="cmr-12">Northup, Constantine Plotnikov, Jonathan Rees, Kevin Reid, Matthew Roller, Vijay</span>
+<span 
+class="cmr-12">Saraswat, Christian Scheideler, Scott Smith, Michael Sperber, Fred Spiessens,</span>
+<span 
+class="cmr-12">Swaroop Sridhar, Terry Stanley, Marc Stiegler, Nick Szabo, Kazunori Ueda, David</span>
+<span 
+class="cmr-12">Wagner, Bryce &#8220;Zooko&#8221; Wilcox-O&#8217;Hearn, Steve Witham, and the e-lang and cap-talk</span>
+<span 
+class="cmr-12">communities.</span>
+<!--l. 108--><p class="indent">   <span 
+class="cmr-12">Thanks to Ka-Ping Yee and David Hopwood for a wide variety of assistance. They</span>
+<span 
+class="cmr-12">reviewed numerous drafts, contributed extensive and deep technical feedback, clarifying</span>
+<span 
+class="cmr-12">rephrasings, crisp illustrations, and moral support. Ka-Ping Yee contributed Figures</span><span 
+class="cmr-12">&nbsp;</span><a 
+href="#x1-197r2"><span 
+class="cmr-12">14.2</span><!--tex4ht:ref: fig:stackvat --></a>
+<span 
+class="cmr-12">(p.</span><span 
+class="cmr-12">&nbsp;</span><a 
+href="#x1-197r2"><span 
+class="cmr-12">168</span><!--tex4ht:ref: fig:stackvat --></a><span 
+class="cmr-12">), </span><a 
+href="#x1-201r3"><span 
+class="cmr-12">14.3</span><!--tex4ht:ref: fig:2vat --></a> <span 
+class="cmr-12">(p.</span><span 
+class="cmr-12">&nbsp;</span><a 
+href="#x1-201r3"><span 
+class="cmr-12">171</span><!--tex4ht:ref: fig:2vat --></a><span 
+class="cmr-12">), </span><a 
+href="#x1-215r1"><span 
+class="cmr-12">16.1</span><!--tex4ht:ref: fig:pipeline --></a> <span 
+class="cmr-12">(p.</span><span 
+class="cmr-12">&nbsp;</span><a 
+href="#x1-215r1"><span 
+class="cmr-12">184</span><!--tex4ht:ref: fig:pipeline --></a><span 
+class="cmr-12">), and</span><span 
+class="cmr-12">&nbsp;</span><a 
+href="#x1-224r1"><span 
+class="cmr-12">17.1</span><!--tex4ht:ref: fig:refstates --></a> <span 
+class="cmr-12">(p.</span><span 
+class="cmr-12">&nbsp;</span><a 
+href="#x1-224r1"><span 
+class="cmr-12">191</span><!--tex4ht:ref: fig:refstates --></a><span 
+class="cmr-12">) with input from the e-lang</span>
+<span 
+class="cmr-12">community. Thanks to Terry Stanley for suggesting the listener pattern and purchase-order</span>
+<span 
+class="cmr-12">examples. Thanks to Marc Stiegler for the membrane example shown in Figure</span><span 
+class="cmr-12">&nbsp;</span><a 
+href="#x1-140r3"><span 
+class="cmr-12">9.3</span><!--tex4ht:ref: ecode:makeMembrane --></a>
+<span 
+class="cmr-12">(p.</span><span 
+class="cmr-12">&nbsp;</span><a 
+href="#x1-140r3"><span 
+class="cmr-12">113</span><!--tex4ht:ref: ecode:makeMembrane --></a><span 
+class="cmr-12">). Thanks to Darius Bacon for the promise pipelining example shown in</span>
+<span 
+class="cmr-12">Figure</span><span 
+class="cmr-12">&nbsp;</span><a 
+href="#x1-215r1"><span 
+class="cmr-12">16.1</span><!--tex4ht:ref: fig:pipeline --></a> <span 
+class="cmr-12">(p.</span><span 
+class="cmr-12">&nbsp;</span><a 
+href="#x1-215r1"><span 
+class="cmr-12">184</span><!--tex4ht:ref: fig:pipeline --></a><span 
+class="cmr-12">). Thanks to Mark Seaborn for suggesting that the when-catch</span>
+<span 
+class="cmr-12">expression evaluate to a promise for its handler&#8217;s result, as explained in Section</span><span 
+class="cmr-12">&nbsp;</span><a 
+href="#x1-239r1"><span 
+class="cmr-12">18.1</span><!--tex4ht:ref: sec:ev-ctl-flow --></a><span 
+class="cmr-12">.</span>
+<span 
+class="cmr-12">Thanks to the Internet Assigned Numbers Authority, for choosing the perfect port</span>
+<span 
+class="cmr-12">number for Pluribus on their own. Thanks to Norm Hardy for bringing to my</span>
+<span 
+class="cmr-12">attention the relationship between knowledge and authority in computational</span>
+<span 
+class="cmr-12">systems.</span>
+<!--l. 136--><p class="indent">   <span 
+class="cmr-12">For helpful suggestions regarding the dissertation itself, I thank Yair Amir,</span>
+<span 
+class="cmr-12">Tyler Close, M. Scott Doerrie, K. Eric Drexler, Bill Frantz, Norm Hardy, Chris</span>
+<span 
+class="cmr-12">Hibbert, Ken Kahn, Alan Karp, Patrick McGeer, Chip Morningstar, Eric Northup,</span>
+<span 
+class="cmr-12">Jonathan Shapiro, Matthew Roller, Scott Smith, Mark Smotherman, Swaroop</span>
+<span 
+class="cmr-12">Sridhar, Terry Stanley, Marc Stiegler, E. Dean Tribble, Bill Tulloh, and Lauren</span>
+<span 
+class="cmr-12">Williams.</span>
+<!--l. 160--><p class="indent">   <span 
+class="cmr-12">I am eternally grateful to the board of Electric Communities for open sourcing E when</span>
+<span 
+class="cmr-12">their business plans changed.</span>
+<!--l. 163--><p class="indent">   <span 
+class="cmr-12">Thanks to Kevin Reid and E. Dean Tribble for keeping the E development process alive</span>
+<span 
+class="cmr-12">and well while I spent time on this dissertation.</span>
+                                                                                   
+                                                                                   
+<!--l. 201--><p class="noindent"><span 
+class="cmbx-12x-x-207">Contents</span>
+                                                                                   
+                                                                                   
+<!--l. 204--><p class="indent">
+                                                                                   
+                                                                                   
+<!--l. 204--><p class="noindent"><span 
+class="cmbx-12x-x-207">List</span>
+<span 
+class="cmbx-12x-x-207">of</span>
+<span 
+class="cmbx-12x-x-207">Tables</span>
+<a 
+ id="Q1-1-0"></a>
+                                                                                   
+                                                                                   
+<!--l. 207--><p class="indent">
+                                                                                   
+                                                                                   
+<!--l. 207--><p class="noindent"><span 
+class="cmbx-12x-x-207">List</span>
+<span 
+class="cmbx-12x-x-207">of</span>
+<span 
+class="cmbx-12x-x-207">Figures</span>
+<a 
+ id="Q1-1-0"></a>
+                                                                                   
+                                                                                   
+                                                                                   
+                                                                                   
+<!--l. 1--><p class="indent">
+                                                                                   
+                                                                                   
+<a 
+ id="x1-2r1"></a>
+<a 
+ id="Q1-1-0"></a>
+<!--l. 1--><p class="noindent"><span 
+class="cmbx-12x-x-172">Chapter</span>
+<span 
+class="cmbx-12x-x-172">1</span>
+<!--l. 1--><p class="noindent"><span 
+class="cmbx-12x-x-207">Introduction</span>
+<!--l. 4--><p class="indent">   When separately written programs are composed so that they may cooperate, they may
+instead destructively interfere in unanticipated ways. These hazards limit the scale and
+functionality of the software systems we can successfully compose. This dissertation presents a
+framework--a computational model and a set of design rules--for enabling those interactions
+between components needed for the cooperation we intend, while minimizing the hazards of
+destructive interference.
+<!--l. 13--><p class="indent">   Most of the progress to date on the composition problem has been made in the context of
+sequential, single-machine programming among benign components. Within this limited
+context, object programming supports composition well. This dissertation explains and
+builds on this success, showing how to extend the object paradigm to support robust
+composition of concurrent and potentially malicious components distributed over potentially
+malicious machines. We present E, a distributed, persistent, secure programming language,
+and CapDesk, a virus-safe desktop built in E, as embodiments of the techniques we
+explain.
+<!--l. 24--><p class="indent">   As Alan Kay has suggested <span class="cite">[<a 
+href="#Xkay:ma">Kay98</a>]</span>, our explanation of the power of object
+programming will focus not on the objects themselves, but on the reference graph
+that connects them. In the object model of computation, an object can affect
+the world outside itself only by sending messages to objects it holds references
+to.<span class="footnote-mark"><a 
+href="markm-thesis2.html#fn1x1"><sup >1</sup></a></span> <a 
+ id="x1-3f1"></a> 
+The references that an object may come to hold thereby limit what effects it may cause. Our
+extensions to the object paradigm leverage this observation. References become the sole
+                                                                                   
+                                                                                   
+conveyers of (overt) inter-object causality, yielding the object-capability model of access
+control (Chapter&nbsp;<a 
+href="#x1-115r9">9<!--tex4ht:ref: chap:acc-objcap --></a>), able to support certain patterns of composition among potentially
+malicious objects. We extend the reference graph cryptographically between potentially
+mutually malicious machines, yielding a distributed cryptographic capability system
+(Chapter&nbsp;<a 
+href="#x1-93r7">7<!--tex4ht:ref: chap:con-pluribus --></a>).
+<!--l. 58--><p class="indent">   A particularly vexing set of problems in distributed systems are the issues of partial failure
+(spontaneous disconnection and crashes). The most novel contribution of this dissertation is
+the definition of a state transition semantics for distributed references that supports
+deferred communication, failure notification, and reconnection while preserving useful
+limits on causal transmission. We define a set of reference states, <span 
+class="cmti-10x-x-109">i.e.</span>, states that a
+reference may be in, and a set of associated transition rules, where the causal transmission
+properties provided by a reference depend on its state (Chapter&nbsp;<a 
+href="#x1-223r17">17<!--tex4ht:ref: chap:con-partial-failure --></a>). The resulting
+access-control and concurrency-control discipline helps us cope with the following pressing
+problems:
+     <ul class="itemize1">
+     <li class="itemize">Excessive authority which invites abuse (such as viruses and spyware),
+     </li>
+     <li class="itemize">Inconsistency caused by interleaving (concurrency),
+     </li>
+     <li class="itemize">Deadlock (though other forms of lost progress hazards remain),
+     </li>
+     <li class="itemize">Inter-machine latency, and
+     </li>
+     <li class="itemize">Partial failure (disconnects and crashes).</li></ul>
+<!--l. 80--><p class="indent">   Some prior means of addressing these problems are similar to those presented in this
+dissertation. However, these prior solutions have not been composed successfully into a framework
+for simultaneously addressing these problems. Our comparative success at realizing an integrated
+solution is due to two observations:
+     <ol  class="enumerate1" >
+     <li class="enumerate" value="1" 
+><a 
+ id="x1-5x1"></a>Both access control and concurrency control are about enabling the causality needed
+     for the inter-object cooperation we intend, while seeking to prevent those interactions
+     which might cause destructive interference. In access control, we seek to distribute
+     those access rights needed for the job at hand, while limiting the distribution of access
+     rights that would enable mischief. In concurrency control, we seek to enable those
+     interleavings needed for continued progress, while preventing those interleavings that
+     would cause inconsistency.
+     </li>
+     <li class="enumerate" value="2" 
+><a 
+ id="x1-7x2"></a>References are already the natural means for enabling inter-object causality, so a
+     natural and powerful means of limiting inter-object causality is to restrict the causal
+     transmission properties provided by references.</li></ol>
+<!--l. 101--><p class="indent">   We show how the consistent application of these principles, simultaneously, at multiple scales
+of composition, results in a multiplicative reduction in overall systemic vulnerability to plan
+interference.
+                                                                                   
+                                                                                   
+<a 
+ id="x1-8r1"></a>
+<!--l. 107--><p class="noindent"><span 
+class="cmbx-12x-x-120">1.1</span>   <span 
+class="cmbx-12x-x-120">Organization of this Dissertation</span>
+<a 
+ id="Q1-1-0"></a>
+<!--l. 109--><p class="indent">   Part&nbsp;<a 
+href="#x1-31r1">I<!--tex4ht:ref: part:compose --></a> explains the <span 
+class="cmti-10x-x-109">Software Composition Problem</span>, and how object programming already
+helps address it under local, sequential, and benign conditions. We introduce those compositional
+forms of component robustness needed to extend the object paradigm beyond these limits. We
+introduce a subset of the E language, and a simplified form of Pluribus, E&#8217;s distributed object
+protocol. The rest of the dissertation uses E examples to illustrate how to achieve some of these
+forms of robustness.
+<!--l. 118--><p class="indent">   Part&nbsp;<a 
+href="#x1-103r2">II<!--tex4ht:ref: part:access --></a>, <span 
+class="cmti-10x-x-109">Access Control</span>, explores the consequences of limiting inter-object (overt)
+causality to occur solely by means of messages sent on references. By explaining the role of
+<span 
+class="cmti-10x-x-109">access abstractions</span>, we demonstrate that the resulting access control model is more
+expressive than much of the prior literature would suggest. In this part, we extend our
+attention to potentially malicious components, though still in a sequential and local
+context.
+<!--l. 127--><p class="indent">   Part&nbsp;<a 
+href="#x1-176r3">III<!--tex4ht:ref: part:concurrency --></a>, <span 
+class="cmti-10x-x-109">Concurrency Control</span>, extends our ambitions to distributed systems. Separate
+machines proceed concurrently, interact across barriers of large latencies and partial failure, and
+encounter each other&#8217;s misbehavior. Each of these successive problems motivates a further
+elaboration of our reference states and transition rules, until we have the complete picture, shown
+in Figure&nbsp;<a 
+href="#x1-224r1">17.1<!--tex4ht:ref: fig:refstates --></a> (p.&nbsp;<a 
+href="#x1-224r1">191<!--tex4ht:ref: fig:refstates --></a>).
+<!--l. 135--><p class="indent">   The above parts provide a micro analysis of compositional robustness, in which small code
+examples illustrate the interaction of individual objects, references, and messages. By themselves
+they demonstrate only increased robustness &#8220;in the small.&#8221;
+<!--l. 140--><p class="indent">   Part&nbsp;<a 
+href="#x1-258r4">IV<!--tex4ht:ref: part:robust --></a>, <span 
+class="cmti-10x-x-109">Emergent Robustness</span>, takes us on a macro tour through CapDesk, a proof of concept
+system built in E. It explains how the potential damage caused by bugs or malice are often kept
+from propagating along the reference graph. By examining patterns of susceptibility to plan
+interference across different scales of composition, we come to understand the degree of
+robustness practically achievable &#8220;in the large,&#8221; as well as the remaining limits to this
+robustness.
+<!--l. 149--><p class="indent">   Part&nbsp;<a 
+href="#x1-293r5">V<!--tex4ht:ref: part:related --></a> discusses <span 
+class="cmti-10x-x-109">Related Work</span>, including how these reference-state rules bridge the gap
+between the network-as-metaphor view of the early Smalltalk and the network-transparency
+ambitions of Actors. In addition, many chapters end with notes on related work specific to that
+chapter.
+                                                                                   
+                                                                                   
+                                                                                   
+                                                                                   
+<a 
+ id="x1-9r2"></a>
+<a 
+ id="Q1-1-0"></a>
+<!--l. 1--><p class="noindent"><span 
+class="cmbx-12x-x-172">Chapter</span>
+<span 
+class="cmbx-12x-x-172">2</span>
+<!--l. 1--><p class="noindent"><span 
+class="cmbx-12x-x-207">Approach</span>
+<span 
+class="cmbx-12x-x-207">and</span>
+<span 
+class="cmbx-12x-x-207">Contributions</span>
+<!--l. 3--><p class="indent">   This chapter provides a preview of topics developed in the rest of the dissertation, with
+forward references to chapters where each is explained. At the end of those chapters are
+summaries of related work. Further related work appears in Part&nbsp;<a 
+href="#x1-293r5">V<!--tex4ht:ref: part:related --></a>.
+<a 
+ id="x1-10r1"></a>
+   <span 
+class="cmbx-12x-x-120">2.1</span>   <span 
+class="cmbx-12x-x-120">Unattenuated Composition</span>
+<a 
+ id="Q1-1-0"></a>
+<!--l. 11--><p class="noindent"><hr class="figure"><div class="figure" 
+><table class="figure"><tr class="figure"><td class="figure" 
+>
+                                                                                   
+                                                                                   
+                                                                                   
+                                                                                   
+   <div  
+class="centerline">                         <img 
+src="markm-thesis0x.png" alt="PIC" class="graphics" width="141.52875pt" height="92.345pt" ><!--tex4ht:graphics  
+name="markm-thesis0x.png" src="granovetter.eps"  
+-->                                    </div>
+<a 
+ id="x1-11r1"></a>
+<a 
+ id="x1-12"></a>
+<span 
+class="cmbx-10x-x-109">Figure</span><span 
+class="cmbx-10x-x-109">&nbsp;2.1</span>: Unattenuated Composition.
+<!--l. 16--><p class="noindent"></td></tr></table></div><hr class="endfigure">
+<!--l. 18--><p class="indent">   In an object system (Figure&nbsp;<a 
+href="#x1-11r1">2.1<!--tex4ht:ref: fig:unattenuated-first --></a>), when object Alice says <span 
+class="cmtt-10x-x-109">bob.foo(carol)</span>, she invokes object
+Bob, passing as argument a reference to object Carol. By passing this reference, Alice composes
+Bob with Carol, so that their interaction will serve some purpose of Alice&#8217;s. The argument
+reference enables Bob to interact with Carol.
+<!--l. 25--><p class="indent">   By restricting inter-object causality to flow only by messages sent on references, Bob&#8217;s
+authority is limited according to the references he comes to hold. If Bob cannot interact with
+Carol unless he holds a reference to Carol, then the reference graph from the programming
+language literature <span 
+class="cmti-10x-x-109">is </span>the access graph from the access control literature. When references can
+only be transmitted and acquired by the rules of the object programming model, this
+results in the object-capability model of secure computation. This model has been
+represented by concrete designs for over forty years, but previous attempts to state
+the model abstractly have left out crucial elements. A contribution of Chapter&nbsp;<a 
+href="#x1-115r9">9<!--tex4ht:ref: chap:acc-objcap --></a> is
+to present a single model, abstract enough to describe both prior object-capability
+languages and operating systems, and concrete enough to describe authority-manipulating
+behavior.
+<!--l. 40--><p class="indent">   Alice&#8217;s purpose requires Bob and Carol to interact in certain ways. Even within the
+object-capability restrictions, this reference provides Bob unattenuated authority to access Carol:
+It gives Bob a perpetual and unconditional ability to invoke Carol&#8217;s public operations. This may
+allow interactions well beyond those that serve Alice&#8217;s purposes, including interactions
+harmful to Alice&#8217;s interests. If Alice could enable just those interactions needed for her
+purposes, then, if things go awry, the damage that follows might be usefully isolated and
+limited.
+<!--l. 50--><p class="indent">   This dissertation explores several mechanisms by which the authority Alice provides to Bob
+may be attenuated. Some of these mechanisms simply restate established practice of
+object-capability access control. A contribution of Chapter&nbsp;<a 
+href="#x1-32r3">3<!--tex4ht:ref: chap:auth-excess --></a> and Part&nbsp;<a 
+href="#x1-176r3">III<!--tex4ht:ref: part:concurrency --></a> is to view concurrency
+control issues in terms of attenuating authority as well, and to provide a unified architecture for
+attenuating authority, in which both access control and concurrency control concerns may be
+addressed together.
+<a 
+ id="x1-13r2"></a>
+<!--l. 60--><p class="noindent"><span 
+class="cmbx-12x-x-120">2.2</span>   <span 
+class="cmbx-12x-x-120">Attenuating Authority</span>
+<a 
+ id="Q1-1-0"></a>
+<!--l. 62--><p class="indent">   <hr class="figure"><div class="figure" 
+><table class="figure"><tr class="figure"><td class="figure" 
+>
+                                                                                   
+                                                                                   
+                                                                                   
+                                                                                   
+   <div  
+class="centerline">                 <img 
+src="markm-thesis1x.png" alt="PIC" class="graphics" width="219.82124pt" height="130.48749pt" ><!--tex4ht:graphics  
+name="markm-thesis1x.png" src="caretaker-alt.eps"  
+-->                          </div>
+<a 
+ id="x1-14r2"></a>
+<a 
+ id="x1-15"></a>
+<span 
+class="cmbx-10x-x-109">Figure</span><span 
+class="cmbx-10x-x-109">&nbsp;2.2</span>: Attenuating Authority.
+<!--l. 67--><p class="indent">   </td></tr></table></div><hr class="endfigure">
+<!--l. 69--><p class="indent">   In practice, programmers control access partially by manipulating the access graph, and
+partially by writing programs whose behavior attenuates the authority that flows through them.
+In Figure&nbsp;<a 
+href="#x1-14r2">2.2<!--tex4ht:ref: fig:attenuating-first --></a>, Alice attenuates Bob&#8217;s authority to Carol by interposing an access abstraction. In
+this case, the access abstraction consists of objects which forward some messages from Bob to
+Carol, where Alice controls this message-forwarding behavior. The access abstractions
+presented in Part&nbsp;<a 
+href="#x1-103r2">II<!--tex4ht:ref: part:access --></a> are idealizations drawn from existing prior systems. We are unaware of
+previous systematic presentations on the topic of access abstraction mechanisms and
+patterns.
+<!--l. 81--><p class="indent">   The prior access control literature does not provide a satisfying account of how the behavior of
+such unprivileged programs contributes to the expression of access control policy. A contribution
+of Chapter&nbsp;<a 
+href="#x1-104r8">8<!--tex4ht:ref: chap:acc-intro --></a> is to distinguish between &#8220;permission&#8221; and &#8220;authority,&#8221; to develop a taxonomy of
+computable bounds on eventual permission and authority, and to explain why &#8220;partially
+behavioral bounds on eventual authority&#8221;--the &#8220;BA&#8221; of Table&nbsp;<a 
+href="#x1-111r1">8.1<!--tex4ht:ref: tab:access-arcs --></a> (p.&nbsp;<a 
+href="#x1-111r1">96<!--tex4ht:ref: tab:access-arcs --></a>)--is needed to reason
+about many simple access abstractions.
+<a 
+ id="x1-16r3"></a>
+<!--l. 92--><p class="noindent"><span 
+class="cmbx-12x-x-120">2.3</span>   <span 
+class="cmbx-12x-x-120">Distributed Access Control</span>
+<a 
+ id="Q1-1-0"></a>
+<!--l. 94--><p class="indent">   <hr class="figure"><div class="figure" 
+><table class="figure"><tr class="figure"><td class="figure" 
+>
+                                                                                   
+                                                                                   
+                                                                                   
+                                                                                   
+   <div  
+class="centerline">           <img 
+src="markm-thesis2x.png" alt="PIC" class="graphics" width="285.065pt" height="174.6525pt" ><!--tex4ht:graphics  
+name="markm-thesis2x.png" src="pluribus-flat.eps"  
+-->                 </div>
+<a 
+ id="x1-17r3"></a>
+<a 
+ id="x1-18"></a>
+<span 
+class="cmbx-10x-x-109">Figure</span><span 
+class="cmbx-10x-x-109">&nbsp;2.3</span>: Distributed Access Control.
+<!--l. 99--><p class="indent">   </td></tr></table></div><hr class="endfigure">
+<!--l. 101--><p class="indent">   E objects are aggregated into persistent process-like units called <span 
+class="cmti-10x-x-109">vats </span>(Figure&nbsp;<a 
+href="#x1-17r3">2.3<!--tex4ht:ref: fig:pluribus-first --></a>). Inter-vat
+messages are conveyed by E&#8217;s cryptographic distributed capability protocol, Pluribus, which
+ensures that distributed object references are unforgeable and unspoofable.
+<!--l. 107--><p class="indent">   Chapter&nbsp;<a 
+href="#x1-93r7">7<!--tex4ht:ref: chap:con-pluribus --></a> presents a simplified form of Pluribus. None of the access control properties
+provided by Pluribus are novel. Protocols like Pluribus transparently extend the reference graph
+across machines, while cryptographically enforcing <span 
+class="cmti-10x-x-109">some </span>of the properties of the object-capability
+access control model. Section&nbsp;<a 
+href="#x1-169r5">11.5<!--tex4ht:ref: sec:acc-distrib --></a> explains several aspects of the object-capability model that
+cannot be enforced between mutually suspicious machines on open networks. Our overall system
+consists of object-capability islands sending messages to each other over a cryptographic
+capability sea. A contribution of this section is to introduce a unified account of access control in
+such a mixed system.
+<!--l. 119--><p class="indent">   E has two forms of invocation. The &#8220;<span 
+class="cmtt-10x-x-109">.</span>&#8221; in our first two diagrams is the conventional
+&#8220;immediate-call&#8221; operator. The &#8220;<span 
+class="cmtt-10x-x-109">&lt;-</span>&#8221; in Figure&nbsp;<a 
+href="#x1-17r3">2.3<!--tex4ht:ref: fig:pluribus-first --></a> is the &#8220;eventual-send&#8221; operator. Their
+differences bring us to concurrency control.
+<a 
+ id="x1-19r4"></a>
+<!--l. 126--><p class="noindent"><span 
+class="cmbx-12x-x-120">2.4</span>   <span 
+class="cmbx-12x-x-120">Distributed Concurrency Control</span>
+<a 
+ id="Q1-1-0"></a>
+<!--l. 129--><p class="indent">   E&#8217;s concurrency control is based on communicating event loops. Each vat has a heap of
+objects, a call-return stack, a queue of pending deliveries, and a single thread of control. An
+immediate-call pushes a new stack frame, transferring control there. An eventual-send enqueues a
+new pending delivery--a pair of a message and the target object to deliver it to--on the pending
+delivery queue of the vat hosting the target. A vat&#8217;s thread is a loop, dequeueing the next pending
+delivery and invoking the target with the message. Each of these invocations spawns a <span 
+class="cmti-10x-x-109">turn</span>, which
+runs to completion as a conventional sequential program, changing vat state and enqueuing new
+pending deliveries. All user-level code runs in these turns, including all state access and
+modification.
+<!--l. 142--><p class="indent">   <hr class="figure"><div class="figure" 
+><table class="figure"><tr class="figure"><td class="figure" 
+>
+                                                                                   
+                                                                                   
+                                                                                   
+
+

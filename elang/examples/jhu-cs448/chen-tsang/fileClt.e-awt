@@ -1,0 +1,435 @@
+# Project
+# Name: Yu Chen, Ming Tsang
+# Class 448
+# MSE Student
+
+pragma .disable("explicit-result-guard")
+
+def months := ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+var fileSvr := null
+var fileClt := null
+var myCurDir := "/"
+var mySvrName := ""
+
+var lscache := null
+
+def makeFlexList := <elib:tables.FlexList>
+
+def getFileSvrCap(svrName) :any {
+	return <file: `file-svr-$svrName.cap`>
+}
+
+def objFromFile(file) :any {
+	if (file.exists()) {
+    		return introducer.sturdyFromURI(file.getText()).getRcvr()
+  	} else {
+    		return null
+  	}
+}
+
+def objIntoFile(obj, file) :void {
+	file.setText(introducer.sturdyToURI(makeSturdyRef.temp(obj)))
+}
+
+def msgPane
+def listPane
+def statusPane
+
+def showlist(msg: String) :any {
+	listPane.append(msg + "\n")
+}
+
+def clearlist() :any {
+  lscache := [].asMap().diverge()
+	listPane.setText("Directory Listing:\n")
+}
+
+def showmsg(msg: String) :any {
+	msgPane.append(msg + "\n")
+}
+
+def showstatus(status: String) :any {
+	statusPane.setText(status)
+}
+
+def connectServer(svrName) :any {
+	var svr := svrName.trim()
+
+	try {
+		fileSvr := objFromFile(getFileSvrCap(svr))
+		mySvrName := svr
+		myCurDir := "/"
+		showstatus(`Working Directory - [$svr] /`)
+		showmsg(`Connected to file server $svr`)
+	} catch excuse {
+		showmsg(`Oops...$excuse`)
+		fileSvr := null
+	}
+}
+
+def substring(str: String, startp: int, endp: int) :String {
+	def buf := <import:java.lang.StringBuffer>(str)
+
+	return buf.substring(str, startp, endp)
+}
+
+def processDirectory(dirName) :any {
+	var dir := ""
+	def dirStack := [].diverge(String)
+	var sp := -1
+	var i := 0
+
+  if (dirName.size() == 0) {
+    return "/"
+  }
+
+  showmsg(dirName)
+
+	if (dirName[0] == '/') {
+		dir := dirName
+	} else {
+		dir := myCurDir + "/" + dirName
+	}
+
+  showmsg(dir)
+	
+	dir := dir.replaceAll("\\", "/")
+
+	for subdir in dir.split("/") {
+		if (subdir.size() == 0 || subdir == ".") {
+			continue
+		}
+
+		if (subdir == "..") {
+			if (sp > -1) {
+				sp := sp - 1
+			}
+		} else {
+			sp := sp + 1
+			dirStack[sp] := subdir
+		}
+	}
+
+	dir := ""
+	if (sp < 0) {
+		return "/"
+	}
+
+	while (i <= sp) {
+		dir := dir + "/" + dirStack[i]
+		i := i + 1
+	}
+
+	return dir
+}
+
+def changeDirectory(dirName) :any {
+	myCurDir := dirName
+	showmsg(`Working directory changed to $dirName`)
+	showstatus(`Working Directory - [$mySvrName] $myCurDir\`)
+}
+
+def FileClt() :any {
+
+  def sr  # Self Reference
+
+  def RemoteSelfRef {
+
+    to printMsg(message) : any {
+      showmsg(message)
+    }
+
+    to createDir(pathname) : any {
+      fileSvr <- createDir(pathname, sr)
+    }
+
+    to remove(pathname) : any {
+      fileSvr <- remove(pathname, sr)
+    }
+
+    to removeDir(pathname) : any {
+      fileSvr <- removeDir(pathname, sr)
+    }
+
+    to list(pathname) : any {
+      fileSvr <- list(pathname, sr)
+    }
+
+    to list_callback(curDir, info) : any {
+      if (curDir != myCurDir) {
+        return
+      }
+      var cnt := 0
+      while (cnt < info.size()) {
+        def filename := info[cnt]
+        if (lscache.maps(filename)) {
+          cnt := cnt + 5
+          continue
+        } else {
+          lscache[filename] := 0
+        }
+        def readWrite := info[cnt+1]
+        def type := info[cnt+2]
+        def len := info[cnt+3]
+        def time := <unsafe:java.util.Date>(info[cnt+4])
+        def row := makeFlexList.fromType(char, 100)
+        if (type == "d") {
+          row.push('+')
+        } else if (type == "f") {
+          row.push('-')
+        } else {
+          row.push('?') 
+        }
+        row.append(readWrite)
+        def x := row.size()
+        for j in x..6 {
+          row.push(' ')
+        }
+        
+        var y := 0
+        if (type == "d") {
+          row.append("<DIR>")
+        } else {
+          row.append(`$len`)
+        }
+        y := row.size()
+        for j in y..26 {
+          row.push(' ')
+        }
+        row.append(months[time.getMonth()])
+        row.push(' ')
+        def date := time.getDate()
+        if (date < 10) { row.push('0') }
+        row.append(`$date `)
+        def year := time.getYear() + 1900
+        row.append(`$year `)
+        def hour := time.getHours()
+        if (hour < 10) { row.push('0') }
+        row.append(`$hour`)
+        row.push(':')
+        def minute := time.getMinutes()
+        if (minute < 10) { row.push('0') }
+        row.append(`$minute`)
+        row.push(':')
+        def second := time.getSeconds()
+        if (second < 10) { row.push('0') }
+        row.append(`$second`)
+        def z := row.size()
+        for j in z..42 {
+          row.push(' ')
+        }
+        row.append(` $filename`)
+        showlist(row.snapshot().trim())
+        cnt := cnt + 5
+      }
+    }
+
+    to move(destPath, sourcePath) : any {
+      showmsg(`Start moving from $sourcePath to $destPath.`)
+      fileSvr <- move(destPath.trim(), sourcePath.trim(), sr)
+    }
+
+    # sourcePath must include the file name and 
+    # destPath must not include the file name
+    to upload(destPath, sourcePath) : any {
+      def file := <file: `$sourcePath`>
+      if (file.exists() && file.isFile()) {
+        showmsg(`Start uploading the file $sourcePath.`)
+        fileSvr <- upload(file.getName(), destPath.trim(), sourcePath.trim(), sr)
+      } else {
+        showmsg(`$sourcePath does not exist or $sourcePath is not a file`)
+      }    
+    }
+
+    to upload_callback(sourcePath) : any {
+      def file := <file: `$sourcePath`>
+      if (file.exists() && file.isFile()) {
+        showmsg(`Uploading the file $sourcePath.`)
+        return file.getBytes()
+      } else {
+        showmsg(`$sourcePath does not exist or $sourcePath is not a file`)
+        return null
+      }
+    }
+
+    # sourcePath must include the file name and 
+    # destPath must not include the file name
+    to download(destPath, sourcePath) : any {
+      showmsg(`Start downloading the file, $sourcePath.`)
+      fileSvr <- download(destPath.trim(), sourcePath.trim(), sr)
+    }
+
+    to download_callback(filename, destPath, contents) : any {
+      # Cannot create the root directory
+      if (destPath != "/") {
+        def dir := <file: `$destPath`>
+        # create directory if necessary
+        if (!dir.exists() || !dir.isDirectory()) {
+          dir.mkdirs(null)
+          showmsg(`The directory $destPath is created!`)
+        }
+      }
+      def file := if (destPath != "/") {<file: `$destPath/$filename`>} else {<file: `/$filename`>}
+      # create file if necessary
+      if (!file.exists() || !file.isFile()) {
+        file.createNewFile(null)
+        if (destPath != "/") {
+          showmsg(`The file $destPath/$filename is created!`)
+        } else {
+          showmsg(`The file /$filename is created!`)
+        }
+      }
+      file.setBytes(contents)
+      if (destPath != "/") {
+        showmsg(`Complete downloading the file, $destPath/$filename.`)
+      } else {
+        showmsg(`Complete downloading the file, /$filename.`)
+      }
+
+    }
+
+  }
+
+  bind sr := RemoteSelfRef
+  return RemoteSelfRef
+
+} 
+
+def processcmd(cmd: String) :any {
+	def argv := [].diverge()
+	var argc := 0
+
+	if (cmd.size() == 0) {
+		return
+	}
+	
+	for arg in cmd.split(" ") {
+		if (argc == 0) {
+			argv[0] := arg.toLowerCase()
+		} else {
+			argv[argc] := arg
+		}
+		argc := argc + 1
+	}
+
+	showmsg("> " + cmd)
+
+	if (argv[0] == "connect") {
+		if (argc < 2) {
+			showmsg("Please provide a server name")
+		} else {
+			connectServer(argv[1])
+		}
+		return
+	} else if (argv[0] == "help") {
+		showmsg("chdir [dir name]                        changes working directory")
+		showmsg("connect [server name]                   connects to specfied server")
+		showmsg("del [file names]                        removes specified files")
+		showmsg("download [remote name] [local name]     downloads specified file from server")
+		showmsg("help                                    displays this help message")
+		showmsg("list                                    list the contents of working directory")
+		showmsg("mkdir [dir names]                       creates directories")
+		showmsg("rmdir [dir names]                       removes directories and their sub-directories")
+		showmsg("move [old name] [new name]              moves files and renames files and directories")
+		showmsg("upload [local name] [remote name]       uploads specified file to server")
+    return
+	}
+
+#	if (Ref.isEventual(fileSvr) || fileSvr == null) {
+#		showmsg("You must firstly connect to a file server")
+#		return
+#	}
+
+	try {
+		if (argv[0] == "download") {
+      fileClt <- download(argv[2], processDirectory(argv[1]))
+		} else if (argv[0] == "upload") {
+      fileClt <- upload(processDirectory(argv[2]), argv[1])
+		} else if (argv[0] == "mv" || argv[0] == "move" || argv[0] == "rename") {
+      fileClt <- move(processDirectory(argv[2]), processDirectory(argv[1]))
+		} else if (argv[0] == "cd" || argv[0] == "chdir") {
+			changeDirectory(processDirectory(argv[1]))
+		} else if (argv[0] == "md" || argv[0] == "mkdir") {
+			for i in 1..!argc {
+        fileClt <- createDir(processDirectory(argv[i]))
+			}
+		} else if (argv[0] == "rd" || argv[0] == "rm" || argv[0] == "rmdir") {
+			for i in 1..!argc {
+				fileClt <- removeDir(processDirectory(argv[i]))
+			}			
+		} else if (argv[0] == "del") {
+			for i in 1..!argc {
+				fileClt <- remove(processDirectory(argv[i]))
+			}
+		} else if (argv[0] == "ls" || argv[0] == "list") {
+      clearlist()
+      fileClt <- list(processDirectory("."))
+		} else {
+			showmsg("Oops...I don't understand the command")
+		}
+	} catch excuse {
+		showmsg(`Oops...$excuse`)
+	}
+}
+
+def makeUI() :any {
+  def frame := <swing:JFrame>(`File Client`)
+
+  def cmdPane := <swing:JTextField>(" ")
+	def cmdListener {
+		to actionPerformed(cmdevent) {
+			def cmd := cmdPane.getText().trim()
+
+			for line in cmd.split("\n") {
+				processcmd(line)
+			}
+			cmdPane.setText("")
+		}
+	}
+	cmdPane.addActionListener(cmdListener)	
+
+	bind statusPane := <swing:JLabel>("Not connected")
+
+  bind listPane := <swing:JTextArea>("")
+
+	listPane.setRows(25)
+	listPane.setColumns(60)
+	listPane.setEditable(false)
+	listPane.setLineWrap(false)
+
+  bind msgPane := <swing:JTextArea>("")
+
+	msgPane.setRows(25)
+	msgPane.setColumns(40)
+	msgPane.setEditable(false)
+	msgPane.setLineWrap(false)
+
+	def scrollMsgPane := <swing:JScrollPane>(msgPane)
+	def scrollListPane := <swing:JScrollPane>(listPane)
+
+	def splitPane := <swing:JSplitPane>(1, scrollListPane, scrollMsgPane)
+  def realPane := JPanel` $statusPane
+    $splitPane.Y
+    $cmdPane`
+
+	frame.getContentPane().add(realPane)
+  def windowListener {
+    to windowClosing(winevent) {
+          interp.continueAtTop()
+    }
+    match [verb,args] {}
+  }
+  frame.addWindowListener(windowListener)
+  frame.pack()
+  frame.show()
+}
+
+makeUI()
+introducer.onTheAir()
+fileClt := FileClt()
+
+if (interp.getArgs() =~ [svrName]) {
+	connectServer(svrName)
+}
+interp.blockAtTop()

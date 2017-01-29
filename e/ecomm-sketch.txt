@@ -1,0 +1,42 @@
+Generalizing from a technique Gordie & Arturo both use in their
+respective serialization systems, the comm system's subclass of
+ObjectOutputStream does the same replaceObject() behavior on
+everything:
+
+    public Object replaceObject(Object arg) {
+        Object result;
+        While(true) {
+            //does ambassador() need any arguments?
+            result = E.call(arg, "ambassador");
+            if (result == arg) {
+                //is this the right place to put the
+                // PassByCopy check?
+                return result;
+            }
+            arg = result;
+        }
+    }
+
+This relies on ELib's CRAPI binding mechanism's feature of providing
+new methods (as seen by E.call() and E.send()) to existing java
+classes.  These are known as Sugar classes.  For example, the static
+methods in org.erights.e.elib.base.StringSugar are seen as instance methods of
+all String objects, as invoked through E.  The normal java definition
+of a method with the same name and signature will override (as seen
+through E) even a method introduced in this way.
+
+"ambassador()" is the method we need to introduce in this way.  It
+asks an object to choose a representative of itself that can travel.
+Were "ambassador()" introduced by org.erights.e.elib.prim.ObjectSugar, it would
+be a universal method that all objects respond to.  Since we don't
+want all objects to be passable, we simply avoid introducing at the
+root.  If it is sent to an innapropriate object, an exception will
+stop the serialization attempt.
+
+PassByCopy objects should be both Serializable and should return
+itself when asked for its ambassador.  PassByProxy objects should
+return a proxy object which can be copied to the other side to
+represent them.  Proxy objects themselves are not simple PassByProxy
+objects, as all sorts of other funny things need to happen with them.
+They even get encoded differently depending on whether a three-party
+handoff is occurring.

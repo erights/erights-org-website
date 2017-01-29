@@ -1,0 +1,77 @@
+From markm@cs.jhu.edu Mon Oct 31 17:44:08 2005
+Return-Path: <markm@cs.jhu.edu>
+Received: from vms044pub.verizon.net (vms044pub.verizon.net
+        [206.46.252.44]) by eros.cs.jhu.edu (8.13.4/8.13.4) with ESMTP id
+        j9VMi87X016864 for <shap@eros-os.org>; Mon, 31 Oct 2005 17:44:08 -0500
+Received: from [127.0.0.1] ([151.196.35.28]) by vms044.mailsrvcs.net (Sun
+        Java System Messaging Server 6.2-4.02 (built Sep 9 2005)) with ESMTPA id
+        <0IP800MIVXHLK8I1@vms044.mailsrvcs.net> for shap@eros-os.org; Mon, 31 Oct
+        2005 16:37:00 -0600 (CST)
+Date: Mon, 31 Oct 2005 17:36:57 -0500
+From: Mark Miller <markm@cs.jhu.edu>
+Subject: Notes from whiteboard
+To: Jonathan Shapiro <shap@eros-os.org>
+Cc: Mark Miller <erights@gmail.com>
+Message-id: <43669C89.2080908@cs.jhu.edu>
+MIME-version: 1.0
+Content-type: text/plain; charset=ISO-8859-1
+X-Accept-Language: en-us, en
+X-Enigmail-Version: 0.92.0.0
+User-Agent: Mozilla Thunderbird 1.0.6 (Windows/20050716)
+X-Spam-Checker-Version: SpamAssassin 3.0.4 (2005-06-05) on eros.cs.jhu.edu
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.6 required=5.0 tests=AWL,BAYES_00 autolearn=ham
+         version=3.0.4
+Status: O
+X-UID: 151801
+Content-Length: 1573
+X-Keywords:                                                                
+                                           
+X-Evolution-Source: imap://shap@eros.cs.jhu.edu/
+Content-Transfer-Encoding: 8bit
+
+Problem Context:
+----------------
+Constructing reliable systems is hard.
+There exist a small number of structuring design patterns {confinement,
+revocation, ...} but these are not well integrated in PLs.
+Also a set of required properties -- authority evolution.
+Within classical cap literature, design patterns for these are known.
+Caps resemble lambda calculus with side effects (LCSE).
+Proposal: Fuse LCSE into a programming model, object-caps (OC), that directly
+supports these patterns for the programmer [red: , and extend this into the
+network, concurrent domain.]
+Novelty: Closer fusion of PL semantics with classical access control models.
+? Rationalization of program behavior analysis with permission analysis in a
+common framework.
+[red: New model of ref graph (stateful refs w.r.t. msg delivery).
+New way to look at causality and units of operation (UofO).]
+
+
+2nd column
+
+Requirements (Patterns)
+Recap of cap-based systems
+Relationship between caps & LCSE
+The Fusion: OC model.
+E as reification of OC model.
+The patterns expressed in E.
+
+[red: Concurrency:
+------------------
+Issues: definition of distributed consistency.
+Achieve good failure semantics, therefore recovery.
+Low invasiveness of concurrency.
+High partial availability under disconnection.
+Problem: Existing solutions fail...
+Proposal: Slice UofO and causality in this particular way.
+! Challenge: How to capture this in a way that preserves ref-graph intuitions,
+therefore evolution of authority properties.
+Solution: Stately refs
+-----
+Worked example description.
+
+-- 
+
+    Cheers,
+    --MarkM

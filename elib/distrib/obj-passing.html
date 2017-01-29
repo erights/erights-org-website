@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Types of Object Passing</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">distrib</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="pipeline.html" title="Back to: Promise Pipelining"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Promise Pipelining" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="vattp/index.html" title="On to: Data Pluribus"><img src="../../images/next.gif" width="64" height="32" alt="On to: Data Pluribus" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Types
+              of<br>
+              Object Passing</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <h1>PassByProxy</h1>
+      <p>The default case -- an <i><b><font color="#009000">E</font></b></i> object
+        that doesn't state otherwise is PassByProxy. (However, a Java object using
+        ELib is by default not remotely passable.) PassByProxy objects are shown
+        as circles in our extended Granovetter notation. When passed between vats,
+        the remote vat receives a remote reference to the original object.</p>
+      <h1>PassByConstruction</h1>
+      <p>When a PassByConstruction object is passed between vats, it causes an
+        object to be constructed in the remote vat as its remote <i>presence</i>.
+        PassByConstruction objects are shown as rectangles in our extended Granovetter
+        notation. </p>
+      <p>These presences taken together <i>are</i> the PassByConstruction object
+        as a whole, and the original object is simply the originating presence.
+        A reference to a PassByConstruction object is always eventually a NEAR
+        reference to such a local presence of the object. An <i>available</i>
+        object is a PassByConstruction object whose presences can continue to
+        give meaningful (if degraded) service when out of contact with other presences
+        (including the originating presence).</p>
+      <h2>PassByCopy</h2>
+      <p>This is the simplest form of PassByConstruction, specified by simply
+        declaring the object to be PassByCopy. When passed, the object's contents
+        are simply serialized at the sending end and unserialized at the receiving
+        end. Each presence is an identical copy of all the others, and the presences
+        operate autonomously of the other presences.</p>
+      <p>To be PassByCopy, an object must be immutable, selfless (use value-based
+        equality, rather than having its own creation identity), and transparent
+        (not encapsulate any of its state). Beyond these restrictions, the only
+        additional semantics of declaring an object PassByCopy are that references
+        to such an object is always eventually NEAR, and therefore at least its
+        surface level use (fetching its state) is <i>available</i>. <font color="#ff0000">***
+        redundant?</font></p>
+      <h2>Partitionable Reservoirs</h2>
+      <h2>CryptoBrandMakers</h2>
+      <p>To be written. In the meantime, see e-lang email messages <a href="http://www.eros-os.org/pipermail/e-lang/2001-October/005870.html"><br>
+        Identity et al (was Re: [E-Lang] Authority -- what is its dual?)</a>,<br>
+        <a href="http://www.eros-os.org/pipermail/e-lang/1999-November/003049.html">A
+        stab at the sealer in E</a>,<br>
+        and <a href="http://www.eros-os.org/pipermail/e-lang/1999-November/003020.html">A
+        stab at the sealer in E</a>.</p>
+      <h1> Una</h1>
+      <p>To be written. In the meantime, see e-lang email messages <a href="http://www.eros-os.org/pipermail/e-lang/2001-September/005728.html"><br>
+        Migration and Una (was: E FAQ)</a> <br>
+        and <a href="http://www.eros-os.org/pipermail/e-lang/2002-April/006357.html">&quot;Objects
+        as Capabilities in Squeak&quot;</a>.</p>
+      <h3> </h3>
+      <h2>Lamport Slots</h2>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">distrib</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="pipeline.html" title="Back to: Promise Pipelining"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Promise Pipelining" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="vattp/index.html" title="On to: Data Pluribus"><img src="../../images/next.gif" width="64" height="32" alt="On to: Data Pluribus" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

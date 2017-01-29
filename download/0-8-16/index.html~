@@ -1,0 +1,609 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" -->
+
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html;CHARSET=iso-8859-1">
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>E 0.8.16h Download and Install E</TITLE>
+<!-- #EndEditable --> 
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made href="mailto:markm@caplet.com" title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<P> 
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> 
+      <P> 
+      <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> 
+            <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" valign="center" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">download</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="../0-8-15/index.html"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: E 0.8.15b Download and Install E" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><a href="windows-bin.html"><img src="../../images/first.gif" width="32" height="64" alt="1st child: E 0.8.16h: Installing on Windows" border="0"></a><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><img src="../../images/next-gray.gif" width="64" height="32"><!-- #EndEditable --></td>
+              </tr>
+            </table>
+          </TD>
+          <TD ALIGN="RIGHT"> 
+            <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b><font size="5">Download 
+              and Install</font></b><font size="5" color="#009000"><i><b><br>
+              </b></i></font><i><font color="#009000"><b>E</b></font></i><b> 0.8.16h</b><!-- #EndEditable --></FONT> 
+          </TD>
+        </TR>
+      </TABLE>
+      <hr>
+      <!-- #BeginEditable "LongBody" --> 
+      <p>Jump to </p>
+      <blockquote> 
+        <p> <a href="#platforms">Download by Platforms &amp; Versions</a><a href="#Highlights"><br>
+          Highlights this Version</a><br>
+          <a href="#variants">Variants and Subsets of E</a><br>
+          <a href="#dependencies">Dependencies</a><br>
+          <a href="#env">Environment Variables</a></p>
+      </blockquote>
+      <p></p>
+      <h1 align="center"><a href="../which.html">Are you sure you want the 0.8.16h 
+        version?</a></h1>
+      <hr>
+      <h1><a name="platforms"></a>Download by Platforms &amp; Versions</h1>
+      <p>Earlier versions of <font color="#009000"><em><b>E</b></em></font> have 
+        been tested and run on MSWindows (95, 98 FE, NT, 2K), Linux, and now Mac 
+        OS X (which I think is really a FreeBSD platform). It <em>should</em> 
+        run on other UNIX platforms as well, given an adequate version of Java 
+        and bash (see below). It should also run without problems on MSWindows 
+        98 SE and on ME, but as far as we are aware, no one has tried this. If 
+        you experience any problems, or have any other informative experiences, 
+        please let <a href="mailto:bugs@erights.org">me</a> know, or <a href="https://bugs.sieve.net/bugs/?func=addbug&group_id=16380">report 
+        a bug</a>.</p>
+      <p> The <i>Installing</i> links below describe how to install, and run various 
+        forms of the binary distribution. The <i>Building</i> links describe how 
+        to build E from the source release. The <i>Download</i> links will download 
+        each corresponding form of the release to your machine. </p>
+      <div align="center"> 
+        <p></p>
+        <div align="center"> 
+          <table cellpadding="12" border="2">
+            <tr> 
+              <td>&nbsp; </td>
+              <th> 
+                <div align="center">Binary<br>
+                  Distribution</div>
+              </th>
+              <th> 
+                <div align="center">Source<br>
+                  Distribution</div>
+              </th>
+            </tr>
+            <tr> 
+              <th> 
+                <div align="center"><b>MSWindows 9x/ME/NT/2k</b><br>
+                  (zip files)</div>
+              </th>
+              <td> 
+                <div align="center"><a href="windows-bin.html">Installing</a><br>
+                  <a href="E-win32-0.8.16h.zip"><b><font size="+1">Download E</font></b></a></div>
+              </td>
+              <td> 
+                <div align="center"><a href="windows-src.html">Building</a><br>
+                  <a href="E-src-0.8.16h.zip">Download E</a></div>
+              </td>
+            </tr>
+            <tr> 
+              <th> 
+                <div align="center"><b> Unix &amp; Unix-like Platforms<br>
+                  <i>Now supporting Mac OS X!</i><br>
+                  (tar.gz files)</b></div>
+              </th>
+              <td> 
+                <div align="center"><a href="unix-bin.html">Installing</a><br>
+                  <a href="E-nix-0.8.16h.tar.gz"><b><font size="+1">Download E</font></b></a></div>
+              </td>
+              <td> 
+                <div align="center"><a href="unix-src.html">Building</a><br>
+                  <a href="E-src-0.8.16h.tar.gz">Download E</a></div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <p>&nbsp;</p>
+      <hr>
+      <h1><a name="Highlights"></a>Highlights of this Version</h1>
+      <h3><a name="doco"></a>Doc-Comment Syntax</h3>
+      <p><font color="#009000"><em><b>E</b></em></font> accepts &quot;<code>#</code>&quot; 
+        and &quot;<code>//</code>&quot; syntax for comments, but has never accepted 
+        the familiar &quot;<code>/* .. */</code>&quot; syntax. This has turned 
+        out well, as <font color="#009000"><em><b>E</b></em></font> now accepts 
+        the Javadoc &quot;<code>/** .. */</code>&quot; syntax for doc-comments, 
+        and accepts these only as doc-comments. Since we weren't stuck with &quot;<code>/* 
+        .. */</code>&quot; as a comment syntax, we aren't required to treat doc-comments 
+        as a special kind of comment, and don't. Rather, an optional doc-comment 
+        is now a first class part of the <font color="#009000"><em><b>E</b></em></font> 
+        syntax, and can only appear prior to the definition it is documenting. 
+        Non-doc-comments, even in this position, cannot be mistaken for a doc-comment. 
+        The content of a doc-comment is preserved in the expansion to Kernel-E, 
+        and is available at runtime for online help. Now that object definitions 
+        are implicitly given Java-like fully qualified names, we expect to shortly 
+        be able to generate edoc documentation from both tamed Java and <font color="#009000"><em><b>E</b></em></font> 
+        code. </p>
+      <p>All the comments in <font color="#009000"><em><b>E</b></em></font> code 
+        in this release that were intended to be doc-comments have now been converted 
+        to the doc-comment syntax.</p>
+      <h3><a name="interface"></a>Experimental &quot;<code>interface</code>&quot; 
+        and &quot;<code>implements</code>&quot;</h3>
+      <p>This is best explained by example</p>
+      <blockquote> 
+        <pre>pragma enable(&quot;typedef&quot;)</pre>
+        <p>/**<br>
+          * Would Euclid approve?<br>
+          */<br>
+          interface Point guards PointStamp {<br>
+          <br>
+          /** abscissa */<br>
+          to getX() :near<br>
+          <br>
+          /** ordinate */<br>
+          to getY() :near<br>
+          }</p>
+        <p>pragma enable(&quot;auditors&quot;)</p>
+        <p>def makePoint(x :integer, y :integer) :Point {<br>
+          def point implements PointStamp {<br>
+          to getX() :integer {x}<br>
+          to getY() :integer {y}<br>
+          }<br>
+          }</p>
+        <p>def pt :Point := makePoint(3, 4)<br>
+        </p>
+      </blockquote>
+      <p>The experimental <code>interface</code> syntax must first be turned on 
+        by <code>pragma&nbsp;enable(&quot;typedef&quot;)</code> or by otherwise 
+        setting the <code>e.enable.typedef</code> property to <code>true</code> 
+        (see <a href="eprops.txt">eprops.txt</a>). This feature is used to declare 
+        types that describe the API that various objects may implement. The resulting 
+        type objects may be used as both guards and rubber-stamping auditors.</p>
+      <p>The experimental implements syntax must first be turned on by <code>pragma&nbsp;enable(&quot;auditors&quot;)</code> 
+        or by otherwise setting the <code>e.enable.auditors</code> propery to 
+        <code>true</code> (see <a href="eprops.txt">eprops.txt</a>). This feature 
+        is used to declare the set of auditors that should audit an object expression. 
+        When this is a type-auditor produced by an <code>interface</code> declaration, 
+        the instances of this object expression will pass the corresponding type-guard.</p>
+      <p>These features are incompletely specified or implemented at the present 
+        time. What is there may go through radical changes before settling down. 
+        Like all features that require an <code>e.enable.*</code> property to 
+        be set to <code>true</code>, these features are not yet official parts 
+        of the <font color="#009000"><em><b>E</b></em></font> language, and there 
+        is not yet any commitment to supporting them. They are being provided 
+        in their current state so we may all explore and discuss them, and figure 
+        out what we should actually do.</p>
+      <p>Thanks to E-Dean Tribble and <a href="http://www.skyhunter.com/marc.html">Marc 
+        Stiegler</a> for much help in figuring this out.</p>
+      <h3><a name="EPainter"></a>Zooko's EPainter</h3>
+      <p><a href="http://bugs.sieve.net/bugs/?func=detailbug&bug_id=125532&group_id=16380"><img src="../../images/bug3.gif" width="34" height="47" align="right" border="0"></a>With 
+        the addition of this class, an <font color="#009000"><em><b>E</b></em></font> 
+        object can now virtually subclass a swing <code>JPanel</code> in order 
+        to override its <code>paint</code> method. It should now be possible to 
+        define new swing widgets in <font color="#009000"><em><b>E</b></em></font>. 
+        This is discussed in the thread rooted <a href="http://www.eros-os.org/pipermail/e-lang/2002-April/006351.html">here</a>.</p>
+      <p>This work is primarily by <a href="http://zooko.com">Zooko</a>, thanks!</p>
+      <h3></h3>
+      <h3><a name="nohydro"></a>Anti-Highlight: Hydro No Longer Bundled</h3>
+      <p>I've been bundling Tyler Close's ADT library in with the <font color="#009000"><em><b>E</b></em></font> 
+        distributions for awhile (under its original name, &quot;Hydro&quot;), 
+        in hopes of making progress towards integrating ADT into <font color="#009000"><em><b>E</b></em></font> 
+        as <font color="#009000"><em><b>E</b></em></font>'s collection class library. 
+        Well, time has gone by, I haven't made progress on this front, and major 
+        non-upwards compatible changes to <font color="#009000"><em><b>E</b></em></font> 
+        are much more expensive than they used to be. I've discussed the matter 
+        with Tyler, and we agree that <font color="#009000"><em><b>E</b></em></font> 
+        should stop bundling ADT.</p>
+      <p>Thanks to <a href="http://www.waterken.com">Tyler</a> for clarity on 
+        this matter. I'd like to take this opportunity to endorse his products. 
+        As the discussion on e-lang about integrating <font color="#009000"><em><b>E</b></em></font> 
+        and ADT should make clear, Tyler engages in very solid and principle-driven 
+        design. The problems were in reconciling two separately evolved systems.</p>
+      <hr>
+      <h1><a name="variants"></a>Variants and Subsets of E</h1>
+      <p>A complete <font color="#009000"><em><b>E</b></em></font> system is persistent, 
+        distributed, and capability-secure both within and between processes. 
+        Incomplete variants of <font color="#009000"><em><b>E</b></em></font> 
+        are tagged by which of these features are left out.</p>
+      <center>
+        <p> 
+        <table border="2" cellpadding="6">
+          <tr> 
+            <th>Feature</th>
+            <th>Prefix if<br>
+              feature is absent</th>
+            <th>What it stands for</th>
+          </tr>
+          <tr> 
+            <td> 
+              <p align="center">Persistent</p>
+            </td>
+            <td> 
+              <p align="center">tl-</p>
+            </td>
+            <td> 
+              <p align="center"><b>T</b>ime-<b>L</b>ocal</p>
+            </td>
+          </tr>
+          <tr> 
+            <td> 
+              <p align="center">Distributed</p>
+            </td>
+            <td> 
+              <p align="center">sl-</p>
+            </td>
+            <td> 
+              <p align="center"><b>S</b>pace-<b>L</b>ocal</p>
+            </td>
+          </tr>
+          <tr> 
+            <td> 
+              <div align="center">Local<br>
+                capability security </div>
+            </td>
+            <td> 
+              <div align="center">otc-</div>
+            </td>
+            <td> 
+              <div align="center"><b>O</b>nly-<b>T</b>rusted-<b>C</b>ode</div>
+            </td>
+          </tr>
+          <tr> 
+            <td> 
+              <p align="center">Distributed<br>
+                capability security </p>
+            </td>
+            <td> 
+              <p align="center">daff<i>E</i></p>
+            </td>
+            <td> 
+              <p align="center"><b>D</b>istributed <b>A</b>pplication <b>F</b>ramework<br>
+                <b>F</b>orsaking <b>E</b>ncryption</p>
+            </td>
+          </tr>
+        </table>
+        <p></p>
+      </center>
+      <p>A non-persistent <font color="#009000"><em><b>E</b></em></font> is called 
+        <i>time-local</i> since an object only exist as long as its hosting process 
+        does. A non-distributed <font color="#009000"><em><b>E</b></em></font> 
+        is called <i>space-local</i> if an object and all references to it only 
+        exist within its hosting process. </p>
+      <p><font color="#009000"><em><b>E</b></em></font> <i>by definition</i> provides 
+        distributed capability-security -- the ability for objects in mutually 
+        suspicious processes to safely cooperate. If it looks like <font color="#009000"><em><b>E</b></em></font> 
+        and it quacks like <font color="#009000"><em><b>E</b></em></font>, it 
+        might be a duck; but if it doesn't provide distributed capability security, 
+        it's not <font color="#009000"><em><b>E</b></em></font>. A system that's 
+        otherwise equivalent to <font color="#009000"><em><b>E</b></em></font>, 
+        but doesn't provide distributed capability security, is called <i>daffE</i>. 
+        A distributed <font color="#009000"><em><b>E</b></em></font> can only 
+        be implemented by means of strong crypto, of course, for which we are 
+        using code derived from the <a href="http://ai.cryptix.org/"> Cryptix</a> 
+        library (in accord with the terms of their open-source license). In a 
+        space-local system, no distributed insecurity can arise, so such a system 
+        would be an <font color="#009000"><em><b>sl-E</b></em></font> rather than 
+        an <i>sl-daffE</i>. </p>
+      <p><font color="#009000"><em><b>E</b></em></font> is designed to provide 
+        local capabillity-security -- the ability for mutually suspicious objects 
+        hosted by the same process to safely cooperate, and the use of capability 
+        discipline to determine which of its hosting process's authorities it 
+        may exercise. Such objects could be executing <i>untrusted code</i> -- 
+        code that the hosting process (or its owner) doesn't need to fully trust. 
+      </p>
+      <p><b>This is a &quot;complete&quot; release of E</b>. &quot;complete&quot; 
+        is in quotes, because both the persistence and the distribution leave 
+        much to be desired, as explained <a href="../0-8-10alpha/index.html">here</a>. 
+        However, these are close enough that this release that doesn't need qualifiers 
+        in its name.</p>
+      <hr>
+      <h1><a name="dependencies"></a>Dependencies</h1>
+      <h3>Versions &amp; Types of Java</h3>
+      <p>In refering to various versions of Java, we follow Sun's terminology 
+        and numbering. A Java Runtime, or <b>jre</b>, is adequate to run standard 
+        Java binary programs (class files &amp; resources). A Java Development 
+        Kit, or <b>jdk</b>, is adequate both to build a program from sources and 
+        to run it. A jdk is a superset of the corresponding jre, and their version 
+        numbers are always in synch. Each successive version of the jdk/jre from 
+        Sun effectively defines a new version of the Java &amp; JVM standards, 
+        except that Sun has introduced a <a href="http://java.sun.com/products/jdk/1.2/java2.html">numbering 
+        inconsistency</a>: The Java/JVM 2.x standard corresponds to Sun's jdk/jre 
+        1.2.x. We ignore this inconsistency and refer to both as 1.2.x.</p>
+      <p>This version of <font color="#009000"><em><b>E</b></em></font> requires 
+        a jre &gt;= 1.3.1. E no longer supports Java &lt; 1.3.1. To build <font color="#009000"><em><b>E</b></em></font> 
+        from sources, a corresponding jdk is required. </p>
+      <p><i>Note: E does not install correctly when using JDK1.4beta on Windows2000 
+        -- it fails to exec with &quot;winfo.exe&quot; executable, used during 
+        install time to gather info about your Windows system. It seems to be 
+        a more general problem in execing executables. If you experience this 
+        problem, we suggest you install using a JDK1.3.*. Once installed, E should 
+        work fine with either JDK1.3.* or JDK1.4beta. <br>
+        ( <a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125445&group_id=16380">Track 
+        this issue...</a> )</i></p>
+      <p>Some places to get a jre or jdk:</p>
+      <div align="center"> 
+        <table cellpadding="12" border="2">
+          <tr> 
+            <td> 
+              <div align="center"></div>
+            </td>
+            <th> 
+              <div align="center">jre</div>
+            </th>
+            <th> 
+              <div align="center">jdk</div>
+            </th>
+          </tr>
+          <tr> 
+            <th> 
+              <div align="center"><b>Win95/98/NT</b> </div>
+            </th>
+            <td> 
+              <div align="center"><a href="http://java.sun.com/j2se/1.3/jre/download-windows.html">jre 
+                1.3.x</a></div>
+            </td>
+            <td> 
+              <div align="center"><a href="http://java.sun.com/j2se/1.3/download-windows.html">jdk 
+                1.3.x</a></div>
+            </td>
+          </tr>
+          <tr> 
+            <th> 
+              <div align="center"><b>Linux</b></div>
+            </th>
+            <td> 
+              <div align="center"><a href="http://www.blackdown.org/java-linux/mirrors.html">blackdown.org<br>
+                </a><a href="http://java.sun.com/j2se/1.3/jre/download-linux.html">sun</a> 
+              </div>
+            </td>
+            <td> 
+              <div align="center"><a href="http://www.blackdown.org/java-linux/mirrors.html">blackdown.org<br>
+                </a><a href="http://java.sun.com/j2se/1.3/download-linux.html">sun</a> 
+              </div>
+            </td>
+          </tr>
+          <tr> 
+            <th> 
+              <div align="center">Solaris</div>
+            </th>
+            <td> 
+              <div align="center"><a href="http://www.sun.com/software/solaris/jre/download.html">jre 
+                1.3.x</a></div>
+            </td>
+            <td> 
+              <div align="center"><a href="http://www.sun.com/software/solaris/java/download.html">jdk 
+                1.3.x</a></div>
+            </td>
+          </tr>
+          <tr> 
+            <th>Mac OS X</th>
+            <td> 
+              <div align="center">already included</div>
+            </td>
+            <td> 
+              <div align="center">already included</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <h3><a name="bash"></a>Bash</h3>
+      <p>To build E requires a bash available as &quot;<code>/bin/bash</code>&quot;. 
+        If bash is unavailable for your platform, it seems to work better than 
+        it should to make a symbolic link from &quot;<code>/bin/bash</code>&quot; 
+        to &quot;<code>/bin/sh</code>&quot;. If you try this and run into problems, 
+        please report these problems.</p>
+      <p>To run the E driver script &quot;<code>e</code>&quot; requires a bash 
+        &gt;= 2.01 available as &quot;/bin/bash&quot;. The E driver script is 
+        required in order to be able to run E scripts (*.e files) directly as 
+        executables. To check your bash version, type</p>
+      <p> 
+      <blockquote> 
+        <pre>$ echo $BASH_VERSION</pre>
+      </blockquote>
+      <p>to your bash shell. A bash (2.05 as of this writing) for Mac OS X is 
+        available for <a href="http://www.apple.com/downloads/macosx/unix_apps_utilities/bashthegnubourneagainshell.html">download</a> 
+        from <a href="http://www.savagetranscendental.com/tip3.html">Savage Transcendental 
+        Studios</a>.</p>
+      <h2><a name="build-dep"></a>Build-Only Dependencies</h2>
+      <p>If you are only installing <font color="#009000"><em><b>E</b></em></font> 
+        from a binary distribution, or only rebuilding the Java portion for your 
+        own use, you can ignore this section. However, if you wish to build an 
+        <font color="#009000"><em><b>E</b></em></font> distribution from sources, 
+        then you will need the equivalent of the following tools as well.</p>
+      <h3><a name="cygwin"></a>The <a href="http://sources.redhat.com/cygwin/"><tt>Cygwin</tt></a> 
+        Distribution</h3>
+      <p>The <font color="#009000"><em><b>E</b></em></font> building process relies 
+        on a number of UNIX tools. These are available for Windows from Cygnus 
+        Support as the Cygwin package. If you wish to build <font color="#009000"><em><b>E</b></em></font> 
+        on Windows, you should <a href="http://sources.redhat.com/cygwin/download.html">download</a> 
+        and install a version &gt;= 1.0.</p>
+      <h3><a name="byaccj"></a>BYacc/Java (Berkeley Yacc for Java)</h3>
+      <p>The E source distribution contains the executable binary program byaccj.exe 
+        for Windows, and <code>byaccj</code> for Linux/386/glibc. These are actually 
+        <a href="http://troi.lincom-asg.com/%7Erjamison/byacc/">BYacc/Java</a> 
+        from Bob Jamison and <a href="http://troi.lincom-asg.com/%7Erjamison/byacc/ACKNOWLEDGEMEN">others</a>. 
+        BYacc/Java is the Berkeley Yacc program extended with a &quot;-j&quot; 
+        flag and others for producing Java output. BYacc/Java is covered by the 
+        Berkeley License. The sources to byaccj are bundled with the E sources, 
+        and byaccj is <i>optionally</i> made as part of making E. </p>
+      <p>BYacc/Java is only needed if you wish to remake the parsers as part of 
+        making E. Usually, this is only necessary of you wish to edit the *.y 
+        files in the source tree (<code>term.y</code> and <code>e.y</code>). Since 
+        BYacc/Java is a C program, it was causing porting headaches, and most 
+        people interested in rebuilding E won't need to rebuild the parsers anyway. 
+        So as of this release we added a switch: If you set the environment variable 
+        &quot;<code>MAKE_PARSERS</code>&quot; to &quot;<code>true</code>&quot; 
+        before running &quot;<code>make</code>&quot;, then make will try to build 
+        BYacc/Java on your system, and then use it to rebuild the parsers. Otherwise, 
+        it will just use the parsers included in the source tree.</p>
+      <h3><a name="zip"></a>Zip Files</h3>
+      <p>Our build process packs up the <code>*.zip</code> files in the distribution 
+        by using <a href="http://www.info-zip.org/pub/infozip/">Info-Zip</a>'s 
+        highy portable, and highly ported, <code>zip</code> program. Info-Zip's 
+        zipping tools are open-sourced with a license that seems to resemble the 
+        X11 license, but before redistributing it, you should read it for yourself. 
+        The <font color="#009000"><em><b>E</b></em></font> distributions do not 
+        bundle in these tools.</p>
+      <h3><a name="env"></a>Environment Variables</h3>
+      <p>The following are the main environment variables controlling building, 
+        and normally the only ones you will need to be aware of if something goes 
+        wrong. Others variables are documented in the various makefiles, especially 
+        <code>makerules.mk</code>.</p>
+      <ul>
+        <li> 
+          <p><b><code>OSTYPE</code></b> - To determine whether we are compiling 
+            on the Cygwin platform, we check whether this is set to either &quot;<code>cygwin</code>&quot; 
+            or &quot;<code>cygwin32</code>&quot; (both have been encountered). 
+            If so, we set <code>CYGWINOS</code> to &quot;<code>1</code>&quot;. 
+            All other conditionals test <code>CYGWINOS</code>.</p>
+        </li>
+        <li> 
+          <p><b><code>CYGWINOS</code></b> - See above. If you actually are on 
+            a Cygwin environment, but <code>OSTYPE</code> has yet a different 
+            value, you probably shouldn't change it for fear of screwing something 
+            else up. So just set <code>CYGWINOS</code> to &quot;<code>1</code>&quot; 
+            yourself.</p>
+        </li>
+        <li> 
+          <p><b><code>JAVA_HOME</code></b> - If set, it should be set to the directory 
+            where the JDK is installed. This is used to find certain executables 
+            and jar files that come with the JDK distribution. </p>
+          <p>If not set, then the needed executables (eg, &quot;<code>java</code>&quot;) 
+            are assumed to be on the PATH, and the jar files directly known to 
+            the makefiles are assumed to be adequate for building. This is known 
+            to work when compiling with <code>javac</code>, and known not to work 
+            when compiling with <code>jikes</code> 1.15. See below.</p>
+        </li>
+        <li> 
+          <p><b><code>JAVAC</code></b> - If set, should be set to executable for 
+            the Java compiler. The Java compiler is assumed to be command line 
+            compatible with <code>javac</code> or <code>jikes</code>. If the executable 
+            is on the PATH, then simple names (like &quot;<code>javac</code>&quot;) 
+            can be used rather than full pathnames. This can also include some 
+            initial compiler options to appear before the others. I normally build 
+            with JAVAC set to &quot;<code>jikes&nbsp;+E&nbsp;+F</code>&quot;. 
+            I'm using Jikes 1.15, and at least that version needs to be provided 
+            with the JDK's <code>rt.jar</code> file as an explicit component of 
+            the <code>-classpath</code> argument. The makefiles do this automatically 
+            if <code>JAVA_HOME</code> is set to the JDK's install directory.</p>
+          <p>If not set, this defaults to either &quot;<code>javac</code>&quot; 
+            or &quot;<code>$(JAVA_HOME)/bin/javac</code>&quot;, depending on whether 
+            <code>JAVA_HOME</code> is set.</p>
+        </li>
+        <li> 
+          <p><b><code>JAVACMD</code></b> - If set, should be set to an executable 
+            for running Java that's command-line compatible with the JDK's &quot;<code>java</code>&quot; 
+            executable. </p>
+          <p>If not set, this defaults to either &quot;<code>java</code>&quot; 
+            or &quot;<code>$(JAVA_HOME)/jre/bin/java</code>&quot; depending on 
+            whether <code>JAVA_HOME</code> is set. </p>
+        </li>
+        <li> 
+          <p><b><code>JAVADOC</code></b> - If set, should be set to an executable 
+            for generating Javadoc documentation that's command-line compatible 
+            with the JDK's &quot;<code>javadoc</code>&quot; executable. </p>
+          <p>If not set, this defaults to either &quot;<code>javadoc</code>&quot; 
+            or &quot;<code>$(JAVA_HOME)/bin/javadoc</code>&quot; depending on 
+            whether <code>JAVA_HOME</code> is set. </p>
+        </li>
+        <li> 
+          <p><b><code>MAKE_PARSERS</code></b> - <font color="#009000"><em><b>E</b></em></font> 
+            contains a small number (two as of this writing) of *.y files, which 
+            are compiled into parsers written in Java using <a href="#byaccj">BYacc/Java</a> 
+            (see above). The generated parsers are included in the source distribution 
+            <i>as</i> sources, even though technically they are not, because most 
+            people interested in rebuilding <font color="#009000"><em><b>E</b></em></font> 
+            will not care to rebuild these parsers.</p>
+          <p>Those that do wish to rebuild these parsers should set <code>MAKE_PARSERS</code> 
+            to &quot;<code>true</code>&quot;. This will cause the BYacc/Java executable, 
+            <code>byaccj</code>, to be rebuilt from sources, and will cause these 
+            parsers to be rebuild from their <code>*.y</code> files using <code>byaccj</code>. 
+            The BYacc/Java sources seem to have problems compiling on some platforms. 
+            If you encounter such problems, and especially if you figure out how 
+            to fix it, please let us know.</p>
+          <p>If not set, this defaults to not rebuilding byaccj or the parsers, 
+            but just using the generated parsers included in the source distribution 
+            <i>as</i> sources.</p>
+        </li>
+      </ul>
+      If there are better or more conventional ways to control these building 
+      issues, please let us know.<!-- #EndEditable --></TD>
+    <TD WIDTH="10%">&nbsp;</TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> 
+      <hr>
+      <div align="center"> 
+        <table cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> 
+              <div align="left"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" valign="center" alt="ERights Home"></a></div>
+            </td>
+            <td> 
+              <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> 
+                    <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div>
+                  </td>
+                </tr>
+                <tr> 
+                  <td> 
+                    <div align="center"><font size="-1"><a href="../index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>  
+        <table width="100%" border="0" cellspacing="0" cellpadding="4">
+          <tr> 
+            <td><i><a href="mailto:webmaster@erights.org">webmaster@erights.org</a></i> 
+              <br>
+              or <a href="https://bugs.sieve.net/bugs/?func=addbug&group_id=16380"><i>report 
+              bug</i></a><br>
+              or <a href="http://www.blindpay.com/crit-me-now.cgi"><img src="../../images/cmn.gif" width="98" height="21" border="0" align="middle" alt="Annotate this page"></a> 
+            </td>
+            <td> 
+              <div align="right"> 
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a>
+
+              </div>
+            </td>
+          </tr>
+        </table>
+        
+      </div>
+    </TD>
+    <TD WIDTH="10%" valign="bottom">&nbsp;</TD>
+  </TR>
+</TABLE>
+</BODY>
+
+<!-- #EndTemplate --></HTML>

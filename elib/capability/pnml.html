@@ -1,0 +1,504 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>PetName Markup Language</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">capability</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="consensus-9feb01.html" title="Back to: Statements Of Consensus, 9 Feb 01"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Statements Of Consensus, 9 Feb 01" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="duals/index.html" title="On to: Capability Myths Demolished"><img src="../../images/next.gif" width="64" height="32" alt="On to: Capability Myths Demolished" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Lambda
+              for Humans<font size="5"><br>
+              The PetName Markup Language</font></B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p>In the mutually suspicious decentralized electronic world we find ourselves
+        in, humans face a dilemma. Computers need to communicate securely with
+        other computers, and in so doing, securely designate various objects.
+        No problem so far, there are a number of cryptographic means by which
+        a bit string (usually no less than 128 bits) can be used globally (ie,
+        between mutually suspicious parties, and without translation) as secure
+        designators. The clearest example is public key fingerprints, used to
+        designate that entity which knows and uses the corresponding private key.
+        Let's call such global cryptographic identifiers "keys".
+      <blockquote>Note: In <i><b><font color="#009000">E</font></b></i>, a "key"
+        is a cryptographic capability, and is represented by a triple: a public
+        key fingerprint, an unguessable secret number (known as a SwissNumber),
+        and TCP/IP location hint information used to try to contact the object.
+        This last part is not assumed to have any security properties.</blockquote>
+      <p> Humans also need to communicate securely with other humans, and in so
+        doing, securely designate various objects, including yet other humans.
+        Unfortunately, due to their peculiar nature, humans are unable to memorize
+        large numbers of keys, and use them as names for a multitude of objects.
+        Fortunately, a human-computer symbiote -- a human augmented with a personal
+        computer which he trusts (a personal TCB) -- can securely speak to other
+        such symbiotes using only keys as designators. In order for the human
+        part of such a symbiote to be effective, the computer part must translate
+        between the world of keys and the world of human-understandable and memorable
+        names. This translation must provide the human with a local world of name-based
+        designation whose security properties match the security properties of
+        keys.
+      <h1><a name="background"></a>Background </h1>
+      <p> The progression of attempts to solve this problem has followed a trajectory
+        from more centralized to more decentralized solutions.
+      <ul>
+        <li>
+          <p> DNS (ICANN) and Central CA (VeriSign) Model. Central authorities
+            administering a global name space.</p>
+        <li>
+          <p> The PGP Web of Trust. No central authority, but still a global name
+            space. No coherent theory of what's being authenticated.</p>
+        <li>
+          <p><a href="http://www.ietf.org/rfc/rfc2693.txt" title="Simple Public Key Infrustructure">SPKI</a>.
+            Decentralized network of name-spaces. But without a translation-on-introduction
+            mechanism, humans can only participate in a second class way.</p>
+        <li>
+          <p> The <a href="http://thecan.org/in/communities.html">Communities.com</a>
+            PetName System. A SPKI-like decentralized network of name-spaces,
+            with a translation-on-introduction mechanism. </p>
+      </ul>
+      <p>The last, unfortunately, was never documented for external consumption.
+        Though <a href="http://www.eros-os.org/~majordomo/dcms-dev/0036.html">http://www.eros-os.org/~majordomo/dcms-dev/0036.html</a>
+        and <a href="http://www.eros-os.org/~majordomo/dcms-dev/0039.html">http://www.eros-os.org/~majordomo/dcms-dev/0039.html</a>
+        document Jonathan Shapiro's adaptation of this idea for use in a configuration
+        management system.
+      <p> In another forum where cryptographic capability ideas were being vigorously
+        challenged, a valid concern was raised for which we didn't have a publicly
+        documented answer, beyond the above two brief email messages. How can
+        we enable humans to deal securely with cryptographic capabilities as human-memorable
+        designators? This document answers that question. Since the discussion
+        in that forum was already using <a href="http://www.skyhunter.com/marcs/echatIndex.html">EChat</a>
+        as an example, and since Communities.com originally developed the PetName
+        system for a multi-way chat application, I will present the ideas in terms
+        of a hypothetical augmented EChat.
+      <p> This proposal derives from thinking about the lambda-calculus/capability
+        perspective on naming. Program text also uses variable names rather than
+        designating particular objects directly. An argument variable name is
+        used to send an anonymous object reference to be bound to a parameter
+        variable name on reception. It doesn't matter whether the two names are
+        the same, since names are only in a local scope. Lambda-based programs
+        never communicate names to each other, even though they use only names
+        to bring about their communications. This is a pure <a href="http://world.std.com/%7Ecme/usenix.html">key-centric</a>
+        approach to communication. The PetName system started as a faithful application
+        of the principles that make lambda's magic work. It has grown some from
+        there, but this isn't necessarily good.
+      <p> Note that this proposal is useful not just for supporting capabilities
+        specifically, but more generally whenever human speak in a textual fashion
+        to other humans and would like to embed keys in much the way they type
+        in, or read, a normal name. Besides EChat, this could all probably be
+        applied to PGP email (thereby augmenting it with user-local names).
+      <p>See also <a href="http://www.cap-lore.com/MathPhys/GRref.html">Norm's
+        speculations</a> on the connection between secure designation and General
+        Relativity's view of space.
+      <h1> <a name="zooko"></a>Zooko's Triangle</h1>
+      <p> Zooko's &quot;<a href="http://zooko.com/distnames.html">Names: Decentralized,
+        Secure, Human-Memorizable: Choose Two</a>&quot; brings these ideas together
+        into a framework we call Zooko's Triangle. Clay Shirky's <a href="http://shirky.com/writings/domain_names.html">Domain
+        Names: Memorable, Global, Non-political?</a> and its &quot;pick two&quot;
+        conclusion, is an (uncredited) restatement of much of Zooko's paper, with
+        some excellent writing, but without a path towards a technical solution.
+        Indeed, Shirky claims no non-political solution is possible. We claim
+        the PetNames Markup Language proves him wrong.</p>
+      <p align="center"><img src="images/zooko-triangle.gif" width="479" height="386" alt="Zooko's Triangle"></p>
+      <p>In Zooko's triangle, the three corners are the simultaneous virtues we'd
+        like to have in a naming system. </p>
+      <ul>
+        <li>
+          <p><b>Globally Context-free</b>. We'd like names of global scope, ie,
+            in which the correspondence between the name and that which the name
+            designates is not context dependent. This allows different parties
+            to use the same names to refer to the same entities.</p>
+        </li>
+        <li>
+          <p><b>Human Meaningful</b>. We'd like names human beings can deal with.
+            As Shirky puts it, we'd llike name that pass the side of the bus test,
+            &quot;where a user seeing a simple address like IBM.com on a bus or
+            a business card (or hearing it over the phone or the radio) could
+            go to a browser and type it in.&quot;</p>
+        </li>
+        <li>
+          <p><b>Securely Collision-free</b>. And finally, we'd like a name system
+            that isn't vulnerable to abuse by outside parties, including parties
+            labeled &quot;trusted third parties&quot;. For example, the DNS system
+            is normally thought to rely on the decisions of ICANN, and as Shirky
+            points out, this inevitably turns ICANN into a corruptable political
+            entity whether ICANN likes it or not. </p>
+          <p><a href="http://www.icannwatch.org/">ICANN Watch</a> especially <a href="http://www.icannwatch.org/article.pl?sid=03/01/16/057208&amp;mode=thread">this
+            paper</a>, and the <a href="http://www.aaronsw.com/weblog/000801">Declaration
+            of ICANN Independence</a> and the various pages linked to by these
+            make the case that ICANN is already long past the corruptable stage,
+            and is simply corrupt. Whether true or not, these pages certainly
+            establsh that the controversy is inescapably political rather than
+            &quot;merely&quot; technical. Even the continuance of ICANN's role
+            is the subject of political struggle and dispute, as when the government
+            of Tonga <a href="names/icann-not.html">claims</a> that its ownership
+            of the &quot;.to&quot; domain is sovereign, and not subject to ICANN's
+            whims. While we applaud those on the decentralized side of this political
+            struggle, this paper instead seeks a technical solution that avoid
+            the need for politics.</p>
+        </li>
+      </ul>
+      <p>As Zooko and Shirky say, we can't have names with all three properties.
+        However, we can have names with each of the three pairs of properties,
+        and we can build a naming system involving several of these kinds of names,
+        in order to make use of all three properties. The PetName system makes
+        use of these three kinds of names:</p>
+      <ul>
+        <li>
+          <p><b>Keys</b>. These are global and secure. As mentioned above, the
+            clearest example is a public key fingerprint used to designate that
+            entity that knows the corresponding private key. Anyone holding a
+            fingerprint can verify that they are speaking to the entity designated
+            by this fingerprint. Likewise, the holder of a cryptographic hash
+            can verify that a bit string is the data designated by the hash. In
+            both cases, the check is independent of the context of the checker
+            (hence, global) and not vulnerable to any outside party (secure).
+            These are, therefore, <i>self-authenticating designators</i>. <i><font color="#FF0000">(***
+            Note: Rather than &quot;key&quot;, we expect to revise this document
+            to adopt Tyler Close's <a href="http://www.waterken.com/dev/YURL/Analogy/">suggested</a>
+            term, &quot;pointer&quot;.)</font></i></p>
+        </li>
+        <li>
+          <p><b>Nicknames</b>. My Nickname is &quot;MarkM&quot;. <font color="#FF0000">***
+            to be written</font></p>
+        </li>
+        <li>
+          <p><b>Lambda Names and PetNames</b>. <font color="#FF0000">*** rewrite
+            as split between Nickname and PetName. </font>Why "petname"? We started
+            with "nickname", but this had the wrong connotations. My nickname
+            is usually understood as a property of me. It's a unary operator:
+            <tt>nickname(MarkMiller) =&gt; MarkM</tt>. By contrast, petnames are
+            understood to be specific (and private!) to the relationship between
+            two people. My Mom's petname for me is, well, I'm not telling. By
+            our definition, SPKI is a petname system. </p>
+        </li>
+      </ul>
+      <h1><a name="pnml"></a>The PetName Markup Language</h1>
+      <p> To be fashionable, I will present the proposal in terms of a proposed
+        new markup language -- The PetName Markup Language (PNML). Why a markup
+        language? I frankly think markup languages are silly ways for software
+        to speak to other software. Objects are better, and if the two pieces
+        of software are in different address spaces, then serialized object graphs
+        are fine. However, humans often speak to other humans in fairly unstructured
+        text containing embedded objects or designators. For this, markup languages
+        are not too bad, in that they take the literal text to be the "normal"
+        case, and require some kind of anti-quote for the non-literal part.
+      <p> PNML consists of just two tags: <tt>&lt;pn&gt;<i>pet-name-string</i>&lt;/pn&gt;</tt>
+        and <tt>&lt;key&gt;<i>stringified-cryptographic-key</i>&lt;/key&gt;</tt>.
+        (In a more speculative section below we'll introduce a third tag: <tt>&lt;s/&gt;</tt>.)
+        When used in a context where multiple kinds of cryptographic key need
+        to be distinguished but aren't self identifying, we augment the <tt>&lt;key&gt;</tt>
+        tag with a "<tt>type</tt>" attribute, but postpone standardizing the values
+        of this attribute. For E, the stringified key would be exactly <i><b><font color="#009000">E</font></b></i>'s
+        stringified "<tt>cap://...</tt>" URI.
+      <p> <img src="images/zt-step1.gif" width="172" height="134" align="right">The
+        goal is that machines should only send to each other text with embedded
+        <tt>&lt;key&gt;</tt> elements, not <tt>&lt;pn&gt;</tt> elements, since
+        those are the form of designation that works robustly between machine.
+        Conversely, humans should only need to type or see <tt>&lt;pn&gt;</tt>
+        elements containing names meaningful to them. However, we define one markup
+        language containing both tags, rather than two markup languages, so humans
+        can embed <tt>&lt;key&gt;</tt> elements, as they will often wish to do
+        using cut-and-paste from other applications (such as PGP).
+      <p> Just as each PGP user has his own key-ring, each PNML user-agent has
+        a persistent mutable private 1-to-1 mapping from petnames to keys. This
+        user-agent knows how to translate text received from its user into text
+        transmittable to other user-agents -- replace all <tt>&lt;pn&gt;</tt>
+        elements with <tt>&lt;key&gt;</tt> elements by looking up the pet-name-strings
+        in the local name-space. If a given petname isn't found, the text isn't
+        accepted and the user is notified.
+      <blockquote>
+        <table cellpadding="0">
+          <tr>
+            <td>Human types:</td>
+            <td>Did you get that letter from <b>&lt;pn&gt;HoneyBunny&lt;/pn&gt;</b>?</td>
+          </tr>
+          <tr>
+            <td>Machine sends:</td>
+            <td>Did you get that letter from <b>&lt;key&gt;cap://...&lt;/key&gt;</b><tt>?</tt></td>
+          </tr>
+        </table>
+      </blockquote>
+      <p> <img src="images/zt-step2.gif" width="172" height="134" align="right">More
+        interesting is when a user-agent receives text from another user-agent
+        and needs to translate it for display to its user. As expected, it replaces
+        all <tt>&lt;key&gt;</tt> elements with <tt>&lt;pn&gt;</tt> elements by
+        looking up the keys in the local name-space. </p>
+      <blockquote>
+        <table cellpadding="0">
+          <tr>
+            <td>Machine receives:</td>
+            <td>Did you get that letter from <b>&lt;key&gt;cap://...&lt;/key&gt;</b>?</td>
+          </tr>
+          <tr>
+            <td>Human reads:</td>
+            <td>Did you get that letter from <b>&lt;pn&gt;Ms. Jones&lt;/pn&gt;</b>?</td>
+          </tr>
+        </table>
+      </blockquote>
+      <p>And if the key isn't found? Let's assume we have some way to come up
+        with an initial proposed petname for this key. We'll revisit this issue
+        later, but for now it can simply be the string "<tt>unknown</tt>". If
+        this name isn't already taken, the user-agent remembers this as the new
+        petname for this key. Otherwise, it searches successive names derived
+        from this name: "<tt>unknown-1</tt>", "<tt>unknown-2</tt>", etc, until
+        it finds one that isn't taken, and remembers that instead. It then uses
+        that name in the replacement <tt>&lt;pn&gt;</tt> element. In also places
+        this name in a separate persistent, mutable, private <tt>ToBeRenamed</tt>
+        table, associated with a copy of the text which introduced this key. This
+        table remembers the names not chosen by the user, and therefore ones for
+        the user to think about renaming. </p>
+      <blockquote>
+        <table cellpadding="0">
+          <tr>
+            <td>Machine receives:</td>
+            <td>Did you get that letter from <b>&lt;key&gt;cap://...&lt;/key&gt;</b>?</td>
+          </tr>
+          <tr>
+            <td>Human reads:</td>
+            <td>Did you get that letter from <b>&lt;pn&gt;unknown-3&lt;/pn&gt;</b>?</td>
+          </tr>
+        </table>
+      </blockquote>
+      <p>Going back to the case where the incoming key is found, if the associated
+        petname is in the <tt>ToBeRenamed</tt> table, then a copy of this text
+        is added to the text remembered in that table. That table therefore maps
+        from names to lists of text.
+      <p> Now "<tt>unknown-3</tt>" isn't very informative. However, while there
+        are better answers (see below), there are no answers which are more correct.
+        Assuming the existing inter-human channels have characterizable security
+        properties, and (inductively) assuming that the reader's name space has
+        so far maintained a name-key mapping that the reader can use reliably,
+        then the only thing the reader knows for sure is what specific others
+        have said to this reader about the designated entity. That's why we save
+        all incoming text that designates an entity the reader hasn't named yet.
+        This text is the information the reader has to work with to choose a reliable
+        name.
+      <h1> <a name="maint"></a>Maintaining a Name-Space</h1>
+      <p> The user-agent exports to its user, through its user-interface, operations
+        for examining and editing its data structures. The most important operation,
+        of course, is <tt>rename</tt>, which by default also removes that name,
+        if present, from the <tt>ToBeRenamed</tt> table.
+      <h1> <a name="paths"></a>Naming Paths</h1>
+      <p> Starting from here, we should eventually(!) import more of SPKI's power
+        by allowing naming paths rather than simple names. We introduce a kind
+        of designatable object called a name-space (doesn't have to be 1-to-1,
+        can be many-to-1), and a standard way of either invoking it remotely (the
+        E way) or of authenticatedly replicating it (the SPKI way). Now
+      <blockquote>
+        <table cellpadding="0">
+          <tr>
+            <td>Human says:</td>
+            <td>Did you get that letter from <b>&lt;pn&gt;Bob&lt;s/&gt;Mom&lt;/pn&gt;</b>?</td>
+          </tr>
+        </table>
+      </blockquote>
+      <p>can be though of like "Did you get that letter from <b>Bob's Mom</b>?"
+        (The apostrophe-s trick for naming paths is taken from Smalltalk-72.)
+        Now the sending user-agent can translate in one of two ways. It can look
+        up <tt>&lt;pn&gt;Bob&lt;/pn&gt;</tt>'s exported name-space object, and
+        ask it what key is associated with "<tt>Mom</tt>". Or it can just translate
+        <tt>&lt;pn&gt;Bob&lt;/pn&gt;</tt> and send </p>
+      <blockquote>
+        <table cellpadding="0">
+          <tr>
+            <td>Machine sends:</td>
+            <td>Did you get that letter from <b>&lt;key&gt;cap://...&lt;s/&gt;Mom&lt;/key&gt;</b>?</td>
+          </tr>
+        </table>
+      </blockquote>
+      <p> When the user-agent receives this, it can translate it all the way by
+        doing the same lookup:
+      <blockquote>
+        <table cellpadding="0">
+          <tr>
+            <td>Human reads:</td>
+            <td>Did you get that letter from <b>&lt;pn&gt;Ms. Jones&lt;/pn&gt;</b>?</td>
+          </tr>
+        </table>
+      </blockquote>
+      <p> or it can present a path:
+      <blockquote>
+        <table cellpadding="0">
+          <tr>
+            <td>Human reads:</td>
+            <td>Did you get that letter from <b>&lt;pn&gt;Robert&lt;s/&gt;Mom&lt;/pn&gt;</b>?</td>
+          </tr>
+        </table>
+      </blockquote>
+      <p>Where do these exported name-space objects come from? Anyone should be
+        able to create and maintain a name-space for export, and publicly export
+        a read-only facet. In an EChat- or PGP-like scenario, it is probably done
+        by deliberately marking a subset of one's pet-name name-space for export.
+      <p> Feedback, especially from SPKI folk, would help narrow down these options.
+        However, they all correctly preserve the required security properties.
+      <h1><a name="nicknames"></a>Choosing Better Proposed PetNames</h1>
+      <table align="right" cellspacing="6">
+        <tr>
+          <td><img src="images/zt-step1.gif" width="172" height="134"></td>
+        </tr>
+        <tr>
+          <td><img src="images/ztn-step2.gif" width="172" height="134"></td>
+        </tr>
+        <tr>
+          <td><img src="images/ztn-step3.gif" width="172" height="134"></td>
+        </tr>
+      </table>
+      <p>"<tt>unknown</tt>" really sucks as a base to generate an initial proposed
+        petname. This is where the notion of nickname is relevant, although more
+        mechanism is needed in order for there to be nicknames. As long as Robert's
+        choice of the nickname "<tt>Bob</tt>" can't cause Alice to confuse him
+        with someone she has already installed as "<tt>Bob</tt>", then we should
+        be willing to start with Robert's proposed name. If there's a conflict,
+        Alice will end up seeing "<tt>Bob-3</tt>", and knowing that she didn't
+        generate this name because it's in her <tt>ToBeRenamed</tt> table. This
+        still tells Alice what Robert suggests she call him, which is useful.
+      <p> In E, the user agent might ask the designated object whether it responds
+        to "<tt>getNickname</tt>". If it says yes, it could ask it for its nickname.
+        Otherwise we could fall back to "<tt>unknown</tt>". The EChat object representing
+        a user would, of course, respond to <tt>getNickname</tt>.
+      <p> Were we to add all this to PGP, the names encoded in the PGP keys would
+        be our nicknames. We could get PGP keys, and therefore nicknames, from
+        fingerprints (keys in our sense) by, for example, asking the PGP key servers.
+        Each signed key endorsement in PGP can be seen as the equivalent of signed
+        text in the <tt>ToBeRenamed</tt> table of the form:
+      <blockquote>
+        <table cellpadding="0">
+          <tr>
+            <td><b>&lt;pn&gt;Carl&lt;/pn&gt;</b> says:</td>
+            <td>I know <b>&lt;pn&gt;unknown-3&lt;/pn&gt;</b> as Bill Frantz. </td>
+          </tr>
+        </table>
+      </blockquote>
+      <h1><a name="asides"></a>Asides</h1>
+      <p> Jonathan, I think you should adopt a term other than "true name" for
+        the key information. Vernor Vinge's "true name" is the human legible name
+        (or other information) than enables others, such as governments, to figure
+        out which physical breathing human body you inhabit, and perhaps point
+        guns at you. Fortunately, none of the 3 kinds of name we're dealing here
+        are necessarily that kind.
+      <p> Note: The second email linked to above states that Communities.com is
+        currently working on a product version of this system. I want to make
+        it clear that I left Communities.com 18 months ago or so, and have no
+        idea how these notions evolved in the meantime. Neither party should be
+        taken to speak for the other. Also, the ideas I present in this note evolved
+        from the PetName system that I knew at Communities.com, but it is not
+        a description of that system.
+      <p> Norm Hardy's <a href="http://cap-lore.com/CapTheory/Personal.html">http://cap-lore.com/CapTheory/Personal.html</a>
+        is a very different start on exploring the issues of giving capabilities
+        a secure user interface. I believe it and this note are complementary.
+      <p>Along with the political swamp of ICANN, DNS also brings about our centralized
+        vulnerability to the likes of VeriSign and other root CAs. As Zooko has
+        elsewhere pointed out, the SSL protocol architects (is this the right
+        attribution?), when faced with the Man-In-The-Middle (MITM) problem, &quot;solved&quot;
+        it by electing VeriSign to be everyone's shared Man in the Middle -- effectively
+        pre-arranging a conspiracy between what would have been the separate MITMs.
+        See also <a href="http://www.financialcryptography.com/mt/archives/000206.html"><i>VeriSign's
+        conflict of interest creates new threat</i></a>.
+      <h1><a href="http://www.eros-os.org/pipermail/cap-talk/2005-February/003010.html"><img src="images/clickyestocontinue-020205.png" width="441" height="361" border="0" align="right"></a>More
+        Recent News</h1>
+      <p><a href="../../talks/skynet/index.html">CapDesk</a> implements for textual
+        and graphical PetNames.</p>
+      <p>&quot;<a href="http://www.waterken.com/dev/YURL/Name/">Trust Management
+        for Humans</a>&quot; - Tyler Close points out that PetNames are also an
+        answer to the phishing problem. His Waterken browser implements a PetName
+        system. (Waterken's <a href="http://www.waterken.com/dev/YURL/">YURLs</a>
+        are, in the terminology of this document, keys.)</p>
+      <p>The <a href="http://petmail.lothar.com/design.html">PetMail</a> email
+        client uses PetNames.</p>
+      <p>At the thread rooted in &quot;<a href="http://www.eros-os.org/pipermail/cap-talk/2005-February/002754.html">Firefox
+        breaks the principle of identifiability</a>&quot;, there's an extensive
+        good discussion of the pros and cons of PetNames as an answer to phishing.</p>
+      <p>Check out Marc Stiegler's informal <a href="http://www.skyhunter.com/marcs/petnames/IntroPetNames.html">An
+        Introduction to Petname Systems</a>.</p>
+      <p>And Ian Grigg's <a href="http://www.financialcryptography.com/mt/archives/000338.html">The
+        Four Corners of Identity</a>.</p>
+      <h1><a name="acks"></a>Acknowledgements</h1>
+      <p>Besides myself, as far as I can remember the people who worked on or
+        influenced the PetName system include: Eric Messick, John Sullivan, Trevor
+        Morris, Bill Frantz, and Ellen Isaacs. Perhaps also Randy Farmer. Apologies
+        if I've left anyone out. Please let me know. </p>
+      <p>The current state of thinking on PetNames owes a debt to the e-lang,
+        web-calculus, and cap-talk communities, and especially to Bryce &quot;Zooko&quot;
+        Wilcox-O'Hearn, Tyler Close, Marc Stiegler, and Alan Karp.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">capability</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="consensus-9feb01.html" title="Back to: Statements Of Consensus, 9 Feb 01"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Statements Of Consensus, 9 Feb 01" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="duals/index.html" title="On to: Capability Myths Demolished"><img src="../../images/next.gif" width="64" height="32" alt="On to: Capability Myths Demolished" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

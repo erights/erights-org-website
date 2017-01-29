@@ -1,0 +1,217 @@
+ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Highlights of 0.8.33o</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">download</a>&nbsp;/&nbsp;<a href="index.html">0-8-33</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="swt-support.html" title="On to: SWT Support"><img src="../../images/next.gif" width="64" height="32" alt="On to: SWT Support" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Highlights
+              of 0.8.33o</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p><a href="#non-up">Non-Upwards Compatible Changes</a> </p>
+      <p><a href="#new_features">New features</a></p>
+      <p><a href="#deprecated">Deprecated features</a></p>
+      <p><a href="#bugs">Bugs Addressed</a></p>
+      <h1><a name="non-up"></a>Non-Upwards Compatible Changes</h1>
+      <h3>CapTP protocol changes</h3>
+      <p>In order to fix the <a href="http://bugs.sieve.net/bugs/?func=detailbug&bug_id=125665&amp;group_id=16380">Inappropriate
+        &quot;the donor is gone&quot;</a> bug, I made an incompatible change to
+        the CapTP protocol: the addition of the <tt>donorPath</tt> to the <a href="../../elib/distrib/captp/acceptFrom.html">acceptFrom</a>
+        messages.</p>
+      <h3>Syntax changes</h3>
+      <p>Reserved some new keywords: &quot;<span class="keyword"><tt>datatype</tt></span>&quot;,
+        &quot;<span class="keyword"><tt>fn</tt></span>&quot;, &quot;<span class="keyword"><tt>fun</tt></span>&quot;.</p>
+      <p>An assignment-level statement in the collection position of a <tt class="keyword">for</tt>-loop
+        now requires parens.</p>
+      <blockquote>
+        <pre><span class="keyword">for</span> <span class="defvar">i</span> <span class="keyword">in</span> (<span class="keyword">def</span> <span class="defvar">coll</span> := foo()) {</pre>
+      </blockquote>
+      <h1><a name="new_features"></a>New features</h1>
+      <h3>Experimental extra sugared forms of when-catch</h3>
+      <p>See &quot;<a href="http://www.eros-os.org/pipermail/e-lang/2004-December/010254.html">experimental
+        extra sweet when-catch syntaxes</a>&quot;</p>
+      <h3>Experimental sugar-free form of when-catch</h3>
+      <p>See &quot;<a href="http://www.eros-os.org/pipermail/e-lang/2004-December/010331.html">User
+        Defined Control Flow</a>&quot;</p>
+      <h3>Forward declaration may now appear at right end of assignment without
+        parens </h3>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">r</span> := <span class="keyword">def</span> <span class="defvar">p</span>
+<span class="stdout"># value: &lt;Resolver&gt;</span></pre>
+      </blockquote>
+      <h3>Slightly better tracing</h3>
+      <p>Setting <tt>TraceLog_causality=event</tt> will now trace exceptions that
+        caught by an E try-catch and that escape a deflector.</p>
+      <h3>Help is now sorted</h3>
+      <blockquote>
+        <pre><span class="stdout">? </span>help(3)</pre>
+      </blockquote>
+      <h3>Newly tamed classes</h3>
+      <p>Thanks to Kevin Reid and Marc Stiegler</p>
+      <blockquote>
+        <pre>java.io.DataInput
+java.io.InputStream
+java.io.Reader
+java.nio.Buffer
+java.nio.ByteBuffer
+java.nio.CharBuffer
+java.nio.charset.Charset
+java.nio.charset.CharsetDecoder
+java.nio.charset.CharsetEncoder
+java.nio.charset.CoderResult
+java.nio.charset.CodingErrorAction
+org.xml.sax.InputSource
+org.w3c.dom.Node</pre>
+      </blockquote>
+      <h3>Newly iteratable classes</h3>
+      <blockquote>
+        <pre>java.util.Collection
+java.util.Iterator
+java.util.Map</pre>
+      </blockquote>
+      <p>So, assuming it was correct not to suppress <tt>Charset#availableCharsets/0</tt>
+        above, we can enumerate it:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">x</span> := &lt;import:<span class="litchars">java.nio.charset.Charset</span>&gt;.availableCharsets()
+
+<span class="stdout">? </span><span class="keyword">for</span> <span class="defvar">k</span> =&gt; <span class="defvar">v</span> in x {
+<span class="stdout">&gt; </span>    println(`$k<span class="litchars"> =&gt; </span>$v`)
+<span class="stdout">&gt; </span>    <span class="keyword">if</span> (k[0] &gt; '<span class="litchars">E</span>') { <span class="keyword">break</span> }
+<span class="stdout">&gt; </span>}
+<span class="stdout"># stdout: Big5 =&gt; Big5
+#         Big5-HKSCS =&gt; Big5-HKSCS
+#         EUC-JP =&gt; EUC-JP
+#         EUC-KR =&gt; EUC-KR
+#         GB18030 =&gt; GB18030
+#         </span></pre>
+      </blockquote>
+      <h1><a name="deprecated"></a>Deprecated features</h1>
+      <p>none yet</p>
+      <hr>
+      <table cellpadding="12">
+        <tr>
+          <td><h1><a name="bugs"></a>Bugs Addressed</h1></td>
+          <td>&nbsp;</td>
+          <th>Thanks to...</th>
+        </tr>
+        <tr>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125653&amp;group_id=16380">out
+            of memory in donutlab sliverserver</a></td>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125653&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+          <td>Marc Stiegler</td>
+        </tr>
+        <tr>
+          <td><a href="http://bugs.sieve.net/bugs/?func=detailbug&bug_id=125665&amp;group_id=16380">Inappropriate
+            &quot;the donor is gone&quot;</a></td>
+          <td><a href="http://bugs.sieve.net/bugs/?func=detailbug&bug_id=125665&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+          <td>Benny Tsai</td>
+        </tr>
+        <tr>
+          <td><a href="http://bugs.sieve.net/bugs/?func=detailbug&bug_id=125631&amp;group_id=16380">InputStream
+            read/1 and read/3 must be suppressed</a></td>
+          <td><a href="http://bugs.sieve.net/bugs/?func=detailbug&bug_id=125631&amp;group_id=16380"><img src="../../images/bug3.gif" width="34" height="47" border="0"></a></td>
+          <td>Kevin Reid</td>
+        </tr>
+        <tr>
+          <td><a href="http://bugs.sieve.net/bugs/?func=detailbug&bug_id=125628&amp;group_id=16380">SturdyRefs
+            amplify even when they should not</a></td>
+          <td><a href="http://bugs.sieve.net/bugs/?func=detailbug&bug_id=125628&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+          <td>Kevin Reid</td>
+        </tr>
+        <tr>
+          <td><a href="http://bugs.sieve.net/bugs/?func=detailbug&bug_id=125664&amp;group_id=16380">meta.context()
+            exposes global state</a></td>
+          <td><a href="http://bugs.sieve.net/bugs/?func=detailbug&bug_id=125664&amp;group_id=16380"><img src="../../images/bug3.gif" width="34" height="47" border="0"></a></td>
+          <td>Kevin Reid</td>
+        </tr>
+        <tr>
+          <td><a href="http://bugs.sieve.net/bugs/?func=detailbug&bug_id=125642&amp;group_id=16380">UnsafeLoader
+            not thread-safe</a></td>
+          <td><a href="http://bugs.sieve.net/bugs/?func=detailbug&bug_id=125642&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+          <td>Kevin Reid</td>
+        </tr>
+      </table>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">download</a>&nbsp;/&nbsp;<a href="index.html">0-8-33</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="swt-support.html" title="On to: SWT Support"><img src="../../images/next.gif" width="64" height="32" alt="On to: SWT Support" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

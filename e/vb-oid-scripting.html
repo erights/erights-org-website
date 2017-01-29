@@ -1,0 +1,309 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>World Scripting in VB</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="index.html">e</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="e-world-scripting.html" title="Back to: E World Scripting"><img src="../images/prev.gif" width="64" height="32" alt="Back to: E World Scripting" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="e-vb-oid-scripting.html" title="On to: VB-Like E World Scripting"><img src="../images/next.gif" width="64" height="32" alt="On to: VB-Like E World Scripting" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>Original 
+              VB-based<br>
+              Scripting Proposal</b></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> This is the original email message from 
+      Tony that started all this off. <a href="e-world-scripting.html">Here</a> 
+      is my current best response on what these examples would look like in E 
+      for those in the C syntactic tradition, and <a href="e-vb-oid-scripting.html">here</a> 
+      are the same examples expressed in E for those in the Visual Basic syntactic 
+      tradition. The examples in this message and the E-based response are now 
+      cross-linked to each other so you can easily see how the examples compare.
+<p> 
+      <hr align="CENTER">
+      <p></p>
+      <pre>Date: Fri, 26 Sep 1997 14:04:30 -0700
+To: markm-at-communities.com, crock@communities.com, marcs@communities.com,
+        jay@communities.com
+From: Tony Grant &lt;tony@communities.com&gt;
+Subject: E
+</pre>
+      <p>I've spoken briefly with most of you about E and my hopes that it will 
+        truly be just that. Mark has asked me to provide a few samples of Visual 
+        Basic syntax. I've listed some sample scripts that I'd love to use. I'll 
+        state briefly what the script should do and then provide some VB-like 
+        pseudo code to illustrate how simple I would like things to be. [MarkM: 
+        This is not literal VB syntax, but enough to give you the flavor]</p>
+      <p>This also makes a couple of assumptions about E that I haven't heard 
+        anything completely final about: it can be both a word scripting tool: 
+        Run Microcosm and do tests via a script mechanism</p>
+      <p>One question I have about the syntax is how much overhead is needed for 
+        any particular script. Crock and I briefly discussed how neat it would 
+        be to have an E script for every unum which is not much more than a giant 
+        text field. It would be great if the script could simply state the little 
+        bit of functionality and nothing else. In my mind, this is what separates 
+        a script from a program. Users of the scripting language shouldn't have 
+        to deal with:</p>
+      <p> 
+      <pre>  #include &lt;stdio.h&gt; or
+  import EZ.Avatars.Speech
+</pre>
+      <p>or any other overhead junk.</p>
+      <p> 
+      <hr align="CENTER">
+      [<a name="cosm-api"></a><a href="e-world-scripting.html#cosm-api">See the 
+      E Version</a>]
+      <p></p>
+      <p>Some of the neat behavioral stuff we can do depends on the events that 
+        we've defined. I know we'll at least have timer events, RegionEntry, RegionExit, 
+        Bump ( walked into an object) , Click... I think we're also doing Speech 
+        (triggered when anybody says something in a region. And maybe some others.</p>
+      <p>In VB, each of these would be a Method available to each object, and 
+        each Method would have a defined set of parameters relevant to the event:</p>
+      <p> 
+      <pre>Click()
+Bump()
+RegionEntry(AvatarName as String)
+RegionExit(AvatarName as String)
+Speech(AvatarName as String, Text as String)
+...
+</pre>
+      <p>Useful functions and data:</p>
+      <p> 
+      <pre>MyName
+ListObjects()
+ListAvatars()
+ListPortals()
+ListTeleportPads()
+ListLocalRegions()
+ListGestures()  [gestures known to this object]
+PlayGesture(GestureName as String)
+Say(Text as String)
+
+Launch (AvatarName as String,RegionName as String)
+WalkTo (RegionName as String)
+TeleportTo (RegionName as String)
+</pre>
+      <p>Here are some script examples:</p>
+      <p> 
+      <hr align="CENTER">
+      [<a name="example1"></a> <a href="e-world-scripting.html#example1">See the 
+      E for C Version</a>] [<a href="e-vb-oid-scripting.html#example1">See the 
+      E for VB Version</a>]
+      <p></p>
+      <p>1. Launch Microcosm with Yappy as the avatar and have him transition 
+        back and forth between CentralPark region and BeachResort.</p>
+      <p>This would help us to find any memory leaks occurring on transitions. 
+        I don't know how much overhead would be involved in this, but it would 
+        be great if it we're simple:</p>
+      <p> 
+      <pre>   Launch(&quot;Dax&quot;,&quot;CentralPark&quot;)
+
+   For i = 1 to 100
+      TeleportTo(&quot;BeachResort&quot;)
+      TeleportTo(&quot;CentralPark&quot;)
+   Next i
+</pre>
+      <p> 
+      <hr align="CENTER">
+      [<a name="example2"></a> <a href="e-world-scripting.html#example2">See the 
+      E for C Version</a>] [<a href="e-vb-oid-scripting.html#example2">See the 
+      E for VB Version</a>]
+      <p></p>
+      <p>2. Visit every region in a realm. This would a great script to run after 
+        new art checking to make sure that none of the new regions have broken 
+        the world.</p>
+      <p> 
+      <pre>   Launch(&quot;Dax&quot;,&quot;CentralPark&quot;)
+
+   regions = ListLocalRegions
+   For each r in regions
+      TeleportTo (r)
+   Next
+</pre>
+      <p>Alternatively:</p>
+      <p> 
+      <pre>   Launch(&quot;Dax&quot;,&quot;CentralPark&quot;)
+
+   regions = ListLocalRegions
+   For i = 1 to regions.Size
+      TeleportTo regions(i)
+   Next
+</pre>
+      <p> 
+      <hr align="CENTER">
+      [<a name="example3"></a> <a href="e-world-scripting.html#example3">See the 
+      E for C Version</a>] [<a href="e-vb-oid-scripting.html#example3">See the 
+      E for VB Version</a>]
+      <p></p>
+      <p>3. Simple Click response:</p>
+      <p> 
+      <pre>   Define Sub Click()
+      Say (&quot;Ow!&quot;)
+   End Sub
+</pre>
+      <p> 
+      <hr align="CENTER">
+      [<a name="example4"></a> <a href="e-world-scripting.html#example4">See the 
+      E for C Version</a>] [<a href="e-vb-oid-scripting.html#example4">See the 
+      E for VB Version</a>]
+      <p></p>
+      <p>4. The next generation Click response. Play a random gesture.</p>
+      <p> 
+      <pre>   Define Sub Click()
+      gestures = ListGestures()
+      size = gestures.Size
+      n = Random(size)
+      PlayGesture(gestures(n))
+   End Sub
+</pre>
+      <p> 
+      <hr align="CENTER">
+      [<a name="example5"></a> <a href="e-world-scripting.html#example5">See the 
+      E for C Version</a>] [<a href="e-vb-oid-scripting.html#example5">See the 
+      E for VB Version</a>]
+      <p></p>
+      <p>5. A greeting bot. When an avatar enters the region, the bot welcomes 
+        him or her:</p>
+      <p> 
+      <pre>   Define Sub RegionEntry(AvatarName as String)
+      Say(&quot;Hi &quot; + AvatarName + &quot;. Welcome to KidsWorld!&quot;)
+   End Sub
+</pre>
+      <p> 
+      <hr align="CENTER">
+      [<a name="example6"></a> <a href="e-world-scripting.html#example6">See the 
+      E for C Version</a>] [<a href="e-vb-oid-scripting.html#example6">See the 
+      E for VB Version</a>]
+      <p></p>
+      <p>6. A ridiculously simple Eliza:</p>
+      <p> 
+      <pre>   Define Sub Speech(AvatarName as String, Text as String)
+      Say (&quot;That's interesting &quot; + AvatarName + &quot;. Tell me more about &quot; &amp;Text)
+   End Sub
+</pre>
+      <p> 
+      <hr align="CENTER">
+      [<a name="example7"></a> <a href="e-world-scripting.html#example7">See the 
+      E for C Version</a>] [<a href="e-vb-oid-scripting.html#example7">See the 
+      E for VB Version</a>]
+      <p></p>
+      <p>7. Have a bot in your Turf that reacts to the mention of your name.</p>
+      <p> 
+      <pre>   Define Sub Speech(AvatarName as String, Text as String)
+      If InStr(MyName,Text)
+         PlayGesture(&quot;Spin&quot;)
+         Say (&quot;I sure do love &quot; + MyName)
+      End If
+   End Sub
+</pre>
+      <p> 
+      <hr align="CENTER">
+      [<a name="example8"></a> <a href="e-world-scripting.html#example8">See the 
+      E for C Version</a>] [<a href="e-vb-oid-scripting.html#example8">See the 
+      E for VB Version</a>]
+      <p></p>
+      <p>8. The wandering avatar: (no error checking for a region with no portals)</p>
+      <p> 
+      <pre>
+   Launch(&quot;Dax&quot;,&quot;CentralPark&quot;)
+
+   For i = 1 to 100
+      regions = ListRegions()
+      size = regions.Size
+      n = random(size)
+      WalkTo (regions(n))
+   Next i
+</pre>
+      <p><img src="kilroy.gif" width="560" height="26" align="BOTTOM" border="0"></p>
+      <p>This is my target. If things we're this easy, I'd be ecstatic. I don't 
+        particularly care about If...EndIf and For...Next vs. braces, although 
+        scripting languages do seem to tend towards the former. It's arguably 
+        more <i>human</i> readable (as opposed to more <i>programmer</i>-readable).</p>
+      <p>I'd like a user who's never programmed before to be able to select from 
+        a list of default script behaviors, look at the text and understand what's 
+        going on. She could then change a text string and be thrilled to se the 
+        behavior reflected in Microcosm. Feeling more ambitious, she cuts and 
+        pastes a few scripts together and starts becoming comfortable with the 
+        syntax. Soon her turf is crawling with lively objects...</p>
+      <P ALIGN="left">&nbsp;
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="index.html">e</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="e-world-scripting.html" title="Back to: E World Scripting"><img src="../images/prev.gif" width="64" height="32" alt="Back to: E World Scripting" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="e-vb-oid-scripting.html" title="On to: VB-Like E World Scripting"><img src="../images/next.gif" width="64" height="32" alt="On to: VB-Like E World Scripting" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

@@ -1,0 +1,168 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Highlights of 0.8.21h</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">download</a>&nbsp;/&nbsp;<a href="index.html">0-8-21</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="swt-support.html" title="On to: SWT Support"><img src="../../images/next.gif" width="64" height="32" alt="On to: SWT Support" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Highlights
+              of 0.8.21h</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+
+      <h2>SWT Support</h2>
+      <p>The big highlight of this version is SWT support. There's so much to
+        say that we cover this in a <a href="swt-support.html">separate SWT page</a>.</p>
+      <h2>Boot-comm-system!!</h2>
+      <h2>New Repl abstraction</h2>
+      <h2>New command line</h2>
+      <h2>Darius' Smallcaps changes integrated</h2>
+      <h2>Syntax</h2>
+      <h3>Map Pattern</h3>
+      <p>See MarkM's message <a href="http://www.eros-os.org/pipermail/e-lang/2002-August/007471.html">Map
+        Pattern Syntax</a>.</p>
+      <h3>Experimental exporter / importer syntax</h3>
+      <h3>Experimental accumulator syntax</h3>
+      <h3>interface (e.enable.typedef)</h3>
+      <h3>implements (e.enable.auditors)</h3>
+      <h3>Java matchers -- thanks, Darius</h3>
+      <h2>Renamed: traceln</h2>
+      <h2>Bugs Fixed</h2>
+      <table width="100%" cellpadding="12">
+        <tr>
+          <td>Term-tree lexer mishandling of dollar signs</td>
+          <td><a href="http://bugs.sieve.net/bugs/?func=detailbug&amp;bug_id=125553&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+        </tr>
+        <tr>
+          <td>Term-tree data coercion forgot to shorten promise chain</td>
+          <td><a href="http://bugs.sieve.net/bugs/?func=detailbug&amp;bug_id=125552&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+        </tr>
+        <tr>
+          <td>try-catch catching escapes</td>
+          <td><a href="http://bugs.sieve.net/bugs/?func=detailbug&bug_id=125558&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+        </tr>
+        <tr>
+          <td>Ejector not disabled if escape-pattern doesn't match</td>
+          <td><a href="http://bugs.sieve.net/bugs/?func=detailbug&bug_id=125559&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+        </tr>
+      </table>
+      <h2>Term Data Conversion &amp; Bug</h2>
+      <blockquote>
+        <pre>? term`${&quot;foo&quot;}(${&quot;bar&quot;}, .String.${&quot;baz&quot;}, $true, $false,
+>               $null, ${'c'}, ${9}, ${2.3})`
+# value: term`foo(bar, &quot;baz&quot;, true, false, \
+#                 null, 'c', 9, 2.3)`</pre>
+      </blockquote>
+      <p>x </p>
+      <h2>Pretty Printing Fixed</h2>
+      <h2>E_USER_HOME -- erc</h2>
+      <h2>Octal no longer supported</h2>
+      <h2>type__uriGetter</h2>
+      <h2>:String[]</h2>
+      <h2>:[int, String]</h2>
+      <h2>Miranda method renaming</h2>
+      <h3>getOptMeta dead</h3>
+      <h3>__yourself deprecated</h3>
+      <h3>new __conformTo/1</h3>
+      <h2>Auditors</h2>
+      <h3>Syntax turned on, official part of language</h3>
+      <h3>Not yet fully implemented but useful</h3>
+      <h3>Module vs interface scoping problem</h3>
+      <h3>Java interfaces are either Markers or rubber stamps</h3>
+      <h3>Default auditor behavior is now Gozarian</h3>
+      <h1 ALIGN="left">Removed Deprecated</h1>
+      <p ALIGN="left">PromiseMaker(), makePromise(), Ref.run() -&gt; Ref.promise()</p>
+      <p ALIGN="left">SturdyRef.liveRef(), SturdyRef.promiseRef() -&gt; SturdyRef.getRcvr()</p>
+      <p ALIGN="left">e.ListenAddress -&gt; e.ListenAddressPath</p>
+      <p ALIGN="left">e.interp.interactive -&gt; use &quot;--interact&quot; option.</p>
+      <p ALIGN="left">Various unused &amp; deprecated tracing methods</p>
+      <p ALIGN="left">e.enable.new-constructor is retired. It used to <i>allow</i>
+        (optionally enable) the deprecated behavior of mapping Java constructors
+        to &quot;new&quot; methods in addition to &quot;run&quot; methods. This
+        existed in order to survive a transition which we have now survived.</p>
+      <p ALIGN="left">ImageIcon.new(File, ..) -&gt; ImageIcon.run(File, ..)</p>
+      <p ALIGN="left">makeBrand.pair(name) -&gt; makeBrandPair(name)</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">download</a>&nbsp;/&nbsp;<a href="index.html">0-8-21</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="swt-support.html" title="On to: SWT Support"><img src="../../images/next.gif" width="64" height="32" alt="On to: SWT Support" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

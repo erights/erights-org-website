@@ -1,0 +1,238 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Inheritance as aStatic Pattern of Message Passing</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">blocks</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="defPlumbing.html" title="Back to: Defining Plumbing"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Defining Plumbing" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="miranda.html" title="On to: Miranda Methods"><img src="../../images/next.gif" width="64" height="32" alt="On to: Miranda Methods" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b>Inheritance 
+              as a<br>
+              Static Pattern of Message Passing</b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p ALIGN="left">Unlike many object-oriented languages, <i><b><font color="#009000">E</font></b></i>
+        has no primitive notion of inheritance. However, <i><b><font color="#009000">E</font></b></i>'s
+        support for message <a href="delegation.html">delegation</a> allows us
+        to build inheritance as a pattern of message passing.</p>
+      <div>
+        <h2><a name="Classic"></a>Classic Inheritance</h2>
+      </div>
+      <p class="BodyAfterHead" align="center"> <img src="images/classicInheritance.gif" width="220" height="174"></p>
+      <p class="BodyAfterHead">In classic inheritance, as found in Java, Smalltalk,
+        and the single-inheritance subset of C++ <font color="#ff0000">(***what
+        about Perl &amp; Python?)</font>, an object is an instance of a class,
+        while a class is a subclass of a parent class, which in turn is a subclass...
+        on up to a root class. The resulting object contains state (instance variables)
+        and behavior (methods) according to all the classes in this ancestry chain.</p>
+      <p class="Body"> Here's how class B may appear in Java:</p>
+      <blockquote>
+        <pre class="updoc">
+public class B extends A {
+    <i><font class="comment"># private b-slice instance variable</font></i>
+    private int myFoo;
+
+    <i><font class="comment"># initialize b-slice</font></i>
+    public B(String str, int foo) {
+        <i><font class="comment"># initialize a-slice</font></i>
+        super(str);
+        myFoo = foo;
+    }
+
+    <i><font class="comment"># non-final, may be overridden</font></i>
+    public int getFoo() { return myFoo; }
+
+    <i><font class="comment"># overrides, but wraps, a-slice's getBar()</font></i>
+    public int getBar() {
+        return super.getBar() + this.getFoo();
+    }
+}</pre>
+      </blockquote>
+      <p class="Body"><tt>getBar()</tt>, by calling <tt>this.getFoo()</tt> rather
+        than using <tt>myFoo</tt>, is enabling the Foo-providing part of its behavior
+        to be changed by a subclass. However, it isn't requiring this -- if the
+        subclass doesn't override, the b-slice has an adequate implementation
+        of this behavior. One can think of class B as providing an <i> open implementation</i>.
+        An open implementation exposes some of its internal logic, and invites
+        subclasses to build alternate implementations by overriding particular
+        pieces. </p>
+      <p class="Body"> Such subclassing requires a more intimate understanding
+        of the internal logic of the superclass than does being a client of an
+        object -- for example, to know the effects of overriding <tt>getFoo()</tt>,
+        a subclass would have to know whether <tt>getBar()</tt> uses <tt>getFoo()</tt>
+        or <tt>myFoo</tt>.</p>
+      <p class="Body"> Mixing state and behavior from separately written (and
+        possibly mutually suspicious) modules within one object is confusing.
+        Object programming enables us to think about modularity precisely when
+        abstraction boundaries coincide with object boundaries. In capability
+        programming, this is even more true. However, the open implementation
+        technique, though delicate, is useful. Can we have this layer cake and
+        digest it as well?</p>
+      <h2><a name="Static"></a>A Pattern of Static Delegation</h2>
+      <div>
+        <div align="center"><img src="images/staticDelegation.gif" width="272" height="183">
+        </div>
+      </div>
+      <p class="BodyAfterHead"> The obvious answer is the correct one -- just
+        make each slice into a separate object. <tt><i>super</i></tt> is then
+        simply an instance variable each slice (except the top one) uses to point
+        at the slice above it. <tt><i>self</i></tt> is simply an instance variable
+        that all slices use to point at the bottom slice. (&quot;<tt>self</tt>&quot;
+        plays the role of &quot;<tt>this</tt>&quot; in Java or C++.) Outside the
+        slice-tower, others point only at the bottom slice, <tt>cSlice</tt>, and
+        send messages to it as if it were the object as a whole. Each object in
+        the tower delegates messages it doesn't understand to the object above
+        it -- its <tt>super</tt>. Using these principles, we can get the effect
+        of the previous Java code in <i><b><font color="#009000">E</font></b></i> as follows:</p>
+      <blockquote>
+        <pre class="updoc">
+<b>def makeB {</b>
+
+    <i><font class="comment"># only needed if, in Java terms, B is non-abstract</font></i>
+    <b>to new(</b>str, foo<b>) :</b>any<b> {
+        def self := makeB.adopt(self, </b>str, foo<b>)
+    }</b>
+
+    <i><font class="comment"># initialize b-slice</font></i>
+    <b>to adopt(self,</b> str, foo<b>) :</b>any<b> {</b>
+
+                                 <i><font class="comment"># initialize a-slice</font></i>
+        def bSlice extends makeA.adopt(self, str) {
+            <i><font class="comment"># you are invited to override</font></i>
+            to getFoo() { foo }
+
+            <i><font class="comment"># overrides, but wraps, a-slice's getBar</font></i>
+            to getBar() {
+                return super.getBar() + self.getFoo()
+            }
+        }
+    }
+}</pre>
+      </blockquote>
+      <p class="Body"> We call this pattern <i>static</i> delegation to distinguish
+        it from other patterns of inheritance by delegation [ref <a href="http://lieber.www.media.mit.edu/people/lieber/Lieberary/OOP/Treaty/Treaty.ps">Treaty
+        of Orlando</a>, <a href="http://lieber.www.media.mit.edu/people/lieber/Lieberary/OOP/Delegation/Delegation.html">Lieberman</a>,
+        Vulcan, Self, Clarity]. In these other patterns, the super object is dynamically
+        told which object to use as <i><tt>self</tt></i> during each act of delegation,
+        allowing several different sub-objects to &quot;inherit&quot; from the
+        same super object. This pattern can certainly be practiced by the <i><b><font color="#009000">E</font></b></i> programmer,
+        but it remains to be seen whether its power is worth its complexity.</p>
+      <p class="Body">The first part of the above code, shown in bold, is boilerplate
+        that would need to be manually repeated whenever this inheritance pattern
+        is used. Instead, we provide the <i> class</i> expression as shorthand
+        for this boilerplate.</p>
+      <p class="Body"></p>
+      <h2><a name="ClassExpr"></a>The <i><tt>class</tt></i> Expression</h2>
+      <p><b><i><font color="#FF0000">The &quot;<tt>class</tt>&quot; keyword is
+        no longer supported, having been subsumed by the &quot;<tt>extends</tt>&quot;
+        keyword. There &quot;<tt>extends</tt>&quot; keyword and its use for normal
+        delegation will be explained <a href="delegation.html">here</a>. This
+        section on the &quot;The <tt>class</tt> Expression&quot; will be replaced
+        with one showing how to use the &quot;<tt>extends</tt>&quot; keyword for
+        inheritance-by-static-delegation, ie, as sugar for the above pattern.</font></i></b></p>
+      <div>
+        <div align="center"> <img src="images/defClass.gif" width="256" height="56">
+        </div>
+      </div>
+      <p class="BodyAfterHead"> Using the <i> class</i> expression, you can write
+        makeB as</p>
+      <blockquote>
+        <pre class="updoc">
+<b>class makeB(</b>str, foo<b>)</b> :any <b>{
+</b>    def super := makeA.adopt(self, str)
+    def bSlice {
+        to getFoo() { foo }
+        to getBar() {
+            super.getBar() + self.getFoo()
+        }
+        delegate { super }
+    }
+}</pre>
+      </blockquote>
+      <p class="Body"> This will expand to the previous, more explicit code shown
+        above. <tt>class</tt> only helps define B so that it can be &quot;subclassed&quot;
+        by C. B still manually does all the work needed to &quot;subclass&quot;
+        A. If B doesn't need to be &quot;subclass&quot;ed, it needn't use <tt>class</tt>,
+        even if it is &quot;subclass&quot;ing something else. </p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">blocks</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="defPlumbing.html" title="Back to: Defining Plumbing"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Defining Plumbing" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="miranda.html" title="On to: Miranda Methods"><img src="../../images/next.gif" width="64" height="32" alt="On to: Miranda Methods" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

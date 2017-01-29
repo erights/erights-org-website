@@ -1,0 +1,328 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" -->
+
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html;CHARSET=iso-8859-1">
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Miranda Methods</TITLE>
+<!-- #EndEditable -->
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made href="mailto:markm@caplet.com" title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<P>
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP">
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD>
+      <P>
+      <TABLE BORDER="0" WIDTH="100%">
+        <TR>
+          <TD ALIGN="LEFT" valign="top">
+            <table cellpadding="2">
+              <tr>
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" valign="center" alt="ERights Home"></a>
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">blocks</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr>
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="inheritance.html"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Inheritance by Static Delegation" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><img src="../../images/next-gray.gif" width="64" height="32"><!-- #EndEditable --></td>
+              </tr>
+            </table>
+          </TD>
+          <TD ALIGN="RIGHT">
+            <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b>
+              Miranda Methods</b><!-- #EndEditable --></FONT>
+          </TD>
+        </TR>
+      </TABLE>
+      <hr>
+      <!-- #BeginEditable "LongBody" --> 
+      <p class="Body"> When we first created lazyNum, where did the &quot;&lt;lazy&gt;&quot; 
+        string that was printed out come from? After the E command interpreter 
+        reads and evaluates an expression, it then needs to print a string to 
+        represent the resulting value. It gets this by calling the result's <em class="Emphasis"> 
+        printOn</em> method</p>
+      <blockquote> 
+        <pre class="updoc">
+? def PointMaker(x, y) :any {
+&gt;     def point {
+&gt;         to printOn(out) { out print(`&lt;$x, $y&gt;`) }
+&gt;         to getX() :any {x}
+&gt;         to getY() :any {y}
+&gt;     }
+&gt; }
+# value: &lt;PointMaker&gt;
+
+? def pt := PointMaker(3, 5)
+# value: &lt;3, 5&gt;
+
+? pt printOn(stdout)
+# stdout: &lt;3, 5&gt;
+
+? PointMaker printOn(stdout)
+# stdout: &lt;PointMaker&gt;</pre>
+      </blockquote>
+      <p class="Body"> Above, the object expression for <em class="Emphasis"> 
+        point</em> explicitly provides a <em class="Emphasis"> printOn</em> method, 
+        and this is what gets run when <em class="Emphasis"> printOn</em> is called 
+        on a point. The object expression for <em class="Emphasis"> PointMaker</em>, 
+        on the other hand, does not provide a <em class="Emphasis"> printOn</em> 
+        method, but nevertheless, we see that it has a <em class="Emphasis"> printOn</em> 
+        behavior. <em class="Emphasis"> printOn</em> is one of a small set of 
+        Miranda Methods -- if the object-expression does not supply its own <em class="Emphasis"> 
+        printOn</em> method, one will be provided for it. Similarly for the other 
+        Miranda Methods.</p>
+      <p class="Body"> Rarely, in order to have full control, you may wish to 
+        define an object while waiving all your miranda rights, rather than just 
+        overriding individual methods. You do this by using a <a href="defPlumbing.html">plumbing 
+        expression</a> instead of an <a href="defObject.html">object expression</a>.</p>
+      <p class="Body">The Miranda Methods can also be used from ELib, as documented 
+        <a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html">here</a>. 
+        (<font color="#FF0000">There is a distressing amount of redundancy between 
+        that page and this one. We need to fix this, probably when we build edoc.</font>) 
+      </p>
+      <h2 class="Body">The Miranda Methods are:</h2>
+      <p class="Body">The Miranda Methods are actually implemented in Java and 
+        operate from within the E implementation. A few rely on that special position 
+        to implement behaviors that could not otherwise have been implemented 
+        in E. In this section, we will do our best job of using E anyway as a 
+        notation to explain what these methods do, but explain in the text what 
+        the differences are.</p>
+      <ul>
+        <li> 
+          <p class="Body"><b><a name="printOn"></a><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#printOn(java.lang.Object,%20org.erights.e.elib.eio.TextWriter)">printOn</a></b><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#printOn(java.lang.Object,%20org.erights.e.elib.eio.TextWriter)">(<i>out</i>) 
+            </a></p>
+          <blockquote> 
+            <p>Asks the object to print a representation of itself onto the TextWriter, 
+              using &quot;out print()&quot; and <a href="../io/text-file-io.html">its 
+              siblings</a>. The object should print subobjects by sending them 
+              to the same TextWriter (or any indentation of it) rather than coercing 
+              these to a string itself, in order to give the TextWriter the opportunity 
+              to finitely print <a href="defVar.html#scopeConsistency">cyclic 
+              structures</a>.</p>
+            <p>The Miranda behavior is</p>
+            <p> 
+            <blockquote> 
+              <pre>to printOn(out :TextWriter) {
+    out print(&quot;&lt;&quot;, <font face="Times New Roman, Times, serif"><i>/*name of object expression*/</i></font>, &quot;&gt;&quot;)
+}</pre>
+            </blockquote>
+            <p>except that an E object has no other way to ascertain the name 
+              of its defining object expression. If the defining object expression 
+              is anonymous, then the object prints as</p>
+            <p> 
+            <blockquote> 
+              <pre>&lt;e object&gt;</pre>
+            </blockquote>
+          </blockquote>
+        </li>
+        <li><b><a name="whenMoreResolved"></a><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#whenMoreResolved(java.lang.Object,%20java.lang.Object)">whenMoreResolved</a></b><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#whenMoreResolved(java.lang.Object,%20java.lang.Object)">(<i>observer</i>) 
+          </a> 
+          <blockquote> 
+            <p>Really used to test a reference rather than an object. When sent 
+              to a Promise, should the Promise ever become Resolved, the resolution 
+              is eventually sent to observer. If it is sent to a Far reference, 
+              even though a Far reference is already Resolved, the whenMoreResolved 
+              message will still be sent to the object the Far reference designates, 
+              so that it can respond. This ensures that a whenMoreResolved does 
+              not report successful resolution (notifying the observer with a 
+              non-Broken argument reference) until all earlier messages sent on 
+              this same reference have been received.</p>
+            <p>The <a href="../intro/quickE.html">when/latch/catch</a> construct 
+              expands into a call to "Ref whenResolved(...)", which send whenMoreResolved.</p>
+            <p></p>
+            <p>The Miranda behavior is</p>
+            <p> 
+            <blockquote> 
+              <pre>to whenResolver(observer) {
+    observer &lt;- (self)
+}</pre>
+            </blockquote>
+            <p></p>
+          </blockquote>
+        </li>
+        <li><b><a name="whenBroken"></a><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#whenBroken(java.lang.Object,%20java.lang.Object)">whenBroken</a></b><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#whenBroken(java.lang.Object,%20java.lang.Object)">(<i>observer</i>)</a> 
+          <blockquote>Used to ask a reference to notify the observer should it 
+            ever become broken. By virtue of the behavior below, a Near reference 
+            ignores the request, since it cannot become Broken. A Broken reference 
+            immediately responds with itself. Eventual references, whether Resolved 
+            or not (whether a Promise or a Far reference) remember the request 
+            so they can notify the observer should they become Broken. In all 
+            cases, of the observer is invoked, it is eventually send the Broken 
+            reference as the argument of a <code>run</code> message. 
+            <p></p>
+            <p>The Miranda behavior is</p>
+            <p> 
+            <blockquote> 
+              <pre>to whenBroken(observer) {}</pre>
+            </blockquote>
+            <p></p>
+          </blockquote>
+        </li>
+        <li><a name="order"></a><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#order(java.lang.Object,%20java.lang.String,%20java.lang.Object%5B%5D)"><b>order</b>(<i>nestedVerb</i>, 
+          <i>nestedArgs</i>)</a> =&gt; [<i>result</i>, <i>self</i>] 
+          <blockquote>Without the <code>order</code> message, E already provides 
+            for the partially-ordered fail-stop delivery of messages sent on the 
+            same reference. However, this notion of fail-stop only makes later 
+            delivery contingent on the reference remaining unbroken. You can use 
+            the order message to get the same effect, but have later deliveries 
+            contingent on the synchronous success of an earlier message as well. 
+            <p></p>
+            <p>The Miranda behavior is equivalent to:</p>
+            <p> 
+            <blockquote> 
+              <pre>to order(self, nestedVerb, nestedArgs) :any {
+    [E call(self, nestedVerb, nestedArg), self]
+}</pre>
+            </blockquote>
+            <p>If the call throws, then the order message a whole throws. A promise 
+              for the result of an order message becomes broken, rather than resolving 
+              to a pair of a broken promise and self. </p>
+            <blockquote> 
+              <pre>? def x := 6 &lt;- order(&quot;floorDivide&quot;, [2]) &lt;- get(1) &lt;- add(2)
+# value: &lt;Eventual ref&gt;
+              <p>? x</p>
+              <p># value: 8</p>
+              <p>? def y := 6 &lt;- order(&quot;floorDivide&quot;, [0]) &lt;- 
+                get(1) &lt;- add(2)<br>
+                # value: &lt;Eventual ref&gt;</p>
+              <p>? y<br>
+                # value: &lt;ref broken by problem: &lt;ArithmeticException: BigInteger 
+                divide by zero&gt;&gt;</p></pre>
+            </blockquote>
+          </blockquote>
+        </li>
+        <li><a name="getAllegedType"></a><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#getAllegedType(java.lang.Object)"><b>getAllegedType</b>()</a> 
+          <blockquote><code>getAllegedType</code>, which will return a Type object 
+            describing the protocol that this object alleges it responds to. 
+            <p></p>
+            <p>The Miranda behavior is</p>
+            <p> 
+            <blockquote> 
+              <pre>to getAllegedType() :Type {
+    <font face="Times New Roman, Times, serif">/*not expressible in E*/</font>
+}</pre>
+            </blockquote>
+            <p></p>
+          </blockquote>
+        </li>
+        <li><a name="respondsTo"></a><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#respondsTo(java.lang.Object,%20java.lang.String,%20int)"><b>respondsTo</b>(<i>verb</i>, 
+          <i>arity</i>)</a> 
+          <blockquote>Does this object respond to messages with this <i>verb</i> 
+            and this <i>arity</i>? 
+            <p></p>
+            <p>The Miranda behavior is equivalent to</p>
+            <p> 
+            <blockquote> 
+              <pre>to respondsTo(verb :String, arity :integer) :boolean {
+    self getAllegedType() hasMethod(verb, arity)
+}</pre>
+            </blockquote>
+            <p></p>
+          </blockquote>
+        </li>
+        <li><a name="yourself"></a><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#yourself(java.lang.Object)"><b>yourself</b>()</a> 
+          <blockquote>Used internally by <a href="../../elib/distrib/captp/index.html">CapTP</a> 
+            to ensure that message are delivered in the proper order when Alice, 
+            Bob, and Carol are on three separate machines. Is available for use 
+            by the E programmer, but it's hard to see when it would be useful. 
+            It you find a programming technique that makes use of yourself, please 
+            let <a href="mailto:webmaster@erights.org">me</a> know. 
+            <p></p>
+            <p>The Miranda behavior is</p>
+            <p> 
+            <blockquote> 
+              <pre>to yourself() :any {
+    self
+}</pre>
+            </blockquote>
+          </blockquote>
+        </li>
+        <li><a name="reactToLostClient"></a><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#reactToLostClient(java.lang.Object,%20java.lang.Throwable)"><b>reactToLostClient</b>(<i>problem</i>)</a> 
+          <blockquote> 
+            <p>Informs the object that at least of its clients may no longer be 
+              able to communicate to it, due to a network partition.</p>
+            <p><font color="#FF0000">To be written</font>. But see <a href="http://mumble.net/e/faq.html#2-6">this 
+              example</a>.</p>
+          </blockquote>
+        </li>
+        <li><a name="getOptMeta"></a><a href="../../javadoc/org/erights/e/elib/prim/MirandaMethods.html#getOptMeta(java.lang.Object,%20org.erights.e.elib.sealing.Brand)"><b>getOptMeta</b>(<i>brand</i>)</a> 
+          <blockquote> 
+            <p>Generic object-level rights amplification protocol.</p>
+            <p><font color="#FF0000">To be written</font>.</p>
+          </blockquote>
+        </li>
+      </ul>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%">&nbsp;</TD>
+  </TR>
+  <TR VALIGN="TOP">
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD>
+      <hr>
+      <div align="center">
+        <table cellpadding="4" cellspacing="0">
+          <tr>
+            <td>
+              <div align="left"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" valign="center" alt="ERights Home"></a></div>
+            </td>
+            <td>
+              <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr>
+                  <td>
+                    <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a>
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a>
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a>
+                      </font></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div align="center"><font size="-1"><a href="../../download/index.html">Download</a>
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a>
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp;
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+        <table width="100%" border="0" cellspacing="0" cellpadding="4">
+          <tr>
+            <td><i><a href="mailto:webmaster@erights.org">webmaster@erights.org</a></i>
+              <br>
+              or <a href="https://bugs.sieve.net/bugs/?func=addbug&group_id=16380"><i>report
+              bug</i></a><br>
+              or <a href="http://www.blindpay.com/crit-me-now.cgi"><img src="../../images/cmn.gif" width="98" height="21" border="0" align="middle" alt="Annotate this page"></a>
+            </td>
+            <td>
+              <div align="right">
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a>
+
+              </div>
+            </td>
+          </tr>
+        </table>
+
+      </div>
+    </TD>
+    <TD WIDTH="10%" valign="bottom">&nbsp;</TD>
+  </TR>
+</TABLE>
+</BODY>
+
+<!-- #EndTemplate --></HTML>

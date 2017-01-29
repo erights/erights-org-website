@@ -1,0 +1,54 @@
+This is BibTeX, Version 0.99c (Web2C 7.4.5)
+The top-level auxiliary file: tgc05.aux
+The style file: alpha.bst
+Database file #1: common.bib
+Warning--entry type for "reed:namos" isn't style-file defined
+--line 139 of file common.bib
+Warning--empty school in amir:thesis
+Warning--empty school in fielding:rest
+Warning--empty journal in goldberg:smalltalk72
+Warning--empty publisher in kahn:vulcan
+Warning--empty publisher in tulloh:abstraction
+Warning--empty institution in tribble:joule
+You've used 57 entries,
+            2543 wiz_defined-function locations,
+            877 strings with 12409 characters,
+and the built_in function-call counts, 21631 in all, are:
+= -- 2174
+> -- 913
+< -- 45
++ -- 307
+- -- 292
+* -- 1397
+:= -- 3457
+add.period$ -- 180
+call.type$ -- 57
+change.case$ -- 327
+chr.to.int$ -- 55
+cite$ -- 63
+duplicate$ -- 915
+empty$ -- 1677
+format.name$ -- 372
+if$ -- 4527
+int.to.chr$ -- 3
+int.to.str$ -- 0
+missing$ -- 42
+newline$ -- 287
+num.names$ -- 179
+pop$ -- 407
+preamble$ -- 1
+purify$ -- 391
+quote$ -- 0
+skip$ -- 793
+stack$ -- 0
+substring$ -- 1092
+swap$ -- 170
+text.length$ -- 45
+text.prefix$ -- 24
+top$ -- 0
+type$ -- 432
+warning$ -- 6
+while$ -- 208
+width$ -- 60
+write$ -- 733
+(There were 7 warnings)

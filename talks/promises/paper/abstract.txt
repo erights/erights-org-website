@@ -1,0 +1,19 @@
+Programmers write programs, expressing plans for machines to
+execute. When we compose programs, so they may cooperate, they may
+instead interfere with each other in unanticipated ways. \emph{Plan
+coordination} is the art of simultaneously enabling plans to
+cooperate, while avoiding hazards of destructive plan
+interference. Within a single machine, object programming has provided
+impressive successes at plan coordination.
+
+In Internet-scale computing, machines proceed concurrently, interact
+across barriers of large latencies and partial failure, and must cope
+with each other's misbehavior. Each dimension presents new plan
+coordination challenges. As an example, we show how hard it is to use
+locking to prevent concurrent plans from interfering without
+destroying their ability to continue cooperating.
+
+This paper explains how, by changing only a few concepts of
+conventional sequential object programming, the E language addresses
+these joint challenges. Several projects are adapting these insights
+to existing languages.

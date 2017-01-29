@@ -1,0 +1,256 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+   <TITLE>CVS FAQ</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (Win95; U) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#ffeedd" TEXT="#000000" LINK="#0000FF" VLINK="#800080">
+
+<H1>CVS FAQ</H1>
+
+<P><I>This page is maintained by Trev. Please let me know of any errors ASAP so 
+  I can fix them. <BR>
+<B>Warning:</B> these pages change frequently. If you've looked at them
+recently hit &quot;reload&quot; on your browser to make sure you're seeing
+the latest version. </I></P>
+
+<P>This page lists some of the common problems people have with cvs, with some 
+  possible solutions. See also the Build environment FAQ (XXX file not found). 
+  Further cvs documentation can be found on the <A HREF="http://www.cyclic.com/">CVS 
+  page</A>. </P>
+
+<UL>
+<LI><A HREF="#SeeChanges">How can I see what files I have changed?</A>
+</LI>
+
+<LI><A HREF="#MissingDir">Cvs can't open my directory; what's wrong?</A>
+</LI>
+
+<LI><A HREF="#WontUpdate">I've updated but I don't get the latest files;
+what's wrong?</A> </LI>
+
+<LI><A HREF="#Rename">How do I rename a file in cvs?</A> </LI>
+
+<LI><A HREF="#DeleteDir">How do I delete a directory in cvs?</A> </LI>
+
+<LI><A HREF="#RenameDir">How do I rename a directory in cvs?</A> </LI>
+
+<LI><A HREF="#makebranch">How do I branch a tree?</A> </LI>
+
+<LI><A HREF="#Lock">I'm getting &quot;waiting for lock&quot; messages when
+I try to use cvs; what's up?</A> </LI>
+
+<LI><A HREF="#EmptyDir">I'm getting empty directories when I update; what's
+up?</A> </LI>
+
+  <LI>How can I copy changes from one CVS tree to another? (XXX file not found)</LI>
+</UL>
+
+<H2><A NAME="SeeChanges"></A>How can I see what files I have changed?</H2>
+
+<P>Use the command <TT>cvs -nq update -d</TT>. This is like a normal update
+but the <TT>-n</TT> flag means it doesn't actually do anything. It just
+tells you quick status about all files in the directory and its subdirectories.
+Output is a list of filenames preceded by one of: </P>
+
+<DL>
+<DT>?</DT>
+
+<DD>This is a file that is not in the cvs repository but is in your local
+tree. Look carefully at these files. A lot of them will be junk (log files
+etc.), but some may be files you've forgotten to <TT>cvs add</TT>. </DD>
+
+<DT>M</DT>
+
+<DD>This is a file that you've modified but haven't committed yet </DD>
+
+<DT>A</DT>
+
+<DD>This is a file that you've added but haven't committed yet </DD>
+
+<DT>R</DT>
+
+<DD>This is a file that you've removed but haven't committed yet </DD>
+
+<DT>U</DT>
+
+<DD>This is a file thats changed in the repository, and you don't have
+the latest version. You'll need to get it before you commit. </DD>
+
+<DT>P</DT>
+
+<DD>(Windows only) This is a file thats changed in the repository, and
+you don't have the latest version. Not sure why this is different from
+U. </DD>
+
+<DT>C</DT>
+
+<DD>This is a file that's changed in the repository <I>and</I> changed
+(differently) in your tree. You'll have to merge the two sets of changes
+before checking in </DD>
+</DL>
+
+<H2><A NAME="MissingDir"></A>Cvs can't open my directory; what's wrong?</H2>
+
+<P>If you do a <TT>cvs update</TT> and then get a message of the form <TT>cvs
+[update aborted]: cannot open directory /home/cvsroot/src/somethingorother:
+No such file or directory</TT>, then someone has deleted a directory. Your
+local copy of the directory tree still contains references to the (now
+missing) directory so cvs complains that it can't update it. The fix is
+to manually edit the cvs Entries file in your tree containing the missing
+directory. So, in our example, you'd edit <TT>src/CVS/Entries</TT> (note
+that we stripped off the initial <TT>/home/cvsroot/</TT> and the final
+part of the pathname, then added <TT>CVS/Entries</TT>). This should contain
+a line of the form: <TT>D/somethingorother////</TT>. Delete this line and
+try your update again. </P>
+
+<H2><A NAME="WontUpdate"></A>I've updated but I don't get the latest files;
+what's wrong?</H2>
+
+<P>There are two common causes for this: </P>
+
+<UL>
+<LI>You forgot to use the <TT>-d</TT> flag. Unless you use this flag, cvs
+will not copy over any newly added directories. Most people <I>always</I>
+use <TT>-d</TT> to avoid just this problem. In fact it's probably worth
+setting up an alias which does <TT>cvs -q update -d</TT> (the <TT>-q</TT>
+cuts down on the spam cvs gives you). The only disadvantage of routinely
+using <TT>-d</TT> is that you may hit the missing directory bug (see <A HREF="#MissingDir">Cvs
+can't open my directory; what's wrong?</A>). This bug doesn't show up if
+you don't use <TT>-d</TT>. </LI>
+
+<LI>You may have a sticky bit set. If you check out a file using an explicit
+version number e.g. you do <TT>cvs update -r1.2 <I>somefile</I></TT> then
+cvs marks <I>somefile</I> with a &quot;sticky bit&quot;. Subsequent updates
+will <I>not</I> update that file. To force an update you can use the <TT>-A</TT>
+flag to cvs. On Unix this behaves as you'd hope - updates any files that
+are out of date for any reason, including sticky bits. On Windows, unfortunately,
+it updates <I>everything</I>, up to date or not. So you should probably
+do <TT>cvs update -A <I>somefile</I></TT> to update just the file you really
+want to update. </LI>
+</UL>
+
+<H2><A NAME="Rename"></A>How do I rename a file in cvs?</H2>
+
+<P>Hah! You don't. That would be too easy. You have to rename the file,
+then <TT>cvs remove</TT> the old name, then <TT>cvs add</TT> the new one.
+This is a royal pain in the butt, and screws up the version history by
+splitting it into two parts - before and after the rename. You should probably
+put the old name of the file in the checkin message for the <TT>cvs add</TT>,
+so people looking at the log of the new file will know how to get at the
+log of its previous incarnation. </P>
+
+<P>There is a way to rename files that avoids these problem but it's horribly 
+  arcane. Here's a link to the appropriate part of the <A HREF="http://www.loria.fr/cgi-bin/molli/wilma.cgi/doc.847210383.html">CVS 
+  reference manual</A> if you really want to try it. </P>
+
+<H2><A NAME="DeleteDir"></A>How do I delete a directory in cvs?</H2>
+
+<P>Removing directories while maintaining change history works just fine.
+</P>
+
+<P>Here is how you do it: </P>
+
+<PRE>cd the_dir_you_want_to_remove
+rm *
+cvs remove
+commit -m &quot;they're all gone&quot;
+</PRE>
+
+<P>If someone does a 'cvs update' at this point, they get an empty directory.
+This is apparently what's been bothering people, so they go into $CVSROOT
+and remove the directory from there. DON'T EVER remove a directory from
+$CVSROOT!!!! That looses change information for the files that were in
+there. If someone tried to recreate the state of the system as it was before
+the directory was removed, they couldn't do it. </P>
+
+
+<H2><A NAME="makebranch"></A>How do I branch a tree?</H2>
+
+<P>Branching a tree in CVS is a tricky tagging process.
+</P>
+
+<P>From the tree to be branched, identify the tag from which to create a branch.
+Also determine the branch tag.
+</P>
+
+<P>Type:
+</P>
+
+<PRE>
+	cvs tag -b -r MyCurrentTag MyNewBranchTag <trees>
+</PRE>
+
+<P>If, for example, MyCurrentTag has version 2.3 then MyNewBranchTag 
+will have version 2.3.0.2
+</P>
+
+<P> Note that is is possible to use rtag instead of tag. The difference
+is that rtag works directly on the repository, i.e., no checkoout is required,
+whereas tag bases the revision numbers on the working directory. It is also 
+important to keep in mind that when working with a branch, files
+committed over the branch are the only ones kept under the branch, all other
+files remain under the main revision path. In other words, if we branch, to say,
+the src tree, commit a file under the branch and then tag the tree, all files
+will have main revision path nubers whereas the file committed will have branch
+revision number. All files will share the same tag, nonetheless.
+</P>
+
+
+<H2><A NAME="EmptyDir"></A>I'm getting empty directories when I update;
+what's up?</H2>
+
+<P>You're probably updating a directory that has been deleted. To get cvs
+to ignore empty directories, use the -P option to cvs update or cvs checkout.
+</P>
+
+<H2><A NAME="RenameDir"></A>How do I rename a directory in cvs?</H2>
+
+<P>I'm not even going to try to answer this one. Look at the section in the section 
+  in the <A HREF="http://www.loria.fr/cgi-bin/molli/wilma.cgi/doc.847210383.html">CVS 
+  reference manual</A> which explains the grim and gory details. </P>
+
+<H2><A NAME="Lock"></A>I'm getting &quot;waiting for lock&quot; messages
+when I try to use cvs; what's up?</H2>
+
+<P>The kind of error message you may get is: </P>
+
+<BLOCKQUOTE>
+<P>waiting for uid51's lock in /home/cvsroot/www-int/engineering/design_notes
+</P>
+</BLOCKQUOTE>
+
+<P>They usually happen when you're trying to update the master tree i.e.
+you're doing a &quot;commit&quot;. When cvs changes the master tree it
+creates lock files which block out other changes until the tree is consistent.
+A simultaneous cvs update will spot the log files and block, printing out
+message like the one above every 30 seconds. So often these messages are
+just cvs doing its job - if you wait a while the other user's update will
+finish, the lock files will be deleted, and your operation will continue.
+</P>
+
+<P>Unfortunately, sometimes cvs is killed (or crashes) halfway through
+an operation, leaving the lock files lying around. In this case your operation
+will never start, because the lock files never go away. So if you continue
+to get lock messages, even after waiting for half an hour or so, you may
+have hit some stale lock files. By the way, remember that some people use
+cvs over a slow modem so the tree may legitimately be locked for a long
+time, even if everything is working properly. </P>
+
+<P>If you think you have hit stale lock files, first contact the user who's
+id appears in the error message (in our example message the user id is
+very unhelpful - uid51, probably an automatic script - but it will usually
+be someone's Unix login id). If they say they aren't using cvs at the moment
+then it's a good sign that the lock files are stale. You'll have to go
+into the directory mentioned in the message (e.g. <TT>/home/cvsroot/www-int/engineering/design_notes</TT>
+in our example) and delete the lock files manually. The lock files usually
+start with <TT>#cvs.tfl</TT>, <TT>#cvs.rfl</TT>, or <TT>#cvs.wfl</TT>.
+</P>
+
+<P>For more details see: Dealing with Waiting for xxx's lock messages (XXX file 
+  not found).</P>
+
+
+</BODY>
+</HTML>

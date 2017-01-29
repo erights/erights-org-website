@@ -1,0 +1,510 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>From Functions To Objects</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">capability</a>&nbsp;/&nbsp;<a href="index.html">ode</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="overview.html" title="Back to: Overview: An Ode to the Granovetter Diagram"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Overview: An Ode to the Granovetter Diagram" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="ode-capabilities.html" title="On to: From Objects to Capabilities"><img src="../../../images/next.gif" width="64" height="32" alt="On to: From Objects to Capabilities" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b><font size="6">From
+              Functions To</font><br>
+              Objects</b></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p>Object computation can be understood as the sum of three
+        elements [<a
+        href="ode-references.html#Goldberg76">Goldberg76</a>] [<a
+        href="ode-references.html#Hewitt73">Hewitt73</a>]: </p> <div
+        align="center"> 
+
+	<p align="center"><b>Objects == Lambda Abstraction + Message
+        Dispatch + Local Side Effects </b></p> </div>
+
+	<p>(footnote: The remaining feature often thought
+        to be defining of object-oriented programming is
+        inheritance. Though we do not view inheritance as as a
+        fundamental ingredient of object computation, its widespread
+        use in object-oriented programming practice motivates its
+        inclusion in E.  However,
+        <i><b><font color="#009000">E</font></b></i>'s reconciliation
+        of inheritance with capability security principles [<a
+        href="ode-references.html#Miller99">Miller99</a>] is beyond
+        the scope of this paper.) </p>
+
+      <h2 align="left"><a name="lambda"></a>Lambda Abstraction</h2> 
+      <p
+      align="left">Lambda abstraction [<a
+      href="ode-references.html#Church41">Church41</a>] is a pure
+      theory of nested function definition and application. In E
+      notation, conventional function definition and application
+      should look familiar:
+
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)</pre>
+        <pre><span class="comment"># E sample</span>
+<span class="keyword">def</span> <span class="defobj">factorial</span>(<span class="defvar">n</span>) :any {
+    <span class="keyword">if</span> (n &lt;= 0) {
+        <span class="keyword">return</span> 1
+    } <span class="keyword">else</span> {
+        <span class="keyword">return</span> n * factorial(n-1)
+    }
+}
+</pre>
+        <pre>
+<span class="stdout">? </span><span class="stdin">factorial(3)</span>
+<span class="stdout"># value: 6</span></pre>
+      </blockquote>
+      
+      <p> The only unfamiliar element is the use of
+      &quot;<tt>:any</tt>&quot; as a
+      <i>result guard declaration</i>. The value returned is filtered
+      through the optional result guard. Like a traditional type
+      declaration, a guard determines what kind of values may pass
+      through. The &quot;<tt>any</tt>&quot; guard allows any value to
+      be returned, whereas the &quot;<tt>void</tt>&quot; guard always
+      returns <tt>null</tt>. As we will see, <i><b><font
+      color="#009000">E</font></b></i> also allows optional guard
+      declarations on variable definitions.</p>
+
+      <p>Nested function definition, familiar from all lexical lambda
+        languages including ALGOL60, Scheme, and ML, should also look
+        familiar:</p>
+
+      <blockquote>
+        <pre><span class="comment"># E sample</span>
+<span class="keyword">def</span> <span class="defobj">makeAddr</span>(<span class="defvar">x</span>) :any {
+    <span class="keyword">def</span> <span class="defobj">adder</span>(<span class="defvar">y</span>) :any {
+        <span class="keyword">return</span> x + y
+    }
+    <span class="keyword">return</span> adder
+}
+</pre>
+        <pre><span class="stdout">? </span><span class="stdin"><span class="keyword">def</span> <span class="defvar">addThree</span> := makeAddr(3)</span>
+<span class="stdout"># value: &lt;adder&gt;
+
+? </span><span class="stdin">addThree(5)</span>
+<span class="stdout"># value: 8</span></pre>
+      </blockquote>
+
+      <p>The call to <tt>makeAddr</tt> returns a <a href="http://en.wikipedia.org/wiki/Closure_(computer_science)">closure</a> 
+        -- effectively a version of the <tt>adder</tt> function that adds <tt>3</tt> 
+        to its argument. Church originally thought about this as substitution 
+        -- return an <tt>adder</tt> function in which <tt>x</tt> has been replaced 
+        by <tt>3</tt>. Unfortunately, this simple perspective generalizes poorly. 
+        An alternative perspective is to consider a function, such as that held 
+        in the <tt>addThree</tt> variable, to be a combination of a <i>behavior</i> 
+        -- the static code for adder, and <i>state</i> -- the runtime bindings 
+        for its <i>free</i> variables. <tt>x</tt> in <tt>adder</tt> is a free 
+        variable in that <tt>adder</tt> uses <tt>x</tt>, but the corresponding 
+        definition of <tt>x</tt> is inherited from <tt>adder</tt>'s creating context. 
+        In the remainder of this paper, we will refer to such free state variables 
+        as <i>instance variables</i>. 
+      <p>Such functions already have the most often cited attribute of
+        objects: they are a combination of encapsulated state together
+        with behavior that has exclusive access to that
+        state. Ignoring for a moment the message-name "<tt>foo</tt>",
+        the Granovetter Diagram describes an important aspect of the
+        lambda calculus. Imagine that Alice, Bob, and Carol are three
+        functions. If, in the initial conditions, Alice contains a
+        binding for Bob and Carol, then Alice's behavior can give Bob
+        access to Carol.
+
+      <blockquote>
+        <pre><span class="keyword">def</span> <span class="defobj">...</span> {                    <span class="comment"># enclosing context</span>
+    <span class="keyword">def</span> <span class="defvar">bob</span> := ...           <span class="comment"># instance variable bob somehow bound to Bob</span>
+    <span class="keyword">def</span> <span class="defvar">carol</span> := ...         <span class="comment"># instance variable carol somehow bound to Carol</span>
+    <span class="keyword">def</span> <span class="defobj">alice</span>(...) :void {   <span class="comment"># defines Alice</span>
+        bob(..., carol, ...) <span class="comment"># Alice sends Bob a reference to Carol</span>
+    }
+    ...
+}</pre>
+      </blockquote>
+
+      <h2 align="left"><a name="dispatch"></a>Adding Message Dispatch</h2>
+
+      <p>The most visible difference between a function and an object
+        is that a function's behavior is written to satisfy just one
+        kind of request, and all calls on that function are forms of
+        that one request. By contrast, an object's behavior enables it
+        to satisfy a variety of different requests (each with a
+        separate <i>method</i>). A request to an object (a
+        <i>message</i>) identifies which of these requests is being
+        made. There is nothing fundamental here; objects have been
+        trivially built from functions, and vice-versa, many times in
+        the history of computer science. In <i><b><font
+        color="#009000">E</font></b></i>,
+        behaviors-as-bundles-of-methods and requests-as-messages are
+        the more primitive notions, of which functions are a
+        degenerate case.</p>
+
+      <blockquote>
+        <pre><span class="comment"># E sample</span>
+<span class="keyword">def</span> <span class="defobj">makePoint</span>(<span class="defvar">x</span>,<span class="defvar">y</span>) :any {
+    <span class="keyword">def</span> <span class="defobj">point</span> {
+        <span class="keyword">to</span> <span class="defverb">__printOn</span>(<span class="defvar">out</span>) :void { out.print(`<span class="litchars">&lt;</span>$x<span class="litchars">,</span>$y<span class="litchars">&gt;</span>`) }
+        <span class="keyword">to</span> <span class="defverb">getX</span>()          :any { <span class="keyword">return</span> x }
+        <span class="keyword">to</span> <span class="defverb">getY</span>()          :any { <span class="keyword">return</span> y }
+        <span class="keyword">to</span> <span class="defverb">add</span>(other)      :any {
+            <span class="keyword">return</span> makePoint(x + other.getX(), y + other.getY())
+        }
+    }
+    <span class="keyword">return</span> point
+}
+</pre>
+        <pre><span class="stdout">? </span><span class="stdin"><span class="keyword">def</span> <span class="defvar">p</span> := makePoint(3,5)</span>
+<span class="stdout"># value: &lt;3,5&gt;
+
+? </span><span class="stdin">p.getX()</span><span class="stdout">
+# value: 3
+
+? </span><span class="stdin">p + makePoint(4,8)</span><span class="stdout">
+# value: &lt;7,13&gt;</span></pre>
+      </blockquote>
+
+      <p>From a lambda-calculus perspective, <tt>makePoint</tt> is
+        like <tt>makeAddr</tt> -- it is a lexically enclosing function
+        that defines the variable bindings used by the object it both
+        defines and returns. From an object perspective,
+        <tt>makePoint</tt> is simultaneously like a class and
+        constructor -- both defining the instance variables for
+        points, and creating, initializing, and returning individual
+        points. We have found such lambda-based object definition to
+        be simpler, more expressive, and more intuitive, than either
+        of the common choices -- class-based and prototype-based
+        object definition.  The lambda-based technique for defining
+        objects dates back at least to 1973 [<a
+        href="ode-references.html#Hewitt73">Hewitt73</a>], so we find
+        it distressing that the other two are often assumed to be the
+        only available choices.</p>
+
+      <p>The returned points are clearly object-like rather than
+        function-like.  Each point's behavior contains four methods --
+        <tt>__printOn</tt>, <tt>getX</tt>, <tt>getY</tt>, and
+        <tt>add</tt> -- and every request to a point starts by naming
+        which of these services is being requested. Now we see that
+        the "<tt>foo</tt>" in the Granovetter Diagram is simply a
+        message-name.  Extending our earlier example, Alice's behavior
+        would be:</p>
+
+      <blockquote>
+        <pre>        bob.foo(..., carol, ...)</pre>
+      </blockquote>
+
+      <p>Some shortcuts above need a brief explanation. </p>
+      <ul>
+        <li>
+          <p>&quot;<tt>a + b</tt>&quot; is merely syntactic shorthand
+            for &quot;<tt>a.add(b)</tt>&quot;, and similarly for other
+            expression operators.</p> 
+        </li>
+        <li>
+          <p>The command line interpreter prints a value by sending it
+            the <tt>__printOn</tt> message. </p>
+        </li>
+        <li>
+
+          <p>The string between back-quotes and containing $-prefixed
+            expressions is a quasi-string. Like interpolated strings
+            in Perl, it evaluates to a string by evaluating the nested
+            expressions and printing them into the enclosing
+            string. </p>
+
+        </li>
+        <li>
+
+          <p>Finally, functions are simply one-method objects where
+            the method is named &quot;<tt>run</tt>&quot;. The previous
+            <tt>makeAddr</tt> is therefor just syntactic shorthand
+            for:</p>
+
+        </li>
+      </ul>
+      <blockquote>
+        <pre><span class="keyword">def</span> <span class="defobj">makeAddr</span> {
+    <span class="keyword">to</span> <span class="defverb">run</span>(<span class="defvar">x</span>) :any {
+        <span class="keyword">def</span> <span class="defobj">adder</span> {
+            <span class="keyword">to</span> <span class="defverb">run</span>(<span class="defvar">y</span>) :any {
+                <span class="keyword">return</span> x.add(y)
+            }
+        }
+        <span class="keyword">return</span> adder
+    }
+}</pre>
+      </blockquote>
+      <h2><a name="side-effects"></a>Adding Side Effects</h2>
+
+      <p>Two features of object programming implied by the Granovetter
+        Diagram have been left out of computation as so far
+        described. </p>
+
+      <ul>
+        <li>
+
+          <p>First, the diagram implies that Bob is obtaining access
+            to Carol, but computation as so far described gives Bob no
+            means for holding on to this access. </p>
+
+        </li>
+        <li>
+
+          <p>Second, we understand the diagram to say that Alice is
+            giving Bob access to Carol herself, not a copy of Carol
+            [<a href="ode-references.html#Deutsch99">Deutsch99</a>].
+            However, in computation as has been described so far,
+            Carol is indistinguishable from a copy of Carol. We cannot
+            distinguish between pass-by-reference-sharing and
+            pass-by-copy, but the Granovetter Diagram clearly intends
+            to show specifically pass-by-reference-sharing. Were
+            computation adequately described purely in terms of
+            pass-by-copy, the Granovetter Diagram would be
+            unnecessary. </p>
+
+        </li>
+      </ul>
+
+      <p>The introduction of side effects solves both of these
+      problems.</p>
+
+      <p>Starting with lambda calculus (or with lambda plus message
+        dispatch), there are many ways to add side effects. The
+        approach used by <i><b><font color="#009000">E</font></b></i>,
+        Scheme, ML and many other lambda languages is to introduce
+        assignment.  In <i><b><font color="#009000">E</font></b></i>,
+        variables are non-assignable (or
+        &quot;<i><tt>final</tt></i>&quot;) by default. For a variable
+        to be assignable, it must be declared with
+        &quot;<i><tt>var</tt></i>&quot;.</p>
+
+      <p>How does assignment make Carol potentially distinct from a
+        duplicate of Carol? Consider:</p>
+
+      <blockquote>
+        <pre><span class="comment"># E sample</span>
+<span class="keyword">def</span> <span class="defobj">makeCounter</span>(<span class="keyword">var</span> <span class="defvar">count</span>) :any {
+    <span class="keyword">def</span> <span class="defobj">counter</span> {
+        <span class="keyword">to</span> <span class="defverb">incr</span>() :any { <span class="keyword">return</span> count += 1 }
+    }
+    <span class="keyword">return</span> counter
+}
+</pre>
+
+<pre><span class="stdout">? </span><span class="stdin"><span class="keyword">def</span> <span class="defvar">carol</span> := makeCounter(0)</span>
+<span class="stdout"># value: &lt;counter&gt;
+
+? </span><span class="stdin">carol.incr()</span><span class="stdout">
+# value: 1</span></pre>
+      </blockquote>
+
+      <p>Two otherwise identical counters are distinct because they
+        have distinct <tt>count</tt> variables that increment
+        separately. All those who have access to the same counter are
+        able to see the side effects of <tt>incr</tt> messages sent by
+        others who have access to this same counter.</p>
+
+      <p>How does assignment enable Bob to retain access he has been
+        given to Carol? By assigning an incoming message-argument to
+        an instance variable:</p>
+
+      <blockquote>
+        <pre><span class="keyword">def</span> <span class="defobj">makeBob</span>() :any {
+    <span class="keyword">var</span> <span class="defvar">carol</span> := null
+    <span class="keyword">def</span> <span class="defobj">bob</span> {
+        <span class="keyword">to</span> <span class="defverb">foo</span>(<span class="defvar">...</span>, <span class="defvar">newCarol</span>, <span class="defvar">...</span>) ... {
+            carol := newCarol
+        }
+        ...
+    }
+    <span class="keyword">return</span> bob
+}</pre>
+      </blockquote>
+      <h2><a name="facets"></a>Composites &amp; Facets</h2>
+
+      <p>Technically, by introducing assignment, we have made each
+        assignable variable into a distinct primitive variable-object,
+        referred to as a <tt><i>Slot</i></tt>.  A user-defined object
+        then contains bindings from the names of these variables to
+        these Slots. The Slots in turn contain the bindings to the
+        current values of the variables. When the programmer writes a
+        use-occurrence of the variable in an expression, this causes
+        the containing object to send a <tt>getValue()</tt> message to
+        the Slot to get its current value. When the programmer writes
+        an assignment, this causes the containing object to send a
+        <tt>setValue(newValue)</tt> message to the Slot.</p>
+
+      <p>When a variable is only in the scope of one object, as in all
+        the above examples, we usually ignore this distinction, and
+        speak as if the containing object has bindings directly from
+        the variable names to the current values of these
+        variables. But this shortcut does not work for code such
+        as:</p>
+
+      <blockquote>
+        <pre><span class="comment"># E sample</span>
+<span class="keyword">def</span> <span class="defobj">makeCounterPair</span>(<span class="keyword">var</span> <span class="defvar">count</span>) :any {
+    <span class="keyword">def</span> <span class="defobj">upCounter</span> {
+        <span class="keyword">to</span> <span class="defverb">incr</span>() :any { <span class="keyword">return</span> count += 1 }
+    }
+    <span class="keyword">def</span> <span class="defobj">downCounter</span> {
+        <span class="keyword">to</span> <span class="defverb">decr</span>() :any { <span class="keyword">return</span> count -= 1 }
+    }
+    <span class="keyword">return</span> [upCounter, downCounter]
+}</pre>
+        <pre><span class="stdout">? </span><span class="stdin"><span class="keyword">def</span> [<span class="defvar">i</span>, <span class="defvar">d</span>] := makeCounterPair(3)</span>
+<span class="stdout"># value: [&lt;upCounter&gt;, &lt;downCounter&gt;]
+
+? </span><span class="stdin">i.incr()</span><span class="stdout">
+# value: 4
+
+? </span><span class="stdin">i.incr()</span><span class="stdout">
+# value: 5
+
+? </span><span class="stdin">d.incr()</span><span class="stdout">
+</span><span class="stderr"># problem: &lt;NoSuchMethodException: &lt;a downCounter&gt;.incr/0&gt;</span><span class="stdout">
+
+? </span><span class="stdin">d.decr()</span><span class="stdout">
+# value: 4</span></pre>
+      </blockquote>
+
+      <p>Each time <tt>makeCounterPair</tt> is called, it defines a
+        new <tt>count</tt> variable and returns a list of two objects,
+        one that will increment and return the value of this variable
+        and one that will decrement and return it. This is a trivial
+        example of a useful technique -- defining several objects in
+        the same scope, each providing different operations for
+        manipulating a common state held in that scope. </p>
+
+	<div align="center"><img src="images/incrDecr.png" width="525"
+            height="202" alt="Facets Sharing State"></div>
+
+      <p>On the left we see, diagrammed in explicit detail, the
+        objects and relationships resulting from each call to
+        <tt>makeCounterPair</tt>. The stacking represents that a new
+        triple is created by each call. None of these objects actually
+        refer to <tt>makeCounterPair</tt>, so there's no arrow to
+        it. On the right, each triple is visualized as a single
+        composite. This view also shows that <tt>makeCounterPair</tt>
+        is in scope during the definition of each composite, and so
+        they <i>might</i> reference it. </p>
+
+      <p>Like an individual object, a composite is a combination of
+        state and behavior. Like an individual object, the state
+        consists of all of the variables within the composite. The
+        behavior consists of all of the code within the composite, but
+        here we have an important difference. </p>
+
+      <p>The behavior elicited by a message to the composite depends
+        not just on the message, but, obviously, on which object of
+        the composite receives the message. Objects on the surface of
+        the composite -- objects which may be referred to from outside
+        the composite, like <tt>upCounter</tt> and
+        <tt>downCounter</tt> -- are
+        <i>facets</i> of the composite. The variable-object,
+        <tt>count</tt>, need not be considered a facet since we can
+        tell that no reference to it can escape from the
+        composite.</p>
+
+      <p>The aggregation of a network of objects into a composite is
+        purely subjective -- it allows us to hide detail when we
+        wish. The technique works because the possible interactions
+        among composites obey the same rules as the possible
+        interactions among individual objects -- these rules are
+        therefor
+        <i>compositional</i>. </p>
+
+      <h2><a name="dyna-graph"></a>The Dynamic Reference Graph</h2>
+
+      <p>When speaking of object computation, all too much emphasis is
+        often placed on the objects themselves. The fabric of an
+        object system is the dynamic reference graph. As suggested by
+        the Granovetter Diagram, objects (or composites) are the nodes
+        of this graph and references are the arcs. Only computation
+        <i>within</i> the graph brings about changes to the topology
+        of the graph (the <i>who refers to whom</i> relationships),
+        and it only brings about those changes that are enabled by the
+        graph's current topology.  To learn the perspective of the
+        Granovetter Diagram is to see the dynamic reference graph as
+        primary, and objects themselves as secondary [<a
+        href="ode-references.html#Kay99">Kay99</a>].</p>
+
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">capability</a>&nbsp;/&nbsp;<a href="index.html">ode</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="overview.html" title="Back to: Overview: An Ode to the Granovetter Diagram"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Overview: An Ode to the Granovetter Diagram" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="ode-capabilities.html" title="On to: From Objects to Capabilities"><img src="../../../images/next.gif" width="64" height="32" alt="On to: From Objects to Capabilities" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

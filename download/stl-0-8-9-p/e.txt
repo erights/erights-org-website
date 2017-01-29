@@ -1,0 +1,98 @@
+#!/bin/bash
+
+# E Driver Script (or E Driver Script Template)
+#
+# If you are looking at "e-template.txt", then you are looking at a
+# template to be used to construct "e".
+# In this case, for some variable definitions, you should instead see
+# text of the form, for example,
+#
+#     EHOME=$<<e.home>>
+#
+# but with curly brackets instead of angle brackets.
+# 
+# In the comment preceding this, you should be an example of a
+# possible value of this property, such as
+# "c:/Program Files/erights.org/".  Were this variable to have this
+# value in the "e" file, it would appear as
+#
+#     EHOME=c:/Program Files/erights.org/
+#
+# All these variables come from eprops.txt.  See that file for more
+# complete documentation.
+#
+# @author Mark S. Miller
+
+set -e
+
+# Where is E installed?  This should be the root directory of the
+# installation.  The definition of EJAR below assumes EHOME ends with
+# a "/".  XXX We should fix this to be more tolerant.
+#
+# For example, "c:/Program Files/erights.org/"
+
+EHOME="/home/markm/ehome/"
+
+# What executable Java command should be used?
+#
+# For example, "d:/jdk1.3/bin/java.exe"
+
+JCMD="java"
+
+# The following line only applies to Cygwin systems.  XXX What
+# conditional should we test?
+# JCMD=`cygpath -u $JCMD`
+
+# Assumes EHOME ends in a "/".  See note above.
+EJAR=${EHOME}e.jar
+
+
+function usage {
+    echo "usage: e [-options] [(e-script.e | \"-\") [args...]]"
+    exit -1
+}
+
+declare -a jopts
+
+function jpush {
+    jopts[${#jopts[@]}]=$1
+}
+
+execflag=exec
+
+while [ $(($# >= 1)) = 1 ]; do
+    case $1 in
+        -cp )     jpush "$1"; shift
+                  if [ $(($# < 1)) = 1 ]; then usage; fi
+                  jpush "$1"; shift;;
+        -D* )     jpush "$1"; shift;;
+        -J* )     jpush "${1#-J}"; shift;;
+        --help )
+            echo "e [-options] [(e-script.e | \"-\") [args...]]"
+            echo "where options include:"
+            echo "  -cp <classpath>      Defines classpath. Passed to java."
+            echo "  -D<name>=<value>     Defines Property.  Passed to java."
+            echo "  -J<java-option>      java-option passed to java."
+            echo "    For example, \"e -J-version\" shows the Java version."
+            echo "  --help               Prints this out and exits."
+            echo "  --show               Shows the java command line, rather"
+            echo "                       than executing it"
+            echo "If \"-\" is used instead of a script file name,"
+            echo "then E commands are read from stdin."
+            exit 0;;
+        --show)   execflag=show; shift;;
+        -)        break;;
+        -*)       usage;;
+        *)        break;;
+    esac
+done
+
+cmd=("${JCMD}" -jar "${jopts[@]}" "-De.home=${EHOME}" "${EJAR}" "$@")
+
+if [ $execflag = exec ]; then
+    exec "${cmd[@]}"
+else
+    for i in "${cmd[@]}"; do
+        echo $i
+    done
+fi

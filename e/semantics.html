@@ -1,0 +1,423 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Reference Mechanics</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="index.html">e</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="e-goals.html" title="On to: E Language Design Goals"><img src="../images/next.gif" width="64" height="32" alt="On to: E Language Design Goals" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b>Reference
+              Mechanics</b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <h2 align="CENTER"> <font size="+1"><b>Asynchronous Optimistic Messaging<br>
+        for Distributed Secure Reliable O-O Programming</b></font></h2>
+      <p><b>Last updated:</b><i> [July 10, 1998. </i><a href="http://www.caplet.com/"><i>MarkM</i></a><i>]</i>
+        <br>
+        <i>Document authored by </i><a href="http://www.caplet.com/"><i>MarkM</i></a><i>.</i>
+        <br>
+        <i>Original Subsystem (E) authored primarily by </i><a href="http://www.milk.com/home/danfuzz/">Danfuzz
+        Bornstein</a><i>.</i><br>
+        <i>Current Subsystem (</i><a href="#javadocing"><i>ELib</i></a><i> and
+        </i><a href="index.html"><i>E</i></a><i>) authored by <a href="http://www.caplet.com/">MarkM</a>.</i></p>
+      <p>See &quot;<a href="#javadocing">What Javadoc Does Who Need to Know?</a>&quot;
+        below, to get started quickly.
+      <h2>Introduction</h2>
+      <p>Over time, programmers have become (in some ways) reasonably successful
+        at organizing computation that occurs within a single machine. The necessary
+        lessons cost generations of failed companies. For Communities.com to succeed,
+        we must become reasonably successful at organizing computation spread
+        across a large number of machines, while securely serving the interests
+        of a diverse set of parties. To succeed at this, we cannot afford to learn
+        the necessary lessons from scratch -- these would likely be even more
+        expensive than the uni-machine lessons. Nor can we simply leverage the
+        lessons of previous distributed systems builders -- there are not yet
+        adequate demonstrations of success. Instead, we must borrow lessons from
+        uni-machine programming where appropriate.</p>
+      <p>But only where appropriate! Distributed systems (such as CORBA and RMI)
+        can also fail by overgeneralization from uni-machine programming practices.
+        In certain ways, uni-machine and distributed systems are very similar.
+        In other ways, they are very different. Our strategy for generalizing
+        uni-machine programming paradigms must account for both their similarities
+        and their differences.
+      <h4>Related Documents</h4>
+      <h5>Current issues</h5>
+      <p>Some current issues with the design of New-E have their own pages explaining
+        the design space and the potential solutions. <br>
+        Currently the only one is the <a href="ProxyTyping.html">proxy typing</a>
+        discussion.
+      <h5>Background reading</h5>
+      <p>E derives from a long and diverse pedigree of languages and operating
+        systems:
+        <center>
+          <img src="pedigree.gif" width="473" height="453" align="BOTTOM" border="0">
+        </center>
+        Those in blue (and connected by green links) are those that have a <i>capability-nature</i>,
+        whether or not they were actually capability secure. Most important of
+        E's ancestors is <a href="../history/joule/index.html">Joule</a>. See
+        also:</p>
+      <p>Agorics' <a href="http://www.agorics.com/agorics/allkey.html">KeyKOS</a>
+        pages, and Jonathan Shapiro's <a href="http://www.cis.upenn.edu/~KeyKOS/">KeyKOS</a>
+        and <a href="http://www.cis.upenn.edu/~eros/">EROS</a> pages.</p>
+      <p>Ken Kahn &amp; Mark Miller, &quot;<a href="http://www.agorics.com/agorics/agoricsPapers/aos/AOS.refs.html#iv"><i>Language
+        Design and Open Systems</i></a>&quot; in <i>The Ecology of Computation</i>,
+        ed Bernardo Huberman, North Holland, 1988.</p>
+      <p>&quot;<a href="http://www.communities.com/products/tools/e/e_white_paper.html">The
+        E Extension to Java</a>&quot; (a Communities.com white paper)</p>
+      <p>&quot;<a href="satan/index.html">Satan Comes to Dinner</a>&quot; (secure
+        dining philosophers in E)</p>
+      <p>Mark Stiegler's &quot;<a href="http://www.communities.com/company/papers/security/index.html">Intro
+        to Capability Security</a>&quot;</p>
+      <p>MarkM's &quot;<a href="http://www.caplet.com/security/taxonomy/">Computer
+        Security</a>&quot; pages (still in formation)</p>
+      <p>Presentation on Mult-E to OnLive (powerpoint converted to html XXX files
+        missing)</p>
+      <p>&quot;A wise man even learns from the mistakes of others&quot; <i>--seen
+        on a fortune cookie.</i>
+      <h2>Requirements (or Strong Preferences)</h2>
+      <p>Smooth integration between the local/sequential and distributed worlds.
+      <ul>
+        <li>Abstraction power of Object Orientation in both worlds.
+        <li>Capability Security Paradigm integrated across both worlds.
+        <li>Concurrency control amenable to maintaining the invariants of mutable
+          objects under all conditions.
+      </ul>
+      <p>Powerful and simple programming paradigm for organizing distributed computation,
+        that accomodates the properties of distributed systems.
+      <ul>
+        <li>Partial Failure
+        <li>Inherent Asynchrony
+        <li>Long Latencies
+        <li>&quot;<a href="http://www.caplet.com/security/taxonomy/">Cooperation
+          without Vulnerability</a>&quot; without a shared TCB (Trusted Computer
+          Base).
+        <li>Objects that outlive program versions (and hence may need to be upgraded)
+        <li>Co-existence of diverse versions of the participating programs
+      </ul>
+      <p>Single address space test: Programs built correctly for the distributed
+        case work correctly in the local case.</p>
+      <p>Requirements (or strong preferences) not met by the current E system:
+      <ul>
+        <li>E itself provides no support for upgrade, and arguably shouldn't.
+          This is provided instead by state bundles.
+        <li>E does not currently support version co-existence.
+        <li>Provision of the above by a library within a standard language (eg,
+          Java) without
+          <ul>
+            <li>bloat (unreasonable expansion from the code as written by the
+              programmer to the code that runs)
+            <li>preprocessors
+            <li>post-processors
+            <li>funky classloaders
+            <li>or anything else that would inhibit straightforward use of stock
+              programming environments and debuggers.
+          </ul>
+      </ul>
+      <h2>Architecture</h2>
+      <h4>Starting Uni-Machine Programming Paradigms:</h4>
+      <p>
+      <table border="1">
+        <tr>
+          <td>Abstraction mechanisms</td>
+          <td>Object-oriented programming</td>
+          <td>As in Smalltalk</td>
+        </tr>
+        <tr>
+          <td>Security</td>
+          <td><a href="http://www.communities.com/company/papers/security/index.html">Capability</a>
+            patterns</td>
+          <td>As in <a href="http://www.agorics.com/agorics/allkey.html">KeyKOS</a></td>
+        </tr>
+        <tr>
+          <td>Concurrency</td>
+          <td>Actors/Event-loop programming</td>
+          <td>As in <a href="../history/joule/index.html">Joule</a></td>
+        </tr>
+      </table>
+      Relevant Differences of Distributed Computation:
+      <table border="1">
+        <tr>
+          <td>Partial Failure</td>
+          <td>&quot;Quake&quot; model of failures <br>
+            Sturdy vs Fragile References</td>
+        </tr>
+        <tr>
+          <td>Inherently Asynchronous</td>
+          <td>One-way Messages</td>
+        </tr>
+        <tr>
+          <td>Long Latencies</td>
+          <td>Non-blocking event loop <br>
+            Optimistic References <br>
+            Pipelined Requests</td>
+        </tr>
+        <tr>
+          <td>No Universal TCB</td>
+          <td>Object/Machine Trust Equivalence</td>
+        </tr>
+        <tr>
+          <td>Objects outlive versions</td>
+          <td>State Bundles (outside E)</td>
+        </tr>
+        <tr>
+          <td>Comm Co-existence</td>
+          <td>Not currently supported</td>
+        </tr>
+      </table>
+      <img src="dist-msg.gif" width="768" height="576" align="BOTTOM" alt="Dynamic Distributed Reference Graph" border="0">
+      <h4>Current Architecture Overview</h4>
+      <p><i>The introduction set the scene; this section gives the key properties
+        of the current design. It may mention classes and some important interfaces
+        but it doesn't go into details. Someone should be able to read just the
+        overviews of our design documents and get a good understanding of how
+        the system works and fits together, without knowing the full details.</i>
+        <i>Also include any insights gained from experience like design bugs or
+        expense discovered in usage.</i>
+      <h4>Proposed Architecture Overview</h4>
+      <p>These need to be turned into real illustrations surrounded by a real
+        explanation</p>
+      <center>
+        <p><img src="elib-1.gif" width="600" height="765" align="BOTTOM" border="0"></p>
+        <p>
+        <hr align="CENTER">
+        <img src="elib-2.gif" width="600" height="765" align="BOTTOM" border="0">
+        <p></p>
+        <p>
+        <hr align="CENTER">
+        <img src="elib-3.gif" width="600" height="765" align="BOTTOM" border="0">
+        <p></p>
+        <p>
+        <hr align="CENTER">
+        <img src="elib-4.gif" width="600" height="765" align="BOTTOM" border="0">
+        <p></p>
+        <p>
+        <hr align="CENTER">
+        <img src="elib-5.gif" width="600" height="765" align="BOTTOM" border="0">
+        <p></p>
+        <p>
+        <hr align="CENTER">
+        <img src="elib-6.gif" width="599" height="765" align="BOTTOM" border="0">
+        <p></p>
+        <p>
+        <hr align="CENTER">
+        <img src="elib-7.gif" width="599" height="765" align="BOTTOM" border="0">
+        <p></p>
+        <p>
+        <hr align="CENTER">
+        <img src="elib-8.gif" width="617" height="788" align="BOTTOM" border="0">
+      </center>
+      <h4>Off the shelf alternatives</h4>
+      <p><i>Any notes about potential off the shelf technologies that could be
+        used, and their trade-offs.</i>
+      <h4>Other Design Objectives, Constraints and Assumptions</h4>
+      <p><i>Lists any special objectives and assumptions of the code e.g. reusability,
+        thread safety, security, performance, use of resources, compatibility
+        with existing code etc. This section gives important context for reviewers</i>
+      <h2>Current implementation</h2>
+      <h4><a name="javadocing"></a>What Javadoc Does Who Need to Know?</h4>
+      <p>All of ELib is javadoc'ed, but for the ELib user most of this is irrelevant
+        internal detail. The normal ELib application programmer should only need
+        to use the methods found in <a href="../javadoc/org/erights/e/elib/prim/E.html">E</a>,
+        the static pair making methods of <a href="../javadoc/org/erights/e/elib/ref/Ref.html">Ref</a>,
+        and the methods found in <a href="../javadoc/org/erights/e/elib/ref/Resolver.html">Resolver</a>.</p>
+      <p>Intermediate between ELib implementer and ELib application programmer
+        is the ELib framework creator -- using the ELib constructs to create new
+        forms of message plumbing. In the E language, the abstraction provided
+        for this purpose was the Deflector. In ELib, one instead defines new implementors
+        of <a href="../javadoc/org/erights/e/elib/base/Callable.html">Callable</a>
+        (for intercepting synchronous calls) or <a href="../javadoc/org/erights/e/elib/ref/Ref.html">Ref</a>
+        (for intercepting asynchronous and synchronous calls). For example, A
+        <i>Proxy</i> would be a kind of Vow, since it needs to intercept asynchronous
+        calls, whereas a vat-to-crew or crew-to-vat <i>Tether</i> may be a Callable,
+        if it only needs to intercept synchronous calls.</p>
+      <p>If one wished to create multiple runQ's (need link to issues), one would
+        also need to use the class <a href="../javadoc/org/erights/e/elib/prim/Runner.html">Runner</a>.
+      </p>
+      <p>
+      <h4>Examples, Testing and Debugging</h4>
+      <p>ELib is currently tested by two pieces of code: <a href="../javadoc/org/erights/e/elib/prim/tests/ERunDemo.html">ERunDemo</a>
+        is a trivial test/example that demostrates event-loop concurrency and
+        Promise-based optimism. <a href="../elang/index.html">E</a> is a programming
+        language, usable as a test harness to test/exercise/debug all of ELib
+        as well as programs built using ELib. (As you might guess from the names,
+        ELib was originally built to be the runtime library for E.)</p>
+      <h2>Known Bugs &amp; Deficiencies</h2>
+      <p><i>E.whenKept()</i> and <i>E.whenBroken()</i> are not yet implemented.</p>
+      <p><a href="../javadoc/org/erights/e/elib/prim/tests/ERunDemo.html">ERunDemo</a>
+        demonstrates and documents a mysterious (but repeatable!) concurrency
+        control bug that doesn't occur under the debugger. This is high priority.</p>
+      <p>The coverage testing hooks in org.erights.e.elib.prim.JavaMemberNode
+        provide access to global static state, and so provide a covert channel.
+        This needs to be guarded by a capability which can be given out only to
+        authorized testing code.</p>
+      <p>ELib to Java Binding Issues:
+      <ul>
+        <li>Only arguments are coerced to the parameter type. We should also coerce
+          the receiver to the receiver type. (in org.erights.e.elib.prim.JavaMemberNode.execute())
+          <p>
+        <li>org.erights.e.elib.prim.JavaMemberNode.coerce() is a hacky bunch of
+          special cases that grew as needed, rather than a principled framework.
+          Such a principled framework has yet to be designed.
+          <p>
+          <ul>
+            <li>Deflectors of public java interfaces should eventually be generated
+              and loaded on the fly, driven by attempting to load a mangling of
+              the original interface name.
+              <p>
+          </ul>
+        <li>org.erights.e.elib.prim.ScriptMaker currently presents <i>all</i>
+          public java methods and fields of <i>all</i> public java classes, modulo
+          1) In overloading, only name and arity are significant. and 2) A sugaring
+          mechanism whereby various sugaring classes (org.erights.e.elib.base.*Sugar
+          and org.erights.e.elib.prim.ObjectSugar) add or override instance methods
+          of the corresponding java classes. Deficiencies in this mechanism:
+          <p>
+          <ul>
+            <li>When more than one java method of the same name has the same arity,
+              an arbitrary one wins. This is unacceptably stupid. Rather, that
+              name-arity should be ruined for that object (bound to a method that
+              throws), and methods with each of the full signatures as names should
+              be defined instead. <b><i>Partially done:</i> </b>Methods we also
+              register the methods under mangled names using the parameter-type
+              signature.
+              <p>
+            <li>I'm not sure whether a non-sugar instance method on a subclass
+              can override a sugar method associated with a superclass. This is
+              needed for the ambassador pattern.
+              <p>
+            <li>For production use, methods should be exported explicitly, and
+              hidden by default. The exported methods should all be audited for
+              security.
+              <p>
+            <li>For debugging use, where methods are exported by default (as in
+              the current implementation) one must be able to explicitly prevent
+              certain methods from being exported (such as java.lang.Object.wait()).
+              <p>
+            <li>The binding between a class and its sugaring class is currently
+              by initialize-time registration in org.erights.e.elib.prim.ScriptMaker.
+              It should instead be by class discovery of a mangling of the original
+              class's name.
+              <p>
+            <li>Inheritance of multiple sugaring (for which there are no known
+              cases) just picks the sugaring of an arbitrary supertype, rather
+              than doing the right thing. What &quot;the right thing&quot; is
+              here has yet to be specified.
+              <p>
+            <li>There is currently no way to sugar a static method.
+              <p>
+            <li>JavaMemberNodes are currently recreated rather than inherited,
+              leading to wasted space, and making the ELib coverage recorder much
+              less useful.
+              <p>
+            <li>Each array type gets its own vtable with its own JavaMemberNodes,
+              when they should instead be shared, similarly wasting space and
+              making coverage stats less meaningful.
+              <p>
+          </ul>
+        <li>ELib needs a protocol-inquiry meta-protocol so that, for example,
+          an object can be registered as listening only for those events it can
+          respond to. (thanks for this requirement go to Tony Grant and Bill Frantz)
+          E would also benefit from this addition.
+      </ul>
+      <h2>Design Issues</h2>
+      <h4>Resolved Issues</h4>
+      <ul>
+        <li>Methods are registered under both their unmangled and their mangled
+          names. See <a href="ejbind.html">The E-to-Java Binding Spec</a>.
+        <li>If <i>p</i> is a broken reference, should <i>E.resolution(p)</i> throw
+          a NestedException containing the problem, or should it return <i>p</i>?
+          Either answer is semantically plausible, so it would be good to know
+          which is more convenient. But this needs to get pinned down <i>soon</i>!
+          <ul>
+            <li>Done. If <i>p</i> is broken, E.resolution(p) returns p. Turns
+              out to be much more convenient.
+          </ul>
+      </ul>
+      <h4>Open Issues</h4>
+      <ul>
+        <li><a href="ProxyTyping.html">Proxy typing</a>
+        <li>Are optimistic return results good? (placeholder for link to possible
+          document by Arturo)
+      </ul>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="index.html">e</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="e-goals.html" title="On to: E Language Design Goals"><img src="../images/next.gif" width="64" height="32" alt="On to: E Language Design Goals" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

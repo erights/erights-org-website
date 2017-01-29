@@ -1,0 +1,676 @@
+ 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>Capability Myths Demolished</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">capability</a>&nbsp;/&nbsp;<a href="index.html">duals</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><img src="../../../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b>Capability 
+              Myths<br>
+              Demolished </b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <p></p>
+      <p>Despite the virtues of capability systems, the vast bulk of scientific 
+        and engineering effort has gone into ACL-based security development. Capability 
+        systems have been largely dismissed by computer security reseachers and 
+        practitioners due to a history of misunderstandings repeated till they 
+        became common wisdom. These myths <i>about what capability systems cannot 
+        do</i> continue to spread, even though many of the actual systems in use 
+        could do these supposedly impossible things. The myths about capabilities 
+        we will discuss here are:</p>
+      <ul>
+        <li><i><a href="#equiv-myth">The Equivalence Myth</a></i>: ACLs and capability 
+          systems are formally equivalent</li>
+        <li><i><a href="revoke-myth">The Irrevocability Myth</a></i>: Capabilities 
+          cannot revoke access</li>
+        <li><i><a href="#delegate-myth">The Delegation Myth</a></i>: Capabilities 
+          get away from you</li>
+      </ul>
+      <div align="center"> 
+        <table cellpadding="12">
+          <tr> 
+            <th>&nbsp;</th>
+            <th>1. <a href="#acls-as-columns">ACLs as Columns</a></th>
+            <th>2. <a href="#caps-as-rows">Caps as Rows</a></th>
+            <th>3. <a href="#caps-as-keys">Caps as Keys<br>
+              (SPKI)</a> </th>
+            <th>4. <a href="#actual-caps">Caps in Practice</a></th>
+          </tr>
+          <tr> 
+            <th>A. <a href="#granularity">Granularity of Subject</a></th>
+            <td bgcolor="#FF0000"> 
+              <div align="center"><b>Human</b></div>
+            </td>
+            <td bgcolor="#00FF00"> 
+              <div align="center"><b>instance</b></div>
+            </td>
+            <td bgcolor="#00FF00"> 
+              <div align="center"><b>instance<br>
+                <font color="#FF0000">(Human)</font></b></div>
+            </td>
+            <td bgcolor="#00FF00"> 
+              <div align="center"><b>instance</b></div>
+            </td>
+          </tr>
+          <tr> 
+            <th>B. <a href="#designation">Designation and Authority</a></th>
+            <td bgcolor="#FF0000"> 
+              <div align="center"><b>separate</b></div>
+            </td>
+            <td bgcolor="#FF0000"> 
+              <div align="center"><b>separate</b></div>
+            </td>
+            <td bgcolor="#FF0000"> 
+              <div align="center"><b><font color="#FFFF00">(mostly)</font><br>
+                separate</b></div>
+            </td>
+            <td bgcolor="#00FF00"> 
+              <div align="center"><b>bundled</b></div>
+            </td>
+          </tr>
+          <tr> 
+            <th>C. <a href="#dynamic">Static <i>vs</i> Dynamic</a></th>
+            <td bgcolor="#FF0000"> 
+              <div align="center"><b>static</b></div>
+            </td>
+            <td bgcolor="#FF0000"> 
+              <div align="center"><b>static</b></div>
+            </td>
+            <td bgcolor="#00FF00"> 
+              <div align="center"><b>dynamic</b></div>
+            </td>
+            <td bgcolor="#00FF00"> 
+              <div align="center"><b>dynamic</b></div>
+            </td>
+          </tr>
+          <tr> 
+            <th>D. <a href="#compose">1-level <i>vs</i> Compositional</a></th>
+            <td bgcolor="#FF0000"> 
+              <div align="center"><b>1-level</b></div>
+            </td>
+            <td bgcolor="#FF0000"> 
+              <div align="center"><b>1-level</b></div>
+            </td>
+            <td bgcolor="#FF0000"> 
+              <div align="center"><b>1-level</b></div>
+            </td>
+            <td bgcolor="#00FF00"> 
+              <div align="center"><b>compositional</b></div>
+            </td>
+          </tr>
+          <tr> 
+            <th>E. <a href="#invoke">Accessing and Authorizing</a></th>
+            <td bgcolor="#FF0000"> 
+              <div align="center"><b>separate</b></div>
+            </td>
+            <td bgcolor="#FF0000"> 
+              <div align="center"><b>separate</b></div>
+            </td>
+            <td bgcolor="#FF0000"> 
+              <div align="center"><b> separate</b></div>
+            </td>
+            <td bgcolor="#00FF00"> 
+              <div align="center"><b>bundled</b></div>
+            </td>
+          </tr>
+          <tr> 
+            <th>F. <a href="#confine">Is the Alice-Bob link required?</a></th>
+            <td bgcolor="#FF0000"> 
+              <div align="center"><b>no</b></div>
+            </td>
+            <td bgcolor="#FF0000"> 
+              <div align="center"><b>no</b></div>
+            </td>
+            <td bgcolor="#FF0000"> 
+              <div align="center"><b>no</b></div>
+            </td>
+            <td bgcolor="#00FF00"> 
+              <div align="center"><b>yes</b></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <p><i>Models vs Reality: Column #1 represents the dominant security paradigm, 
+        ACLs, both in practice, and approximately as commonly understood. Column 
+        #4 represents actual capability systems in practice. Columns #2 and #3 
+        represent the two different ways in which capabilities are commonly understood 
+        -- according to a naive static view of Lampson's access matrix [<a href="#Lampson71">Lampson71</a>], 
+        and according to the metaphor that &quot;capabilities are keys&quot;. 
+        One capability-like system, SPKI [<a href="#Ellison99">Ellison99</a>], 
+        is mostly faithful to the &quot;capabilities are keys&quot; metaphor, 
+        so its properties, when different, are listed in parentheses in column 
+        #3. The row are some attributes on which security models may differ. As 
+        we see, capabilities as commonly understood have more in common with actual 
+        ACL systems than actual capability systems. Below, we proceed from left 
+        to right across the columns, and from top to bottom across the rows. </i></p>
+      <div align="center"> 
+        <table border="1" cellpadding="6">
+          <tr> 
+            <th> 
+              <div align="center"></div>
+            </th>
+            <th> 
+              <div align="center">reading<br>
+                /etc/passwd </div>
+            </th>
+            <th> 
+              <div align="center">editing<br>
+                ~markm/foo/* </div>
+            </th>
+            <th> 
+              <div align="center">reading<br>
+                /etc/motd</div>
+            </th>
+          </tr>
+          <tr> 
+            <th> 
+              <div align="center">Alice</div>
+            </th>
+            <td> 
+              <div align="center"><b>Y</b></div>
+            </td>
+            <td> 
+              <div align="center"><b>Y</b></div>
+            </td>
+            <td> 
+              <div align="center"><font color="#FF0000"><b>N</b></font></div>
+            </td>
+          </tr>
+          <tr> 
+            <th> 
+              <div align="center">Bob</div>
+            </th>
+            <td> 
+              <div align="center"><b>Y</b></div>
+            </td>
+            <td> 
+              <div align="center"><font color="#FF0000"><b>N</b></font></div>
+            </td>
+            <td> 
+              <div align="center"><b>Y</b></div>
+            </td>
+          </tr>
+          <tr> 
+            <th> 
+              <div align="center">Carol</div>
+            </th>
+            <td> 
+              <div align="center"><b>Y</b></div>
+            </td>
+            <td> 
+              <div align="center"><b>Y</b></div>
+            </td>
+            <td> 
+              <div align="center"><b>Y</b></div>
+            </td>
+          </tr>
+        </table>
+        <p><i>The Lampson Access Matrix</i></p>
+      </div>
+      <h2><a name="acls-as-columns"></a><img src="images/acl-oriented.gif" width="342" height="334" align="right" alt="ACL Diagram">1. 
+        ACLs as Columns of the Access Matrix</h2>
+      <p>The ACL diagram on the right is logically equivalent to the normal access 
+        matrix visualization of ACLs, but makes clearer what's going on, and sets 
+        the stage for the steps we take below.</p>
+      <p>The circles on the left are <i>subjects</i>, and the boxes on the right 
+        are <i>resources</i> (or permissions to resources). (The security literature 
+        often calls these &quot;objects&quot;, but this exposition uses &quot;<i>object</i>&quot; 
+        instead for an encapsulated combination of state and behavior, as is familiar 
+        from object-oriented programming.)</p>
+      <p>The black arrows show which subjects may access which resource. In the 
+        access matrix visualization, each resource is a column heading, and each 
+        subject is a row heading. In the access matrix, each black arrow becomes 
+        a <b>Y</b> at the intersection of that subject-row and that resource-column.</p>
+      <p> In an ACL system, there is a list, the <i>access control list</i>, associated 
+        with each resource, listing which subjects may access it, shown as a green 
+        box in our ACL diagram. This list corresponds to a column of cells in 
+        the access matrix. When a subject attempts to access a resource, the system 
+        first checks to ensure that the subject is listed in the ACL for that 
+        resource.</p>
+      <h2><a name="caps-as-rows"></a>2. Capabilities as Rows of the Static Access 
+        Matrix</h2>
+      <h4><i><u><a name="equiv-myth"></a>The Equivalence Myth: ACLs and capability 
+        systems are formally equivalent</u></i></h4>
+      <p><i><u><img src="images/cap-oriented.gif" width="350" height="348" align="right" alt="CList Diagram"></u></i>Capability 
+        systems generally have per-subject capability lists, listing the resources 
+        the subject may access, shown as green boxes on CList diagram on the right. 
+        The CLists are rows on the access matrix. The thin black arrows emerging 
+        from the CLists (the <b>Y</b>s on those rows) are the capabilities themselves. 
+      </p>
+      <p>Although [<a href="#Lampson71">Lampson71</a>]'s presentation of the access 
+        matrix was more sophisticated, the lasting legacy of this paper -- what 
+        most everyone remembers and teaches to one generation after another -- 
+        is the access matrix itself as a static representation of access rights, 
+        and its implications of equivalence. (For genuine flaws of the Lampson 
+        paper itself, see [<a href="#Close02">Close02</a>].) It would seem that 
+        ACLs and capability systems both represent the same information, and differ 
+        only in whether to record this information in a by-column or a by-row 
+        data structure. If this were indeed the only difference, there would be 
+        no non-performance relevance to the choice between the two models. Since 
+        this was widely believed, many people did, as a result, lose interest.</p>
+      <p>There are three things wrong with this picture.</p>
+      <h3><a name="granularity"></a>A. Granularity of Subject, and POLA</h3>
+      <p>What's a &quot;<i>subject</i>&quot;? In using the access matrix to model 
+        ACL systems, an implicit assumption is made that &quot;subject&quot; corresponds 
+        to &quot;user&quot;, &quot;account&quot;, or &quot;principal&quot;, ie, 
+        is understood to have human granularity. When modeling capability systems, 
+        a &quot;subject&quot; corresponds to an <i>instance</i> of some sort of 
+        module, whether an <i>object</i> (an instance of a class, as in a capability 
+        language) or a <i>process</i> (an instance of an executable program, as 
+        in a capability OS). A instance is assumed to have much finer granularity 
+        than a user, and indeed, much finer granularity than users are normally 
+        even aware of. This difference cannot be reconciled without doing violence 
+        to one of these models [<a href="#Shapiro00">Shapiro00</a>]. </p>
+      <p>The appeal of the ACL model rests on the image of an administrator being 
+        able to list subjects<i> whose identity a resource's administrator can 
+        know and reason about</i>, ie, accounts, or other relatively static human-granularity 
+        distinctions. The primary virtue of the capability model is the <i>Principle 
+        of Least Authority</i>, or <i>POLA</i> (introduced by [<a href="#Saltzer75">Saltzer75</a>] 
+        as the <i>Principle of Least Privilege</i>). This relies on a user being 
+        able to invoke an instance, and grant it only that subset of authority 
+        it needs to carry out its proper duties. This relies on each instance 
+        having its own separate set of authorities.</p>
+      <h3><a name="designation"></a>B. Designation and Authority: The Confused 
+        Deputy part 1</h3>
+      <p>The matrix visualization shows each authorization as a <b>Y</b> in a 
+        cell of the matrix. By simply shifting to the above visualization with 
+        the black arrows, we see a difference obscured by the matrix visualization 
+        -- the direction in which the arrows point. Why should this make a difference?</p>
+      <p>The ACL model presumes some namespace, such as filenames, which subjects 
+        use to designate which resources they are attempting to access. This namespace 
+        is necessarily separate from the representation of authorization, since 
+        the arrows representing authorization point in the wrong direction. This 
+        assumes away one of the deepest problems in computer security -- the designation 
+        problem. How does a subject come to know a designator and understand what 
+        relationship the designated resource supposedly has to the subject, and 
+        what actions the subject should therefore perform on the resource? When 
+        designators and authorizations take separate path through a system, their 
+        recombination invariably leads to Confused Deputies [<a href="#Hardy88">Hardy88</a>, 
+        <a href="#Sitaker00">Sitaker00</a>] -- where an authorization given to 
+        it by one party is used to access a resource designated by a different 
+        party, bringing about an unintended rights transfer. In ACL systems, this 
+        confusion is essentially inescapable.</p>
+      <p>In a capability system, the capability itself already points from the 
+        subject to the resource, and so serves both to designate what resource 
+        to access, as well as providing the authority to perform that access. 
+        We can avoid introducing a shared namespace into the foundations, and 
+        thereby avoid all the security issues involved in managing a shared namespace 
+        -- issues rarely acknowledged as a cost of non-capability models.</p>
+      <h3><a name="dynamic"></a>C. Static <i>vs</i> Dynamic</h3>
+      <p>A security model must account for how authorization changes over time 
+        [<a href="#Harrison76">Harrison76</a>]. This takes us to our next column.</p>
+      <p></p>
+      <h2><a name="caps-as-keys"></a>3. Capabilities as Tickets/Keys (and SPKI)</h2>
+      <p>The most appealing metaphor for initially teaching capabilities is <i>capabilities 
+        are (copyable) keys</i> (or similarly, <i>copyable tickets</i>). This 
+        metaphor is often used, and we ourselves have used it to good effect [<a href="#Stiegler00">Stiegler00</a>]. 
+        However, many people are not taught to graduate from this metaphor, and 
+        so are left to take it too literally, leading them into the next two myths.</p>
+      <p><img src="images/spki.gif" width="266" height="233" align="right" alt="SPKI Diagram">In 
+        the diagram of SPKI on the right, the ability to read <tt>/etc/motd</tt> 
+        is behind a locked door. To read it, you have to access <tt>&quot;/etc/motd&quot;</tt> 
+        for reading and present the key that unlocks the door -- demonstrating 
+        that you are authorized to read. The diagram shows that Alice already 
+        posseses one of these keys, represented by the black arrow from Alice 
+        to the resource. (Alice's CList is now shown simply as the arrow-tail-dots 
+        within Alice.) The stubby yellow arrow represents Alice giving to Bob 
+        a copy of this key. Once Bob receives it, he will now be able to read 
+        <tt>/etc/motd</tt> as well. By giving Bob a copy of her key, Alice is 
+        <i>authorizing</i> Bob to read <tt>/etc/motd</tt>. The stubby yellow arrow 
+        represents this act of authorization. (In SPKI, an authorization certificate.) 
+      </p>
+      <p>In this model and in SPKI, subjects <i>authorize</i> subjects (unlabeled 
+        stubby yellow arrow carrying a black arrow) and subjects <i>access</i> 
+        resources (the gray arrow carrying the operation name, &quot;<i>read</i>&quot;), 
+        and these are two distinct kinds of action. This is not true of actual 
+        capability systems, as we'll explain below.</p>
+      <p>As with actual capabilities, keys are correctly assumed unforgeable. 
+        The only way Bob can get a key to a resource is either by being its creator, 
+        or if someone who already has the key, such as Alice, decides to give 
+        him a copy. Subjects are also correctly assumed to be encapsulated -- 
+        if Alice doesn't want to hand out a copy, no one can steal it from her 
+        CList. </p>
+      <h4><i><u><a name="revoke-myth"></a>The Irrevocability Myth: Capabilities 
+        cannot revoke access</u></i></h4>
+      <p>Likewise, no one but Alice can delete a key from Alice's CList -- not 
+        even the resource's creator. This correctly implies that keys themselves 
+        are literally irrevocable. Further, by assumption, the key is all that's 
+        required to establish that an access is authorized -- there is correctly 
+        no provision within the model to place an extra security check between 
+        Alice and the resource. So, in the absence of the ability to revoke Alice's 
+        key, there would seem to be no opportunity to revoke Alice's access. Can 
+        privileges only be granted in an irrevocable fashion? In many quarters, 
+        this is still the common wisdom.</p>
+      <blockquote> 
+        <p><i>Capability systems modeled as unforgeable references present the 
+          other extreme, where delegation is trivial, and revocation is infeasible.</i></p>
+      </blockquote>
+      <p align="right">[<a href="#Chander01">Chander01</a>]</p>
+      <p>As we will see shortly, this conclusion is often reached because this 
+        model is <i>non-compositional</i>. SPKI, also non-compositional, had to 
+        introduce a revocation primitive because revocation could not otherwise 
+        be provided within the model. (This is not to say that [<a href="#Chander01">Chander01</a>] 
+        is confused for this reason. We gather that they are confused for more 
+        complex reasons.) </p>
+      <h4><i><u><a name="delegate-myth"></a>The Delegation Myth: Capabilities 
+        get away from you</u></i></h4>
+      <p>According to this metaphor, once Alice has the key to <tt>/etc/motd</tt>, 
+        she can give a copy to anyone, such as Bob, without restriction. Though 
+        SPKI is the only capability-like system we know that actually allows such 
+        unrestricted authorization, many have assumed it.</p>
+      <p>In 1984, Earl Boebert published &quot;On the Inability of an Unmodified 
+        Capability System to Enforce the *-Property&quot; [<a href="#Boebert84">Boebert84</a>]. 
+        This paper also claimed that capability systems could not do confinement. 
+        Though Boebert was soon convinced otherwise by Norm Hardy, he never published 
+        a retraction. His supposed impossibility proof had tremendous influence, 
+        especially by way of [<a href="#Kain87">Kain87</a>] and [<a href="#Gong89">Gong89</a>]:</p>
+      <blockquote> 
+        <p><i>Boebert made clear in [<a href="#Boebert84">Boebert84</a>] that 
+          an unmodified or classic capability system can not enforce the * property 
+          or solve the confinement problem. The main pitfall of a classic capability 
+          system is that the right to exercise access carries with it the right 
+          to grant access . Since a capability is just a bit string, it can propagate 
+          in many ways without the detection of the kernel or the server.</i></p>
+        <p align="right">[<a href="#Gong89">Gong89</a>]</p>
+      </blockquote>
+      <p>In [<a href="#Gong89">Gong89</a>], Li Gong then goes on to propose a 
+        mixed capability / ACL system, ICAP, to address this &quot;deficiency&quot;. 
+        Once Boebert's mistake is understood, it's easy to see that ICAP is pointless. 
+        [<a href="#Gong89">Gong89</a>] won the <i>best of conference</i> award, 
+        and the similar [<a href="#Kain87">Kain87</a>] shared the <i>symposium 
+        best paper</i> award, both after KeyKOS's patent [<a href="#Hardy86">Hardy86</a>] 
+        on capability-based confinement has issued, and after well after the KeyKOS 
+        architecture had been explained in the computer security literature [<a href="#Hardy85">Hardy85</a>].</p>
+      <p>Note that the last sentence quoted above is a separate but contributory 
+        misunderstanding -- the equivalence of capabilities and bit strings is 
+        a feature only of a specialized category of capability systems known as 
+        <i>password capability systems</i>, such as [<a href="#Tanenbaum86">Tanenbaum86</a>]. 
+        (These can be described as <i>capabilities as unguessable phone numbers</i> 
+        systems.) For password capability systems, Boerbert's results may often 
+        be valid. But most capability systems are the other kind -- partitioned 
+        capability systems.</p>
+      <p>The resulting common wisdom was further amplified by the influential 
+        and widely cited [<a href="#Wallach97">Wallach97</a>], which also reiterates 
+        the revocation myth:</p>
+      <blockquote> 
+        <p><i>However, an important issue is confinement of privileges [26]. It 
+          should not generally be possible for one program to delegate a privilege 
+          to another program (that right should also be mediated by the system). 
+          This is the fundamental flaw in an unmodified capability system; two 
+          programs which can communicate object references can share their capabilities 
+          without system mediation. This means that any code which is granted 
+          a capability must be trusted to care for it properly. In a mobile code 
+          system, the number of such trusted programs is unbounded. Thus, it may 
+          be impossible to ever trust a simple capability system. Likewise, mechanisms 
+          must be in place to revoke a capability after it is granted. Many extensions 
+          to capabilities have been proposed to address these concerns. Kain and 
+          Landwehr [<a href="#Kain87">Kain87</a>] propose a taxonomy for extensions 
+          and survey many systems which implement them.</i></p>
+        <p><i>Fundamentally, extended capability systems must either place restrictions 
+          on how capabilities can be used, or must place restrictions on how capabilities 
+          can be shared. Some systems, such as ICAP [15], make capabilities aware 
+          of ``who'' called them; they can know who they belong to and become 
+          useless to anyone else. The IBM System/38 [4] associates optional access 
+          control lists with its capabilities, accomplishing the same purpose. 
+          Other systems use hardware mechanisms to block the sharing of capabilities 
+          [24].</i></p>
+        <p align="right">[<a href="#Wallach97">Wallach97</a>]</p>
+      </blockquote>
+      <p>Further correspondence with Wallach speaks for itself.</p>
+      <blockquote> 
+        <p><i>I'll concede that, if you extend your capability system in such 
+          a way to allow the kind of interposition we're talking about (i.e., 
+          not something supported by a traditional capability system), that you 
+          can potentially get the semantics that you want, assuming your type 
+          system allows you do this cleanly (Java's type system makes this very 
+          messy).</i></p>
+        <p align="right">Wallach, quoted in [<a href="#Shapiro01">Shapiro01</a>]</p>
+      </blockquote>
+      <p>Ignoring Java's type system, this interposition issue can be reduced 
+        to the question of whether the system is <i>compositional</i>. With the 
+        exception of SPKI, all actual capability systems we know of are compositional.</p>
+      <p></p>
+      <h2><a name="actual-caps"></a><img src="images/granovetter.gif" width="246" height="265" align="right" alt="Granovetter Diagram">4. 
+        Actual Capability Systems in Practice</h2>
+      <p>The properties of most actual capability systems are depicted in the 
+        Granovetter diagram on the right [<a href="#Granovetter73">Granovetter73</a>, 
+        <a href="#Miller00">Miller00</a>]. The differences with the previous diagram 
+        explain the remaining rows of our <i>Myths vs Reality</i> table, and put 
+        to rest the above two <i>capabilities as keys</i> myths.</p>
+      <h3><a name="compose"></a>D. One-Level <i>vs</i> Compositional.</h3>
+      <p> The pink <tt>/etc/motd</tt> box has been replaced by the blue Carol 
+        circle. This depicts that there is no artificial separation between subjects 
+        and resources. Rather, every subject is a resource, and every resource 
+        is conceptually a subject (though some, like the number 3, are primitively 
+        provided). This uniformity makes the capability security model <i>compositional</i> 
+        -- these networks can be composed to any depth. As this corresponds to 
+        object-oriented programming practice, we now refer to Alice, Bob, and 
+        Carol as <i>objects</i>.</p>
+      <h3><a name="invoke"></a>E. Accessing and Authorizing: The Confused Deputy 
+        part 2</h3>
+      <p> The thick yellow arrow now represents an <i>invocation</i> (or message). 
+        It carries both the message-name <i>foo</i> and an arrow tail, showing 
+        that Alice is both accessing Bob and authorizing Bob in one act. When 
+        Bob receives a capability (a designation/authority bundle) to Carol, Bob 
+        must receive this as part of a package that gives it meaning to Bob -- 
+        as an argument of an invocation. Otherwise, how's Bob to know why someone 
+        gave him this extra authority, or what he's supposed to do with it? (In 
+        SPKI, the certificate is often delivered together with other information 
+        that could inform Bob, but SPKI doesn't bind these two together securely.)</p>
+      <p>A capability bundles together designation and authority. The act of <i>invoking 
+        </i>bundles together the acts of accessing and of authorizing. Both are 
+        required to avoid Confused Deputy problems [<a href="#Hardy88">Hardy88</a>, 
+        <a href="#Sitaker00">Sitaker00</a>].</p>
+      <h3><a name="confine"></a>F. Is the Alice-Bob link required?</h3>
+      <p>The thick yellow arrow is now riding on a capability from Alice to Bob. 
+        In actual capability systems, in order for Alice to authorize Bob to access 
+        Carol, Alice must herself also be authorized to access both Bob and Carol. 
+        The Alice-Bob link is required since invocations may only travel on capabilities. 
+        To understand this using the key metaphor is a stretch. (Everyone is normally 
+        locked in their house. In order for Alice to give Bob a copy of the key 
+        to Carol's house, Alice needs a key to Bob's house, so that she may get 
+        to Bob to give him the key. We will not belabor this further.)</p>
+      <p>This new restriction makes confinement possible -- to prevent Alice from 
+        delegating to Bob, don't give Alice access to Bob. Because capabilities 
+        are compositional, so is confinement -- a subgraph of cooperating objects 
+        cannot delegate to Bob if Bob is not reachable from that subgraph. This 
+        is the simple insight behind the capability-based confinement systems 
+        of [<a href="#Hardy86">Hardy86</a>, <a href="#Shapiro99">Shapiro99</a>, 
+        <a href="#Wagner02">Wagner02</a>, and <a href="#Yee02">Yee02</a>], and 
+        should put to rest <u><i><u>The Delegation Myth</u></i></u>.</p>
+      <h2><a name="revoke"></a><img src="images/revoke.gif" width="295" height="233" align="right" alt="Revocation Diagram">Revoking 
+        Access</h2>
+      <p>To put to rest <u><i><u>The Irrevocability Myth</u></i></u>, we show 
+        capability revocation by composition (or interposition). Let's say Alice 
+        wants to give Bob revocable access to Carol, with Alice having the option 
+        to revoke it at a later time. Alice could simply create a pair of forwarders, 
+        c1 and c2, connected as shown. Alice would give Bob access to c1, and 
+        retain c2 for herself. Of the c1/c2 pair, we may call c1 the <i>forwarding 
+        facet</i>, and c2 the <i>revoking facet</i>. Bob may use c1 as if it were 
+        Carol -- any messages sent to c1 get forwarded through c2 to Carol. This 
+        works well given that inter-object interactions are mediated mainly by 
+        messages, and that messages may be handled generically, so that a reusable 
+        mechanism can forward any message.</p>
+      <p>When Alice desires to revoke Bob's access to Carol, she invokes c2, telling 
+        it to stop forwarding. c2 would then drop its pointer to Carol, and c1 
+        would become useless to Bob. Note that <i>no capabilities were revoked</i>, 
+        which is the truth supporting the myth. Bob still has access to c1. However, 
+        access to the useless c1 is no better than a hypothetical revoked capability 
+        would be. We haven't revoked the capability, but we have revoked the effective 
+        access to Carol represented by that capability. Revocation is just a change 
+        in behavior of user-defined objects.</p>
+      <p>How does this interact with <i><u>The Delegation Myth</u></i>? What if 
+        Bob had delegated to Fred his access to Carol? Since Bob only ever has 
+        access to c1, not Carol herself, this is the most Bob can delegate to 
+        Fred (and only, of course, if Bob has access to Fred). When Alice invokes 
+        c2 in order to disable c1, this prevents further access to Carol by Fred 
+        just as much as it prevents access by Bob.</p>
+      <p>The Powerbox pattern of <font color="#FF0000">XXX</font> above makes 
+        extensive use of such patterns of revocation.</p>
+      <h4><font color="#FF0000">XXX Need concluding paragraph</font></h4>
+      <h1><a name="acks"></a>Acknowledgements</h1>
+      <p>Thanks to Tyler Close, Hal Finney, Marc Stiegler, E. Dean Tribble, Zooko, 
+        and especially to Jonathan Shapiro for their comments, not all of which 
+        are reflected in the current draft. </p>
+      <h1><a name="refs"></a>References</h1>
+      <p><a name="Boebert84"></a>[Boebert84] W. E. Boebert, &quot;<b>On the Inability 
+        of an Unmodified Capability System to Enforce the *-Property</b>&quot;, 
+        in <i>Proceedings of the 7th DoD/NBS Computer Security Conference</i>, 
+        1984.</p>
+      <p><a name="Chander01"></a>[Chander01] Ajay Chander, Drew Dean, John Mitchell, 
+        &quot;<b>A State Transition Model of Trust Management and Access Control</b>&quot;, 
+        <i>14th IEEE Computer Security Foundations Workshop</i>, Online at <a href="http://citeseer.nj.nec.com/chander01statetransition.html">citeseer</a>.</p>
+      <p><a name="Close02"></a>[Close02] Tyler Close, &quot;<b>Re: Capability 
+        Myths Demolished</b>&quot;, e-lang email commenting on this paper, archived 
+        at <a href="http://www.eros-os.org/pipermail/e-lang/2002-November/007833.html">http://www.eros-os.org/pipermail/e-lang/2002-November/007833.html</a>.</p>
+      <p><a name="Ellison99"></a>[Ellison99] Carl Ellison, Bill Frantz, Butler 
+        Lampson, Ron Rivest, B. Thomas, and T. Ylonen, &quot;<b>SPKI Certificate 
+        Theory</b>&quot; IETF RFC 2693. Online at <a href="http://www.ietf.org/rfc/rfc2693.txt">http://www.ietf.org/rfc/rfc2693.txt</a>.</p>
+      <p><a name="Gong89"></a>[Gong89] Li Gong, &quot;<b>A Secure Identity-Based 
+        Capability System</b>&quot;, IEEE Symposium on Security and Privacy, 1989. 
+        Online at <a href="http://citeseer.nj.nec.com/gong89secure.html">citeseer</a></p>
+      <p><a name="Granovetter73"></a>[Granovetter73] Mark Granovetter, &quot;<b>The 
+        Strength of Weak Ties</b>&quot;, in: <i>American Journal of Sociology</i> 
+        (1973) Vol. 78, pp.1360-1380.</p>
+      <p></p>
+      <p><a name="Hardy85"></a>[Hardy85] Norm Hardy, &quot;<b>The KeyKOS Architecture</b>&quot;, 
+        <i>Operating Systems Review</i>, September 1985, pp. 8-25. Updated at 
+        <a href="http://www.cis.upenn.edu/%7EKeyKOS/OSRpaper.html">http://www.cis.upenn.edu/~KeyKOS/OSRpaper.html</a>.</p>
+      <p><a name="Hardy86"></a>[Hardy86] Norm Hardy, &quot;<b>U.S. Patent 4,584,639: 
+        Computer Security System</b>&quot;, Key Logic, 1986 <i>(The &quot;Factory&quot; 
+        patent)</i>, Online at <a href="http://www.cap-lore.com/CapTheory/KK/Patent.html">http://www.cap-lore.com/CapTheory/KK/Patent.html</a>.</p>
+      <p><a name="Hardy88"></a>[Hardy88] Norm Hardy, &quot;<b>The Confused Deputy, 
+        or why capabilities might have been invented</b>&quot;, <i>Operating Systems 
+        Review</i>, pp. 36:38, Oct., 1988, <a href="http://cap-lore.com/CapTheory/ConfusedDeputy.html">http://cap-lore.com/CapTheory/ConfusedDeputy.html</a>.</p>
+      <p><a name="Harrison76"></a>[Harrison76] Michael Harrison, Walter Ruzzo, 
+        Jeffrey Ullman., &quot;<b>Protection in Operating Systems</b>&quot;, Comm. 
+        of ACM, Vol. 19, n 8, August 1976, pp.461-471. Online at <a href="http://www.cs.fiu.edu/%7Enemo/cot6930/hru.pdf">http://www.cs.fiu.edu/~nemo/cot6930/hru.pdf</a>.</p>
+      <p><a name="Kain87"></a>[Kain87] Richard Y. Kain, Carl Landwehr, &quot;<b>On 
+        Access Checking in Capability-Based Systems</b>&quot;, in <i>IEEE Transactions 
+        on Software Engineering</i> SE-13, 2 (Feb. 1987), 202-207. Reprinted from 
+        the <i>Proceedings of the 1986 IEEE Symposium on Security and Privacy</i>, 
+        April, 1986, Oakland, CA; Online at <a href="http://chacs.nrl.navy.mil/publications/CHACS/Before1990/1987landwehr-tse.pdf">http://chacs.nrl.navy.mil/publications/CHACS/Before1990/1987landwehr-tse.pdf</a>.</p>
+      <p><a name="Lampson71"></a>[Lampson71] Butler Lampson, &quot;<b>Protection</b>&quot;, 
+        in <i>Proceedings of the Fifth Annual Princeton Conference on Informations 
+        Sciences and Systems</i>, pages 437-443, Princeton University, 1971. Reprinted 
+        in Operating Systems Review, 8(l), January 1974. Online at <a href="http://research.microsoft.com/%7Elampson/09-protection/WebPage.html">http://research.microsoft.com/~lampson/09-protection/WebPage.html</a>.</p>
+      <p><a name="Miller00"></a>[Miller00] Mark S. Miller, Chip Morningstar, Bill 
+        Frantz, &quot;<b>Capability-based Financial Instruments</b>&quot;, in 
+        Proceedings of Financial Cryptography 2000, Springer Verlag, 2000. Online 
+        at <a href="http://www.erights.org/elib/capability/ode/index.html">http://www.erights.org/elib/capability/ode/index.html</a>.</p>
+      <p><a name="Saltzer75"></a>[Saltzer75] Jerome H. Saltzer, Michael D. Schroeder, 
+        &quot;<b>The Protection of Information in Computer Systems</b>&quot;, 
+        <i>Proceedings of the IEEE</i>. Vol. 63, No. 9 (September 1975), pp. 1278- 
+        1308. Online at <a href="http://cap-lore.com/CapTheory/ProtInf/">http://cap-lore.com/CapTheory/ProtInf/</a>.</p>
+      <p><a name="Shapiro99"></a>[Shapiro99] Jonathan S. Shapiro, &quot;<b>EROS: 
+        A Capability System</b>&quot;, Ph.D. thesis, University of Pennsylvania, 
+        1999. Online at <a href="http://www.eros-os.org/papers/shap-thesis.ps">http://www.eros-os.org/papers/shap-thesis.ps</a>.</p>
+      <p><a name="Shapiro00"></a>[Shapiro00] Jonathan Shapiro, &quot;<b>Comparing 
+        ACLs and Capabilities</b>&quot;, 2000, Online at <a href="http://www.eros-os.com/essays/ACLSvCaps.html">http://www.eros-os.com/essays/ACLSvCaps.html</a>.</p>
+      <p><a name="Shapiro01"></a>[Shapiro01] Jonathan Shapiro, &quot;<b>Re: Old 
+        Security Myths Continue to Mislead</b>&quot;, email archived at <a href="http://www.eros-os.org/pipermail/e-lang/2001-August/005532.html">http://www.eros-os.org/pipermail/e-lang/2001-August/005532.html</a>.</p>
+      <p><a name="Sitaker00"></a>[Sitaker00] Kragen Sitaker, &quot;<b>thoughts 
+        on capability security on the Web</b>&quot;, email archived at <a href="http://lists.canonical.org/pipermail/kragen-tol/2000-August/000619.html">http://lists.canonical.org/pipermail/kragen-tol/2000-August/000619.html</a>.</p>
+      <p><a name="Stiegler00"></a>[Stiegler00] Marc Stiegler, &quot;<b>E in a 
+        Walnut</b>&quot;, Online at <a href="http://www.skyhunter.com/marcs/ewalnut.html">http://www.skyhunter.com/marcs/ewalnut.html</a>.</p>
+      <p><a name="Tanenbaum86"></a>[Tanenbaum86] Andrew S. Tanenbaum, Sape J. 
+        Mullender, Robbert van Renesse, &quot;<b>Using Sparse Capabilities in 
+        a Distributed Operating System</b>&quot; (1986) Proc. <i>Sixth Int'l Conf. 
+        On Distributed Computing Systems</i>, IEEE, pp. 558-563. Online at <a href="ftp://ftp.cs.vu.nl/pub/papers/amoeba/dcs86.ps.Z">ftp://ftp.cs.vu.nl/pub/papers/amoeba/dcs86.ps.Z</a>.</p>
+      <p></p>
+      <p><a name="Wagner02"></a>[Wagner02] David Wagner &amp; Dean Tribble, &quot;<b>A 
+        Security Analysis of the Combex DarpaBrowser Architecure</b>&quot;, Online 
+        at <a href="http://www.combex.com/papers/darpa-review/">http://www.combex.com/papers/darpa-review/</a>.</p>
+      <p><a name="Wallach97"></a>[Wallach97] Dan Wallach, Dirk Balfanz, Drew Dean, 
+        Edward Felten, &quot;<b>Extensible Security Architectures for Java</b>&quot;, 
+        in <i>Proceedings of the 16th Symposium on Operating Systems Principles</i> 
+        (Saint-Malo, France), October 1997. Online at <a href="http://www.cs.princeton.edu/sip/pub/sosp97.html">http://www.cs.princeton.edu/sip/pub/sosp97.html</a>.</p>
+      <p><a name="Yee02"></a>[Yee02] Ka-Ping Yee, Mark Miller, &quot;<b>Auditors: 
+        An Extensible, Dynamic Code Verification Mechanism</b>&quot;, Online at 
+        <a href="../../../elang/kernel/auditors/index.html">http://www.erights.org/elang/kernel/auditors/index.html</a>.</p>
+      <p align="left"> 
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">capability</a>&nbsp;/&nbsp;<a href="index.html">duals</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><img src="../../../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

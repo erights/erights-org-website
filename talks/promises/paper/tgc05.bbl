@@ -1,0 +1,324 @@
+\newcommand{\etalchar}[1]{$^{#1}$}
+\begin{thebibliography}{OBDMS98}
+
+\bibitem[Ami95]{amir:thesis}
+Yair Amir.
+\newblock {\em Replication Using Group Communication Over a Partitioned
+  Network}.
+\newblock PhD thesis, 1995.
+
+\bibitem[Bej96]{bejar:gc}
+Arturo Bejar.
+\newblock The {Electric Communities} distributed garbage collector, 1996.
+\newblock \\{\tt http://www.crockford.com/ec/dgc.html}.
+
+\bibitem[BH93]{hansen:monitors}
+Per Brinch~Hansen.
+\newblock Monitors and concurrent {Pascal}: a personal history.
+\newblock In {\em HOPL-II: The second ACM SIGPLAN conference on History of
+  programming languages}, pages 1--35, New York, NY, USA, 1993. ACM Press.
+
+\bibitem[BJ87]{birman:vsync}
+Ken Birman and T.~Joseph.
+\newblock Exploiting virtual synchrony in distributed systems.
+\newblock In {\em SOSP '87: Proceedings of the eleventh ACM Symposium on
+  Operating systems principles}, pages 123--138, New York, NY, USA, 1987. ACM
+  Press.
+
+\bibitem[BL94]{bogle:batched}
+Phillip Bogle and Barbara Liskov.
+\newblock Reducing cross domain call overhead using batched futures.
+\newblock In {\em OOPSLA '94: Proceedings of the ninth annual conference on
+  Object-oriented programming systems, language, and applications}, pages
+  341--354, New York, NY, USA, 1994. ACM Press.
+
+\bibitem[Boe05]{boehm:threads}
+Hans-J. Boehm.
+\newblock Threads cannot be implemented as a library.
+\newblock {\em SIGPLAN Not.}, 40(6):261--268, 2005.
+
+\bibitem[CL85]{chandy:snapshots}
+K.~Mani Chandy and Leslie Lamport.
+\newblock Distributed snapshots: determining global states of distributed
+  systems.
+\newblock {\em ACM Trans. Comput. Syst.}, 3(1):63--75, 1985.
+
+\bibitem[CL02]{castro:bft}
+Miguel Castro and Barbara Liskov.
+\newblock Practical byzantine fault tolerance and proactive recovery.
+\newblock {\em ACM Trans. Comput. Syst.}, 20(4):398--461, 2002.
+
+\bibitem[Clo04a]{tyler:yurl}
+Tyler Close.
+\newblock Waterken {YURL}, 2004.
+\newblock \\{\tt www.waterken.com/dev/YURL/httpsy/}.
+
+\bibitem[Clo04b]{tyler:webcalc}
+Tyler Close.
+\newblock web-calculus, 2004.
+\newblock \\{\tt www.waterken.com/dev/Web/}.
+
+\bibitem[DH65]{dvh}
+J.~B. Dennis and E.~C.~Van Horn.
+\newblock Programming semantics for multiprogrammed computations.
+\newblock Technical Report MIT/LCS/TR-23, M.I.T. Laboratory for Computer
+  Science, 1965.
+
+\bibitem[Don76]{jed:dccs}
+Jed Donnelley.
+\newblock A {Distributed Capability Computing System}, 1976.
+
+\bibitem[Eng97]{Englander:beans}
+Robert Englander.
+\newblock {\em Developing {Java Beans}}.
+\newblock O'Reilly \& {Associates, Inc.}, 981 Chestnut Street, Newton, MA
+  02164, USA, 1997.
+
+\bibitem[Fie00]{fielding:rest}
+Roy~Thomas Fielding.
+\newblock {\em Architectural styles and the design of network-based software
+  architectures}.
+\newblock PhD thesis, 2000.
+\newblock Chair-Richard N. Taylor.
+
+\bibitem[GHJV94]{gamma:patterns}
+Erich Gamma, Richard Helm, Ralph Johnon, and John Vlissides.
+\newblock {\em {Design Patterns}, elements of reusable object-oriented
+  software}.
+\newblock {Addison Wesley}, 1994.
+
+\bibitem[GK76]{goldberg:smalltalk72}
+Adele Goldberg and Alan~C. Kay.
+\newblock {Smalltalk-72} instruction manual.
+\newblock March 1976.
+\newblock Xerox Palo Alto Research Center.
+
+\bibitem[GR83]{goldberg:purplebook}
+Adele Goldberg and David Robson.
+\newblock {\em {Smalltalk-80}: The Language and Its Implementation}.
+\newblock Addison-Wesley, Reading, MA, 1983.
+
+\bibitem[Har85]{hardy:keykos}
+Norman Hardy.
+\newblock {KeyKOS} architecture.
+\newblock {\em SIGOPS Oper. Syst. Rev.}, 19(4):8--25, 1985.
+
+\bibitem[HBS73]{hewitt:actors}
+Carl Hewitt, Peter Bishop, and Richard Steiger.
+\newblock A universal modular {ACTOR} formalism for artificial intelligence.
+\newblock In Nils~J. Nilsson, editor, {\em Proceedings of the 3rd International
+  Joint Conference on Artificial Intelligence}, pages 235--245, Standford, CA,
+  August 1973. William Kaufmann.
+
+\bibitem[Hew85]{hewitt:challenge}
+Carl Hewitt.
+\newblock The challenge of open systems: current logic programming methods may
+  be insufficient for developing the intelligent systems of the future.
+\newblock {\em BYTE}, 10(4):223--242, 1985.
+
+\bibitem[Hoa65]{hoare65}
+C.A.R Hoare.
+\newblock Record handling, in {Algol Bulletin} 21.3.6, 1965.
+
+\bibitem[Hoa74]{hoare:monitors}
+C.~A.~R. Hoare.
+\newblock Monitors: an operating system structuring concept.
+\newblock {\em Commun. ACM}, 17(10):549--557, 1974.
+
+\bibitem[Hoa78]{hoare:csp}
+C.~A.~R. Hoare.
+\newblock Communicating sequential processes.
+\newblock {\em Commun. ACM}, 21(8):666--677, 1978.
+
+\bibitem[{IBM}68]{IBM:POO}
+{IBM Corporation}.
+\newblock {\em {IBM System}\slash 360 Principles of Operation}.
+\newblock IBM Corporation, San Jose, CA, USA, eighth edition, 1968.
+
+\bibitem[Kay93]{kay:smallhistory}
+Alan~C. Kay.
+\newblock The early history of {Smalltalk}.
+\newblock {\em SIGPLAN not.}, 28(3):69--95, 1993.
+
+\bibitem[Kay98]{kay:ma}
+Alan Kay.
+\newblock prototypes vs classes, 1998.
+\newblock \\{\tt
+  lists.squeakfoundation.org/pipermail/\-squeak-dev/1998-October/017019.html}.
+
+\bibitem[KTMB87]{kahn:vulcan}
+Kenneth~M. Kahn, Eric~Dean Tribble, Mark~S. Miller, and Daniel~G. Bobrow.
+\newblock Vulcan: Logical concurrent objects.
+\newblock In {\em Research Directions in Object-Oriented Programming}, pages
+  75--112. 1987.
+
+\bibitem[Lam98]{lamport:paxos}
+Leslie Lamport.
+\newblock The part-time parliament.
+\newblock {\em ACM Trans. Comput. Syst.}, 16(2):133--169, 1998.
+
+\bibitem[Lef]{twisted}
+Glyph Lefkowitz.
+\newblock Generalization of deferred execution in {Python}.
+\newblock \\{\tt python.org/pycon/papers/deferex/}.
+
+\bibitem[LS88]{liskov:promises}
+Barbara Liskov and Lubia Shrira.
+\newblock Promises: linguistic support for efficient asynchronous procedure
+  calls in distributed systems.
+\newblock In {\em PLDI '88: Proceedings of the ACM SIGPLAN 1988 conference on
+  Programming Language design and Implementation}, pages 260--267, New York,
+  NY, USA, 1988. ACM Press.
+
+\bibitem[MD88]{miller:agoric}
+Mark Miller and K.~Eric Drexler.
+\newblock {Markets and computation: Agoric open systems}.
+\newblock In Bernardo Huberman, editor, {\em The Ecology of Computation}, pages
+  133--176. North-Holland, 1988.
+
+\bibitem[Mil92]{gold:promises}
+Mark~S. Miller.
+\newblock Transcript of talk: The promise system, 1992.
+\newblock \\{\tt sunless-sea.net/Transcripts/promise.html}.
+
+\bibitem[MMF00]{miller:ode}
+Mark~S. Miller, Chip Morningstar, and Bill Frantz.
+\newblock Capability-based financial instruments.
+\newblock In {\em Financial Cryptography}, pages 349--378, 2000.
+
+\bibitem[MS03]{miller:paradigm}
+Mark~S. Miller and Jonathan~S. Shapiro.
+\newblock {Paradigm Regained}: Abstraction mechanisms for access control.
+\newblock In {\em ASIAN}, pages 224--242, 2003.
+
+\bibitem[MTS04]{miller:struct-auth}
+Mark~S. Miller, Bill Tulloh, and Jonathan~S. Shapiro.
+\newblock {The Structure of Authority}: Why security is not a separable
+  concern.
+\newblock In {\em MOZ}, pages 2--20, 2004.
+
+\bibitem[MYS03]{miller:myths}
+Mark~S. Miller, Ka-Ping Yee, and Jonathan Shapiro.
+\newblock {Capability Myths Demolished}, 2003.
+
+\bibitem[OBDMS98]{partition-aware}
+\"{O}zalp Babao\u{g}lu, Renzo Davoli, Alberto Montresor, and Roberto Segala.
+\newblock System support for partition-aware network applications.
+\newblock {\em SIGOPS Oper. Syst. Rev.}, 32(1):41--56, 1998.
+
+\bibitem[Ree78]{reed:namos}
+David~Patrick Reed.
+\newblock Naming and synchronization in a decentralized computer system.,
+  January~01 1978.
+
+\bibitem[Rei05]{reid:e-on-cl}
+Kevin Reid.
+\newblock {E on Common Lisp}, 2005.
+\newblock \\{\tt homepage.mac.com/kpreid/elang/e-on-cl/}.
+
+\bibitem[Sar93]{Saraswat93}
+Vijay~A. Saraswat.
+\newblock {\em Concurrent Constraint Programming}.
+\newblock MIT Press, Cambridge, MA, 1993.
+
+\bibitem[Sha83]{tr003}
+Ehud Shapiro.
+\newblock A subset of {Concurrent Prolog} and its interpreter.
+\newblock Technical Report TR-003, Institute for New Generation Computer
+  Technology (ICOT), January 1983.
+
+\bibitem[SKYM04]{stiegler:polaris}
+Marc Stiegler, Alan~H. Karp, Ka-Ping Yee, and Mark~S. Miller.
+\newblock Polaris: Virus safe computing for {Windows XP}.
+\newblock Technical Report HPL-2004-221, Hewlett Packard Laboratories, 2004.
+
+\bibitem[SM87]{Shapiro:merge}
+E.~Shapiro and C.~Mierowsky.
+\newblock Fair, biased, and self-balancing merge operators: Their specification
+  and implementation in {Concurrent Prolog}.
+\newblock In Ehud Shapiro, editor, {\em Concurrent Prolog: Collected Papers
+  (Volume I)}, pages 392--413. MIT Press, London, 1987.
+
+\bibitem[SM03]{bancomat}
+Jeremy Sussman and Keith Marzullo.
+\newblock The bancomat problem: an example of resource allocation in a
+  partitionable asynchronous system.
+\newblock {\em Theor. Comput. Sci.}, 291(1):103--131, 2003.
+
+\bibitem[SS75]{SaltzerSc75}
+Jerome~H. Saltzer and Michael~D. Schroeder.
+\newblock The protection of information in computer system.
+\newblock {\em Proceedings of the IEEE}, 63(9):1278--1308, 1975.
+
+\bibitem[SS04]{shroff:match}
+Paritosh Shroff and Scott~F. Smith.
+\newblock Type inference for first-class messages with match-functions, 2004.
+
+\bibitem[SSF99]{shapiro:eros}
+Jonathan~S. Shapiro, Jonathan~M. Smith, and David~J. Farber.
+\newblock {EROS}: a fast capability system.
+\newblock In {\em SOSP '99: Proceedings of the seventeenth ACM symposium on
+  Operating systems principles}, pages 170--185, New York, NY, USA, 1999. ACM
+  Press.
+
+\bibitem[ST83]{udi:objects}
+Ehud~Y. Shapiro and Akikazu Takeuchi.
+\newblock Object oriented programming in concurrent prolog.
+\newblock {\em New Generation Comput.}, 1(1):25--48, 1983.
+
+\bibitem[Sti04]{stiegler:ewalnut}
+Marc Stiegler.
+\newblock The {E} language in a walnut, 2004.
+\newblock \\{\tt www.skyhunter.com/marcs/ewalnut.html}.
+
+\bibitem[SV05a]{oze}
+Fred Spiessens and Peter {Van Roy}.
+\newblock The {Oz-E} project: Design guidelines for a secure multiparadigm
+  programming language.
+\newblock In {\em Multiparadigm Programming in {Mozart/Oz}: Extended
+  Proceedings of the Second International Conference {MOZ 2004}}, volume 3389
+  of {\em Lecture Notes in Computer Science}. Springer-Verlag, 2005.
+
+\bibitem[SV05b]{tgc}
+Fred Spiessens and Peter {Van Roy}.
+\newblock A practical formal model for safety analysis in {Capability-Based}
+  systems, 2005.
+\newblock To be published in Lecture Notes in Computer Science
+  (Springer-Verlag). Presentation available at \\{\tt
+  www.info.ucl.ac.be/people/fsp/auredsysfinal.mov}.
+
+\bibitem[TM02]{tulloh:abstraction}
+Bill Tulloh and Mark~S. Miller.
+\newblock Institutions as abstraction boundaries.
+\newblock In Jack High, editor, {\em Social Learning: Essays in Honor of {Don
+  Lavoie}}. 2002.
+
+\bibitem[TMHK95]{tribble:joule}
+E.~Dean Tribble, Mark~S. Miller, Norm Hardy, and David Krieger.
+\newblock {Joule}: Distributed application foundations.
+\newblock Technical Report {ADd03.4P}, {Agorics Inc., Los Altos}, December
+  1995.
+\newblock \\{\tt www.agorics.com/Library/joule.html}.
+
+\bibitem[TMK{\etalchar{+}}87]{tribble:channels}
+Eric~Dean Tribble, Mark~S. Miller, Kenneth~M. Kahn, Daniel~G. Bobrow, Curtis
+  Abbott, and Ehud~Y. Shapiro.
+\newblock Channels: A generalization of streams.
+\newblock In {\em ICLP}, pages 839--857, 1987.
+
+\bibitem[vH45]{Hayek:1945:UKS}
+Friedrich von Hayek.
+\newblock The uses of knowledge in society.
+\newblock {\em American Economic Review}, 35:519--530, September 1945.
+
+\bibitem[VH04]{VanRoyHaridi}
+Peter {Van Roy} and Seif Haridi.
+\newblock {\em Concepts, Techniques, and Models of Computer Programming}.
+\newblock MIT Press, March 2004.
+
+\bibitem[WO01]{zooko:hell}
+Bryce~``Zooko'' Wilcox-O'Hearn.
+\newblock Deadlock-free, 2001.
+\newblock \\{\tt www.eros-os.org/pipermail/e-lang/2001-July/005410.html}.
+
+\end{thebibliography}

@@ -1,0 +1,815 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.03 [en] (Win95; U) [Netscape]">
+   <TITLE>Satan Comes to Dinner</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+
+<CENTER>
+<H1>
+Satan Comes to Dinner</H1></CENTER>
+
+<CENTER>
+  in <A HREF="../e/e_white_paper.html">E</A>
+</CENTER>
+
+<CENTER></CENTER>
+
+<CENTER><A HREF="../../../../copy.html">&copy;1997 Electric Communities</A></CENTER>
+
+<CENTER><A HREF="../../../../copy.html">All Rights Reserved</A></CENTER>
+
+<H1>
+Abstract</H1>
+A solution to Dijkstra's Dining Philosophers Problem which provides for deadlock
+avoidance and fairness. It does not require that the philosopher classes be trusted.
+Satan is invited to supply a class. An example of the failure of class-signing.
+The classes are written in <A HREF="../e/e_white_paper.html">E</A>, an extended
+<A HREF="http://www.javasoft.com/">Java</A> subset that provides message passing,
+orthogonal persistence, and capability-based security.
+<P>&nbsp;
+<H1>
+The Dining Philosophers Problem</H1>
+The Dining Philosophers Problem is one of the standard exercises in the
+teaching of concurrent programming. It is instructive in the design of
+things like operating systems and distributed systems. It is an interesting
+problem because it introduces management of scarce, shared resources. It
+is tricky because most naive implementations will result in deadlock. The
+statement of the problem usually goes like this:
+<BLOCKQUOTE>There is a group of philosophers (usually 5) who eat together
+at a round table. There are forks placed between the philosophers. Philosophers
+spend their time either thinking or eating. In order to eat, a philosopher
+must pick up exactly two forks, one on his immediate left, and the other
+on his immediate right. When he is done eating, he will put his forks down
+so that his neighbors may use them, and he thinks again.</BLOCKQUOTE>
+The Dining Philosophers Problem (aka The Dining Quintuple Problem) was
+designed in 1965 by Edsger W. Dijkstra to demonstrate the horror that is
+deadlock. In some versions of the problem, the forks are replaced with
+chopsticks. This change does not substantively alter the problem, although
+it can simplify the graphics. Some versions have the philosophers eating
+spaghetti or rice. In this version, they are dining on shrimp.
+
+<P>The programming problem is to construct a simulation which will allow
+philosophers to move between their eating and thinking states while properly
+controlling the forks.
+
+<P>A typical solution has each philosopher doing something like this:
+<PRE>&nbsp;&nbsp;&nbsp; forever {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; busy thinking
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; wait for left fork
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; wait for right fork
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; busy eating
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; drop left fork
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; drop right fork
+&nbsp;&nbsp;&nbsp; }</PRE>
+The busy statements will consume time. The length of time is often random.
+The wait statements are often implemented using semaphores or other mutual
+exclusion gadgets, causing the program to block until the fork becomes
+available.
+
+<P>If every philosopher picks up his left fork and then waits for the right
+fork to become available, then the system will deadlock. Computation cannot
+go forward because the philosophers will never get their second forks.
+The fact that the busy periods are of random duration may reduce the occurrence
+of deadlock, but it does not prevent it. Occasional deadlock is actually
+a bigger problem, because it is much more difficult to replicate, diagnose,
+and fix. Deadlock is one of the greatest programming hazards in concurrent
+systems.
+
+<P>Some solutions modify some of the philosophers, so that they always
+pick up their right forks first. This does avoid deadlock, but it is a
+special solution. It cannot be generalized to avoid deadlock in other situations.
+Other implementations introduce waiters, rooms, chairs, tokens, and other
+objects to help manage the deadlock problem. These solutions are complex,
+and also not sufficiently generalizable.
+
+<P>Most solutions depend on the philosophers behaving correctly. For example,
+if a philosopher picks up his forks and never puts them down, the philosophers
+sitting beside him will die of starvation. If either happens to be holding
+a fork (which is likely), then all of the other philosophers will starve,
+too.
+
+<P>So we will redefine the problem. We still want to avoid deadlock, but
+we also want to be able to invite anyone to code their own philosopher
+class, and to have it run fairly with others.
+
+<P>&nbsp;
+<H1>
+An Example of the Failure of Class Signing</H1>
+Suppose that you invite Satan to contribute one of the philosopher classes.
+How can you be confident that his code will not contaminate the shared
+environment, will not cause starvation among the other philosophers, and
+will not spoil everyone else's fun? Even more important, how can you be
+sure that Satan's code will not run amok and drain your bank account, reveal
+your private key, and trash your hard disk?
+
+<P>It is not sufficient to simply stuff Satan's code into a sandbox. He
+is not giving you an applet. He is giving you a class which needs to work
+cooperatively, even under the cloud of mutual suspicion, with other objects.
+
+<P>The goal is not to keep Satan out. You want to invite Satan in, but
+without compromising your security. You don't want to choose between safety
+and the benefits of openness. You want both.
+
+<P>Satan offers to prove to you that his class is safe by presenting an
+Authenticode certificate which will certify that Satan signed the class.
+You could verify that the signature is truly Satan's, but proof that it
+came from Satan is not proof that it is safe.
+
+<P>Satan, pretending to be offended by your skepticism, asks "Whose signature
+do you trust? Just say the name, and I will have them sign my class. Would
+you like Microsoft to sign it? There's a guy over there who owes me a favor."
+
+<P>You come to the conclusion that a signature cannot by itself transform
+a suspect class into a fully trusted class, so you decide that you need
+a more credible security mechanism.
+
+<P>&nbsp;
+<H1>
+Capabilities</H1>
+That mechanism is <I>capabilities</I>. A capability is the unforgable,
+transferable, non-revocable right to communicate with an object. We will
+create a framework which will support anyone's Philosopher code, certified
+or not. By relying on good capability-based design, rather than certification,
+we have less overhead and a better system.
+<CENTER></CENTER>
+
+<CENTER><IMG SRC="fig1.gif" HEIGHT=68 WIDTH=435 ALIGN=BOTTOM></CENTER>
+
+<CENTER></CENTER>
+
+<CENTER>(fig. 1)</CENTER>
+
+
+<P>In fig. 1 we see an example of a capability relationship. The ovals
+represent objects. The arrow indicates an object reference. Object C has
+a reference to Object A, and therefore Object C has the capability to communicate
+with Object A. An object can receive a reference to an object by having
+the reference passed to it, or by instantiating a new object.
+
+<P>Assuming that Object C is not trusted, we cannot be certain that it
+will destroy its reference to Object A when requested to. Capabilities
+are not directly revokable. But they can be indirectly revocable, as can
+be seen in fig. 2:
+<CENTER></CENTER>
+
+<CENTER><IMG SRC="fig2.gif" HEIGHT=168 WIDTH=439 ALIGN=BOTTOM></CENTER>
+
+<CENTER></CENTER>
+
+<CENTER>(fig. 2)</CENTER>
+
+
+<P>Object C is given a reference to Object T. Normally, Object T will pass
+Object C's messages on to Object A. Object B can send a message to Object
+T which will cause Object T to destroy its own reference to Object A. Object
+C will be left with a reference to the now useless Object T. Object C's
+capability to communicate with Object A has been revoked. Object B doesn't
+need to trust Object C if it can trust Object T.
+
+<P>&nbsp;
+<H1>
+The Cast</H1>
+We will now introduce a new object to the Dining Philosophers: The Fork
+Dispenser. It is not safe to share forks, so the Fork Dispenser will dispense
+new disposable forks. As fig. 3 shows, each philosopher must interact with
+two fork dispensers in order to interact with the plate of shrimp. Each
+fork dispenser is shared by two philosophers.
+<CENTER></CENTER>
+
+<CENTER><IMG SRC="fig3.gif" HEIGHT=462 WIDTH=453 ALIGN=BOTTOM></CENTER>
+
+<CENTER></CENTER>
+
+<CENTER>(fig. 3)</CENTER>
+
+
+<P>Each philosopher is assigned two fork dispensers. Philosophers do not
+have the capabilities necessary to interact directly with the other philosophers,
+the plates of shrimp, or with the system in general.
+
+<P>A philosopher sends requests to its fork dispensers, which respond by
+sending fork capabilities. The forks contain capabilities to the plate
+of shrimp, which the fork dispenser can revoke.
+<CENTER></CENTER>
+
+<CENTER><IMG SRC="fig4.gif" HEIGHT=339 WIDTH=405 ALIGN=BOTTOM></CENTER>
+
+<CENTER></CENTER>
+
+<CENTER>(fig. 4)</CENTER>
+
+
+<P>Joining the fork dispensers in the cast are forks, plates, and philosophers,
+using these interfaces:
+<PRE>public einterface ForkDispenser {
+&nbsp;&nbsp;&nbsp; emethod service (Object, Philosopher, Plate);
+&nbsp;&nbsp;&nbsp; emethod forkPlease (Philosopher);
+&nbsp;&nbsp;&nbsp; emethod forkReturn (Philosopher);
+}
+&nbsp;
+public einterface Fork {
+&nbsp;&nbsp;&nbsp; emethod shrimpPlease (int);
+&nbsp;&nbsp;&nbsp; emethod hereIsYourShrimp (int);
+&nbsp;&nbsp;&nbsp; emethod revoke ();
+}
+&nbsp;
+public einterface Plate {
+&nbsp;&nbsp;&nbsp; emethod shrimpPlease (Fork theFork, int serialNr);
+}
+&nbsp;
+public einterface Philosopher {
+&nbsp;&nbsp;&nbsp; emethod hereIsYourForkDispenser (ForkDispenser);
+&nbsp;&nbsp;&nbsp; emethod hereIsYourFork (Fork);
+&nbsp;&nbsp;&nbsp; emethod hereIsYourShrimp (int);
+}</PRE>
+&nbsp;
+<H1>
+Fork Dispenser</H1>
+
+<PRE>public eclass OurForkDispenser implements ForkDispenser {
+&nbsp;&nbsp;&nbsp; private Object&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; trusted = null;
+&nbsp;&nbsp;&nbsp; private Philosopher&nbsp; nowServing = null;
+&nbsp;&nbsp;&nbsp; private Philosopher&nbsp; firstPhilosopher = null;
+&nbsp;&nbsp;&nbsp; private Philosopher&nbsp; secondPhilosopher = null;
+&nbsp;&nbsp;&nbsp; private Plate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstPlate = null;
+&nbsp;&nbsp;&nbsp; private Plate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; secondPlate = null;
+&nbsp;&nbsp;&nbsp; private Fork&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; theFork = null;
+&nbsp;&nbsp;&nbsp; private Timer&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; theTimer = new Timer();
+&nbsp;&nbsp;&nbsp; private int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; timerSerialNr;
+&nbsp;&nbsp;&nbsp; private boolean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; otherIsWaiting = false;
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; public ForkDispenser (eobject trusted) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.trusted = trusted;
+&nbsp;&nbsp;&nbsp; }</PRE>
+The service message transmits a philosopher and plate pair. The philosopher
+must never get a direct capability to the plate. This information allows
+the fork dispenser to determine which plate to use. The service message
+should only come from the trusted source that created the fork dispenser.
+Checking this prevents Satan from trying to confuse the fork dispenser
+by sending his own service messages.
+
+<P>The fork dispenser sends its own reference to the philosopher. This
+gives the philosopher the capability to interact with the fork dispenser.
+<PRE>&nbsp;&nbsp;&nbsp; emethod service (Object theSource, Philosopher thePhilosopher,&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Plate thePlate) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (theSource == trusted) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; thePhilosopher &lt;- hereIsYourForkDispenser (this);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (firstPhilosopher == null) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstPhilosopher = thePhilosopher;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstPlate = thePlate;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; secondPhilosopher = thePhilosopher;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; secondPlate = thePlate;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; }</PRE>
+<A NAME="2"></A>A philosopher requests a fork. Determine which plate he
+uses. If the requester is not associated with either plate, then ignore
+the request. (This will prevent Satan from pretending that he is both philosophers.)
+
+<P>If a fork is not in use, then dispense one. If the requester is the
+same as current fork holder, then remind him that he already has a fork.
+(This can occur in some recovery strategies.)
+
+<P>Otherwise, the situation is that a request was made for a fork while
+a fork is in use by another philosopher. Make a note that the other philosopher
+is waiting and set a watchdog timer which will start the revocation of
+the current fork in 10,000 milliseconds.
+<PRE>&nbsp;&nbsp;&nbsp; emethod forkPlease (Philosopher who) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int thePlate;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (who == firstPhilosopher) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; thePlate = firstPlate;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else if (who == secondPhilosopher) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; thePlate = secondPlate;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (nowServing == null) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nowServing = who;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; theFork = new OurFork (nowServing, thePlate);
+<A NAME="3"></A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nowServing &lt;- hereIsYourFork (theFork);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else if (nowServing == who) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nowServing &lt;- hereIsYourFork (theFork);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; otherIsWaiting = true;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; timerSerialNr += 1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; theTimer.in (10000, (invocation&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (this &lt;- timeOut (theTimer, timerSerialNr)));
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; }</PRE>
+A philosopher returns a fork, allowing someone else to eat. The protocol
+does not require this kind of politeness, but it is nice, isn't it?
+
+<P>First, check that the person returning the fork is the recorded holder
+of the fork. (This prevents Satan from pretending to be the other philosopher.)
+Then revoke the fork. (This prevents Satan from holding on to the capability.)
+If the other philosopher was waiting, then issue him a new fork and cancel
+the timer.
+<PRE>&nbsp;&nbsp;&nbsp; emethod forkReturn (Philosopher thePhilosopher) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (nowServing == thePhilosopher) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; theFork &lt;- revoke ();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (otherIsWaiting) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; timerSerialNr += 1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; serveOther();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nowServing = null;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; theFork = null;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; }</PRE>
+The watchdog timer has expired. If the event was not canceled, then revoke
+the fork and issue a new one to the other philosopher. (All timer messages
+except the one with a serial number matching timerSerialNr have been canceled.)
+<PRE>&nbsp;&nbsp;&nbsp; emethod timeOut (Timer theSource, int messageSerialNr) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (theSource == theTimer &amp;&amp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; messageSerialNr == timerSerialNr) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; theFork &lt;- revoke ();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; serveOther();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; }</PRE>
+Issue a fork to the other philosopher. Because a fork dispenser serves
+two philosophers, each with its own plate, figure out which plate to use.
+<PRE>&nbsp;&nbsp;&nbsp; private void serveOther () {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (nowServing == firstPhilosopher) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nowServing = secondPhilosopher;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; thePlate = secondPlate;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nowServing = firstPhilosopher;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; thePlate = firstPlate;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; theFork = new OurFork(nowServing, thePlate);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nowServing &lt;- hereIsYourFork (theFork);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; otherIsWaiting = false;
+&nbsp;&nbsp;&nbsp; }
+}</PRE>
+The ForkDispenser has three facets, or sets of interfaces:
+<CENTER><TABLE BORDER >
+<TR>
+<TH>Sender&nbsp;</TH>
+
+<TH>E Methods&nbsp;</TH>
+</TR>
+
+<TR>
+<TD>The trusted source&nbsp;</TD>
+
+<TD><TT>service</TT>&nbsp;</TD>
+</TR>
+
+<TR>
+<TD>Timer&nbsp;</TD>
+
+<TD><TT>timeOut</TT>&nbsp;</TD>
+</TR>
+
+<TR>
+<TD>Philosopher&nbsp;</TD>
+
+<TD><TT>forkPlease</TT>
+<BR><TT>forkReturn</TT>&nbsp;</TD>
+</TR>
+</TABLE></CENTER>
+In particular, OurForkDispenser does not want a Philosopher to be able
+to send the service or timeOut messages. This is accomplished by having
+the senders of these messages include the sender's reference as the first
+parameter, which OurForkDispenser can easily validate.
+
+<P>&nbsp;
+<H1>
+Fork</H1>
+Forks are disposable objects which give a philosopher indirect access to
+a plate of shrimp.
+<PRE>public eclass OurFork implements Fork {
+&nbsp;&nbsp;&nbsp; private int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; previousSerialNr = Integer.MIN_VALUE;
+&nbsp;&nbsp;&nbsp; private Philosopher&nbsp; thePhilosopher = null;
+&nbsp;&nbsp;&nbsp; private Plate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; thePlate = null;
+&nbsp;
+&nbsp;&nbsp;&nbsp; public Fork (Philosopher thePhilosopher, Plate thePlate) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.thePhilosopher = thePhilosopher;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.thePlate = thePlate;
+&nbsp;&nbsp;&nbsp; }</PRE>
+<A NAME="5"></A>The philosopher requested a shrimp. To assist the plate
+in pairing the messages, the fork verifies that the message contains a
+serial number that is larger than the previous serial number. If the number
+is ok, then a message is sent to the plate. If not, disconnect from the
+plate. (This prevents the sending of consecutive messages with the same
+serial number.)
+
+<P>The fork will be unable to forward the message if its reference to the
+plate has been revoked.
+
+<P>(The serial number test will fail after 4 billion shrimp requests to
+a fork due to an int rollover. That could fixed by adding a rollover test
+here, or by changing serial numbers to long. A well formed philosopher
+will easily recover. It seems that this warning is requiring more effort
+than the fix. It is unlikely that the fix would ever be needed.)
+<PRE>&nbsp;&nbsp;&nbsp; emethod shrimpPlease (int serialNr) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (previousSerialNr &lt; serialNr) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; previousSerialNr = serialNr;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (thePlate != null) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; thePlate &lt;- shrimpPlease (this, serialNr);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; thePhilosopher &lt;- noShrimp();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; thePlate = null;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; thePhilosopher &lt;- noShrimp();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; }</PRE>
+<A NAME="7"></A>A shrimp is delivered successfully from the plate of shrimp.
+If this fork has not been revoked, pass the message on to the philosopher.
+This indirection assures that the philosopher was holding two valid forks
+at the same time.
+<PRE>&nbsp;&nbsp;&nbsp; emethod hereIsYourShrimp (int serialNr) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (thePlate != null) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; thePhilosopher &lt;- hereIsYourShrimp (serialNr);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; thePhilosopher &lt;- noShrimp ();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; }</PRE>
+Revoke the fork by making it useless. By erasing the fork's reference to
+the plate, it is no longer able to send the messages that make shrimp for
+the philosopher. This emethod is intended to be used by the fork dispenser.
+<PRE>&nbsp;&nbsp;&nbsp; emethod revoke () {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; thePlate = null;
+&nbsp;&nbsp;&nbsp; }
+}</PRE>
+&nbsp;
+<H1>
+Plate</H1>
+
+<PRE>public eclass OurPlate implements Plate {
+&nbsp;&nbsp;&nbsp; private int&nbsp;&nbsp; firstSerialNr = Integer.MIN_VALUE;
+&nbsp;&nbsp;&nbsp; private Fork&nbsp; firstFork = null;
+</PRE>
+Respond to a request for a shrimp. The philosopher sends a message through
+each of his forks.
+
+<P><A NAME="6"></A>An E object receives one message at a time. After the
+plate has seen two matching serial numbers, it sends a piece of shrimp.
+Because a fork is unable to send the same serial number twice in succession,
+the plate can determine that two forks were used. Further, by confirming
+that the ForkDispenser references do not match, forks from two different
+fork dispensers were used. We prove that the first fork is still valid
+by using it to return the shrimp.
+<PRE>&nbsp;&nbsp;&nbsp; emethod shrimpPlease (Fork theFork, int serialNr) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (firstSerialNr != serialNr) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstSerialNr = serialNr;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstFork = theFork;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstFork &lt;- hereIsYourShrimp (serialNr);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstFork = null;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstSerialNr = Integer.MIN_VALUE;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; }
+}</PRE>
+It might seem that a hereIsYourShrimp message is not a suitable payoff.
+A better payoff would be to have the plate send a reference to a shrimp
+object.
+
+<P>&nbsp;
+<H1>
+Nice Philosopher</H1>
+The Nice Philosopher puts down his forks and spends at least part of his
+time thinking.
+<PRE>public eclass NicePhilosopher implements Philosopher {
+&nbsp;&nbsp;&nbsp; private ForkDispenser&nbsp; firstForkDispenser&nbsp; = null;
+&nbsp;&nbsp;&nbsp; private ForkDispenser&nbsp; secondForkDispenser = null;
+&nbsp;&nbsp;&nbsp; private Fork&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstFork&nbsp; = null;
+&nbsp;&nbsp;&nbsp; private Fork&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; secondFork = null;
+&nbsp;&nbsp;&nbsp; private int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; serialNr = Integer.MIN_VALUE;
+&nbsp;&nbsp;&nbsp; private int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; timerSerialNr = 0;
+&nbsp;&nbsp;&nbsp; private Timer&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; theTimer = new Timer;
+&nbsp;&nbsp;&nbsp; private boolean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; eatingMode = false;</PRE>
+A philosopher is not necessarily made by a fork dispenser, but it is initialized
+by a fork dispenser. (This avoids a race condition on starting up.) Once
+the fork dispensers arrive, leap into action and begin to think.
+<PRE>&nbsp;&nbsp;&nbsp; emethod hereIsYourForkDispenser (ForkDispenser theForkDispenser) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (firstForkDispenser == null) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstForkDispenser = theForkDispenser;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; secondForkDispenser = theForkDispenser;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; busyThinking();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; }</PRE>
+To think, set up a timer to send startEating in 10 seconds.
+<PRE>&nbsp;&nbsp;&nbsp; private void busyThinking() {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; eatingMode = false;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; timerSerialNr += 1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; theTimer.in (10 * 1000, (invocation&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (this &lt;- startEating (timerSerialNr)));
+&nbsp;&nbsp;&nbsp; }</PRE>
+<A NAME="1"></A>Request a fork from each of the fork dispensers. Set up
+a timer to stop eating in 20 seconds.
+<PRE>&nbsp;&nbsp;&nbsp; emethod startEating () {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstFork&nbsp; = null;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; secondFork = null;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstForkDispenser&nbsp; &lt;- forkPlease (this);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; secondForkDispenser &lt;- forkPlease (this);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; serialNr = Integer.MIN_VALUE;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; timerSerialNr += 1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; theTimer.in (20 * 1000, (invocation&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (this &lt;- stopEating (timerSerialNr)));
+&nbsp;&nbsp;&nbsp; }</PRE>
+Receive the forks. After both have arrived, serious eating can begin.
+<PRE>&nbsp;&nbsp;&nbsp; emethod hereIsYourFork (Fork theFork) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (firstFork == null) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstFork = theFork;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; secondFork = theFork;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; eatingMode = true;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; eat();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; }</PRE>
+<A NAME="4"></A>Eat by requesting shrimp from the forks. Dijkstra requires
+that two forks be used. A serial number is added to the request to help
+the plate pair up the messages.
+<PRE>&nbsp;&nbsp;&nbsp; void eat() {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; serialNr += 1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstFork&nbsp; &lt;- shrimpPlease (serialNr);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; secondFork &lt;- shrimpPlease (serialNr);
+&nbsp;&nbsp;&nbsp; }
+</PRE>
+A shrimp is delivered successfully from the plate of shrimp. What to do
+next? Get more shrimp!
+<PRE>&nbsp;&nbsp;&nbsp; emethod hereIsYourShrimp (int serialNr);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (eatingMode) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; eat();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; }</PRE>
+A noShrimp message will can occur if a fork was revoked. If that happens,
+cancel the timer and stop eating.
+<PRE>&nbsp;&nbsp;&nbsp; emethod noShrimp () {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; timerSerialNr += 1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this &lt;- stopEating();
+&nbsp;&nbsp;&nbsp; }</PRE>
+The time has come to put down the forks and stop eating. It isn't really
+necessary to put down the forks, because the fork dispenser will revoke
+them anyway. But returning the forks allows the other philosophers to begin
+eating a little sooner, so it is a polite thing to do. Revocation may already
+have occurred. That's ok.
+<PRE>&nbsp;&nbsp;&nbsp; emethod stopEating () {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstForkDispenser&nbsp; &lt;- forkReturn (this);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; secondForkDispenser &lt;- forkReturn (this);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; busyThinking();
+&nbsp;&nbsp;&nbsp; }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}
+</PRE>
+
+<H1>
+Evil Philosopher</H1>
+This is Satan's own implementation of Philosopher. It is so constrained
+by capability security that it is not really very evil. About the worst
+you can say about it is that it is very impolite. It is an infernal eating
+machine. It never rests. It never sets down its forks. Even so, the fork
+dispensers can guarantee fairness (starvation avoidance). As nasty as Satan
+is, he cannot prevent the other philosophers from getting their turns.
+<PRE>public eclass EvilPhilosopher implements Philosopher {
+&nbsp;&nbsp;&nbsp; private ForkDispenser&nbsp; firstForkDispenser = null;
+&nbsp;&nbsp;&nbsp; private ForkDispenser&nbsp; secondForkDispenser = null;
+&nbsp;&nbsp;&nbsp; private Fork&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstFork = null;
+&nbsp;&nbsp;&nbsp; private Fork&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; secondFork = null;
+&nbsp;&nbsp;&nbsp; private int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; serialNr = Integer.MIN_VALUE;</PRE>
+First collect two fork dispensers. Then begin to eat. Without the fork
+dispensers, he can't get plate-aware forks, and without those forks, he
+cannot get shrimp.
+<PRE>&nbsp;&nbsp;&nbsp; emethod hereIsYourForkDispenser (ForkDispenser theForkDispenser) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (firstForkDispenser == null) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstForkDispenser = theForkDispenser;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; secondForkDispenser = theForkDispenser;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; startEating();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; }</PRE>
+Request a fork from each of the fork dispensers. It does no good to request
+two forks from a single dispenser, because the plate of shrimp can tell
+the difference.
+<PRE>&nbsp;&nbsp;&nbsp; void startEating() {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstFork&nbsp; = null;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; secondFork = null;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstForkDispenser&nbsp; &lt;- forkPlease (this);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; secondForkDispenser &lt;- forkPlease (this);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; serialNr = Integer.MIN_VALUE;
+&nbsp;&nbsp;&nbsp; }</PRE>
+Receive the forks. After both have arrived, serious eating can begin.
+<PRE>&nbsp;&nbsp;&nbsp; emethod hereIsYourFork (Fork theFork) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (firstFork == null) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstFork = theFork;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; secondFork = theFork;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; eat();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; }</PRE>
+Eat by requesting shrimp from the forks.
+<PRE>&nbsp;&nbsp;&nbsp; void eat () {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; serialNr += 1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; firstFork&nbsp; &lt;- shrimpPlease (serialNr);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; secondFork &lt;- shrimpPlease (serialNr);
+&nbsp;&nbsp;&nbsp; }
+</PRE>
+This philosopher has no thinking mode, so eventually the noShrimp message
+will arrive when one of the fork dispensers revokes a fork. When that happens,
+startEating again.
+<PRE>&nbsp;&nbsp;&nbsp; emethod noShrimp () {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; startEating();
+&nbsp;&nbsp;&nbsp; }</PRE>
+A shrimp is delivered successfully from the plate of shrimp. What to do
+next? More shrimp!
+<PRE>&nbsp;&nbsp;&nbsp; emethod hereIsYourShrimp (int serialNr);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; eat();
+&nbsp;&nbsp;&nbsp; }
+}</PRE>
+&nbsp;
+<H1>
+Main</H1>
+This Main is sufficient to get everything running on a single machine.
+In the next chapter, we will distribute this over a number of machines.
+<PRE>public class Main {
+&nbsp;&nbsp;&nbsp; public final static int NR_DINERS = 5;
+&nbsp;&nbsp;&nbsp; public final static int NR_FORKS&nbsp; = NR_DINERS;
+&nbsp;
+&nbsp;&nbsp;&nbsp; public static void main (String argv[ ]) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ForkDispenser&nbsp; forkDispensers[ ] = new ForkDispenser[NR_FORKS];
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Philosopher&nbsp;&nbsp;&nbsp; thePhilosopher = null;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Plate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; thePlate = null;
+&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (int i = 0; i &lt; NR_FORKS; i += 1) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; forkDispensers [i] = new OurForkDispenser(this);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (int i = 0; i &lt; NR_DINERS; i += 1) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (i == 0) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; thePhilosopher = new EvilPhilosopher();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; thePhilosopher = new NicePhilosopher();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; thePlate = new OurPlate();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; forkDispensers [i]
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;-&nbsp; service (this, thePhilosopher, thePlate);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; forkDispensers [(i + 1) % NR_FORKS]&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;-&nbsp; service (this, thePhilosopher, thePlate);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; }
+}
+</PRE>
+
+<H1>
+Flow</H1>
+Fig. 5 shows the flow of messages as a philosopher engages in the main
+part of the dining protocol.
+<CENTER></CENTER>
+
+<CENTER><IMG SRC="fig5.gif" HEIGHT=291 WIDTH=456 ALIGN=BOTTOM></CENTER>
+
+<CENTER></CENTER>
+
+<CENTER>(fig. 5)</CENTER>
+
+
+<P>&nbsp;
+<OL>
+<LI>
+The philosopher sends <TT><A HREF="#1">forkPlease</A></TT> requests to
+both fork dispensers.</LI>
+
+<LI>
+The fork dispenser creates a <A HREF="#2">new fork</A> object with capabilities
+to the philosopher and the plate of shrimp.</LI>
+
+<LI>
+The fork dispenser sends a capability to the fork in a <TT><A HREF="#3">hereIsYourFork</A></TT>
+message to the philosopher.</LI>
+
+<LI>
+The philosopher sends a <TT><A HREF="#4">shrimpPlease</A></TT> message
+to each fork.</LI>
+
+<LI>
+The fork determines that it has not been revoked, and that it has never
+seen the current serial number. If all is ok, it sends a <TT><A HREF="#5">shrimpPlease</A></TT>
+message containing a capability to itself to the plate of shrimp.</LI>
+
+<LI>
+The plate of shrimp will receive two messages. If the serial numbers on
+the messages match, then it knows that two different forks were used. It
+sends a <TT><A HREF="#6">hereIsYourShrimp</A></TT> message to the fork
+that sent the first of the two messages to prove that the first fork is
+still valid.</LI>
+
+<LI>
+If the fork has not been revoked, then send a <TT><A HREF="#7">hereIsYourShrimp</A></TT>
+message to the philosopher.</LI>
+</OL>
+The fork dispenser is able to revoke a fork at any time by sending a revoke
+message. In this way, the fork dispenser can impose a scheduling policy
+which resembles time slicing. This assures fairness, in that all philosophers
+will get chances to eat.
+
+<P>The only capabilities granted to a philosopher are the fork dispensers
+and forks. This prevents Satan's philosopher class from doing anything
+harmful.
+
+<P>&nbsp;
+<H1>
+Consumption of Resources Attack</H1>
+Java is vulnerable to Consumption of Resources Attacks, in which Satan's
+class attempts to consume all of the available memory or compute time.
+This can degrade performance, and in many cases cause your machine crash.
+This can be minimized if Satan is required to host this philosopher on
+his own machine. Then the worst thing he can do is attempt to flood the
+network with messages.
+
+<P>A later version of <A HREF="../e/e_white_paper.html">E</A> will provide a remedy
+  to Consumption of Resources Attacks.
+<P>&nbsp;
+<H1>
+Collusion</H1>
+Suppose that Satan is allowed to provide two philosophers. Can they collude
+to prevent the nice philosophers from eating?
+
+<P>If the philosophers are run in a machine which is not under Satan's
+control, then the answer is no. E's containment mechanism assures that
+the philosophers cannot communicate directly with each other. They can
+only communicate with fork dispensers (and the forks they dispense), which
+do not support collusion.
+
+<P>The answer is less clear if Satan is allowed to execute his philosopher
+code remotely. Because Satan can hack his own machine, he can locally break
+containment, allowing the evil philosophers to communicate with each other.
+Suppose there is a nice philosopher sitting between the two evil philosophers.
+By sharing information about the condition of their forks, they can play
+a synchronized game in which the one on the left puts his fork down then
+immediately requests another when the one on the right gets a fork. When
+it is issued, the one on the right puts down his fork and immediately requests
+another. In this way, they can prevent the philosopher in the middle from
+getting two forks at the same time.
+
+<P>A similar kind of collusion can be found in an online poker game. While
+we can have confidence that the cards are dealt fairly, we cannot be confident
+that some of the players will not collude. The cheaters may be communicating
+by telephone, or may even be a single person pretending to be multiple
+people. By colluding, they have more information about the distribution
+of cards and the state of the deck, and so may be able to shave the odds
+in their favor. This kind of collusion could occur without the hacking
+of software.
+
+<P>Similarly, collusion in the Dining Philosopher example could occur without
+the hacking of software. The conspirators are able to speak to each other,
+and so can say things like "I just received my fork. Put down yours and
+request a new one."
+
+<P>ForkDispenser can be modified to make such collusion less effective.
+If every dispenser used a different time out value, or random time out
+values, then the attack will fail at least occasionally, and starvation
+will be prevented.
+
+<P>&nbsp;
+<H1>
+References</H1>
+Campione, Mary and Walrath, Kathy. <A HREF="http://www.javasoft.com/docs/books/tutorial/java/threads/deadlock.html">Deadlock
+and the Dining Philosophers. &lt;URL: http://www.javasoft.com/docs/books/tutorial/java/threads/deadlock.html
+></A> from <I><A HREF="http://www.javasoft.com/docs/books/tutorial/">The
+Java Tutorial: Object-Oriented Programming for the Internet</A></I>. Addison-Wesley.
+
+<P>Englin, Jessica. <A HREF="http://cda.mrs.umn.edu/~englinjm/EWD.html">Edsger
+W. Dijkstra. &lt;URL: http://cda.mrs.umn.edu/~englinjm/EWD.html ></A>
+
+<P>Electric Communities. <A HREF="../devil.html">Dicing
+with the Devil. &lt;URL: http://www.communities.com/products/tools/e/techpapers/devil.html></A>
+
+<P>Electric Communities. <A HREF="../../../../company/papers/security/index.html">Introduction
+To Capability Based Security. &lt;URL: http://www.communities.com/company/papers/security/index.html></A>
+
+<P>Falk, Bennett. <A HREF="http://www.dnai.com/~bfalk/dining.html">Table
+Manners. &lt;URL: http://www.dnai.com/~bfalk/dining.html></A>
+
+<P>Feldman, M.B. <A HREF="http://www.seas.gwu.edu/faculty/mfeldman/cs2-book/chap15.html">Introduction
+to Concurrent Programming &lt;URL: http://www.seas.gwu.edu/faculty/mfeldman/cs2-book/chap15.html></A>
+from <I><A HREF="http://www.seas.gwu.edu/faculty/mfeldman/concurrency">Software
+Construction and Data Structures with Ada 95</A></I>. Addison-Wesley.
+
+<P>Gloyer, Brian. <A HREF="http://www.javasoft.com/applets/contest/DiningPhilosophers/">The
+Dining Philosophers. &lt;URL: http://www.javasoft.com/applets/contest/DiningPhilosophers/></A>
+
+<P>Hardy, Norm. <A HREF="http://www.MediaCity.com/~norm/CapTheory/">Capability
+Theory. &lt;URL: http://www.MediaCity.com/~norm/CapTheory/></A>
+
+<P>Herring, Charles. <A HREF="http://csl.ncsa.uiuc.edu/~herring/java.html">Implementing
+Discrete-Event Simulation in Java. &lt;URL: http://csl.ncsa.uiuc.edu/~herring/java.html></A>
+
+<P>Holdsworth, D. <A HREF="http://www.leeds.ac.uk/ucs/people/DHoldsworth/diners/diners.html">Dijkstra's
+Dining Philosophers. &lt;URL: http://www.leeds.ac.uk/ucs/people/DHoldsworth/diners/diners.html></A>
+
+<P>Miller, Mark. <A HREF="http://www.caplet.com/security/taxonomy/index.html">Taxonomy
+of Computer Security Problems. &lt;URL: http://www.caplet.com/security/taxonomy/index.html
+></A>
+
+<P>McGregor, Tony. <A HREF="http://byerley.cs.waikato.ac.nz/~tonym/201/sync/node15.html">The
+Dining Philosophers Problem &lt;URL: http://byerley.cs.waikato.ac.nz/~tonym/201/sync/node15.html></A>
+from <A HREF="http://www.cs.waikato.ac.nz/cs/studies/0657.201/">201 - Computer
+Systems</A>.
+</BODY>
+</HTML>

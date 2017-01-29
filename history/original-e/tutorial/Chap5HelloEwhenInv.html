@@ -1,0 +1,187 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+   <TITLE>Hello EWhen Inverse</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.0Gold (Win95; I) [Netscape]">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+
+<PRE><IMG SRC="midi_e.gif" ALT="Electric Communities: E Programming Language" HEIGHT=30 WIDTH=30>  <A HREF="index.html">Contents</A>  <A HREF="../index.html">Home Page</A>
+</PRE>
+
+<H1>Hello EWhen Inverse</H1>
+
+<P>
+<HR></P>
+
+<BLOCKQUOTE>
+<P>The Hello EWhen Inverse tutorial demonstrates how you can use the <TT>ewhen</TT>
+statement to choose when you want to reveal your information, perhaps after
+specified criteria have been met.</P>
+
+<P> You can use <TT>ewhen</TT> to impose the order in which code executes.
+This is useful in situations like writing online games, where multiple
+players are rolling a dice and you want to generate a random result (rather
+than an influenced one). </P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H2>Hello ewhen inverse</H2>
+
+<BLOCKQUOTE>
+<P>To run this tutorial, enter the following code and study the walkthrough
+that accompanies it. This example is also available in the online example
+suite as <I>HelloEWhenInv.e</I></P>
+
+<P> </P>
+
+<PRE>
+<TT>/* 
+  HelloEWhenInv.e
+  Another ewhen tutorial, in this case we pass 
+  an unforwarded E object reference and then forward it.
+  Copyright 1996 Electric Communities, all rights reserved.
+
+  Program output:
+
+  Sent StartHelloEWhenInstance
+  In HelloEWhenInvObj after forward
+  In HelloEWhenInvObj2
+  Hello World with 7
+*/
+
+import ec.e.lang.EInteger;
+
+public class HelloEWhenInv
+{    
+  public static void main(String args[]) {  
+    HelloEWhenInvObj theInstance = 
+      new HelloEWhenInvObj();
+    theInstance &lt;- StartHelloEWhenInstance();
+    System.out.println(&quot;Sent StartHelloEWhenInstance&quot;);
+  }
+}
+
+eclass HelloEWhenInvObj
+{
+  EInteger anEInteger;
+  emethod StartHelloEWhenInstance() {
+    HelloEWhenInvObj2 first = new HelloEWhenInvObj2();
+    first &lt;- hello(anEInteger);
+    &amp;anEInteger &lt;- forward ((new EInteger(7)) );
+    System.out.println(&quot;In HelloEWhenInvObj after forward&quot;);
+    }
+  }
+}
+
+eclass HelloEWhenInvObj2 
+{
+  emethod hello(EInteger putEIntHere) {
+    System.out.println(&quot;In HelloEWhenInvObj2&quot;);
+    ewhen putEIntHere (int thisInt) ) {
+      System.out.println(&quot;Hello World with &quot; + thisInt);
+    }
+  }
+}</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H2>The Walkthrough</H2>
+
+<BLOCKQUOTE>
+<OL>
+<LI><TT>main</TT> instantiates the E-object <TT>theInstance</TT>, an instance
+of the E-class <TT>HelloEWhenInvObj</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>main</TT> sends the message <TT>StartHelloEWhenInstance</TT> to
+<TT>theInstance</TT>.</LI>
+
+<P> </P>
+
+<LI>theInstance executes the <TT>HelloEWhenInvObj</TT> E-method <TT>StartHelloEWhenInstance</TT>
+to handle the message.</LI>
+
+<P> </P>
+
+<LI><TT>StartHelloEWhenInstance</TT> instantiates the E-object first, an
+instance of the E-class <TT>HelloEWhenInvObj2</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>StartHelloEWhenInstance</TT> sends the message <TT>hello</TT> to
+<TT>first</TT>, passing as an argument the uninitialized instance variable
+<TT>anEInteger</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>first</TT> executes the <TT>HelloEWhenInvObj2</TT> E-method <TT>hello</TT>
+to handle the message.</LI>
+
+<P> </P>
+
+<LI><TT>hello</TT> executes an <TT>ewhen</TT> statement that says, ``When
+you get a value for the argument you were passed, assign it to <TT>thisInt</TT>,
+and execute the following code block.'' <TT>hello</TT> waits for the value
+to be defined.</LI>
+
+<P> </P>
+
+<LI>Meanwhile, <TT>StartHelloEWhenInstance</TT> instantiates a new <TT>EInteger</TT>
+with a value of 7 and forwards the channel referred to by the distributor
+<TT>&amp;anEInteger</TT> to point to this value. <TT>anEInteger</TT> is
+now defined.</LI>
+
+<P> </P>
+
+<LI><TT>hello</TT>'s <TT>ewhen</TT> statement detects that the argument
+it was passed is now defined, assigns its value to <TT>thisInt</TT>, and
+prints out, ``Hello World with 7''.</LI>
+
+<P> </P>
+</OL>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H2><A NAME="Compiling and Running"></A>Compiling and Running</H2>
+
+<BLOCKQUOTE>
+<P>To compile source code for the E runtime, use the <I>ecomp</I> compiler:</P>
+
+<P> </P>
+
+<PRE><TT>  ecomp</TT> <I>filename</I></PRE>
+
+<P>The <I>ecomp</I> command compiles E and Java source files directly into
+Java bytecodes. You can then run your compiled program with the E Java
+interpreter (the<TT> javaec</TT> command):</P>
+
+<P> </P>
+
+<PRE><TT>  javaec</TT> <I>filename</I></PRE>
+
+<P>For more information on these commands, see the <I>E Tools and Utilities
+</I>section in the <I>E Programmer's Guide</I>.</P>
+
+<P> </P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<ADDRESS>Copyright (c) 1996 Electric Communities. All rights reserved worldwide.<BR>
+Most recent update: 5/29/96</ADDRESS>
+
+<P> </P>
+
+</BODY>
+</HTML>

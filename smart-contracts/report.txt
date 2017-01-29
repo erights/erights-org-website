@@ -1,0 +1,499 @@
+
+c:/e/doc/smart-contracts/4steps/index.html:
+c:/e/doc/smart-contracts/erights-updoc.txt:
+expr: define BrandMaker := import:org.erights.e.elang.sealing.Brand
+missing new value
+original value: <statics of org.erights.e.elang.sealing.Brand>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define BrandMaker := import:org.erights.e.elang.sealing.Brand
+                  ^
+
+expr: define MintMaker(name) {
+          define [sealer, unsealer] := BrandMaker pair(name)
+
+          define Issuer {
+              to __printOn(oo) { oo print(`<$name bucks>`) }
+
+              to vouch(item) {
+                  unsealer unseal(item getSealed)
+              }
+
+              to makeAssay(amount : (_ >= 0)) {
+                  define Assay {
+                      to __printOn(oo) { oo print(`<assays $amount $name bucks>`) }
+                      to getIssuer     { Issuer }
+                      to getSealed     { sealer seal(Assay) }
+
+                      to transfer(src, dest) {
+                          define srcIncr := unsealer unseal(src getIncr)
+                          define destIncr := unsealer unseal(dest getIncr)
+                          srcIncr(-amount)
+                          destIncr(amount)
+                          null
+                      }
+                      to compareTo(otherAssay) {
+                          otherAssay := Issuer vouch(otherAssay)
+                          amount compareTo(otherAssay getAmount)
+                      }
+                      to getAmount { amount }
+                  }
+              }
+
+              to makePurse {
+                  define balance : (_ >= 0) := 0
+                  define incr(delta) {
+                      balance += delta
+                  }
+
+                  define Purse {
+                      to __printOn(oo) { oo print(`<holds $balance $name bucks>`) }
+                      to getIssuer     { Issuer }
+                      to getSealed     { sealer seal(Purse) }
+
+                      to getIncr { sealer seal(incr) }
+                      to getAssay { Issuer makeAssay(balance) }
+                      to getBalance { balance }
+
+                      to depositAll(src) {
+                          define assay := Issuer vouch(src getAssay)
+                          assay transfer(src, Purse)
+                          assay
+                      }
+                  }
+              }
+          }
+          define Mint {
+              to __printOn(oo) { oo print(`<$name's Mint>`) }
+              to getIssuer { Issuer }
+              to getSealed { sealer seal(Mint) }
+
+              to inflate(dest, amount) {
+                  define destIncr := unsealer unseal(dest getIncr)
+                  destIncr(amount)
+              }
+          }
+      }
+missing new value
+original value: <MintMaker>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define MintMaker(name) {
+                  ^
+
+expr: define JoeMint := MintMaker("Joe")
+missing new value
+original value: <Joe's Mint>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define JoeMint := MintMaker("Joe")
+                  ^
+
+expr: define JoeCurrency := JoeMint getIssuer
+missing new value
+original value: <Joe bucks>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define JoeCurrency := JoeMint getIssuer
+                  ^
+
+expr: define ThreeBucks := JoeCurrency makeAssay(3)
+missing new value
+original value: <assays 3 Joe bucks>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define ThreeBucks := JoeCurrency makeAssay(3)
+                  ^
+
+expr: define PurseA := JoeCurrency makePurse
+missing new value
+original value: <holds 0 Joe bucks>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define PurseA := JoeCurrency makePurse
+                  ^
+
+expr: define PurseB := JoeCurrency makePurse
+missing new value
+original value: <holds 0 Joe bucks>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define PurseB := JoeCurrency makePurse
+                  ^
+
+expr: ThreeBucks transfer(PurseA, PurseB)
+original and new problem differ
+original problem: <StringException: not in region>
+new problem: <UndefinedVariableException: ThreeBucks not in scope>
+
+expr: [PurseA, PurseB]
+missing new value
+original value: [<holds 0 Joe bucks>, <holds 0 Joe bucks>]
+missing original problem
+new problem: <UndefinedVariableException: PurseA not in scope>
+
+expr: JoeMint inflate(PurseA, 100)
+missing new value
+original value: 100
+missing original problem
+new problem: <UndefinedVariableException: JoeMint not in scope>
+
+expr: JoeMint inflate(PurseB, 200)
+missing new value
+original value: 200
+missing original problem
+new problem: <UndefinedVariableException: JoeMint not in scope>
+
+expr: [PurseA, PurseB]
+missing new value
+original value: [<holds 100 Joe bucks>, <holds 200 Joe bucks>]
+missing original problem
+new problem: <UndefinedVariableException: PurseA not in scope>
+
+expr: ThreeBucks transfer(PurseA, PurseB)
+missing original problem
+new problem: <UndefinedVariableException: ThreeBucks not in scope>
+
+expr: [PurseA, PurseB]
+missing new value
+original value: [<holds 97 Joe bucks>, <holds 203 Joe bucks>]
+missing original problem
+new problem: <UndefinedVariableException: PurseA not in scope>
+
+expr: define TwoBucks := JoeCurrency makeAssay(2)
+missing new value
+original value: <assays 2 Joe bucks>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define TwoBucks := JoeCurrency makeAssay(2)
+                  ^
+
+expr: TwoBucks < ThreeBucks
+missing new value
+original value: true
+missing original problem
+new problem: <UndefinedVariableException: TwoBucks not in scope>
+
+expr: PurseA depositAll(PurseB)
+missing new value
+original value: <assays 203 Joe bucks>
+missing original problem
+new problem: <UndefinedVariableException: PurseA not in scope>
+
+expr: [PurseA, PurseB]
+missing new value
+original value: [<holds 300 Joe bucks>, <holds 0 Joe bucks>]
+missing original problem
+new problem: <UndefinedVariableException: PurseA not in scope>
+
+expr: define CambioMaker(inPurse, outPurse, in2out) {
+
+          define Cambio {
+              to __printOn(oo) {
+                  oo print(`<turning ${inPurse getIssuer} into ${outPurse getIssuer}>`)
+              }
+              to changeMoney(srcPurse) {
+                  define inAssay := inPurse depositAll(srcPurse)
+                  define outAssay := in2out(inAssay)
+                  define destPurse := outPurse getIssuer makePurse
+                  try {
+                      outAssay transfer(outPurse, destPurse)
+                  } catch ex {
+                      inAssay transfer(inPurse, srcPurse)
+                      throw ex
+                  }
+                  destPurse
+              }
+          }
+      }
+missing new value
+original value: <CambioMaker>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define CambioMaker(inPurse, outPurse, in2out) {
+                  ^
+
+expr: define BettyMint := MintMaker("Betty")
+missing new value
+original value: <Betty's Mint>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define BettyMint := MintMaker("Betty")
+                  ^
+
+expr: define BettyBucks := BettyMint getIssuer
+missing new value
+original value: <Betty bucks>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define BettyBucks := BettyMint getIssuer
+                  ^
+
+expr: define BettyPurseA := BettyBucks makePurse
+missing new value
+original value: <holds 0 Betty bucks>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define BettyPurseA := BettyBucks makePurse
+                  ^
+
+expr: BettyMint inflate(BettyPurseA, 250)
+missing new value
+original value: 250
+missing original problem
+new problem: <UndefinedVariableException: BettyMint not in scope>
+
+expr: BettyPurseA
+missing new value
+original value: <holds 250 Betty bucks>
+missing original problem
+new problem: <UndefinedVariableException: BettyPurseA not in scope>
+
+expr: define in2out(inAssay) {
+          BettyBucks makeAssay((0.5 * inAssay getAmount) round)
+      }
+missing new value
+original value: <in2out>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define in2out(inAssay) {
+                  ^
+
+expr: define JBCambio := CambioMaker(PurseA, BettyPurseA, in2out)
+missing new value
+original value: <turning <Joe bucks> into <Betty bucks>>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define JBCambio := CambioMaker(PurseA, BettyPurseA, in2out)
+                  ^
+
+expr: [PurseA, BettyPurseA]
+missing new value
+original value: [<holds 300 Joe bucks>, <holds 250 Betty bucks>]
+missing original problem
+new problem: <UndefinedVariableException: PurseA not in scope>
+
+expr: JoeMint inflate(PurseB, 23)
+missing new value
+original value: 23
+missing original problem
+new problem: <UndefinedVariableException: JoeMint not in scope>
+
+expr: define BettyPurseB := JBCambio changeMoney(PurseB)
+missing new value
+original value: <holds 12 Betty bucks>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define BettyPurseB := JBCambio changeMoney(PurseB)
+                  ^
+
+expr: [PurseA, BettyPurseA]
+missing new value
+original value: [<holds 323 Joe bucks>, <holds 238 Betty bucks>]
+missing original problem
+new problem: <UndefinedVariableException: PurseA not in scope>
+.
+c:/e/doc/smart-contracts/exchange.html:
+c:/e/doc/smart-contracts/exclusive-updoc.txt:
+expr: define BrandMaker := import:org.erights.e.elang.sealing.Brand
+missing new value
+original value: <statics of org.erights.e.elang.sealing.Brand>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define BrandMaker := import:org.erights.e.elang.sealing.Brand
+                  ^
+
+expr: define NaN := 0.0/0.0
+missing new value
+original value: NaN
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define NaN := 0.0/0.0
+                  ^
+
+expr: define ExcluderMaker(name) {
+          define [sealer, unsealer] := BrandMaker pair(name)
+
+          define Issuer {
+              to printOn(oo) { oo print(`<Exclusives by $name>`) }
+
+              to vouch(item) {
+                  unsealer unseal(item getSealed)
+              }
+
+              to makeAssay(myPrecious) {
+                  define AssayPrivate {
+                      to getPrecious { myPrecious }
+                  }
+                  define Assay {
+                      to printOn(oo) {
+                          oo print(""+`<a $name exclusive on $myPrecious>`)
+                      }
+                      to getIssuer { Issuer }
+                      to getSealed { sealer seal(Assay) }
+                      to getPrivate { sealer seal(AssayPrivate) }
+
+                      to transfer(src, dest) {
+                          define srcPrivate := unsealer unseal(src getPrivate)
+                          define destPrivate := unsealer unseal(dest getPrivate)
+                          if (destPrivate getPrecious != null &&
+                              destPrivate getPrecious != myPrecious) {
+
+                              throw("destination not empty")
+                          }
+                          if (srcPrivate getPrecious != myPrecious) {
+                              throw("precious not in src")
+                          }
+                          srcPrivate setPrecious(null)
+                          destPrivate setPrecious(myPrecious)
+                          null
+                      }
+                      to compareTo(otherAssay) {
+                          define otherPrivate := unsealer unseal(otherAssay)
+                          define otherPrecious := otherPrivate getPrecious
+                          if (myPrecious == otherPrecious) {
+                              true
+                          } else if (myPrecious == null) {
+                              -1.0
+                          } else if (otherPrecious == null) {
+                              1.0
+                          } else {
+                              NaN
+                          }
+                      }
+                  }
+              }
+              to makePurse {
+                  define myPrecious := null
+                  define PursePrivate {
+                      to getPrecious { myPrecious }
+                      to setPrecious(newPrecious) { myPrecious := newPrecious }
+                  }
+                  define Purse {
+                      to printOn(oo) {
+                          oo print(""+`<a $name excludable to $myPrecious>`)
+                      }
+                      to getIssuer { Issuer }
+                      to getSealed { sealer seal(Purse) }
+                      to getPrivate { sealer seal(PursePrivate) }
+
+                      to getAssay { Issuer makeAssay(myPrecious) }
+                      to depositFrom(src) {
+                          define assay := Issuer vouch(src getAssay)
+                          assay transfer(src, Purse)
+                          assay
+                      }
+
+                      match [verb, args] {
+                          E call(myPrecious, verb, args)
+                      }
+                  }
+              }
+          }
+          define Excluder {
+              to printOn(oo) { oo print(`<$name's Excluder>`) }
+              to getIssuer { Issuer }
+              to getSealed { sealer seal(Excluder) }
+
+              to makeExcludable(precious) {
+                  define purse := Issuer makePurse
+                  define pursePrivate := unsealer unseal(purse getPrivate)
+                  pursePrivate setPrecious(precious)
+                  purse
+              }
+          }
+      }
+missing new value
+original value: <ExcluderMaker>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define ExcluderMaker(name) {
+                  ^
+
+expr: define JoeExcluder := ExcluderMaker("Joe")
+missing new value
+original value: <Joe's Excluder>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define JoeExcluder := ExcluderMaker("Joe")
+                  ^
+
+expr: define JoeIssuer := JoeExcluder getIssuer
+missing new value
+original value: <Exclusives by Joe>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define JoeIssuer := JoeExcluder getIssuer
+                  ^
+
+expr: define xPrintlnA := JoeExcluder makeExcludable(println)
+missing new value
+original value: <a Joe excludable to <PrintlnFunc>>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define xPrintlnA := JoeExcluder makeExcludable(println)
+                  ^
+
+expr: define xPrintlnB := JoeIssuer makePurse
+missing new value
+original value: <a Joe excludable to null>
+missing original syntax error
+new syntax error: The optional e.enable.define feature in eprops.txt is currently off.
+                  define xPrintlnB := JoeIssuer makePurse
+                  ^
+
+expr: println("hello fundamental instrument")
+missing original stdout
+new stdout: hello fundamental instrument
+
+
+expr: xPrintlnA("hello derivative A")
+missing original problem
+new problem: <UndefinedVariableException: xPrintlnA not in scope>
+
+expr: xPrintlnB("hello derivative B")
+original and new problem differ
+original problem: <NoSuchMethodException: run/1>
+new problem: <UndefinedVariableException: xPrintlnB not in scope>
+
+expr: xPrintlnB depositFrom(xPrintlnA)
+missing new value
+original value: <a Joe exclusive on <PrintlnFunc>>
+missing original problem
+new problem: <UndefinedVariableException: xPrintlnB not in scope>
+
+expr: println("hello fundamental instrument")
+missing original stdout
+new stdout: hello fundamental instrument
+
+
+expr: xPrintlnA("hello derivative A")
+original and new problem differ
+original problem: <NoSuchMethodException: run/1>
+new problem: <UndefinedVariableException: xPrintlnA not in scope>
+
+expr: xPrintlnB("hello derivative B")
+missing original problem
+new problem: <UndefinedVariableException: xPrintlnB not in scope>
+
+expr: println
+original and new value differ
+original value: <PrintlnFunc>
+new value: <println>
+
+expr: xPrintlnA
+missing new value
+original value: <a Joe excludable to null>
+missing original problem
+new problem: <UndefinedVariableException: xPrintlnA not in scope>
+
+expr: xPrintlnB
+missing new value
+original value: <a Joe excludable to <PrintlnFunc>>
+missing original problem
+new problem: <UndefinedVariableException: xPrintlnB not in scope>
+
+c:/e/doc/smart-contracts/history/index.html:
+c:/e/doc/smart-contracts/index.html:
+c:/e/doc/smart-contracts/overview.html:
+c:/e/doc/smart-contracts/report.txt:

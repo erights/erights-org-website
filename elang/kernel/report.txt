@@ -1,0 +1,46 @@
+
+updoc: started
+
+c:/Documents and Settings/MILLERM1/e/doc/elang/kernel/auditors/index.html:......
+expr: adder.incr('a')
+original and new problem differ
+original problem: 42
+     new problem: <ClassCastException: Character doesn't coerce to an int>
+.....
+expr: i := 'a'
+original and new problem differ
+original problem: 42
+     new problem: <ClassCastException: Character doesn't coerce to an int>
+....
+expr: script
+missing new value
+original value: escript`{
+                to getX() :int { x }
+                to getY() :int { y }
+                }`
+missing original problem
+new problem: <UndefinedVariableException: script not in scope>
+
+expr: script.synEnv()
+missing new value
+original value: ["x" => epatt`x :int`,
+                "y" => epatt`y :int`,
+                "int" => null]
+missing original problem
+new problem: <UndefinedVariableException: script not in scope>
+
+expr: script.synEnv()["x"]
+missing new value
+original value: epatt`x :int`
+missing original problem
+new problem: <UndefinedVariableException: script not in scope>
+
+expr: script.synEnv()["x"].synEnv()
+missing new value
+original value: ["int" => null]
+missing original problem
+new problem: <UndefinedVariableException: script not in scope>
+
+c:/Documents and Settings/MILLERM1/e/doc/elang/kernel/EscapeExpr.html:.........
+c:/Documents and Settings/MILLERM1/e/doc/elang/kernel/IntegerLiteral.html:...
+c:/Documents and Settings/MILLERM1/e/doc/elang/kernel/report.txt:

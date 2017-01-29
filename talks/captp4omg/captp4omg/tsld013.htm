@@ -1,0 +1,57 @@
+
+<HTML>
+
+<HEAD>
+<META HTTP-EQUIV="Context-Type" CONTEXT="text/html;charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft Internet Assistant for PowerPoint 97">
+ <TITLE>Distributed Cap Pattern:</TITLE> 
+</HEAD>
+
+<BODY     >
+
+ <H1>Distributed Cap Pattern:The Revocable Facet</H1> 
+ <P><UL>
+def makeRevoker(var precious) :any {
+<BR></UL><UL>
+    def r {
+</UL><UL>
+        to pass(verb, args) :any {
+</UL><UL>
+            E.send(precious, verb, args)
+</UL><UL>
+        }
+</UL><UL>
+        to revoke() { precious := null }
+</UL><UL>
+    }
+</UL><UL>
+    def f {
+</UL><UL>
+        match [verb, args] {
+</UL><UL>
+            r.pass(verb, args)
+</UL><UL>
+        }
+</UL><UL>
+    }
+</UL><UL>
+    [f, r]
+</UL><UL>
+}</UL></P>
+<P><UL>
+“E in a Walnut” www.skyhunter.com/marcs/ewalnut.html<BR></UL></P>
+<P></P> 
+<P>
+<TABLE>
+  <TD HEIGHT=100 WIDTH=100> <A HREF="tsld012.htm">Previous slide</A> </TD>
+  <TD HEIGHT=100 WIDTH=100> <A HREF="tsld014.htm">Next slide</A> </TD>
+  <TD HEIGHT=100 WIDTH=150> <A HREF="tsld001.htm">Back to first slide</A> </TD>
+  <TD HEIGHT=100 WIDTH=150> <A HREF="sld013.htm">View graphic version</A> </TD>
+</TABLE>
+<BR>
+</P>
+
+
+
+</Body>
+</HTML>

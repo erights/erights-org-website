@@ -1,0 +1,86 @@
+
+updoc: started
+
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/bug-check.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/bug3.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/cap-desk.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/capdesk.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/capdesk.png
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/capsecure-ring.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/capsecure-ring.png
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/capsecure-ring.sdr
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/capsecure-ring50x50.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/capsecure-ring50x50.png
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/carrot.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/cmn.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/cmn.png
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/dominos.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/e-cap.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/e-gold-logo.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/e-icon.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/e-icon1.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/E-KEY.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/e-lambda.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/e-logo-shadow.xcf
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/e-logo.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/e-logo.xcf
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/e-on-black.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/e-script.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/e-updoc.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/ewalnut-pink.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/ewalnut-pink.png
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/ewalnut.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/ewalnut.png
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/ezel.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/first.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/first.png
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/flame.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/key.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/large-logo.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/large-logo.jpg
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/liberty.jpg
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/malkovich.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/malkovich.png
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/next-gray.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/next-gray.png
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/next.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/next.png
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/prev-gray.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/prev-gray.png
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/prev.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/prev.png
+c:/Documents and Settings/MILLERM1/e/doc/images/report.txt:
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/ribbon.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/small-logo.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/small-logo.jpg
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/stoppoliceware_gray_88x32.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/Thumbs.db
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/up-gray.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/up-gray.png
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/up.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/up.png
+ignoring c:/Documents and Settings/MILLERM1/e/doc/images/walnut.gif
+[334, "1.0%", "ok static Ref#isBroken(Object)"]
+[338, "1.0%", "ok NullOkGuard#run(ValueGuard)"]
+[420, "1.3%", "ok org.erights.e.elang.interp.vow$vow0__C$vow1__C#coerce/2"]
+[424, "1.3%", "ok org.erights.e.elang.interp.vow$vow0__C#run/1"]
+[430, "1.3%", "ok BaseGuard#run(ValueGuard)"]
+[528, "1.6%", "ok __main$endsWithAny__C$1#run/2"]
+[529, "1.6%", "ok Twine#endsWith(String)"]
+[601, "1.8%", "ok static Ref#isFar(Object)"]
+[620, "1.9%", "ok Resolver#resolve(Object)"]
+[620, "1.9%", "ok static Ref#promise()"]
+[759, "2.3%", "ok static BooleanSugar#not()"]
+[769, "2.3%", "ok org.erights.e.elib.slot.near$near0__C#coerce/2"]
+[938, "2.8%", "ok Equalizer#sameEver(Object, Object)"]
+[986, "3.0%", "ok org.erights.e.tools.updoc.makeHashCache$makeHashCache__C$1#run/2"]
+[986, "3.0%", "ok static EInt#fromString64(String)"]
+[987, "3.0%", "ok FlexMap#put(Object, Object)"]
+[1357, "4.1%", "ok static Ref#isNear(Object)"]
+[1974, "6.0%", "ok FlexList#append(EList)"]
+[1974, "6.0%", "ok FlexList#push(Object)"]
+[1974, "6.0%", "ok org.erights.e.tools.updoc.makeHashCache$makeHashCache__C$hashCache__C$1#run/2"]
+[1974, "6.0%", "ok static BigIntegerSugar#toString64()"]
+[4663, "14.1%", "ok static ConstList#match(String, ConstList)"]
+Call site cache hits: 25625 misses: 760 (97%)
+Run after initialization: 6880 ms

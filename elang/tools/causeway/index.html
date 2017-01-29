@@ -1,0 +1,250 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Causeway: Message-oriented distributed debugging</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elang</a>&nbsp;/&nbsp;<a href="../index.html">tools</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="../updoc.html" title="On to: What's Updoc?"><img src="../../../images/next.gif" width="64" height="32" alt="On to: What's Updoc?" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Causeway<font size="5"><br>
+              Message-oriented distributed debugging<br>
+              <br>
+              </font></B><font size="4"> by Terry Stanley, Tyler
+              Close, and Mark Miller,<br>
+              from <a href="http://www.eros-os.org/pipermail/e-lang/2002-November/007811.html">an
+              idea</a> by E. Dean Tribble<br>
+              partially supported by the Critical Infrastructure Protection Project<br>
+              at George Mason University</font></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p>Causeway, an open source distributed debugger written in <i><b><font color="#009000">E</font></b></i>,
+        lets you browse the causal graph of events in a distributed computation.</p>
+
+      <p>For current information on Causeway, see</p>
+	<blockquote>
+          <p align="left"><a href="http://wiki.erights.org/wiki/Causeway"
+			     >wiki</a> </p>
+          <p align="left"
+	     ><a href="http://www.hpl.hp.com/techreports/2009/HPL-2009-78.html"
+		 >paper</a>
+          </p>
+          <p align="left"><a href="http://www.youtube.com/watch?v=QeqcGa7HlBk"
+			     >Screencast</a></p>
+	</blockquote>
+      <p>The rest of this page is stale
+	and appears here only for historical interest.</p>
+      <hr>
+
+      <p align="left">Causeway provides a post-mortem view, gathered from trace
+        files written by the processes you wish to debug. (We explain below how
+        to enable this tracing.) In the upper left pane, each tab represents the
+        full order of events recorded by each process. This gives a &quot;<i>follow
+        the process</i>&quot; view common to conventional distributed debuggers.
+        In the upper right pane, we see an alternative &quot;<i>follow the conversation</i>&quot;
+        outline view, in which each event expands to show the events it causes.
+        Causeway assigns a unique color per vat. As we see, causality flows back
+        and forth between the vats. </p>
+      <center>
+        <img src="images/cw-screenshot.png" width="771" height="875">
+      </center>
+      <p align="left">Causeway presents several different views of the causal
+        relations. The views are coordinated such that, selecting an item in one
+        view causes corresponding selections in other views.
+      <ul>
+        <li>
+          <p><u>Causality Tree View</u> This tree view contains the full graph
+            built from the trace files.</p>
+        </li>
+        <li>
+          <p><u>Pruned Causality Tree View</u> This tree view is built by walking
+            the full graph and applying a relevance function to each causal relation.
+            The relations are either clipped, skipped, or kept, depending on how
+            relevant, or interesting, they seem. Tree pruning is guided by relevance
+            functions and filters. Currently, default options are selected, but
+            we expect to support user-defined functions and filters in a future
+            release. </p>
+        </li>
+        <li>
+          <p><u>Full-order View</u> The view to the left of the tree view lists
+            the events from a single trace file, in full order. This is equivalent
+            to the full order of events sent within a single process. </p>
+        </li>
+        <li>
+          <p><u>Stack Frame View</u> This view is not quite what you would expect.
+            For a selected message in the tree view, the stack shows the state
+            at the time the message was sent, not received. It's the stack of
+            the cause, not the effect. Selecting an item in the stack view shows
+            the corresponding source code.</p>
+        </li>
+        <li>
+          <p><u>Source Code View</u> This view shows the filename and <i><b><font color="#009000">E</font></b></i>
+            source code, if available.</p>
+        </li>
+      </ul>
+      <h1 align="left">Generating causality traces </h1>
+      <p align="left"><i><b><font color="#009000">E</font></b></i> supports <a href="../../../elib/Tracing.html">tracing</a>
+        and there are many options for turning on various kinds of traces, generated
+        at different levels of detail. Tracing can be turned on using command
+        line properties, or by explicit actions within the programs. The example
+        programs &quot;seller.e&quot; and &quot;buyer.e&quot; turn causality tracing
+        on and off in order to bracket just that portion of their computation
+        that would be interesting to view in Causeway. We recommend this technique
+        to avoid being swamped in irrelevant detail.</p>
+      <p>In the code below, the trace begins with the eventual send to <tt>x</tt>
+        and ends eventually, sometime after <tt>answer</tt> is resolved. The trace
+        includes the message sends (effects) caused by <tt>x &lt;- question()</tt>
+        (the cause) and the message sends caused by these effects, and so on.
+      </p>
+      <blockquote>
+        <pre><span class="comment"># import tracing support</span>
+<span class="keyword">def</span> <span class="defvar">tcr</span> := &lt;unsafe:<span class="litchars">org.erights.e.develop.trace.TraceController</span>&gt;
+
+<span class="comment"># ...
+
+# turn causality tracing on</span>
+tcr.setProperty(&quot;<span class="litchars">TraceLog_causality</span>&quot;, &quot;<span class="litchars">debug</span>&quot;)
+
+<span class="keyword">def</span> <span class="defvar">answer</span> := x &lt;- question()
+<span class="keyword">when</span> (answer) -&gt; <span class="defobj">done</span>(_) :any {
+    <span class="comment"># ...</span>
+} <span class="keyword">catch</span> <span class="defvar">problem</span> {
+    <span class="comment"># ...</span>
+} <span class="keyword">finally</span> {
+    <span class="comment"># turn causality tracing off</span>
+    tcr.setProperty(&quot;<span class="litchars">TraceLog_causality</span>&quot;, &quot;<span class="litchars">warning</span>&quot;)
+}</pre>
+      </blockquote>
+      <p align="left">So that the examples below will be more reusable, first
+        set a shell variable EHOME to the location where you installed <i><b><font color="#009000">E</font></b></i>.
+        On MSWindows in the cygwin bash shell, this would typically look like
+      </p>
+      <blockquote>
+        <pre align="left"><span class="stdout">$ </span>EHOME=&quot;c:/Program Files/erights.org&quot;</pre>
+      </blockquote>
+      <p align="left">In a bash shell on a Unixoid system, this would typically
+        be</p>
+      <blockquote>
+        <pre align="left"><span class="stdout">$ </span>EHOME=/usr/local/e</pre>
+      </blockquote>
+      <p align="left">The shell commands below generates a trace of <tt>seller.e</tt>
+        in the current directory. (The tracing system is very finnicky about not
+        overwriting files, so if you want to save a trace log to a specific name
+        by using the <tt>TraceLog_dir</tt> and <tt>TraceLog_name</tt> properties,
+        be sure to delete any previous trace of that name.)</p>
+      <blockquote>
+        <pre><span class="stdout">$ </span>rm -f seller.txt<span class="stdout">
+$ </span>rune -DTraceLog_dir=. -DTraceLog_name=seller.txt &quot;$EHOME/scripts/test/causeway/seller.e&quot;
+<span class="stdout">waiting...</span></pre>
+      </blockquote>
+      <p>Wait for the seller to print &quot;waiting...&quot;, as shown above.
+        Then, in a separate shell window, generate a trace of <tt>buyer.e</tt>
+        by saying</p>
+      <blockquote>
+        <pre><span class="stdout">$ </span>rm -f buyer.txt<span class="stdout">
+</span><span class="stdout">$ </span>rune -DTraceLog_dir=. -DTraceLog_name=buyer.txt &quot;$EHOME/scripts/test/causeway/buyer.e&quot;
+<span class="stderr">***-----------------------***
+*** Trace data written to ***
+'/home/markm/buyer.txt'
+***-----------------------***</span>
+<span class="stdout">$ </span></pre>
+      </blockquote>
+      <p>After <tt>buyer.e</tt> has terminated, currently, you must manually kill
+        <tt>seller.e</tt>.</p>
+      <p>The first time a process actually writes something to its trace file,
+        it will also print a diagnostic to its stderr with the name of that trace
+        file, as shown above. After the trace has completed, rename the trace
+        files to shorter, more memorable names. For example, <tt>etrace.2004-11-20T01_17_58.600Z.txt</tt>
+        could be renamed to <tt>seller.txt</tt>. </p>
+      <p>Causeway needs deep thread stacks to run. When using standard JDKs, you
+        can tell rune to give its program deeper stacks by using, for example,
+        the &quot;-J-Xss8m&quot; option, to give it 8 MBytes. Assuming your trace
+        files are <tt>seller.txt</tt> and <tt>buyer.txt</tt> in the current directory,
+        you can run Causeway as follows:</p>
+      <blockquote>
+        <pre>$ rune -J-Xss8m &quot;$EHOME/scripts/causeway.e-swt&quot; buyer.txt seller.txt</pre>
+      </blockquote>
+      <p>Causeway has a long startup time, so be prepared to wait a while until
+        your window appears. If you have any problems, suggestions, or other reactions,
+        please let us know.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">elang</a>&nbsp;/&nbsp;<a href="../index.html">tools</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="../updoc.html" title="On to: What's Updoc?"><img src="../../../images/next.gif" width="64" height="32" alt="On to: What's Updoc?" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

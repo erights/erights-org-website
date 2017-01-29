@@ -1,0 +1,536 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>Horton's “Who Done It?”</TITLE>
+<style type="text/css">
+<!--
+.center {	text-align:center;
+	margin-left:auto;
+	margin-right:auto;
+}
+.style1 {font-family: "Times New Roman", Times, serif}
+.title {	margin:auto;
+	text-align:center
+}
+-->
+</style>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<P> 
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <P> 
+      <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../../index.html"><img src="../../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../../index.html">elib</a>&nbsp;/&nbsp;<a href="../../index.html">capability</a>&nbsp;/&nbsp;<a href="../index.html">horton</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="../base.html" title="On to: Testing Simplified Horton"><img src="../../../../images/next.gif" width="64" height="32" alt="On to: Testing Simplified Horton" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><span class="titlemain"><b> Horton's &#8220;<i>Who
+          Done It?</i>&#8221;</b></span><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"><TABLE WIDTH="100%" BORDER="0" dwcopytype="CopyTableColumn">
+              <TR> 
+                <TD ALIGN="LEFT" valign="top"> 
+                  <!-- Google CSE Search Box Begins -->
+                  <form id="searchbox_000392378982602007030:4i4vpd1mcjo" action="http://google.com/cse">
+                    <input type="hidden" name="cx" value="000392378982602007030:4i4vpd1mcjo" />
+                    <input name="q" type="text" size="40" />
+                    <input type="submit" name="sa" value="Search" />
+                    <input type="hidden" name="cof" value="FORID:1" />
+                  </form>
+                  <script type="text/javascript" src="http://google.com/coop/cse/brand?form=searchbox_000392378982602007030%3A4i4vpd1mcjo"></script> 
+                  <!-- Google CSE Search Box Ends -->
+                </TD>
+              </TR>
+            </TABLE></TD>
+        </TR>
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <TABLE CLASS="title">
+        <TR>
+          <TD><H1 CLASS="titlemain">Delegating Responsibility in Digital Systems:<BR>
+            Horton's &#8220;Who Done It?&#8221; </H1>
+              <table width="100%" border="0" cellspacing="6" cellpadding="6">
+                <tr>
+                  <td><div align="center"><span class="titlerest">Mark S. Miller<BR>
+                    Google Research</span></div></td>
+                  <td><div align="center"><span class="titlerest">James E. Donnelley<BR>
+                    NERSC, LBNL</span></div></td>
+                  <td><div align="center"><span class="titlerest">Alan H. Karp<BR>
+                    Hewlett-Packard Labs</span></div></td>
+                </tr>
+            </table></TD>
+        </TR>
+      </TABLE>
+      <p>&nbsp;</p>
+      <table width="20%" border="0" align="center" cellpadding="6" cellspacing="6">
+        <tr>
+          <td><pre class="style1" align="left">Programs do good things, but also do bad,
+making software security more than a fad.
+The authority of programs, we do need to tame.
+But bad things still happen. Who do we blame?</pre>
+              <pre class="style1" align="left">From the very beginnings of access control:
+Should we be safe by construction,
+or should we patrol?
+Horton shows how, in an elegant way,
+we can simply do both, and so save the day. </pre>
+              <div align="right"><em>with apologies to Dr. Seuss</em></div></td>
+        </tr>
+      </table>
+      <H2 CLASS="section"><A NAME="htoc1">1</A>&nbsp;&nbsp;Introduction</H2>
+      There are two approaches to protect users from the harm programs can cause, <EM>proactive
+      control</EM> and <EM>reactive control</EM>. Proactive controls help prevent
+      bad things from happening, or limit the damage when they do. But when repeated
+      abuse occurs, we need some workable notion of &#8220;who&#8221; to blame,
+      so we can reactively suspend the responsible party's access.
+<p> For reactive controls to work well, we must first proactively limit attackers
+  to causing only repairable damage. A simple example is a wiki that proactively
+  grants untrusted users only read access to history, so it can risk granting
+  them write access to pages. If a user posts abuse, damaged pages can be restored,
+  and that user's access can be reactively suspended. We need both approaches,
+  but the main access control paradigms each seem to support only one well. This
+  paper contributes a new answer to this dilemma.
+<p> Access Control List (ACL) systems support reactive control directly. ACL
+  systems presume a program acts on behalf of its &#8220;user&#8221;. Access
+  is allowed or disallowed by checking whether this operation on this resource
+  is permitted for this user. By tagging all actions with the identity of the
+  user they allegedly serve, they can log who to blame, and whose access to suspend.
+  But ACLs are weak at proactive control. Solitaire runs with all its user's
+  privileges. If it runs amok, it could do its user great harm.
+<p> Capabilities seem to have opposite strengths and weaknesses. A capability&mdash;like
+  an object-reference in a memory-safe language&mdash;is a communicable and unforgeable
+  token used both to designate some object and to permit access to that object.
+  Because the term &#8220;capabilities&#8221; has since been used for many other
+  access control rules&nbsp;[<A HREF="#miller:myths"><CITE>11</CITE></A>], we
+  now refer to the original model&nbsp;[<A HREF="#DVH"><CITE>2</CITE></A>] as <EM>object-capabilities</EM> or <EM>ocaps</EM> for
+  short.
+<p> By allowing the controlled delegation of narrow authority, ocap systems support
+  proactive control well. The invoker of an object normally passes as arguments
+  just those objects (capabilities) that the receiver needs to carry out that
+  request. A user can likewise delegate to an application just that portion of
+  the user's authority the application needs&nbsp;[<A HREF="#darpareview"><CITE>21</CITE></A>],
+  limiting damage should it be corrupted by a virus.
+<p> Because ocaps operate on an anonymous &#8220;bearer right&#8221; basis, they
+  seem to make reactive control impossible. Indeed, although many historical
+  criticisms of ocaps have since been refuted&nbsp;[<A HREF="#miller:myths"><CITE>11</CITE></A><CITE>, </CITE><A HREF="#shap00verifying"><CITE>16</CITE></A><CITE>, </CITE><A HREF="#RobustComposition"><CITE>10</CITE></A><CITE>, </CITE><A HREF="#SCOLL"><CITE>17</CITE></A>],
+  a remaining unrefuted criticism is that they cannot record who to blame for
+  which action&nbsp;[<A HREF="#TCSEC-1935"><CITE>6</CITE></A>]. This lack has
+  led some to forego the benefits of ocaps.
+<p> How can we support both forms of control well in one system? One approach
+  combines elements of the two paradigms in one architecture&nbsp;[<A HREF="#Karger:Augmented"><CITE>7</CITE></A><CITE>, </CITE><A HREF="#ellison-rfc"><CITE>4</CITE></A>].
+  Another emulates some of the virtues of one paradigm as a pattern built on
+  the other. For example, Polaris&nbsp;[<A HREF="#Polaris-acm"><CITE>19</CITE></A>]
+  uses lessons learned from ocaps to limit the authority of ACL-based applications
+  on Windows, as Plash&nbsp;[<A HREF="#seaborn:plash"><CITE>15</CITE></A>] does
+  on Unix, without modifying either these applications or their underlying ACL
+  OS.
+<p> In this paper, we show how to attribute actions in an ocap system. As a tribute
+  to Dr. Seuss&nbsp;[<A HREF="#Seuss:horton"><CITE>5</CITE></A>], we call our
+  protocol Horton (<I><FONT COLOR=maroon>H</FONT></I>igher-<I><FONT COLOR=maroon>O</FONT></I>rder <I><FONT COLOR=maroon>R</FONT></I>esponsibility <I><FONT COLOR=maroon>T</FONT></I>racking
+  of <I><FONT COLOR=maroon>O</FONT></I>bjects in <I><FONT COLOR=maroon>N</FONT></I>etworks).
+  Horton can be interposed between existing ocap-based application objects, without
+  modifying either these objects or their underlying ocap foundations. Horton
+  supports identity-based tracking and control for delegating responsibility
+  with authority. Horton thereby refutes this criticism of the ocap paradigm.
+<H2 CLASS="section"><A NAME="htoc2">2</A>&nbsp;&nbsp;The Horton Protocol</H2>
+<p align="center"><span class="figure"><a  name="fig1" href="#fig2"><IMG SRC="send.png" alt="Figure 1: A does &quot;b.foo(c)&quot;" border="0"></a></span></p>
+<p>We explain Horton with a scenario where object A executes <TT>b.foo(c)</TT>,
+  intending to send the &#8220;foo&#8221; message to object B with a reference
+  to object C as an argument. If A had direct references to B and C, then B would
+  receive a direct reference to C. </p>
+<p> Imagine that A, B, and C are application-level objects contributed by mutually
+  suspicious parties, Alice, Bob, and Carol, respectively. In order to attribute
+  possible misbehavior and suspend access, Alice, Bob, and Carol interpose the
+  intermediary objects shown in <a href="#fig1">Figure 1</a>: The outgoing half
+  circles are <EM>proxies</EM> and incoming half circles are <EM>stubs</EM>.
+  Under normal conditions, they wish their app-objects to proceed transparently,
+  as if directly connected.
+<p> When A sends the &#8220;foo&#8221; message on the path to B, A actually sends
+  it to Alice's proxy P1 (<a href="#fig1">Figure 1</a>, <IMG SRC="01.png" alt="step (01)">).
+  P1 logs the outgoing message as a request that Bob is responsible for serving.
+  P1 sends an encoding of this message to Bob's stub S1, which logs that Alice
+  is responsible for making this request (<a href="#fig2">Figure 2</a>, <IMG SRC="13.png" alt="step (13)">).
+  S1 decodes the encoded message into a &#8220;foo&#8221; message which it delivers
+  to B (<a href="#fig3">Figure 3</a>, <IMG SRC="29.png" alt="step (29)">). (Read
+  the html online to see the figures &#8220;animate&#8221; by clicking on them.)
+<p> If Alice decides she no longer wishes to use Bob's services, she shuts off
+  her 
+  &#8220;Bob&#8221; proxies such as P1. If Bob decides he no longer wishes to
+  accept Alice's requests, he shuts off his &#8220;Alice&#8221; stubs such as
+  S1.
+<p> Every protocol which builds secure relationships must face two issues: 1)&nbsp;the
+  base case, building an initial secure relationship between players not yet
+  connected by this protocol, and 2)&nbsp;the inductive case, in which a new
+  secure relationship is bootstrapped from earlier assumed-secure relationships.
+<p> This paper discusses the inductive case. Ocap systems create new relationships
+  by passing arguments. We must show that the relationship represented by the
+  new B&rarr;P3&rarr;S3&rarr;C path in <a href="#fig3">Figure 3</a> attributes
+  responsibility sensibly, <EM>assuming</EM> that the A&rarr;P1&rarr;S1&rarr;B
+  and A&rarr;P2&rarr;S2&rarr;C paths already do. An example attack would be if
+  Alice could fool Bob into blaming Carol for bad service provided by Alice.
+  To avoid non-repudiation&nbsp;[<A HREF="#deniable"><CITE>1</CITE></A>], we
+  accept that Bob can log bad data fooling himself into blaming the wrong party.
+<p> What represents a responsible identity? Cryptographic protocols often represent
+  identity as a key pair. For example, a public encryption key identifies whoever
+  knows the corresponding private decryption key. Put another way, knowledge
+  of a decryption key provides the ability to <EM>be</EM> (or <EM>speak for</EM>&nbsp;[<A HREF="#lampson:auth"><CITE>9</CITE></A>])
+  the entity identified by the corresponding encryption key.
+<p> In ocap systems, the sealer/unsealer pattern&nbsp;[<A HREF="#morris1973protection"><CITE>12</CITE></A>]
+  provides a similar logic. Rectangles such as the one labeled &#8220;Alice&#8221; 
+  represent Who objects, providing a <TT>seal(contents)</TT> operation, returning
+  an opaque <EM>box</EM> encapsulating the contents. All such rectangles with
+  the same label are references to the same Who object. The corresponding BeAlice
+  object provides the authority to <EM>be</EM> the entity identified by Alice's
+  Who object. BeAlice provides an <TT>unseal(box)</TT> operation that returns
+  the contents of a box sealed by Alice's Who. The large rounded rectangles and
+  colors aggregate all objects we assume to behave according to the intentions
+  of a given Who.
+<p> Complete Horton implementations in Java and E are available at <A HREF="http://erights.org/download/horton/">erights.org/download/horton/</A>.
+  For expository purposes, the E code after <a href="#fig3">Figure 3</a> shows
+  just the Horton code needed for the illustrated case. The line numbers on the
+  code show the order of execution taken by our example. The code expresses just
+  the minimal default behavior for participating in the Horton protocol. The
+  LA, LB, and LC lines mark opportune places for each to insert identity-based
+  control hooks. Mostly, this simplified code uses just the simple sequential
+  five-minute subset of E explained in&nbsp;[<A HREF="#RobustComposition"><CITE>10</CITE></A><CITE>,
+  Ch6: A Taste of E</CITE>].
+<p> When the <TT>foo</TT> message arrives at proxy P1, it does not match any
+  of the proxy's method definitions, so it falls through to the <TT>match</TT> clause <FONT COLOR="black">(02)</FONT>,
+  which receives messages reflectively. The clause's head is a pattern matched
+  against a pair of the message name (here, <TT>"foo"</TT>) and the list of arguments
+  (here, a list holding only proxy P2).
+<p align="center"><span class="figure"><a name="fig2" href="#fig3"><IMG SRC="protocol.png" alt="Figure 2: P1 sends a &quot;deliver&quot; message to S1" border="0"></a></span></p>
+<p>P1 asks for the value of P2's <TT>stub</TT> and <TT>whoBlame</TT> fields,
+  which hold S2 and Carol's Who <FONT COLOR="black">(03&ndash;05)</FONT>. (To
+  protect against misbehaving app-objects, P1 actually does this by rights amplification&nbsp;[<A HREF="#morris1973protection"><CITE>12</CITE></A>]
+  rather than the <TT>getGuts</TT> message shown here.) P1 then sends <TT>intro(whoBob)</TT> to
+  S2 <FONT COLOR="black">(06)</FONT>, by which Alice is saying in effect <EM>&#8220;Carol,
+  I'd like to share with Bob my access to C. Could you create a stub for Bob's
+  use?&#8221;</EM> Nothing forces Alice to share her rights in this indirect
+  way; Alice's P1 <EM>could</EM> just give Bob direct access to S2. But then
+  Carol would <EM>necessarily</EM> blame Alice for Bob's use of S2, which Alice
+  might not like. </p>
+<p> Carol makes S3 for Bob's use of C <FONT COLOR="black">(08)</FONT>. Carol
+  tags S3 with Bob's Who, so Carol can blame Bob for messages sent to S3. Carol
+  then &#8220;gift wraps&#8221; S3 for Bob and returns <TT>gs3</TT>, the gift-wrapped
+  S3, to Alice as the result of the <TT>intro</TT> message <FONT COLOR="black">(09&ndash;11)</FONT>.
+  Alice includes <TT>gs3</TT> in the <TT>p3Desc</TT> record encoding the P2 argument
+  of the original message <FONT COLOR="black">(12)</FONT>. By including this
+  in the <TT>deliver</TT> request to Bob's S1 <FONT COLOR="black">(13)</FONT>,
+  Alice is saying in effect <EM>&#8220;Bob, please unwrap this to get the ability
+  to use a service provided by Carol.&#8221;</EM>
+<p> Bob's S1 unpacks the record <FONT COLOR="black">(15)</FONT>, unwraps <TT>gs3</TT> to
+  get S3 <FONT COLOR="black">(16&ndash;26)</FONT>, which it uses to make proxy
+  P3 <FONT COLOR="black">(27)</FONT>. Bob tags P3 with Carol's Who, so Bob can
+  blame Carol for the behavior of S3. S1 then includes P3 as the argument of
+  the app-level <TT>foo</TT> message it sends to B using E's reflective <TT>E.call</TT> primitive <FONT COLOR="black">(28)</FONT>.
+<p> Clearly the <TT>unwrap</TT> function must be the inverse of the <TT>wrap</TT> function.
+  Identity functions would be simple, but would also give Alice's P1 access to
+  S3. Since P1 behaves as Alice wishes, P1's access to S3 would let Alice fool
+  Carol into blaming Bob for messages Alice sends to S3.
+<p> Carol's S2 should at least gift-wrap S3 so only Bob can unwrap it. Could
+  we simply use the <TT>seal</TT>/<TT>unseal</TT> operations of Bob's who/be
+  pair as the <TT>wrap</TT>/<TT>unwrap</TT> functions? Unfortunately, this would
+  still enable Alice to give Bob a gift allegedly from Carol, but which Bob unwraps
+  to obtain a faux S3 created by Alice.
+<p> In our solution, Carol's <TT>wrap</TT> creates a <TT>provide</TT> function,
+  seals it so only Bob can unseal it, and returns the resulting box as the wrapped
+  gift <FONT COLOR="black">(11)</FONT>. Bob's <TT>unwrap</TT> unseals it to get
+  a <TT>provide</TT> function allegedly from Carol <FONT COLOR="black">(18)</FONT>.
+  Bob will need to call <TT>provide</TT> <FONT COLOR="black">(21)</FONT> so that <EM>only</EM> Carol
+  can provide S3 to him. Bob declares an assignable <TT>result</TT> variable <FONT COLOR="black">(19)</FONT>,
+  and a <TT>fill</TT> function for Carol to call to set this variable to S3.
+  He seals this in a box only Carol can unseal <FONT COLOR="black">(20)</FONT> and
+  passes this to <TT>provide</TT> <FONT COLOR="black">(21)</FONT>. Carol's <TT>provide</TT> unseals
+  it to get Bob's <TT>fill</TT> function <FONT COLOR="black">(23)</FONT>, which
+  Carol can call to set the <TT>result</TT> to S3 (24&ndash;25). After Carol's <TT>provide</TT> returns,
+  Bob's <TT>unwrap</TT> returns whatever it finds in the <TT>result</TT> variable <FONT COLOR="black">(26)</FONT>.
+<p> Should Bob and Carol ever come to know that the other is independent of Alice,
+  they can then blame each other, rather than Alice, for actions logged by P3
+  and S3. Say C is a wiki page. If Carol believes that Bob is not a pseudonym
+  for Alice, and Carol decides that Bob has abused this page, Carol should then
+  revoke Bob's access without revoking Alice's access by shutting off her 
+  &#8220;Bob&#8221; stubs such as S3. If Bob decides that C is flaky, he can
+  stop using Carol's services by shutting off his &#8220;Carol&#8221; proxies
+  such as P3. This completes the induction.
+<p align="center" class="figure"><a name="fig3" href="#fig1"><IMG SRC="deliver.png" alt="Figure 3: S1 decodes and delivers &quot;foo(p3)&quot; to B" border="0"></a></p>
+<BLOCKQUOTE CLASS="figure">
+  <PRE>
+
+<SPAN STYLE="background-color:#CCFFE5"><FONT COLOR="#333333">01:</FONT></SPAN>   <FONT COLOR="#333333"># A says:...</FONT> b.foo(c) <FONT COLOR="#333333">...</FONT>
+
+ def <I><FONT COLOR=maroon>makeProxy</FONT></I>(<I><FONT COLOR=maroon>whoBlame</FONT></I>, <I><FONT COLOR=maroon>stub</FONT></I>) {
+   return def <I><FONT COLOR=maroon>proxy</FONT></I> {
+<SPAN STYLE="background-color:#CCFFE5"><FONT COLOR="#333333">04:</FONT></SPAN> to getGuts() {                  <FONT COLOR="#333333"># as P2</FONT>
+<SPAN STYLE="background-color:#CCFFE5"><FONT COLOR="#333333">05:</FONT></SPAN>   return [stub, whoBlame]}
+<SPAN STYLE="background-color:#CCFFE5"><FONT COLOR="#333333">02:</FONT></SPAN> match [<I><FONT COLOR=maroon>verb</FONT></I>, [<I><FONT COLOR=maroon>p2</FONT></I>]] {            <FONT COLOR="#333333"># as P1</FONT>
+<SPAN STYLE="background-color:#CCFFE5"><FONT COLOR="#333333">03:</FONT></SPAN>   def [<I><FONT COLOR=maroon>s2</FONT></I>, <I><FONT COLOR=maroon>whoCarol</FONT></I>] := p2.getGuts()
+<SPAN STYLE="background-color:#CCFFE5"><FONT COLOR="#333333">06:</FONT></SPAN>   def <I><FONT COLOR=maroon>gs3</FONT></I> := s2.intro(whoBlame)
+<SPAN STYLE="background-color:#CCFFE5"><FONT COLOR="#333333">12:</FONT></SPAN>   def <I><FONT COLOR=maroon>p3Desc</FONT></I> := [gs3, whoCarol]
+<SPAN STYLE="background-color:#CCFFE5"><FONT COLOR="#333333">LA:</FONT></SPAN>   <FONT COLOR="#333333">#...check and log service...</FONT>
+<SPAN STYLE="background-color:#CCFFE5"><FONT COLOR="#333333">13:</FONT></SPAN>   stub.deliver(verb, [p3Desc])}}}
+
+ def <I><FONT COLOR=maroon>makeStub</FONT></I>(<I><FONT COLOR=maroon>beMe</FONT></I>, <I><FONT COLOR=maroon>whoBlame</FONT></I>, <I><FONT COLOR=maroon>targ</FONT></I>) {
+   return def <I><FONT COLOR=maroon>stub</FONT></I> {
+<SPAN STYLE="background-color:#FFFF99"><FONT COLOR="#333333">07:</FONT></SPAN> to intro(<I><FONT COLOR=maroon>whoBob</FONT></I>) {              <FONT COLOR="#333333"># as S2</FONT>
+<SPAN STYLE="background-color:#FFFF99"><FONT COLOR="#333333">08:</FONT></SPAN>   def <I><FONT COLOR=maroon>s3</FONT></I> := makeStub(beMe,whoBob,targ)
+<SPAN STYLE="background-color:#FFFF99"><FONT COLOR="#333333">LC:</FONT></SPAN>   <FONT COLOR="#333333">#...check and log intro...</FONT>
+<SPAN STYLE="background-color:#FFFF99"><FONT COLOR="#333333">09:</FONT></SPAN>   return wrap(s3, whoBob, beMe)}
+<SPAN STYLE="background-color:#FFCCFF"><FONT COLOR="#333333">14:</FONT></SPAN> to deliver(<I><FONT COLOR=maroon>verb</FONT></I>, [<I><FONT COLOR=maroon>p3Desc</FONT></I>]) {    <FONT COLOR="#333333"># as S1</FONT>
+<SPAN STYLE="background-color:#FFCCFF"><FONT COLOR="#333333">15:</FONT></SPAN>   def [<I><FONT COLOR=maroon>gs3</FONT></I>, <I><FONT COLOR=maroon>whoCarol</FONT></I>] := p3Desc
+<SPAN STYLE="background-color:#FFCCFF"><FONT COLOR="#333333">16:</FONT></SPAN>   def <I><FONT COLOR=maroon>s3</FONT></I> := unwrap(gs3, whoCarol, beMe)
+<SPAN STYLE="background-color:#FFCCFF"><FONT COLOR="#333333">27:</FONT></SPAN>   def <I><FONT COLOR=maroon>p3</FONT></I> := makeProxy(whoCarol, s3)
+<SPAN STYLE="background-color:#FFCCFF"><FONT COLOR="#333333">LB:</FONT></SPAN>   <FONT COLOR="#333333">#...check and log request...</FONT>
+<SPAN STYLE="background-color:#FFCCFF"><FONT COLOR="#333333">28:</FONT></SPAN>   E.call(targ, verb, [p3])}}}
+
+<SPAN STYLE="background-color:#FFCCFF"><FONT COLOR="#333333">29:</FONT></SPAN> <FONT COLOR="#333333"># B implements:...</FONT> to foo(c) {...} <FONT COLOR="#333333">...</FONT>
+
+<SPAN STYLE="background-color:#FFFF99"><FONT COLOR="#333333">10:</FONT></SPAN> def <I><FONT COLOR=maroon>wrap</FONT></I>(<I><FONT COLOR=maroon>s3</FONT></I>, <I><FONT COLOR=maroon>whoBob</FONT></I>, <I><FONT COLOR=maroon>beCarol</FONT></I>) { <FONT COLOR="#333333"># as S2</FONT>
+<SPAN STYLE="background-color:#FFFF99"><FONT COLOR="#333333">22:</FONT></SPAN>   def <I><FONT COLOR=maroon>provide</FONT></I>(<I><FONT COLOR=maroon>fillBox</FONT></I>) {
+<SPAN STYLE="background-color:#FFFF99"><FONT COLOR="#333333">23:</FONT></SPAN>     def <I><FONT COLOR=maroon>fill</FONT></I> := beCarol.unseal(fillBox)
+<SPAN STYLE="background-color:#FFFF99"><FONT COLOR="#333333">24:</FONT></SPAN>     fill(s3)}
+<SPAN STYLE="background-color:#FFFF99"><FONT COLOR="#333333">11:</FONT></SPAN>   return whoBob.seal(provide)}
+<SPAN STYLE="background-color:#FFCCFF"><FONT COLOR="#333333">17:</FONT></SPAN> def <I><FONT COLOR=maroon>unwrap</FONT></I>(<I><FONT COLOR=maroon>gs3</FONT></I>,<I><FONT COLOR=maroon>whoCarol</FONT></I>,<I><FONT COLOR=maroon>beBob</FONT></I>){ <FONT COLOR="#333333"># as S1</FONT>
+<SPAN STYLE="background-color:#FFCCFF"><FONT COLOR="#333333">18:</FONT></SPAN>   def <I><FONT COLOR=maroon>provide</FONT></I> := beBob.unseal(gs3)
+<SPAN STYLE="background-color:#FFCCFF"><FONT COLOR="#333333">19:</FONT></SPAN>   var <I><FONT COLOR=maroon>result</FONT></I> := null
+<SPAN STYLE="background-color:#FFCCFF"><FONT COLOR="#333333">25:</FONT></SPAN>   def <I><FONT COLOR=maroon>fill</FONT></I>(<I><FONT COLOR=maroon>s3</FONT></I>) {result := s3}
+<SPAN STYLE="background-color:#FFCCFF"><FONT COLOR="#333333">20:</FONT></SPAN>   def <I><FONT COLOR=maroon>fillBox</FONT></I> := whoCarol.seal(fill)
+<SPAN STYLE="background-color:#FFCCFF"><FONT COLOR="#333333">21:</FONT></SPAN>   provide(fillBox)
+<SPAN STYLE="background-color:#FFCCFF"><FONT COLOR="#333333">26:</FONT></SPAN>   return result}
+</PRE>
+  <DIV CLASS="center"></DIV>
+</BLOCKQUOTE>
+<H2 CLASS="section"><A NAME="htoc3">3</A>&nbsp;&nbsp;Related Work</H2>
+Some distributed ocap systems interpose objects to serialize/unserialize messages&nbsp;[<A HREF="#jed:dccs"><CITE>3</CITE></A><CITE>, </CITE><A HREF="#sansom1986netcaps"><CITE>14</CITE></A>],
+stretching the reference graph between local ocap systems. Secure Network Objects&nbsp;[<A HREF="#vandoorn1996secure"><CITE>20</CITE></A>]
+and Client Utility&nbsp;[<A HREF="#HPL-2001-136"><CITE>8</CITE></A>] leveraged
+their intermediation to add some identity tracking. Horton unbundles such identity-based
+control as a separately composable abstraction.
+<p> Reactive security ocap patterns include the logging forwarder&nbsp;[<A HREF="#marcs:picturebook"><CITE>18</CITE></A>]
+  and the caretaker&nbsp;[<A HREF="#redell1974thesis"><CITE>13</CITE></A>]. Horton's
+  main contribution is the inductive formation of these patterns among mutually
+  suspicious parties.
+<p> Petmail&nbsp;[<A HREF="#petmail"><CITE>22</CITE></A>] and SPKI&nbsp;[<A HREF="#ellison-rfc"><CITE>4</CITE></A>]
+  provide some Horton-like features in non-ocap systems. They show how Carol
+  need not be involved during the delegation of C from Alice to Bob. Future work
+  should try to express this in terms of ocaps, without explicit cryptopgraphy.
+<H2 CLASS="section"><A NAME="htoc4">4</A>&nbsp;&nbsp;Conclusions</H2>
+Delegation is fundamental to human society. If digital systems are to mediate
+ever more of our interactions, we must be able to delegate responsibility within
+them. While some systems support the controlled delegation of authority, and
+other systems support assignment of responsibility, today we have no means for
+delegating responsibility, that is, delegating authority coupled with assigning
+responsibility for using that authority. Horton shows how delegation of responsibility
+can be added to systems that already support delegation of authority&mdash;object-capability
+systems.
+<p><EM> We thank the cap-talk community, especially Peter Amstutz, David Chizmadia,
+    Tyler Close, Bill Frantz, David Hopwood, Terence Kelly, Charles Landau, Sandro
+    Magi, Rob Meijer, Chip Morningstar, Toby Murray, Kevin Reid, Jonathan Shapiro,
+    Terry Stanley, Marc Stiegler, Pierre Thierry, Brian Warner, and Meng Weng
+    Wong. </EM>
+<H2 CLASS="section">References</H2>
+<DL COMPACT="compact">
+  <DT><span class="list "><A NAME="deniable"><FONT color="purple">[1]</FONT></A> </span>
+  <DD><span class="list "> Y.&nbsp;Aumann and M.&nbsp;Rabin. Efficient deniable
+      authentication of long messages. <EM>Int. Conf. on Theoretical Computer
+      Science in Honor of Professor Manuel Blum's 60th birthday</EM>, pages 20&ndash;24,
+      1998. </span>
+  <DT><span class="list "><A NAME="DVH"><FONT color="purple">[2]</FONT></A> </span>
+  <DD><span class="list "> J.&nbsp;B. Dennis and E.&nbsp;C.&nbsp;V. Horn. Programming
+      Semantics for Multiprogrammed Computations. Technical Report TR-23, MIT,
+      LCS, 1965.</span>
+  <DT><span class="list "><A NAME="jed:dccs"><FONT color="purple">[3]</FONT></A> </span>
+  <DD><span class="list "> J.&nbsp;E. Donnelley. A Distributed Capability Computing
+      System. In <EM>Proc. Third International Conference on Computer Communication</EM>,
+      pages 432&ndash;440, Toronto, Canada, 1976.</span>
+  <DT><span class="list "><A NAME="ellison-rfc"><FONT color="purple">[4]</FONT></A> </span>
+  <DD><span class="list "> C.&nbsp;Ellison, B.&nbsp;Frantz, B.&nbsp;Lampson,
+      R.&nbsp;Rivest, B.&nbsp;Thomas, and T.&nbsp;Ylonen. SPKI Certificate Theory
+      (IETF RFC 2693), Sept. 1999.</span>
+  <DT><span class="list "><A NAME="Seuss:horton"><FONT color="purple">[5]</FONT></A> </span>
+  <DD><span class="list "> T.&nbsp;S. Geisel. <EM>Horton Hears a Who!</EM> Random
+      House Books for Young Readers, 1954.</span>
+  <DT><span class="list "><A NAME="TCSEC-1935"><FONT color="purple">[6]</FONT></A> </span>
+  <DD><span class="list "> V.&nbsp;D. Gligor, J.&nbsp;C. Huskamp, S.&nbsp;Welke,
+      C.&nbsp;Linn, and W.&nbsp;Mayfield. Traditional capability-based systems:
+      An analysis of their ability to meet the trusted computer security evaluation
+      criteria. Technical report, National Computer Security Center, Institute
+      for Defense Analysis, 1987.</span>
+  <DT><span class="list "><A NAME="Karger:Augmented"><FONT color="purple">[7]</FONT></A> </span>
+  <DD><span class="list "> P.&nbsp;A. Karger and A.&nbsp;J. Herbert. An Augmented
+      Capability Architecture to Support Lattice Security and Traceability of
+      Access. In <EM>Proc. 1984 IEEE Symposium on Security and Privacy</EM>,
+      pages 2&ndash;12, Oakland, CA, Apr. 1984.</span>
+  <DT><span class="list "><A NAME="HPL-2001-136"><FONT color="purple">[8]</FONT></A> </span>
+  <DD><span class="list "> A.&nbsp;H. Karp, R.&nbsp;Gupta, G.&nbsp;Rozas, and
+      A.&nbsp;Banerji. The Client Utility Architecture: The Precursor to E-Speak.
+      Technical Report HPL-2001-136, Hewlett Packard Laboratories, June&nbsp;09
+      2001.</span>
+  <DT><span class="list "><A NAME="lampson:auth"><FONT color="purple">[9]</FONT></A> </span>
+  <DD><span class="list "> B.&nbsp;Lampson, M.&nbsp;Abadi, M.&nbsp;Burrows, and
+      E.&nbsp;Wobber. Authentication in Distributed Systems: Theory and Practice. <EM>ACM
+      Trans. Comput. Syst.</EM>, 10(4):265&ndash;310, 1992.</span>
+  <DT><span class="list "><A NAME="RobustComposition"><FONT color="purple">[10]</FONT></A> </span>
+  <DD><span class="list "> M.&nbsp;S. Miller. <EM>Robust Composition: Towards
+        a Unified Approach to Access Control and Concurrency Control</EM>. PhD
+        thesis, Johns Hopkins University, Baltimore, Maryland, USA, May 2006.</span>
+  <DT><span class="list "><A NAME="miller:myths"><FONT color="purple">[11]</FONT></A> </span>
+  <DD><span class="list "> M.&nbsp;S. Miller, K.-P. Yee, and J.&nbsp;S. Shapiro.
+      Capability Myths Demolished. Technical Report SRL2003-02, Systems Research
+      Laboratory, Department of Computer Science, Johns Hopkins University, mar
+      2003.</span>
+  <DT><span class="list "><A NAME="morris1973protection"><FONT color="purple">[12]</FONT></A> </span>
+  <DD><span class="list "> J.&nbsp;H. Morris, Jr. Protection in Programming Languages. <EM>Communications
+        of the ACM</EM>, 16(1):15&ndash;21, 1973.</span>
+  <DT><span class="list "><A NAME="redell1974thesis"><FONT color="purple">[13]</FONT></A> </span>
+  <DD><span class="list "> D.&nbsp;D. Redell. <EM>Naming and Protection in Extensible
+        Operating Systems</EM>. PhD thesis, Department of Computer Science, University
+        of California at Berkeley, Nov. 1974.</span>
+  <DT><span class="list "><A NAME="sansom1986netcaps"><FONT color="purple">[14]</FONT></A> </span>
+  <DD><span class="list "> R.&nbsp;D. Sansom, D.&nbsp;P. Julin, and R.&nbsp;F.
+      Rashid. Extending a Capability Based System into a Network Environment.
+      In <EM>Proc. 1986 ACM SIGCOMM Conference</EM>, pages 265&ndash;274, Aug.
+      1986.</span>
+  <DT><span class="list "><A NAME="seaborn:plash"><FONT color="purple">[15]</FONT></A> </span>
+  <DD><span class="list "> M.&nbsp;Seaborn. Plash: The Principle of Least Authority
+      Shell, 2005. <A HREF="http://plash.beasts.org/">plash.beasts.org/</A>.</span>
+  <DT><span class="list "><A NAME="shap00verifying"><FONT color="purple">[16]</FONT></A> </span>
+  <DD><span class="list "> J.&nbsp;S. Shapiro and S.&nbsp;Weber. Verifying the
+      EROS Confinement Mechanism. In <EM>Proc. 2000 IEEE Symposium on Security
+      and Privacy</EM>, pages 166&ndash;176, 2000.</span>
+  <DT><span class="list "><A NAME="SCOLL"><FONT color="purple">[17]</FONT></A> </span>
+  <DD><span class="list "> A.&nbsp;Spiessens. <EM>Patterns of Safe Collaboration</EM>.
+      PhD thesis, Université catholique de Louvain, Louvain la Neuve, Belgium,
+      February 2007.</span>
+  <DT><span class="list "><A NAME="marcs:picturebook"><FONT color="purple">[18]</FONT></A> </span>
+  <DD><span class="list "> M.&nbsp;Stiegler. A picturebook of secure cooperation,
+      2004. <A HREF="http://erights.org/talks/efun/SecurityPictureBook.pdf">erights.org/talks/efun/SecurityPictureBook.pdf</A>.</span>
+  <DT><span class="list "><A NAME="Polaris-acm"><FONT color="purple">[19]</FONT></A> </span>
+  <DD><span class="list "> M.&nbsp;Stiegler, A.&nbsp;H. Karp, K.-P. Yee, T.&nbsp;Close,
+      and M.&nbsp;S. Miller. Polaris: Virus-safe Computing for Windows XP. <EM>Commun.
+      ACM</EM>, 49(9):83&ndash;88, 2006.</span>
+  <DT><span class="list "><A NAME="vandoorn1996secure"><FONT color="purple">[20]</FONT></A> </span>
+  <DD><span class="list "> L.&nbsp;van Doorn, M.&nbsp;Abadi, M.&nbsp;Burrows,
+      and E.&nbsp;P. Wobber. Secure Network Objects. In <EM>Proc. 1996 IEEE Symposium
+      on Security and Privacy</EM>, pages 211&ndash;221, 1996.</span>
+  <DT><span class="list "><A NAME="darpareview"><FONT color="purple">[21]</FONT></A> </span>
+  <DD><span class="list "> D.&nbsp;Wagner and E.&nbsp;D. Tribble. A Security
+      Analysis of the Combex DarpaBrowser Architecture, Mar. 2002. <A HREF="http://combex.com/papers/darpa-review/">combex.com/papers/darpa-review/</A>.</span>
+  <DT><span class="list "><A NAME="petmail"><FONT color="purple">[22]</FONT></A> </span>
+  <DD><span class="list "> B.&nbsp;Warner. Petmail. <EM>Codecon</EM>, 2004. <A HREF="http://petmail.lothar.com">petmail.lothar.com</A>. </span>
+</DL>
+<HR SIZE=2>
+<BLOCKQUOTE CLASS="quote"><EM>This document was translated from L<sup>A</sup>T<sub>E</sub>X
+    by </EM><A HREF="http://pauillac.inria.fr/~maranget/hevea/index.html"><EM>H<FONT SIZE=2><sup>E</sup></FONT>V<FONT SIZE=2><sup>E</sup></FONT>A</EM></A><EM>.</EM></BLOCKQUOTE>
+<P ALIGN="left">
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> <table cellspacing="6" cellpadding="12">
+        <tr> 
+          <td><script type="text/javascript"><!--
+google_ad_client = "pub-5301282303422208";
+google_alternate_color = "FFEEDD";
+google_ad_width = 120;
+google_ad_height = 600;
+google_ad_format = "120x600_as";
+google_ad_type = "text_image";
+google_ad_channel ="";
+google_color_border = "336699";
+google_color_bg = "FFFFFF";
+google_color_link = "0000FF";
+google_color_url = "008000";
+google_color_text = "000000";
+//--></script> <script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script></td>
+        </tr>
+      </table></TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+      <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../../index.html"><img src="../../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../../index.html">elib</a>&nbsp;/&nbsp;<a href="../../index.html">capability</a>&nbsp;/&nbsp;<a href="../index.html">horton</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="../base.html" title="On to: Testing Simplified Horton"><img src="../../../../images/next.gif" width="64" height="32" alt="On to: Testing Simplified Horton" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          <tr> 
+            <td colspan="3"><TABLE WIDTH="100%" BORDER="0" dwcopytype="CopyTableColumn">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top">
+            <!-- Google CSE Search Box Begins -->
+            <form id="searchbox_000392378982602007030:4i4vpd1mcjo" action="http://google.com/cse">
+              <input type="hidden" name="cx" value="000392378982602007030:4i4vpd1mcjo" />
+              <input name="q" type="text" size="40" />
+              <input type="submit" name="sa" value="Search" />
+              <input type="hidden" name="cof" value="FORID:1" />
+            </form>
+            <script type="text/javascript" src="http://google.com/coop/cse/brand?form=searchbox_000392378982602007030%3A4i4vpd1mcjo"></script> 
+            <!-- Google CSE Search Box Ends -->
+          </TD>
+          </TR>
+      </TABLE></td>
+          </tr>
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

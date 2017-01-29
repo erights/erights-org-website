@@ -1,0 +1,1874 @@
+\documentclass{llncs}
+\usepackage{epsfig}
+% \usepackage{color}
+\usepackage{alltt}
+\usepackage{ulem}
+\normalem
+
+\begin{document}
+
+% \include{macros}
+
+\newcommand{\name}[1]{{\sf\textsl{#1}}}        % objects/processes
+\newcommand{\vat}[1]{{\sf Vat{#1}}}            % vats
+\newcommand{\pr}[1]{{#1}}                      % principals
+\newcommand{\code}[1]{{\tt {#1}}}              % code
+\newcommand{\var}[1]{{\tt {#1}}}               % variables
+\newcommand{\dvar}[1]{{\textsl{#1}}}           % declarations of variables
+\newcommand{\dobj}[1]{{\textsl{#1}}}           % declarations of objects
+\newcommand{\meth}[1]{{\tt {#1}}}              % methods
+\newcommand{\dmeth}[1]{{\tt {#1}}}             % declarations of methods
+\newcommand{\cls}[1]{{\tt {#1}}}               % classes
+\newcommand{\ex}[1]{{\tt {#1}}}                % exceptions
+\newcommand{\abst}[1]{{#1}}                    % design abstractions
+\newcommand{\sys}[1]{{\sc {#1}}}               % systems and languages
+
+
+\title{Distributed Concurrency-Control Under Mutual Suspicion}
+\subtitle{Programming in E as Plan Coordination}
+
+\author{Mark S. Miller\inst{1,2} \and 
+  E. Dean Tribble \and
+  Jonathan Shapiro\inst{2}}
+
+\institute{Johns Hopkins University
+\and Hewlett Packard Laboratories}
+
+\maketitle
+
+\begin{abstract}
+(**Need a new abstract**)
+The dynamic reference graph is the fabric of object computation. E---a
+distributed, persistent, object-capability programming
+language---extends the concept of the object-reference graph in order
+to provide the distributed access-control and concurrency-control
+needed for practical, secure, global computing.
+
+By restricting causality to flow only along the graph, E turns the
+reference graph into an access graph able to support fine-grained
+\emph{least authority}. By restricting the ordering of these causal
+influences, E provides deadlock-free concurrency-control, able to
+maintain consistency in concurrent stateful systems.  E uses safe
+language techniques to enforce these restrictions within a
+process. E's cryptographic protocol enforces these restrictions
+between mutually suspicious machines. Distributed programs must also
+face large latencies and partial failure. By changing only a few
+concepts of conventional sequential object programming, E enables
+programmers to handle all these issues simultaneously. These insights
+can be adapted to some existing languages, as several projects are now
+attempting.
+\end{abstract}
+
+\section{Introduction}
+
+The fundamental constraint we face as programmers is complexity. It
+might seem that the systems we can successfully create would be
+limited to those we can understand. Instead, every day, massive
+numbers of programmers successfully contribute code towards working
+systems too complex for anyone to understand \emph{as a
+whole}. Instead, we make use of mechanisms of abstraction and
+modularity to construct systems whose components we can understand
+piecemeal, and whose compositions we can again understand without
+fully understanding the components being composed.
+
+To understand these twin problems, of separating components and of
+composing them, we draw on Friedrich Hayek's examination of how
+markets address the twin problems of plan coordination: bringing about
+the cooperative alignment of separately conceived plans, while
+simultaneously avoiding disruptive plan interference
+\cite{Hayek:1945:UKS}. His explanation of the need for property rights
+parallels the rationale for encapsulation in object-oriented systems:
+to provide a domain (an object's encapsulation boundary) in which an
+agent (the object) can execute plans (the object's methods) that use
+resources (the object's private state), where the proper functioning
+of these plans depends on these resources not being used
+simultaneously by conflicting plans. By dividing up the resources of
+society (the state of a computational system) into separately owned
+chunks (private object states), we enable a massive number of plans to
+make use of a massive number of resources without needing to resolve a
+massive number of conflicting assumptions.
+
+But a single object cannot do much by itself. Instead, both objects
+and markets use abstraction to compose plans together into vast
+cooperative networks, such as subcontracting graphs, where one agent,
+employing only its local knowledge, will subcontract out subtasks to
+others, often in great ignorance of how each subtask will be carried
+out [Lachmann, Lavoie, Tulloh02**].
+
+\begin{quotation}
+Programmers are not to be measured by their ingenuity and their logic
+but by the completeness of their case analysis.
+\begin{flushright}
+---Alan Perlis
+\end{flushright}
+\end{quotation}
+
+The problem Hayek was concerned with, how humans coordinate their
+plans with each other, certainly has many differences from the world
+of programming. For purposes of this paper, the most interesting
+difference is that, in the human world, the intelligence of the entity
+who formulates a plan is comparable to the entity who executes the
+plan. For example, when you plan for yourself, you don't need to
+anticipate every possible contingency. If something unusual happens,
+you'll probably be better able to figure out what to do at that time
+anyway. By contrast, when writing a program, we must express a plan
+that can deal with all possible relevant contingencies. Even under
+sequential and benign conditions, the resulting case analysis can be
+quite painful. As we extend our reach into concurrency, distribution,
+and mutual suspicion, each of these dimensions threatens an explosion
+of new cases. To succeed at all three simultaneously, we must find
+ways to reduce the number of additional cases we need to worry about.
+
+Conventional sequential object programming generally assumes objects
+are cooperative, mutually trusting, and co-located---so we can rely
+on them to act in accord with the goals of the system as a whole. The
+only misbehaviors we're normally concerned with are accident and
+confusion---bugs. By abstraction, we limit one object's need for
+knowledge of others, reducing the cases of relevance, aiding
+composition. In distributed programming, concurrency, asynchrony, and
+partial failure limit an object's local knowledge of relevant
+facts. This increases the number of relevant cases it must consider,
+impeding composition. In secure programming, we carefully distinguish
+those objects whose good behavior we rely on from those we don't, but
+we seek to cooperate with both. Confidentiality further constrains
+local knowledge; deceit and malice are further sources of possible
+plan interference.
+
+Previous papers have focused on E's support for mutual suspicion
+within the constraints of distributed systems
+\cite{miller:ode,miller:myths,miller:paradigm,miller:struct-auth}. This
+paper focuses on E's support for concurrent and distributed
+programming within the constraints of mutual suspicion.
+
+\section{Overview}
+
+Throughout this paper, we do not seek ``solutions'' to coordination
+problems, but rather, abstraction mechanisms adequate to craft diverse
+solutions adapted to the needs of many applications. We illustrate
+many of our points with a simple example, a ``\abst{statusHolder}'' object
+implementing the listener pattern.
+
+\begin{description}
+\item[Why Not Shared State Concurrency.] This section shows several
+attempts at a conventionally thread-safe \abst{statusHolder} in
+\sys{Java}, and the ways each suffers from plan interference by
+interleaving.
+
+\item[A Taste of E] shows a \abst{statusHolder} written in E, and explains
+E's eventual-send operator in the context of a single thread of
+control.
+
+\item[Communicating Event Loops] explains how our \abst{statusHolder}
+handles concurrency and distribution under benign conditions.
+
+\item[Mutual Suspicion] examines how the plans coordinated by our
+\abst{statusHolder} are and are not vulnerable to each other.
+
+\item[Promise Pipelining] introduces promises for the results of
+eventual-sent messages, shows how the resulting pipelining helps us
+tolerate latency, and how broken promise contagion lets us handle
+eventually-thrown exceptions.
+
+\item[Partial Failure] shows how \abst{statusHolder}'s clients can
+regain access following a partition or crash, and explains the issues
+involved in regaining distributed consistency.
+
+\item[The When-Catch] explains how to turn data-flow back into
+control-flow.
+
+\item[From Object to Actors and Back Again.] This section presents a
+brief history of E's concurrency-control.
+
+\item[Related Work] discusses other systems with similar goals, as
+well as current projects adapting these insights to existing
+languages.
+
+\item[Discussion and Conclusions] of current status, what remains to
+be done, and lessons learned.
+
+\end{description}
+
+\section{Why Not Shared State Concurrency}
+
+(**Purpose of section, and definition of Shared State Concurrency**)
+
+The following code is representative of the sequential listener
+pattern \cite{Englander:beans} (approximately the observer pattern of
+\cite{gamma:patterns}).
+%
+\begin{alltt}
+    public class \cls{StatusHolder} \{
+        private Object \dvar{currentStatus};
+        private final Vector<Listener> \dvar{myListeners} = new Vector();
+
+        public \dmeth{StatusHolder}(Object \dvar{status}) \{
+            currentStatus = status;
+        \}
+        public void \dmeth{addListener}(Listener \dvar{newListener}) \{
+            myListeners.add(newListener);
+        \}
+        public Object \dmeth{getStatus}() \{
+            return currentStatus; 
+        \}
+        public void \dmeth{setStatus}(Object \dvar{newStatus}) \{
+            currentStatus = newStatus;
+            for (Listener \dvar{listener}: myListeners) \{
+                listener.statusChanged(newStatus);
+            \}
+        \}
+    \}
+\end{alltt}
+%
+An instance of the above class is a \abst{statusHolder}, used to
+coordinate a changing status. Some objects, which we call
+\emph{publishers}, change the current status by calling
+\meth{setStatus}. Others, \emph{subscribers}, monitor these changes by
+calling \meth{getStatus} or \meth{addListener}. By calling
+\meth{addListener}, a subscriber \emph{subscribes} a \emph{listener}.
+
+We can use this pattern to coordinate several loosely coupled
+plans. As a concrete example, the status held by a
+\abst{statusHolder}, \name{SH}, might be the balance of a bank
+account. An account manager, \name{AM}, might publish a new balance in
+reaction to new deposits and withdrawals. A financial application,
+\name{F}, might subscribe a listener, \name{FL}, so that it can react
+to the balance falling below a threshold. A spreadsheet, \name{X},
+might subscribe a listener, \name{XL}, to update a display showing the
+current balance. Although the plans represented by these clients
+interact cooperatively, they know very little about each other.
+
+Even under sequential and benign conditions, this pattern still
+creates plan interference hazards programmers must beware of.
+
+\begin{description}
+\item[Aborting the wrong plan:] If a listener reacts by throwing an
+exception, this prevents some other listeners from being notified of
+the new status. By default, this throw also aborts the publisher's
+plan, even though the problem occurred in a listener's plan.
+
+\item[Nested subscription:] While a listener is being notified, what
+happens if it subscribes another listener? That depends on \cls{Vector}'s
+precise update-during-iteration behavior, and is best avoided.
+
+\item[Nested publication:] If a listener causes a publisher to publish
+a new status, which it may do unknowingly because of aliasing, the
+notification logic is invoked recursively, notifying all listeners of
+the newer status, and then notifying the remaining listeners---out
+of order---of the earlier status.
+\end{description}
+
+As an example of the last hazard, let's say \name{FL} reacts to a too-low
+balance by making some other trades. If one of these causes a deposit,
+\name{AM} publishes a higher balance, which causes all listeners to be
+notified of the higher balance. If it's high enough, the nested
+notification of \name{FL} will ignore it. \name{XL} will render it.
+\name{XL} returns, \name{FL} returns, and the outer for-loop proceeds
+to notify \name{XL} of the lower balance, which renders it, leaving the
+display inaccurate.
+
+All these hazards arise from plan interleaving. Our \abst{statusHolder}, by
+running each listener's plan during a step of a publisher's plan, has
+allowed these plans to interact in surprising ways, creating relevant
+cases we may not have considered. Although these hazards are real, for
+sequential programming under benign conditions, experience suggests
+that programmers can usually avoid these hazards well enough to build
+reliable systems. The first is easily fixed by adding a try-catch
+block around each call to \meth{statusChanged}. For the rest, merely
+documenting that listeners ``must not'' cause any of these cases is
+usually adequate. Indeed, under sequential and benign conditions, we
+should consider the listener pattern trivial---any experienced object
+programmer, even if they have never encountered this pattern before,
+when faced with the problem it solves, would effortlessly invent it
+and employ it successfully.
+
+\subsection{Preserving Consistency}
+
+With genuine concurrency, interacting plans unfold in
+parallel. Fortunately, in the absence of real-time concerns, we don't
+need to think about genuine parallelism. Instead, we can normally
+model the effects of concurrency as the non-deterministic interleaving
+of atomic units of operation. We can roughly characterize a
+concurrency-control paradigm by asking two questions.
+
+\begin{description}
+\item[Serializability:] What are the largest grain units of operation,
+such that we can account for all visible effects of concurrency as
+equivalent to some fully ordered interleaving of these units?
+\cite{IBM:POO} For shared state concurrency, this unit is generally no
+larger than a memory access, instruction, or system call---which is
+often finer than the ``primitives'' provided by our programming
+languages \cite{boehm:threads} (**Note: actual situation is
+worse**). For databases, this unit is the transaction.
+
+\item[Mutual exclusion:] What tools can we use to exclude the
+possibility of some interleavings, so that we need only worry about
+those we haven't excluded? For shared state concurrency, the two
+dominant answers are monitors \cite{hoare:monitors,hansen:monitors},
+and rendezvous \cite{hoare:csp}. For distributed programming, many
+systems restrict the orders in which messages may be delivered
+\cite{birman:vsync,amir:thesis,lamport:paxos}. Can we use these tools
+to exclude the interleavings that threaten consistency, without
+excluding the interleavings needed for progress?
+\end{description}
+
+\sys{Java} is loosely in the monitor tradition. \sys{Ada},
+\sys{Concurrent ML}, and the synchronous pi calculus are loosely in
+the rendezvous tradition. With minor adjustments, the following
+comments apply to both. We ignore the additional complexities that
+come from \sys{Java}'s loosely consistent memory model, and assume
+simple sequentially consistent memory.
+
+If we place our sequential \abst{statusHolder} into a concurrent
+environment, it might get called simultaneously from clients in two
+different threads. The resulting interleaving, might, for example,
+mutate the \var{myListeners} vector while the for-loop is in progress.
+
+Adding the ``\code{synchronized}'' keyword to all methods of the above
+code causes it to resemble a monitor. This fully-synchronized
+\abst{statusHolder} excludes exactly those cases where two plans
+interleave within the \abst{statusHolder}. It is as good at preserving
+its own consistency as our original sequential \abst{statusHolder}
+was.
+
+However, it is generally recommended that \sys{Java} programmers avoid
+this fully-synchronized pattern because it is prone to deadlock
+\cite{Englander:beans}. Although each listener is called from some
+publisher's thread, its purpose may be to contribute to a plan
+unfolding in its subscriber's thread. To defend itself against such
+concurrent entry, the objects at this boundary may themselves be
+synchronized. If a \meth{statusChanged} notification gets blocked
+here, waiting on that subscriber's thread, it blocks the
+\abst{statusHolder}, as well as any other objects whose locks are held
+by that publisher's thread. If the subscriber's thread is itself
+waiting on one of these objects, we have a classic deadly embrace.
+
+Although we have excluded enough interleavings to preserve
+consistency, some of the interleavings we excluded were necessary to
+make progress.
+
+\subsection{Avoiding Deadlock}
+
+To avoid this problem, \cite{Englander:beans} recommends changing the
+\meth{setStatus} method to clone the listeners list within the
+synchronized block, and then to exit the block before entering the
+for-loop:
+%
+\begin{alltt}
+    public void \dmeth{setStatus}(Object \dvar{newStatus}) \{
+        Vector<Listener> \dvar{listeners};
+        synchronized (this) \{
+            currentStatus = newStatus;
+            listeners = (Vector<Listener>) myListeners.clone();
+        \}
+        for (Listener \dvar{listener}: listeners) \{
+            listener.statusChanged(newStatus);
+        \}
+    \}
+\end{alltt}
+%
+This code allows more interleavings, but not enough. It is less prone
+to deadlock, but is not immune. Each listener is still notified from
+some publisher's thread. Although that publisher's thread is no longer
+locking the \abst{statusHolder}, who knows what other locks it holds?
+If the subscriber's thread is waiting on one of these, it still blocks
+both threads, and all objects locked by either. Further, it prevents
+other listeners from receiving this notification. Although this code
+does not yet allow enough interleavings to avoid deadlock, does it
+already allow too many to preserve consistency?
+
+If \meth{setStatus} is called from two threads, the order in which
+they update \var{currentStatus} will be the order they enter the
+synchronized block above. But the for-loop notifying listeners of a
+later status may race ahead of one that will notify them of an earlier
+status. \name{XL} may again leave the display showing an incorrect
+balance. (**ordering as a discovered requirement. Gamma's observer
+pattern has different problems.**)
+
+It's possible to adjust for these remaining problems. The style
+recommended by some rendezvous-based languages, like \sys{Concurrent
+ML} and the pi calculus, corresponds to spawning a separate thread to
+perform each notification, and so allows all interleavings needed for
+progress. However, this style still suffers from the same race
+conditions hazard, and so still fails to exclude enough
+interleavings. We could compensate for this by adding a counter to the
+\abst{statusHolder} and to the notification API, and by modifying the
+logic of all listeners to reorder notifications. But a formerly
+trivial pattern has now exploded into a case-analysis
+minefield. Actual systems contain thousands of patterns more complex
+than our \abst{statusHolder}. Some of these will suffer from less
+obvious minefields.
+
+\begin{quotation}
+This is "Multi-Threaded Hell". As your application evolves, or as
+different programmers encounter the sporadic and non-reproduceable
+corruption or deadlock bugs, they will add or remove locks around
+different data structures, causing your code base to veer back and
+forth \ldots, erring first on the side of more deadlocking, and then
+on the side of more corruption. This kind of thrashing is bad for the
+quality of the code, bad for the forward progress of the project, and
+bad for morale.
+
+\begin{flushright}
+---An experience report from the development of Mojo Nation [Zooko**]
+\end{flushright}
+\end{quotation}
+
+\section{A Taste of E}
+
+Here is the \abst{statusHolder} in E. Before revisiting the issues
+above, let's first use this example to briefly explain E as a
+sequential object language. (For a more complete explanation of E, see
+\cite{stiegler:ewalnut}.)
+%
+\begin{alltt}
+    def \dobj{makeStatusHolder}(var \dvar{currentStatus}) \{
+        def \dvar{myListeners} := [].diverge()
+        def \dobj{statusHolder} \{
+            to \dmeth{addListener}(\dvar{newListener}) \{
+                myListeners.push(newListener)
+            \}
+            to \dmeth{getStatus}() \{ return currentStatus \}
+            to \dmeth{setStatus}(\dvar{newStatus}) \{
+                for \dvar{listener} in myListeners \{
+                    listener <- statusChanged(newStatus)
+                \}
+                currentStatus := newStatus
+            \}
+        \}
+        return statusHolder
+    \}
+\end{alltt}
+%
+E has no classes. The expression beginning with ``\code{def
+\dobj{statusHolder}}'' is an object definition expression. It creates
+a new object with the behavior it describes, defines a variable named
+``\var{statusHolder}'', and binds this variable to this object. An
+object definition contains method definitions. An invocation, such as
+``\code{statusHolder.setStatus(33)}'', causes a message to be
+delivered to an object. When an object receives a message, it reacts
+according to the code of its matching method. As with \sys{Smalltalk}
+\cite{goldberg:purplebook} or \sys{Actors} \cite{ijcai73*235}, all
+values are objects, and all computation proceeds only by delivering
+messages to objects.
+
+>From a lambda calculus perspective, an object definition is like a
+lambda expression, in which the (implicit) lambda parameter is bound
+to the incoming message, and the body (implicitly) does a switch to
+select a method. The methods themselves are the cases of this
+switch. The delivery of a message to an object is the application of
+an object-as-closure to a message-as-argument. An object's behavior is
+indeed a function of the message it is applied to. (This view of
+objects goes back to \sys{Smalltalk-72} \cite{goldberg:smalltalk72}
+and \sys{Actors}. See [Shroff04**] for more.)
+
+Unlike a class definition, an object definition does not declare its
+instance variables. Instead, the instance variables of an object are
+simply the variables used freely within the object definition, which
+therefore must be bound in the object's creation context. The instance
+variables of \abst{statusHolder} are ``\var{currentStatus}'' and
+``\var{myListeners}''. Variables are final by default. We use the
+``\code{var}'' keyword to define ``\var{currentStatus}'' as an
+assignable variable. Square brackets form a list expression; it
+evaluates to an immutable list containing the values of its
+subexpressions. Lists respond to the ``\code{diverge()}'' message by
+returning a new mutable list whose initial contents are a snapshot of
+the diverged list. ``\var{myListeners}'' is initialized to a new empty
+mutable list, which acts much like a \cls{Vector}.
+
+The ``\var{makeStatusHolder}'' object is defined using syntax
+suggestive of a function definition. This is a shorthand for defining
+an object with a single ``\meth{run}'' method. It expands to
+%
+\begin{alltt}
+    def \dobj{makeStatusHolder} \{
+        to \dmeth{run}(var \dvar{currentStatus}) \{
+            # ...
+\end{alltt}
+%
+The corresponding function call syntax,
+``\code{makeStatusHolder(44)}'', is shorthand which expands to
+``\code{makeStatusHolder.run(44)}''. Each time \var{makeStatusHolder} is
+called, it defines and returns a new \abst{statusHolder}.
+
+\subsection{Two Ways to Postpone Plans}
+
+E has two invocation primitives: the immediate-call (``\code{.}'') and
+the eventual-send (``\code{<-}''). To understand the rationale for
+these, let's revisit the familiar world of human planning.
+
+In daily life, when managing my time, while doing one thing I often
+discover something else I also need to do. When I can't do both at
+once, I need to postpone one and come back to it later. I find I
+usually fall into one of two habits.
+
+\begin{description}
+\item[Subgoal stacking:] While I'm executing plan $A$, I realize that
+further progress on $A$ requires the execution of a separate plan
+$B$. In this case, I set aside the context of being in the midst of
+$A$, do $B$ to completion, restore the $A$ context, and continue with
+$A$ while employing the results of $B$.
+
+\item[To-do queuing:] While I'm executing plan $A$, I become aware
+that I should also eventually execute plan $B$. Perhaps $A$ made the
+need for $B$ apparent, or perhaps $A$ caused the need for $B$; but $A$
+itself does not depend on $B$. In this case, I jot down a note to
+myself on a to-do list that I need to do $B$. Confident now that I
+will get to $B$ eventually, but only after I'm done with $A$, I
+continue doing $A$ without interruption or loss of context.
+\end{description}
+
+(Other less usual circumstances require other postponement patterns,
+which we postpone discussing until the ``When-Catch'' section below.)
+
+Subgoal stacking corresponds to conventional sequential call-return
+control flow (or strict applicative-order evaluation), and is
+represented by the ``\code{.}'' or \emph{immediate-call}
+operator---which delivers the message immediately. Above,
+\abst{statusHolder}'s \meth{addListener} method tells
+\var{myListeners} to push the \var{newListener} \emph{now}. When
+\meth{addListener} proceeds past this point, it may assume that all
+the side effects it requested are done.
+
+To-do queuing is much like asynchronous messaging (or non-strict eager
+evaluation) but with some crucial differences. It is represented in E
+by the ``\code{<-}'' or \emph{eventual-send} operator. Above,
+\abst{statusHolder}'s \meth{setStatus} method notes, for each
+listener, that it should eventually be notified that the status has
+changed to this new status, but only after the current event
+completes. (**unclear**) Progress on the publisher's current plan made
+the \abst{statusHolder} aware of the need to send this notification,
+on behalf of some other purpose represented by the listener. But since
+the notification does not contribute to the publisher's plans, both
+the publisher and the listener benefit from \emph{chronological
+isolation}---so these plans may unfold with fewer unintended
+interactions. For example, it can no longer matter whether the
+assignment happens before or after the for-loop.
+%
+\begin{figure}
+\centerline{\epsfig{figure=stackvat.eps}}
+\caption{An E vat consists of a heap of objects and a thread of
+  control. The stack and queue together record the postponed plans the
+  thread needs to process. An immediate-call pushes a new frame on top
+  of the stack, representing the delivery of a message ({\it arrow})
+  to a target object ({\it dot}). An eventual-send enqueues a new
+  pending delivery on the right end of the queue. The thread proceeds
+  from top to bottom and then from left to right}
+\label{fig:stackvat}
+\end{figure}
+%
+Here we explain how this isolation is achieved within a single thread
+of control. In the next section, we see how it is achieved in the face
+of concurrency and distribution.
+
+In E, a \emph{vat} represents both a thread of control and a set of
+objects. Each object lives in exactly one vat. Each vat may host many
+objects. Each vat lives on one machine at a time. Each machine may
+host many vats. The vat is also the minimum unit of persistence,
+migration, partial failure, resource control, and defense from denial
+of service. We'll return to some of these topics below.
+
+A vat's heap holds the subgraph of the distributed object graph which
+it hosts. Each vat maintains a pair of data structures, a stack and a
+queue, to represent all the plans it has postponed, which it needs to
+get back to. We diagram this pair as an ``L'' shaped structure. The
+vertical part represents the LIFO call-return stack. Execution always
+proceeds at the top frame of this stack. Subgoal stacking pushes a new
+frame on top of this stack, causing execution to shift there. The
+horizontal part represents the FIFO to-do queue. Each record in this
+queue represents a \emph{pending delivery}, consisting of a message
+that should be delivered to an object, the object it should be
+delivered to, and an optional \emph{resolver}---a continuation-like
+object that the outcome of this delivery should be reported to, which
+we explain in the section on ``Promises'' below. To-do queuing
+enqueues a new pending delivery at the back of the queue. In our
+example, each pending delivery would record the need to deliver a
+statusChanged message to some listener, and would have no resolver.
+
+A vat's thread of control itself implicitly runs a fixed program,
+servicing this to-do list. When the bottom stack frame returns control
+to this program, the program reports the outcome if there's a resolver
+to report it to, dequeues and unpacks the next pending delivery, and
+delivers the message to the object, initiating a new stack in which a
+sequential call-return program runs to completion. This is the classic
+event loop pattern, in which each queue entry, when it is serviced,
+spawns a separate event. Because each event runs to completion before
+the next is serviced, they are chronologically isolated.
+
+By this chronological isolation, we avoid all three of the hazards of
+our original sequential \cls{StatusHolder} example. In E terms, this
+reveals that these hazards were artifacts of coordinating mostly
+independent plans using subgoal stacking rather than to-do queuing.
+
+\section{Communicating Event Loops}
+
+We now consider the case where our account (including account manager,
+\name{AM}, and its \abst{statusHolder}, \name{SH}) runs in \vat{A} on
+one machine, and our spreadsheet app (including subscriber \name{X}
+and listener \name{XL}) runs in \vat{X} on another machine.
+
+In E, we distinguish several reference-states. A direct reference
+between two objects in the same vat is a \emph{near
+reference}.\footnote{For brevity, we generally do not distinguish a
+near reference from the object it designates.}  As we've seen, near
+references carry both immediate-calls and eventual-sends. Only
+\emph{eventual references} may cross vat boundaries, so \name{X} holds
+an eventual reference to \name{SH}, and \name{SH} holds an eventual
+reference to \name{XL}. Eventual references are first class---they
+can be passed as arguments, returned as results, and stored in data
+structures---just like near references. However, eventual references
+carry only eventual-sends, not immediate-calls. (An immediate-call on
+an eventual reference throws an exception.) This constraint is
+compatible with \name{SH}'s code above, since it stores, retrieves,
+and eventual-sends to its listeners, but never immediate-calls
+them. What happens when a message is sent between vats?
+%
+\begin{figure}
+\centerline{\epsfig{figure=2vat-only.eps,width=330pt}}
+\caption{**Say something intelligent**}
+\label{fig:2vat}
+\end{figure}
+%
+When \name{SH} in \vat{A} does an eventual-send of the
+\meth{statusChanged} message to \name{XL} in \vat{X}, \vat{A} creates
+a pending delivery as before, recording the need to deliver this
+message to \name{XL}. Pending deliveries need to be queued on the
+to-do list of the vat hosting the object that will receive the
+message---in this case, \vat{X}. \vat{A} serializes (marshals) the
+pending delivery onto an encrypted order-preserving byte stream read
+by \vat{X}. Should it ever arrive at \vat{X}, \vat{X} will unserialize
+it and queue it on its own to-do list.
+
+In this case, we no longer have actual chronological isolation. If
+\vat{X} is otherwise idle, it may service this delivery, notifying
+\name{XL} of the new balance, while \name{AM}'s original event is
+still in progress. But so what? These two events can only execute
+simultaneously when they are in different vats. In this case,
+\name{XL} cannot affect \name{AM}'s event-in-progress. Because only
+eventual references span between vats, \name{XL} can only affect
+\vat{A} by eventual-sending to objects hosted by \vat{A}. This cannot
+affect any event already in progress in \vat{A}---\vat{A} only queues
+the pending delivery to be serviced by \vat{A} sometime after the
+current event, and previously queued events, complete.
+
+Only near references provide one object synchronous access to
+another. Therefore an object only has synchronous access to state
+within its own vat. Taken together, these rules guarantee that a
+running event---a sequential call-return program---implicitly has
+mutually exclusive access to everything to which it has synchronous
+access. In the absence of real-time concerns, this is everything one
+could want from chronological isolation.
+
+The net effect is that an event is E's unit of operation. We can
+faithfully account for the visible effects of concurrency without any
+interleaving of the steps within an event. Any actual multi-vat
+computation is equivalent to some fully ordered interleaving of
+events.
+
+(An E event may never terminate, which is hard to account for within
+this simple model of serializability. There are formal models of
+asynchronous systems which can account for non-terminating events
+\cite{chandy:snapshots}. Within the scope of this paper, we can safely
+ignore this issue.)
+
+As with database transactions, the size of an E event is not
+predetermined. It is a tradeoff left for the developer to decide. How
+you carve up the object graph into vats, and how you carve up
+computation into events, will determine which interleaving cases you
+can exclude, and which you must handle.
+
+E has no explicit locking constructs. (**Fix**) Were all I/O in E
+asynchronous as well, as it should be, then an event can never
+block---it can only run, to completion or forever. A vat as a whole is
+either running events, or is idle when there are no pending deliveries
+to service. If it can't block, it can't deadlock. (Once we introduce
+other plan postponement patterns below, the story gets more
+complicated, but the net effect remains mostly intact.)
+
+\section{Mutual Suspicion}
+
+In languages supporting shared-state concurrency, such as \sys{Java}, many
+people simply avoid it, and adopt the event-loop style
+instead. Indeed, several \sys{Java} libraries, such as AWT, were initially
+designed to be thread-safe, and were then re-designed around
+event-loops. Using event-loops, one can easily write a \sys{Java} class
+equivalent to our \var{makeStatusHolder}. If one can so easily choose to
+avoid shared-state concurrency, does E actually need to prohibit it?
+The question is interesting as an example of how mutual suspicion
+alters our notions of program correctness.
+
+\subsection{Defensive Correctness}
+
+When we say that a program, \name{P}, is correct, this normally means
+that we have a specification in mind, $S$, and that \name{P} behaves
+according to $S$, but only given that various other systems behave as
+they are supposed to. Obviously, \name{P} cannot behave at all unless
+it is run on a machine. If machine, \name{M}, operates incorrectly,
+\name{P}-on-\name{M} may behave in ways that deviate from $S$, but we
+don't consider this \name{P}'s fault. Since \name{P}'s correctness
+depends on \name{M}'s correctness, we say that \name{P} \emph{relies}
+upon \name{M}. Put another way, \name{P}'s ability to behave as
+specified is vulnerable to \name{M}'s misbehavior, but \name{M}'s
+misbehavior absolves \name{P} of the responsibility to behave as
+specified. Such escape clauses should be understood as (often
+implicit) parts of contract $S$.
+
+The opposite of reliance is suspicion. We say that \name{P}
+\emph{suspects} \name{Q} when \name{P} behaves as specified
+independent of \name{Q}'s correctness. For example, when \pr{Bruce}
+uses a browser on his laptop to interact with a web server run by
+\pr{Sarah}, if the browser's misbehavior could cause her server to
+serve her other clients incorrectly, we would consider her web server
+to be incorrect. When \pr{Bruce}'s browser misbehaves, perhaps this
+absolves \pr{Sarah}'s server from serving that session correctly, but
+it does not absolve it of the responsibility to serve other clients
+correctly. We understand as a (usually implicit) part of the
+specification that a web server be \emph{defensively correct}---that
+it suspects its clients. A defensively correct object must continue to
+provide correct behavior to well behaved clients despite arbitrary
+behavior by other clients. Before this definition can be useful, we
+need to pin down what we mean by ``arbitrary''.
+
+If a misbehaving browser might cause any effects anywhere, such as
+corrupting \pr{Sarah}'s OS, then defensive correctness would be
+impossible. Instead, \pr{Sarah}'s server relies on her machine and her OS
+to limit the extent to which programs she suspects can affect her. If
+Bruce's browser corrupts \pr{Sarah}'s OS, then her OS is incorrect, and her
+web server is absolved.
+
+We define \name{Q}'s \emph{authority} as all the effects \name{Q} may
+cause, given that some set of other systems are working correctly. If
+the set of systems that \name{P} relies on is \name{R}
+(conventionally, \name{P}'s ``Trusted Computing Base'' or TCB), then,
+from \name{P}'s perspective, \name{Q} has the \emph{authority} to do
+anything it is still possible for it to do, given that \name{R} is
+operating correctly. If \name{P} suspects \name{Q}, then \name{P} must
+operate correctly in the face of any of these cases. But it is not
+\name{P}'s responsibility to worry about \name{Q}'s behavior outside
+those limits; it is \name{R}'s responsibility to prevent those.
+
+As usual, we can divide correctness into consistency (safety)
+vs. progress (liveness). An object that is vulnerable to denial of
+service by its clients may nevertheless be \emph{defensively
+consistent}. Given that all the objects it relies on themselves remain
+consistent, a defensively consistent object will never give bad
+service to well behaved clients, but it may never again give them any
+service. A defensively correct object is invulnerable to its
+clients. A defensively consistent object is merely incorruptible by
+its clients.
+
+Different security properties are feasible at different
+granularities. Conventional OSes provide some support for inter-user
+suspicion, protecting users to some extent from each other's
+misbehavior. But because programs are normally run with their user's
+full authority, all software run under the same account is mutually
+reliant. Since each is granted the authority to corrupt the others in
+ways they cannot defend against, we must absolve them of
+responsibility to defend against such ``friendly fire''. Some OSes
+\cite{dvh} support process granularity defensive consistency. Others,
+by providing principled controls over computational resource rights
+\cite{hardy:keykos,shapiro:eros}, support full defensive
+correctness. Among machines distributed over today's Internet,
+cryptographic protocols help support defensive consistency, but
+defensive correctness remains infeasible.
+
+In most programming languages, all objects in the same process are
+mutually reliant. A \emph{secure language} is one which supports some
+useful form of suspicion within a process. When you browse the web
+using a conventional OS, as far as your OS is concerned, your browser,
+and therefore any \sys{Java} or \sys{Javascript} program running
+within your browser, have been granted the authority to delete all
+your files. Your browser uses only language-based security to deny
+some of this authority to these applets and scripts, enabling you to
+visit web pages you're suspicious of. (See \cite{stiegler:polaris} for
+an unconventional way to use conventional OSes to provide greater
+security.)
+
+At object granularity within a vat, E supports defensive
+consistency. Among the objects within the same vat, any may simply go
+into an infinite loop. Barring heroic measures (explained below), this
+forever denies service to all other objects in that same
+vat. Therefore, within E's architecture, defensive correctness within
+a vat is impossible. Regarding progress, all objects within the same
+vat are mutually reliant. In many situations, defensive consistency is
+adequate---a potential adversary often has more to gain from
+corruption than denial of service. This is especially so in iterated
+relationships, since corruption may misdirect plans but go undetected,
+while loss of progress is quite noticeable. (**Mention \sys{J-Kernel}**)
+
+Finally, with these definitions in hand, we can explain why E
+prohibits shared state concurrency, rather than leaving the choice to
+programmer convention.
+
+In \sys{Java}, any object may spawn a new thread within the same
+address space. If E objects were likewise able to spawn threads
+sharing near references, then any of \abst{statusHolder}'s clients
+might immediate-call it from another thread, even if
+\abst{statusHolder}'s documentation states that they ``must not''.
+For our \abst{statusHolder} to be defensively consistent, it would
+need to be prepared for this possibility. Any ``must not'' in its
+documentation, if violated by a client, merely absolves the
+\abst{statusHolder} of providing good service to that client. But
+\abst{statusHolder} must preserve its own consistency so that it can
+continue to serve its other clients. To meet this requirement would
+involve all the complexities of being thread safe, with all the
+problems previously explained. Instead, in E, the \abst{statusHolder}
+relies on its vat to prevent its clients from spawning a thread which
+can share near references with another thread, so that the remaining
+``arbitrary'' behaviors it needs to worry about do not include these
+cases.
+
+\subsection{POLA}
+
+Our \abst{statusHolder} itself is now defensively consistent, but is
+it a good abstraction for \name{AM} to rely on to build its own
+defensively consistent plans? In our example scenario, we have been
+assuming that \name{AM} acts only as a publisher, and that \name{F}
+and \name{X} act only as subscribers. Let's say that \name{AM} created
+\name{SH}, and gave \name{F} and \name{X} access to \name{SH} in order
+to provide them accurate balances.  But all three objects have access
+to \name{SH}, and therefore each may invoke any of its methods. If
+\name{F} calls setStatus with a bogus balance, \name{XL} will
+dutifully render it.
+
+This is a problem of access-control. \name{SH}, by bundling two kinds
+of authority into one object, encouraged patterns where both kinds of
+authority were provided to objects that only needed one. Fortunately,
+we can repair this by grouping these methods into separate objects,
+each of which represents a sensible bundle of authority.
+%
+\begin{alltt}
+    def \dobj{makeStatusPair}(var \dvar{currentStatus}) \{
+        def \dvar{myListeners} := [].diverge()
+        def \dobj{statusGetter} \{
+            to \dmeth{addListener}(\dvar{newListener}) \{
+                myListeners.push(newListener)
+            \}
+            to \dmeth{getStatus}() \{ return currentStatus \}
+        \}
+        def \dobj{statusSetter} \{
+            to \dmeth{setStatus}(\dvar{newStatus}) \{
+                for \dvar{listener} in myListeners \{
+                    listener <- valueChanged(newStatus)
+                \}
+                currentStatus := newStatus
+            \}
+        \}
+        return [statusGetter, statusSetter]
+    \}
+\end{alltt}
+%
+\name{AM} can make use of makeStatusPair as follows:
+%
+\begin{alltt}
+    def [\dvar{sGetter}, \dvar{sSetter}] := makeStatusPair(33)
+\end{alltt}
+%
+The call to \code{makeStatusPair} on the right hand side makes four
+objects---an object representing the \code{currentStatus} variable, a
+mutable \code{myListeners} list, a \code{statusGetter}, and a
+\code{statusSetter}. The last two each share access to the first
+two. The call to \code{makeStatusPair} returns a list holding these
+last two objects. The left hand side pattern-matches this list,
+binding \code{sGetter} to the new statusGetter, and binding
+\code{sSetter} to the new statusSetter.
+
+\name{AM} can now keep the new statusSetter for itself, and give
+\name{F} and \name{X} access only to the new statusGetter. More
+generally, we may now describe publishers as those with access to
+statusSetter, and subscribers as those with access to
+statusGetter. \name{AM} can now provide consistent balance reports to
+all of its clients, because it has denied to its clients the
+possibilities that would have enabled them to corrupt this
+service. Its clients may now be mutually suspicious of each other.
+
+As with concurrency-control, the key to access-control is to allow
+enough possibilities without allowing too many. We wish to provide
+objects the authority needed to carry out their proper
+duties---publishers gotta publish---but little more. This is known as
+\emph{POLA}, the \emph{Principle of Least Authority} (See
+\cite{miller:paradigm} for the relationship between POLA and the
+Principle of Least Privilege \cite{SaltzerSc75}). By not granting its
+subscribers authority to publish a bogus balance, \name{AM} no longer
+needs to worry about what would happen if they did. This discipline
+helps us design patterns of plan composition where well intentioned
+plans can successfully cooperate, while limiting the cases of
+malicious plan interference we need consider.
+
+\subsection{Mutually Suspicious Machines}
+
+We require that E's cryptographic protocol, \sys{Pluribus}, enforce E's
+computational model---both its access-control and its
+concurrency-control restrictions---among mutually suspicious
+machines. We leave it to future papers to explain our protocol, and to
+examine the degree to which it meets these requirements. (We already
+know several ways in which it falls short.) Here, we wish to simply
+explain what this requirement means. Considering that all
+participating machines may be misbehaving---none may be correctly
+following the protocol---what can it mean for a protocol to enforce a
+model?
+
+Since Pluribus actually runs between vats, we can, without loss of
+generality, ignore the distinction between vats and machines. An
+incorrect machine is, from our perspective, simply a set of incorrect
+vats. An incorrect vat is one that does not implement the language
+and/or protocol correctly. To rely on a vat is, of course, to depend
+on its correctness. To suspect a vat is to maintain one's own
+correctness in the face of anything that other vat might
+\emph{feasibly} do. (We make the standard assumptions that large
+random numbers are not feasibly guessable, and that well accepted
+algorithms are immune to feasible cryptanalysis.)
+
+Returning to our scenario, a program necessarily relies on its own
+vat. \name{AM} relies on \vat{A}. X relies on \vat{X}. \name{F} relies
+on \vat{F}.
+
+We require that all three vats suspect each other---that any two
+correct vats proceed consistently despite any feasible misbehavior by
+other vats.
+
+(**unclear**) \name{AM} has given X and \name{F} access to the
+statusGetter. If \vat{F} is corrupt, it may abuse this statusGetter in
+any way \name{F} may have. And likewise for all authority given to any
+object it hosts. However, the extent of the damage it can do must be
+limited to this authority. For any authority that \name{AM} has not
+given to any of the objects hosted by \vat{F}, \name{AM} need not
+worry about \vat{F} abusing it. Of the effects that a corrupt \vat{F}
+may feasibly cause that might be relevant to \name{AM}'s continued
+correctness, we require that all these same cases could have been
+caused by a correct \vat{F} running a different configuration of
+objects.
+
+(**Say what it means for a protocol to enforce a model.**)
+(**Need example of unenforceability**)
+(**Ask Hopwood what he means by ``E doesn't rely on other vats to
+implement the E language''.**)
+
+(**unclear**) Of course, these requirements cut both ways. In order
+for any protocol to meet these requirements, our model must be
+enforceable, in this sense, by a possible protocol. For example, if we
+introduced conventional static type checking, this might imply more
+guarantees than can be enforced among mutually suspicious
+machines---giving programmers a false sense of security, leading them
+to skip cases they needed to consider. (**Clarify or kill this
+example**)
+
+With a protocol that meets these requirements, we can model suspicion
+of \vat{F} as suspicion of all the objects hosted by \vat{F}. We can
+reason as if we are suspicious only of objects. (**Say why this is
+good**)
+
+\section{Promise Pipelining}
+
+Our concurrency-control examples so far have been artificially
+simple. Our to-do queuing examples were carefully selected so that the
+eventual-send expressions were evaluated only for their effects, with
+no use made of the value of these expressions. With subgoal stacking,
+a subgoal often returns a value to its caller, for its caller to use
+in executing the remainder of its plan. We use this feature
+pervasively for functional composition, as in the following code
+fragment:
+%
+\begin{alltt}
+    def \dvar{t3} := (x.a()).c(y.b())
+\end{alltt}
+%
+which is equivalent to:
+%
+\begin{alltt}
+    def \dvar{t1} := x.a() 
+    def \dvar{t2} := y.b() 
+    def \dvar{t3} := t1.c(t2)
+\end{alltt}
+%
+For this to be a correctly formulated plan, the object executing this
+plan, \name{L}, must know that the objects designated by its \var{x}
+and \var{y} variables, \name{X} and \name{Y}, are co-located with it,
+so that \var{x} and \var{y} hold near
+references, and it must know that the results they will return in
+response to the ``\code{a()}'' and ``\code{b()}'' requests will also
+be near. Returning to our analogy, when you know you've already
+arranged to have in your immediate reach everything you need to
+execute the subgoal, then you can use subgoal stacking
+successfully. Much of the art of concurrency-control in E is to make
+such arrangements, so that you can take substantial steps within the
+isolation provided by an individual event.
+
+But what if you need to formulate a plan that needs to work whether
+these objects are local or remote? In our analogy, at some point in
+your plan, you need to ask Carol for something, but she may not get
+back to you for awhile. Part of your plan needs to be postponed,
+waiting on her, but you continue with your life (advancing other
+plans) in the meantime.
+
+\subsection{Promises}
+
+For example, suppose \name{X} and \name{Y} are on \vat{R}.
+\name{L}'s variables \var{x} and \var{y} will then hold eventual
+references, enabling \name{L} only to eventual-send messages to
+\name{X} and \name{Y}. What happens if \name{L} executes
+%
+\begin{alltt}
+    def \dvar{t1} := x <- a()
+\end{alltt}
+%
+As before, once the pending delivery---representing the need to
+deliver this message to this receiver---is serialized (marshaled) and
+queued to be sent to \vat{R}, the ongoing event in \vat{L} continues
+without waiting on the network or other vats. In this case, the value
+bound to \var{t1} is a reference to the outcome of this delivery, even
+though the delivery hasn't happened yet. We say that \var{t1} holds a
+\emph{promise} for the outcome. The pending delivery sent to \vat{R}
+additionally contains a \emph{resolver} for this promise, which
+provides the right to choose what \var{t1} designates. In \vat{R},
+once the event spawned by delivering \code{a()} to X completes,
+\vat{R} reports the outcome to the resolver, \emph{resolving} the
+promise, so that \var{t1} eventually becomes a reference designating
+this outcome. What kind of reference \var{t1} eventually becomes
+depends on this outcome.
+
+Until this promise is resolved, what kind of a reference is it? Since
+\vat{L} does not yet know what \var{t1} designates, \name{L} cannot
+immediate-call it, so clearly a promise is not a near reference. Since
+we expect \var{t1} will eventually be resolved, it makes perfect sense
+to eventual-send to it, so we consider a promise to be another kind of
+eventual reference. But since the requests sent to \var{t1} cannot be
+delivered until the promise is resolved, these requests are buffered,
+in FIFO order, somewhere within the unresolved reference itself. Once
+the promise is resolved, these messages are forwarded, in order, to
+its resolution.
+
+\subsection{Pipelining}
+
+Since \name{L} can eventual-send to the promises resulting from
+previous eventual-sends, \name{L} can still engage in functional
+composition. If \name{L} executes
+%
+\begin{alltt}
+    def \dvar{t3} := (x <- a()) <- c(y <- b())
+\end{alltt}
+%
+or equivalently
+%
+\begin{alltt}
+    def \dvar{t1} := x <- a()
+    def \dvar{t2} := y <- b()
+    def \dvar{t3} := t1 <- c(t2)
+\end{alltt}
+%
+all three requests are serialized and streamed out to \vat{R}
+immediately, and \vat{L} continues without blocking. (By contrast, in
+a conventional RPC system
+\cite{Nelson81,java:rmi,corba:latency,xml-rpc:latency}, the calling
+thread would only proceed after two or three round trips---depending
+on whether \code{a()} and \code{b()} are overlapped.)
+%
+\begin{figure}
+\centerline{\epsfig{figure=pipeline.eps}}
+\caption{**Say something intelligent**}
+\label{fig:pipeline}
+\end{figure}
+%
+We visualize an unresolved reference as an arrow stretching between
+its promise-end, the tail held by \var{t1}, and its resolver, the arrowhead
+within the pending delivery sent to \vat{R}. Messages sent on a reference
+are always ``moved'' as close to the arrowhead as possible. While the
+pending delivery for \code{a()} is in transit to \vat{R}, so is the
+arrowhead for \var{t1}, so we send the \code{c(t2)} message there as
+well. As \vat{R} unserializes these three requests, it places the first
+two in its local to-do list, since their target is known and
+local. The third is sent on a local promise that will be resolved by
+the outcome of \code{a()}, carrying as an argument a local promise for
+the outcome of \code{b()}.
+
+If the resolution of \var{t1} is on \vat{R}, then as soon as
+\code{a()} is done, \code{c(t2)} is immediately queued on \vat{R}'s
+to-do list, and may well be serviced before \vat{L} learns of
+\var{t1}'s resolution. If \var{t1} is on \vat{L}, then \code{c(t2)} is
+streamed back towards \vat{L} just behind the message informing
+\vat{L} of \var{t1}'s resolution.
+
+Across geographic distances, latency is clearly already the dominant
+performance consideration in distributed computing, not bandwidth, CPU
+time, or memory. As hardware improves, the importance of latency will
+only increase. At the endpoints, processing will be ever cheaper and
+buffers larger, with the limits still many orders of magnitude
+away. At the pipes between these endpoints, bandwidth will likewise
+increase by many orders of magnitude. But latency will remain limited
+by the speed of light. Pipes between fixed endpoints can be made wider
+but not shorter.
+
+Our promise pipelining protocol is approximately a symmetric
+generalization of Bogle's ``Batched Futures'' \cite{bogle:batched},
+and shares its virtues regarding network latency. (See also
+\cite{liskov:promises}.)
+
+\subsection{Datalock}
+
+This promise chaining provides one way to allow some plans, like
+\code{c(t2)}, to be postponed pending the resolution of previous
+plans. We introduce other ways to postpone plans below. Perhaps
+surprisingly, with only the primitives introduced so far, we can
+already create cyclic postponement bugs which, like deadlock, are a
+form of lost-progress bug. We call this new kind of bug
+\emph{datalock}. Consider:
+%
+\begin{alltt}
+    var \dvar{flag} := null
+    def \dobj{epimenides}() \{ return flag <- not() \}
+    flag := epimenides <- run()
+\end{alltt}
+%
+Let's say \var{epimenides} was written with the expectation that,
+before it is called, a promise for a boolean is assigned to the
+variable ``\var{flag}''. Under this assumption, \var{epimenides}
+returns a promise for the opposite boolean. The above assignment
+statement seems to uphold these expectations: If an immediate-call to
+\var{epimenides} would be considered of type ``promise for boolean'',
+then an eventual-send has the same type, since ``promise for promise
+for $T$'' is the same as ``promise for $T$''. By to-do queuing the
+invocation of \var{epimenides}, we postpone it till after the current
+event, so we can meet its expectation by assigning something of the
+required type to the flag variable before our own event is
+done. Reasoning only locally, in terms of conventional typing, it
+seems we have. But the computation of the flag is postponed until the
+flag has been computed.
+
+Although we have traded one form of lost-progress bug for another, we
+are still better off. Deadlock bugs are usually much more
+non-deterministic than other bugs---leading to hard to reproduce
+occurrences. Datalock bugs are as deterministic as normal
+bugs. (**explain why**) For example, the code above will always
+produce the same datalock bug. This is the good news we understand.
+
+We have more good news to report, although it is news we cannot yet
+explain. Empirically, in many years of programming in E and E-like
+languages and a body of experience spread over perhaps 60 programmers,
+including two substantial distributed systems, we know of only two
+accidental datalock bugs. Did others go undetected? We don't
+know. What we do know is that these projects did not spend the
+agonizing time chasing deadlock bugs that projects of their nature
+normally do. Although we have some speculations, on the whole we are
+at a loss to explain the magnitude of this effect.
+
+\subsection{Explicit Promises}
+
+Besides the implicit creation of promise-resolver pairs by
+eventual-sending, E provides a primitive to create these pairs
+explicitly. In the following code
+%
+\begin{alltt}
+    def [\dvar{p}, \dvar{r}] := Ref.promise()
+\end{alltt}
+%
+the right hand side creates and returns a new promise pair (a two
+element list). The left hand side pattern-matches this pair, binding
+\var{p} to the promise and \var{r} to its resolver. Explicit promise
+creation gives us yet greater flexibility to postpone plans until
+other conditions occur. The promise, \var{p}, can be handed out and
+used just as any other eventual reference. All messages eventual-sent
+to \var{p} are queued in \var{p}. An object with access to \var{r} can
+wait until some condition occurs before resolving \var{p} and allowing
+these stalled messages to proceed.
+
+\subsection{Broken Promise Contagion}
+
+What if \name{X}'s \code{\meth{a}()} method completes, not by
+returning a result, but by throwing an exception, \ex{EX}? In the
+local sequential case, this aborts the forward progress of the plan in
+motion, so \code{b()} and \code{c(t2)} are never delivered, and aborts
+the caller's plan as well, and so on until it reaches an exception
+handling block of some sort. This has some nice fail-stop
+properties. It aborts all plans whose assumptions were violated, and
+whose formulation gave no indication that they were prepared for this
+contingency, throwing away their temporary state. Execution resumes
+only at the first enclosing contingency plan. This is control-flow
+exception handling. Even this pattern has some difficult hazards, but
+these are beyond the scope of this paper. Here, we focus on the other
+case, when \code{a()}, \code{b()}, and \code{c(t2)} were eventual-sent
+requests.
+
+In the eventual case, \vat{L} doesn't have the option of terminating the
+caller's plan, since it doesn't even know there's a problem until well
+after the caller's event is done. Instead, we introduce a third
+reference-state, the \emph{broken reference}. A near reference will
+carry both immediate-calls and eventual-sends to its target. An
+eventual reference will carry eventual-sends to its target. A broken
+reference will carry neither.
+
+A broken reference has an attached exception, explaining the alleged
+reason why this reference is broken. In our scenario, \var{t1}'s
+promise becomes broken by \ex{EX}. When a message is eventual-sent to
+a broken reference, the message is never delivered, and the promise
+for the result of the message eventually becomes broken with this same
+exception. In our scenario: \code{a()} throws \ex{EX}. \vat{R} reports
+this outcome to \var{t1}'s resolver. This causes an outcome report to
+be sent to \vat{L}, eventually breaking \var{t1}. It also immediately
+breaks the local promise on which \code{c(t2)} is queued, causing the
+\code{c(t2)} message to be dropped, but reporting this outcome to its
+resolver, breaking \var{t3} with \ex{EX} as well. Having finished the
+\code{a()} event, \vat{R} delivers \code{b()} to \name{Y} and resolves
+\var{t2} to the outcome.
+
+Unlike the sequential case, in the eventual case \code{b()} still gets
+delivered. The aborting of plans still spreads to kill dependent plans
+whose assumptions are likely violated, but this spread only follows
+data dependencies, not plan sequence. E's split between control-flow
+exceptions and data-flow exceptions was inspired by the distinction
+between signaling and non-signaling NaNs in floating point. Like
+non-signaling NaNs, broken promise contagion does not hinder
+pipelining. Both suppress only data dependent computation, but with a
+difference.
+
+A non-signaling NaN is contagious if used in any argument position. A
+broken promise is only necessarily contagious in receiver position. If
+instead \code{a()} returns a result and \code{b()} throws an
+exception, then \code{c(t2)} will still be delivered to the resolution
+of \var{t1}, carrying as argument a broken promise for the result of
+\code{b()}. If the \code{c(t2)} method of the receiving object
+declares that its corresponding parameter only accepts near
+references, this still prevents \code{c(t2)} from being delivered, and
+still breaks \var{t3}---in which case the effect is the same as with
+NaNs. In other cases, this difference can be useful, as it allows
+\code{c(t2)} to accept a promise argument that isn't yet known to be
+broken.
+
+\section{Partial Failure}
+
+Not all exceptional conditions are caused by program behavior.
+Networks suffer outages, partitioning one part of the network from
+another. Machines fail: sometimes in a transient fashion, rolling back
+to a previous stable state; sometimes permanently, making the objects
+they host forever inaccessible. From a machine not able to reach a
+remote object, it is generally impossible to tell which failure is
+occurring, or which messages were lost.
+
+Distributed programs need to be able to react to these conditions, so
+that surviving components can continue to provide valuable and
+correct, even if degraded, service while other components are
+inaccessible. If these components may change state while out of
+contact, when they become accessible to each other again, they must
+recover distributed consistency. There is no one best strategy for
+maintaining consistency in the face of partitions and merges. The
+strategy appropriate will depend on the semantics of the components. A
+general purpose framework should provide simple mechanisms adequate to
+express a great variety of strategies. Group membership and similar
+systems provide one form of such a general framework, with strengths
+and weaknesses in comparison with E. Here, we explain E's
+framework. We provide a brief comparison with group membership-like
+mechanisms in the ``Related Work'' section below.
+
+E's support for partial failure starts by extending the semantics of
+our live reference states. Figure~\ref{fig:refstates} shows the full
+state transition diagram among these states.
+%
+\begin{figure}
+\centerline{\epsfig{figure=refstates.eps}}
+\caption{Live references whose target is known are shown with a solid
+  pointy arrowhead. Promises, whose target is not yet known, are shown
+  with a round arrowhead representing their resolver. Broken
+  references, shown with a vertical bar, have no target. References
+  that cross vat boundaries are shown with a pair of scissors at their
+  throat, representing their vulnerability to partition. There are two
+  possible state transitions, shown as dashed lines: A promise may be
+  \emph{resolved} to any other kind of reference; and a vat-crossing
+  reference can get \emph{broken} by a partition}
+\label{fig:refstates}
+\end{figure}
+%
+We've added the possibility of a vat-crossing reference---a remote
+promise or a far reference---getting broken by a partition. A
+partition between a pair of vats eventually breaks all references that
+cross between these vats, creating eventual common knowledge of the
+loss of connection. Of all the references crossing in a given
+direction between two vats, a partition breaks all these references
+simultaneously. Of the messages that were still in transit, the sender
+can't know which were actually received and which were lost. Of
+successive messages sent on the same reference, later messages will
+only be delivered if all earlier messages sent on that same reference
+were already delivered. This fail-stop FIFO delivery order relieves
+the sender from needing to wait for earlier messages to be
+acknowledged before sending later dependent messages.
+
+On our state-transition diagram, we see that ``near'' and ``broken''
+are terminal states. Even after a partition heals, all live references
+broken by that partition stay broken.
+
+Returning to our listener example, if a partition separates \vat{A}
+from \vat{X}, \name{SH}'s reference to \name{XL} will eventually be
+broken with a partition-exception. Of the \code{statusChanged}
+messages sent by \name{SH}, this reference will deliver them reliably
+in FIFO order until it fails. Once it fails to deliver a message, it
+will never deliver any further messages, and it will eventually become
+visibly broken.
+
+To avoid unnecessary storage and messages, \name{SH} could test
+whether each listener reference was broken before sending another
+\code{statusChanged} message to it, but it need not, since messages
+eventual-sent to broken references are harmless. They are dropped, and
+promises for their result are broken by the same exception. Instead,
+our \abst{statusHolder} arranges to be notified when these references
+break. It does this by using another listener-like pattern---one built
+into E's references---that we call the \emph{reactor pattern}. The
+differences between reactors and listeners are beyond the scope of
+this paper, but the terminology difference will help us keep the
+levels distinct. Rather than \emph{subscribing} a \emph{listener} to
+be notified, one \emph{registers} a \emph{reactor} to be notified.
+
+\subsection{Listening to references}
+
+For each of \name{SH}'s listener references, \name{SH} needs to
+register a reactor to eventually be notified if that reference
+breaks. Once notified, this reactor reacts by removing this reference
+from \name{SH}'s \var{myListener}'s list.
+%
+\begin{alltt}
+    to \dmeth{addListener}(\dvar{newListener}) \{
+        myListeners.push(newListener)
+        def \dobj{reactor}(\dvar{ref}) \{
+            if ((def \dvar{i} := myListeners.indexOf1(ref)) >= 0) \{
+                myListeners.remove(i)
+            \}
+        \}
+        newListener <- \_\_whenBroken(reactor)
+    \}
+\end{alltt}
+%
+The \code{\_\_whenBroken} message is one of a handful of universally
+understood messages that all objects respond to by default. (In Java,
+the methods defined in \code{java.lang.Object} are similarly
+universal.) Of these, the following messages are for interacting with
+a reference itself, as distinct from interacting only with the object
+designated by a reference. The first two are registration messages
+specially understood by references. The third is a notification
+message specially generated by references.
+%
+\begin{description}
+\item[\code{\_\_whenBroken(\dvar{reactor})}] When sent on a reference,
+  this message registers its argument to be notified when this
+  reference breaks.
+\item[\code{\_\_whenMoreResolved(\dvar{reactor})}] When sent on a
+  reference, this message is normally used so that one can react when
+  the reference is first resolved. We explain this in the later
+  ``When-Catch'' section below.
+\item[\code{\_\_reactToLostClient(\dvar{problem})}] When a
+  vat-crossing reference breaks, it sends this message to its target
+  object, to notify it that some of its clients may no longer be able
+  to reach it.
+\end{description}
+%
+We first explain the \code{\_\_whenBroken} message.
+
+Near references and local promises make no special case for these
+messages---they merely deliver them to their target. Objects by
+default respond to a \code{\_\_whenBroken} message by ignoring it. So,
+in our single-vat scenario, when all these references are near, the
+additional code above has no effect. A broken reference responds by
+eventual-sending itself as argument to the reactor, as if by the
+following code:
+%
+\begin{alltt}
+    to \dmeth{\_\_whenBroken}(\dvar{reactor}) \{ reactor <- run(self) \}
+\end{alltt}
+%
+When a local promise becomes broken, it forwards all messages it's
+buffering to the broken reference is has resolved to. 
+
+A vat-crossing reference notifies these reactors if it becomes broken,
+whether by partition or resolution. In order to be able to send these
+notifications during partition, a vat-crossing reference registers the
+reactor argument of a \code{\_\_whenBroken} message at the tail-end of
+the reference---within the sending vat. If the sending vat is told
+that one of these references has resolved, it re-sends equivalent
+\code{\_\_whenBroken} messages to this resolution. If the sending vat
+decides that a partition has occurred (perhaps because the internal
+keep-alive timeout has been exceeded), it breaks all outgoing
+references and notifies all registered reactors.
+
+For all the reasons previously explained, the reactor pattern built
+into E's references only eventual-sends notifications to reactors, so
+they only react eventually. Until the above reactor reacts, \name{SH}
+will continue to harmlessly use the broken reference to
+\name{XL}. Once again, we have separated contingency concerns from
+normal operation. Plans that express no preparation for partition, but
+are otherwise correct, are prevented from doing any harm.
+
+But what of our spreadsheet? We have ensured that it will receive
+\code{statusChanged} notifications in order, and that it will not miss
+any in the middle of a sequence. But, during a partition, its display
+may become arbitrarily stale. Technically, this introduces no new
+correctness hazards. By the time \name{XL} receives a
+\code{statusChanged} message, the \var{newStatus} argument may already
+be stale anyway, even in the single-vat scenario. Between vats, this
+issue is unavoidable because of network delays. But the spreadsheet
+may wish to provide a visual indication that the displayed value may
+now be more stale than usual, since we're now out of contact with the
+authoritative source. To make this convenient, when a reference is
+broken by partition, it eventual-sends a \code{\_\_reactToLostClient}
+message to its target, notifying it that at least one of its clients
+may no longer be able to send messages to it. By default, objects
+ignore \code{\_\_reactToLostClient} messages. By overriding this
+default to update the display as follows, \name{XL} effectively acts
+as a reactor, registered on all references which designate it.
+%
+\begin{alltt}
+    to \_\_reactToLostClient(problem) \{ ...update the display... \}
+\end{alltt}
+%
+When a vat-crossing reference is severed by partition, notifications
+are eventual-sent in both directions. 
+
+This explains how connectivity is safely severed by partition, and how
+objects on either side can react if they wish. But objects also need
+to regain connectivity following a partition. For this purpose, we
+introduce \emph{sturdy references}.
+
+\subsection{Sturdy references}
+
+A sturdy references in E has two forms: a ``captp://...'' URI string
+and an encapsulated SturdyRef object. Both contain the same
+information: the fingerprint of the public key of the vat hosting its
+target object, a list of TCP/IP location hints to seed the search for
+a vat that can authenticate against this fingerprint [redirectory**],
+and a so-called \emph{swiss-number}, a large unguessable random number
+which the hosting vat associates with the target. Like the popular
+myth of how Swiss bank account numbers work, one demonstrates
+knowledge of this secret to gain access to the object it designates.
+Like an object reference, if you don't know an unguessable secret, you
+can only come to know it if someone who knows it and can talk to you
+chooses to tell it to you. A sturdy references is a form of off-line
+``password'' capability---it contains the cryptographic information
+needed both to authenticate the target and to authorize access to the
+target [DCCS,y-property**].
+
+Both forms of sturdy reference are pass-by-copy, and can be passed
+between vats even when the target vat is inaccessible. Sturdy
+references do not directly convey messages to their target. To
+establish or re-establish access to the target, one makes a new live
+reference from a sturdy reference. Doing so initiates a new attempt to
+connect to the target vat, and immediately returns a promise for the
+resulting inter-vat reference. If the connection attempt fails, this
+promise is eventually broken.
+
+Typically, most vat-crossing references are represented only as live
+references. When these break, applications on either end should not
+try to recover the detailed state of all the plans in progress between
+these vats. Instead, they should typically go back to the small number
+of sturdy references from which this complex structure was originally
+spawned, and use these to spawn a new fresh structure. As part of this
+respawning process, the two sides may need to reconcile---to
+restablish distributed consistency.
+
+In our listener example, \name{SH} should not hold sturdy references
+to listeners, and should not try to reconnect to them. This would put
+the burden on the wrong party. A better design would have \name{XL}
+hold a sturdy reference to \name{SH}. \name{XL}'s
+\code{\_\_reactToLostClient} method would be enhanced to attempt to
+reconnect to \name{SH} and to resubscribe \name{XL} on the promise for
+the reconnected \name{SH}. If it does reconnect, it knows it may have
+missed updates in the meantime, so it should first send a new
+\code{getStatus} query to refresh its own state before resubscribing.
+
+But perhaps the spreadsheet application originally encountered
+\name{SH} by navigating from an earlier object representing a
+collection of accounts, creating and subscribing a spreadsheet cell
+for each. While the vats were out of contact, not only may \name{SH}
+have changed, the collection may have changed so that \name{SH} is no
+longer relevant. In this case, a better design would be for the
+spreadsheet to maintain a sturdy reference only to the collection as a
+whole. When reconciling, it should navigate afresh, in order to find
+the \abst{statusHolder}s is now need to subscribe to.
+
+By separating live vs sturdy references, we encourage programming
+patterns that separate reconciliation concerns from normal operations.
+
+\subsection{Persistence}
+
+For an object that is designated only by live references, the hosting
+vat can tell when it's no longer reachable, and can garbage collect
+it.\footnote{E's distributed garbage collection protocol does not
+currently collect unreachable inter-vat cycles of live references. See
+[Bejar**] for a gc algorithm able to collect such cycles among
+mutually suspicious machines.} Once one makes a sturdy reference to a
+given object, it's hosting vat can no longer determine when its
+unreachable. Instead, it must retain the association between this
+object and its swiss number until its obligation to honor this sturdy
+references expires.
+
+The operations for making a sturdy reference provide three options for
+ending this obligation: It can expire at a chosen future date, giving
+the association a \emph{time-to-live}. It can expire when explicitly
+cancelled, making the association \emph{revocable}. And it can expire
+when the hosting vat crashes, making the association
+\emph{transient}. Here, we examine only this last option. An
+association which is not transient is \emph{durable}.
+
+A vat can be either ephemeral or persistent. An ephemeral vat exists
+only until it terminates or crashes; so for these, the last option
+above is irrelevant. A persistent vat periodically \emph{checkpoints},
+saving its persistent state to non-volatile storage. A vat checkpoints
+only between events when its stack is empty. A crash terminates a
+vat-incarnation. Reviving the vat from checkpoint creates a new
+incarnation of the same vat. A persistent vat lives through a sequence
+of incarnations.
+
+The persistent state of a vat is determined by traversal from
+persistent roots. This state includes the vat's public/private key
+pair, so later incarnations can authenticate. It also includes all
+unexpired durable swiss-number associations, and state reached by
+traversal from there. As this traversal proceeds, when it reaches a
+sturdy reference, the sturdy reference itself is saved, but it is not
+traversed to its target. When the traversal reaches a live inter-vat
+reference, a broken reference is saved instead, and the reference is
+again not traversed. Should this vat be revived from this checkpoint,
+old live inter-vat references will be revived as broken references. A
+crash partitions a vat from all others. Following a revival, only
+sturdy references in either direction enable it to become reconnected.
+
+\section{The When-Catch}
+
+To be notified when a reference resolves, one registers a reactor
+using the \code{\_\_whenMoreResolved} message. But programmers rarely
+use this message directly. Instead they use the higher-level
+``when-catch'' syntactic shorthand, whose semantics we explain here by
+example.
+
+Let's say you'd like to buy something, but only after you receive
+satisfying answers to a few questions. The servers which can answer
+these questions are remote, so you eventual-send queries, and
+accumulate the resulting promises-for-boolean-answers into a list. You
+can use the following \var{asyncAnd} function to compute the
+eventual-conjunction of these promises.
+%
+\begin{alltt}
+    def \dobj{asyncAnd}(\dvar{answers}) \{
+        var \dvar{countDown} := answers.size()
+        if (countDown == 0) \{ return true \}
+        def [\dvar{result}, \dvar{resolver}] := Ref.promise()
+        for \dvar{answer} in answers \{
+            when (answer) -> \{
+                if (answer) \{
+                    if ((countDown -= 1) == 0) \{
+                        resolver.resolve(true) 
+                    \}
+                \} else \{
+                    resolver.resolve(false)
+                \}
+            \} catch \dvar{problem} \{
+                resolver.smash(problem)
+            \}
+        \}
+        return result
+    \}
+\end{alltt}
+%
+Let's see how this code works.
+
+If the list is empty, the conjunction is true, and we're
+done. Otherwise, \var{countDown} remembers how may true answers we
+still need to hear before we can conclude that the conjunction is
+true. We iterate through the answers list, using the ``when-catch''
+expression to register a reactor on each reference in the list. The
+behavior of the reactor is expressed in two parts: the code between
+``\code{-> \{}'' and ``\code{\} catch}'' handles the normal case, and
+the catch-clause handles the exceptional case. Once \var{answer}
+resolves, if it's near or far, the normal-case code is run. If it's
+broken, the catch-clause is run.
+
+Here, if the normal case runs, we expect answer to be a
+boolean. Booleans are passed-by-copy between vats, so a resolved
+reference to a boolean is always a near reference to a local copy of
+the boolean. By using a ``when-catch'', we postpone the \code{if}
+until we've gathered enough information to know which way it should
+branch.
+
+Once \var{asyncAnd} registers all these reactors, it immediately
+returns \var{result}, a promise for the conjunction of these
+answers. If they all resolve to true, \var{asyncAnd} \emph{reveals}
+that the result is true, i.e., it resolves the already-returned
+promise to true. If any resolve to false, \var{asyncAnd} reveals false
+without waiting for further answers. If any resolve to broken,
+\var{asyncAnd} reveals a reference broken by the same problem. Asking
+a resolver to resolve an already-resolved promise has no effect. If
+one of the answers is false and another is broken, the above
+\var{asyncAnd} code may reveal either false or broken, depending on
+which reactor happens to be notified first.
+
+Now that we understand how ``when-catch'' works, we see how you can
+use it together with \var{asyncAnd} to postpone your purchase until
+your questions are satisfied.
+%
+\begin{alltt}
+    def \dvar{allOk} := asyncAnd([inventory <- isAvailable(partNo),
+                           creditBureau <- verifyCredit(name),
+                           shipper <- canDeliver(...)])
+    when (allOk) -> \{
+        if (allOk) \{
+            def \dvar{receipt} := seller <- buy(partNo, payment)
+            when (receipt) -> \{
+\end{alltt}
+%
+Promise chaining postpones plans efficiently by data-flow. The
+``when-catch'' postpones plans until data-flow can be turned back into
+control-flow.
+
+\section{From Object to Actors and Back Again}
+
+Here we present a brief history of the concurrency-control ideas
+explained above. In this section, the term ``we'' indicates that at
+least one of this paper's authors participated in a project involving
+other people. All implied credit should be understood to be shared
+with these others.
+
+\subsection{From Objects to Actors}
+
+The nature of computation provided within a single von Neumann machine
+is quite different than the nature of computation provided by networks
+of such machines. Distributed programs must deal with both. To reduce
+cases, it would seem attractive to create an abstraction layer that
+can make these seem more similar. Distributed Shared Memory systems
+(DSMs) \cite{dsm-survey} tries to make the network seem more like a
+von Neumann machine. Object-oriented programming started by trying to
+make a single computer seem more like a network.
+
+\begin{quotation}
+... Smalltalk is a recursion on the notion of computer itself. Instead
+of dividing "computer stuff" into things each less strong than the
+whole--like data structures, procedures, and functions which are the
+usual paraphernalia of programming languages--each Smalltalk object is
+a recursion on the entire possibilities of the computer. Thus its
+semantics are a bit like having thousands and thousands of computer
+all hooked together by a very fast network.
+\begin{flushright}
+---Alan Kay \cite{kay:smallhistory}
+\end{flushright}
+\end{quotation}
+
+Smalltalk imported only the aspects of networks that made it easier to
+program a single machine---its purpose was not to achieve network
+transparency. Problems that could be avoided within a single
+machine---like inherent asynchrony, large latencies, and partial
+failures \cite{waldo:note}---were avoided. The sequential subset of E
+has much in common with the early Smalltalk: Smalltalk's object
+references are like E's near references, and Smalltalk's message
+passing is like E's immediate-call operator.
+
+Inspired by the early Smalltalk, Hewitt created the Actors
+paradigm\cite{ijcai73*235}, whose goals include full network
+transparency within all the constraints imposed by decentralization
+and mutual suspicion \cite{hewitt:challenge}. Although the stated
+goals required the handling of partial failure, the actual Actors
+model assumed this issue away, and instead guaranteed that all sent
+messages would eventually be delivered. The asynchronous-only subset
+of E is an Actors language: Actors' references are like E's eventual
+references, and Actors' message passing is much like E's eventual-send
+operator. Actors provided both data-flow postponement of plans by
+futures (like E's promises without pipelining or contagion) and
+control-flow postponement by continuations (similar in effect to E's
+when-catch).
+
+The price of this uniformity is that programs always had to work in
+the face of network problems. There was only one case to solve, but it
+was the hard case.
+
+\subsubsection{Vulcan.} The Vulcan project \cite{kahn:vulcan}
+merged aspects of Actors and concurrent logic/constraint programming
+\cite{tr003,Saraswat93,janus}. The pleasant properties of concurrent
+logic variables (much like futures or promises) taught us to emphasize
+data-flow postponement and de-emphasize control-flow
+postponement. Vulcan was built on a concurrent logic base, and
+inherited from this base some problems absent from pure Actors
+languages.
+
+\subsubsection{Promise pipelining in Udanax Gold.} This was a
+pre-web hypertext system with a rich interaction protocol between
+clients and servers. To deal with network latencies, sometime in the
+1989--1991 timeframe, we independently reinvented an assymmetric form
+of promise pipelining as part of our protocol design. We later
+discovered that essentially the same idea had already been invented by
+Liskov and Shrira. \cite{liskov:promises}.
+
+\subsubsection{Joule.} The \sys{Joule} language \cite{tribble:joule}
+merges insights developed during the \sys{Vulcan} project with
+remaining virtues of Actors, and the order preserving properties of
+the ``Channels'' abstraction \cite{tribble:channels} invented during
+the Vulcan project. Joule's Channels are similar to E's promises
+generalized to provide multicasting.
+
+\subsection{And back again}
+
+\subsubsection{Original-E.} The language now known as
+\sys{Original-E} was the result of adding the concepts from Joule to
+the sequential, capability-secure subset of Java, and extending the
+Joule-like portion of the language cryptographically over the
+network. Electric Communities created \sys{Original-E}, and used it to
+build \sys{Habitats}---a graphical decentralized secure social virtual
+reality system. Our ambitions included secure user-extensibility, but
+the company failed before we could take this step.
+
+\sys{Original-E} was the first to successfully mix sequential
+immediate-call programming with asynchronous eventual-send
+programming. This is where we first came to appreciate the importance
+of the vat as the container of sequentiality, and as the unit of
+separate failure, persistence, and migration.
+
+\subsubsection{From Original-E to E.} In \sys{Original-E}, the
+co-existence of sequential and asynchronous programming was still
+rough. E brought the invention of the distinct reference states and
+the transitions among them explained in this paper. With these rules,
+E bridges the gap between the network-as-metaphor view of the early
+Smalltalk and the network-transparency ambitions of Actors. Notice
+that all the examples presented in this paper happen to work when all
+the objects involved happen to be local. The local case is strictly
+easier than the network case, so the guarantees provided by near
+references are a strict superset of the guarantees provided by other
+reference states. When handling a known-local problem, a programmer
+can do it the easy way. Otherwise, the programmer must do it the hard
+way. There are still two cases, but there isn't the cost of two cases.
+
+If you don't know a problem is local, your code must be prepared to
+handle the inescapable hard problems of networks. But once you've done
+so, the same code will painlessly also handle the local case without
+requiring any further case analysis.
+
+\section{Related Work}
+
+\subsubsection{Promises and Batched Futures at MIT.} The promise
+pipelining technique was first invented by Liskov and Shrira
+\cite{liskov:promises}. These ideas were then significantly improved
+by Bogle \cite{bogle:batched}. Like the \sys{Udanax Gold} system
+mentioned above, these are asymmetric client server systems. In other
+ways, the techniques used in Bogle's protocol resembles quite closely
+some of the techniques used in E's protocol.
+
+\subsubsection{Group Membership.} There is an extensive body of work
+on group membership systems \cite{birman:vsync,amir:thesis} and
+(broadly speaking) similar systems such as Paxos
+\cite{lamport:paxos}. These systems provide a different form of
+general purpose framework for dealing with partial failure, with both
+strengths and weaknesses in comparison to E. These frameworks provide
+closer approximations of common knowledge than does E, but at the
+price of weaker support for mutual suspicion and scalability. These
+frameworks better support the tightly-coupled composition of separate
+plan-strands into a virtual single overall plan. E's mechanisms better
+support the loosely coupled composition of networks of independent but
+cooperative plans.
+
+For example, when the distributed components in question jointly form
+a single logical application, which provides a single logical service
+to all their collective clients, and when multiple separated
+components may each change state while out of contact with the others,
+we have a \emph{partition-aware application}
+\cite{partition-aware,bancomat}, providing some form of fault-tolerant
+replication among its components. To the clients of a partition-aware
+application, the application as a whole attempts to approximate, as
+close as it can, a single stateful object which is highly available
+under partition. Group membership-like mechanisms shine at supporting
+such application under mutually reliant and even Byzantine conditions
+\cite{castro:bft}. 
+
+E itself provides nothing comparable. The patterns of fault-tolerant
+replication we've built to date are all forms of primary-copy
+replication, where there's a single stationary authoritative host. E
+supports these patterns quite well, and they compose well with simple
+E objects that are unaware they are interacting with a replica. An
+area of future research is to see how well partition-aware
+applications can be programmed in E, and how well they can compose
+with others.
+
+\subsubsection{Croquet and TeaTime.} The \sys{Croquet} project has
+many of the same goals as the \sys{Habitats} project refered to
+above---to create a graphical decentralized secure user-extensible
+social virtual reality system spread across mutually suspicious
+machines. Regarding E, the salient differences are that \sys{Croquet}
+is built on \sys{Smalltalk} extended onto the network by \sys{TeaTime}
+[Reed**], which is based on \sys{Paxos} \cite{lamport:paxos}, in order
+to replicate state among multiple authoritative hosts. Unlike
+\sys{Habitats}, \sys{Croquet} is user-extensible, but is not yet
+secure. It will be interesting to see how they alter \sys{Paxos} to
+work between mutually suspicious machines.
+
+\subsection{Work influenced by E's concurrency-control}
+
+\subsubsection{The Web-Calculus} The \sys{Web-Calculus} [WebCalc**]
+brings to web URLs the following simultaneous properties:
+%
+\begin{itemize}
+\item The cryptographic capability properties of E's sturdy
+  references---both authenticating the target and authorizing access
+  to it.
+\item Promise pipeling of eventually-POSTed requests with results.
+\item The properties recommended by the REST model of web programming
+  [REST**]. REST attributes the success of the web to, among other
+  things, certain loose-coupling properties of ``http://...''  URLs,
+  which are well beyond the scope of this paper. See [REST,WebCalc**]
+  for more.
+\end{itemize}
+%
+As a language neutral protocol compatible and composable with existing
+web standards, the \sys{Web-Calculus} is much better positioned than E
+to achieve widespread adoption. We expect to build a bridge between
+E's references and \sys{Web-Calculus} URLs.
+
+\subsubsection{Oz-E.} Like \sys{Vulcan}, the \sys{Oz} language
+\cite{VanRoyHaridi} language descends from both \sys{Actors} and
+concurrent logic/constraint programming. Unlike these parents,
+\sys{Oz} supports shared-state concurrency, though \sys{Oz}
+programming practice discourages its use. \sys{Oz-E} \cite{oze} is a
+capability-based successor to \sys{Oz} designed to support both local
+and distributed mutual suspicion. For the reasons explained in the
+``Defensive Correctness'' section above, \sys{Oz-E} suppresses
+\sys{Oz}'s shared-state concurrency.
+
+\subsubsection{Twisted Python.} This is a library and a set of
+conventions for doing distributed programming in Python based on
+communicating event loops, promise pipelining, and distributed-only
+capability security. [Twisted**]
+
+\section{Discussion and Conclusions}
+
+The dynamic reference graph is the fabric of object computation. In
+this paper, we have explained how E extends the concept of the
+object-reference graph, in order to provide the distributed
+access-control and concurrency-control needed for practical, secure,
+global computing.
+
+By restricting causality to flow only along the graph, E turns the
+reference graph into an access graph able to support fine-grained
+\emph{least authority}. By restricting the ordering of these causal
+influences, E provides deadlock-free concurrency-control, able to
+maintain consistency in concurrent stateful systems.  E uses safe
+language techniques to enforce these restrictions within a
+process. E's cryptographic protocol enforces these restrictions
+between mutually suspicious machines. Distributed programs must also
+face large latencies and partial failure. By changing only a few
+concepts of conventional sequential object programming, E enables
+programmers to handle all these issues simultaneously.
+
+\section{Acknowledgements}
+For various helpful suggestions, we thank
+Darius Bacon,
+Bill Frantz,
+Ian Grigg,
+David Hopwood,
+Piotr Kaminski,
+Alan Karp,
+Matej Kosik,
+Jon Leonard,
+Kevin Reid,
+Michael Sperber,
+Fred Spiessens,
+Terry Stanley,
+Marc Stiegler,
+Bill Tulloh,
+Steve Witham,
+Ka-Ping Yee
+and the e-lang and cap-talk communities. 
+Further thanks to Ka-Ping Yee for figures~\ref{fig:stackvat}
+and~\ref{fig:2vat}, 
+and to Terry Stanley for suggesting the listener pattern
+and purchase-order examples.
+
+\bibliography{common}
+%\bibliographystyle{splncs}
+\bibliographystyle{alpha}
+\end{document}

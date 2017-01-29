@@ -1,0 +1,218 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>E 0.8.4: Building on Windows</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">download</a>&nbsp;/&nbsp;<a href="index.html">0-8-4</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="windows-bin.html"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: E 0.8.4: Installing on Windows" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" -->x<!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="unix-bin.html"><img src="../../images/next.gif" width="64" height="32" alt="On to: E 0.8.4: Installing on Unix/Linux" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Building
+              </B><font size="7"><font size="7"><i><font color="#009000"><b>E</b></font></i></font><b></b><b>
+              0.8.4</b></font><B><br>
+              on Windows</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <h1>Installing a Development Environment</h1>
+      <p>See the <a href="index.html#dependencies">Dependencies</a> section for
+        information on obtaining appropriate version of a JDK and the Cygwin environment.</p>
+      <h1>The <font color="#009000"><i>E</i></font> Source Distribution</h1>
+      <p>For Windows users, we recommend downloading the <a href="https://www.cypherpunks.to/erights/download/0-8-4/tl-otc-E-src-0.8.4.zip">zip
+        of E</a> source distribution. </p>
+      <h2>Compilation Notes</h2>
+      <p>There are still some deprecated methods used in this release. You can
+        safely ignore these warnings for now.</p>
+      <h2>Building from Makefiles</h2>
+      <p>The file e/src/jsrc/Makefile defines a macro-variable named <tt>COMPILE</tt>
+        in a line like:</p>
+      <p>
+      <blockquote>
+        <pre>COMPILE=$(WCOMPILE)</pre>
+      </blockquote>
+      <p> </p>
+      <p>To the right, it either ways <tt>WCOMPILE</tt> or <tt>JCOMPILE</tt>.
+        As explained in the preceeding comment, WCOMPILE causes the build to use
+        the compiler that comes with Symantec Visual Cafe when Cafe is installed
+        at &quot;<tt>D:/VisualCafe</tt>&quot;. Needless to say, this is not a
+        very portable assumption. Change this to <tt>JCOMPILE</tt> in order to
+        build in a portable manner. However, on my machine this hits a very mysterious
+        problem documented in that Makefile comment. If you have different luck,
+        whether or not you succeed, please let me know.</p>
+      <p>To build the release, <tt>cd</tt> to the <tt>e/src</tt> directory and
+        type <tt>make</tt>.</p>
+      <h2>Building in a Java IDE</h2>
+      <p>The good news is that <font color="#009000"><i><b>E</b></i></font>
+        itself is a pure Java program. Besides the installer (setup.bat,setup.pif)
+        and the command-line drivers (e.bat,e.pif and elmer.bat,elmer.pif), you
+        can happily develop <font color="#009000"><i><b>E</b></i></font> using
+        a Java-only development environment, such as Symantec's Visual Cafe. For
+        concreteness, and because it's what I use, I'll explain how to build a
+        Cafe project for <font color="#009000"><i><b>E</b></i></font>, but user's
+        of other development environments should easily see how to do likewise
+        in their system. But first, you need to go to &quot;<tt>e/src/jsrc</tt>&quot;
+        and run &quot;<tt>make setup</tt>&quot; to initialize &quot;<tt>e/classes</tt>&quot;.
+        This does require the Cygwin environment.</p>
+      <p>To start with, create a &quot;New Project&quot;. For a project type,
+        select &quot;Empty Project&quot; since we don't want it generating new
+        source files for us. Select &quot;Project Options&quot;. Under the &quot;Project&quot;
+        tab, deselect &quot;Enable RAD for New Files&quot; since this is needless
+        overhead for us. The &quot;Project Type&quot; should be &quot;Application
+        - A program that requires a java.exe to run&quot;. We know of no reason
+        why &quot;Win32 - A standalone executable program&quot; shouldn't work,
+        but when we run the resulting executable we get an Out of Memory error.
+        If you have different luck, please let me know.</p>
+      <p>For the &quot;<tt>Main Class</tt>&quot; enter &quot;<tt>org.erights.e.elang.interp.Interp</tt>&quot;
+        -- the class whose <tt>main()</tt> is the top of the E interpreter.
+        For command like arguments, put &quot;<tt>d:\e\src\esrc\scripts\elmer.e</tt>&quot;.
+        Elmer is a good way to test each new build of <font color="#009000"><i><b>E</b></i></font>.</p>
+      <p>On the &quot;<tt>Compiler</tt>&quot; tab, we recommend deselecting
+        &quot;<tt>Show command line</tt>&quot;, but salt to taste.</p>
+      <p>On the &quot;<tt>Directories</tt>&quot; tab, for &quot;<tt>Show
+        directories for</tt>&quot;, first select &quot;<tt>Input class files</tt>&quot;.
+        This is where you enter the equivalent of the CLASSPATH. Assuming you
+        installed the <font color="#009000"><i><b>E</b></i></font> source tree
+        at &quot;<tt>d:\e\src</tt>&quot;, you should enter...</p>
+      <div align="center">
+        <table cellpadding="8" border="1">
+          <tr>
+            <th>...these directories</th>
+            <th>for these reasons</th>
+          </tr>
+          <tr>
+            <td>
+              <pre>d:\e\src\esrc</pre>
+            </td>
+            <td>For the <tt>*.emaker</tt> files</td>
+          </tr>
+          <tr>
+            <td>
+              <pre>d:\e\classes</pre>
+            </td>
+            <td>Where compiled java &amp; resources (icons) go</td>
+          </tr>
+          <tr>
+            <td>
+              <pre>d:\e\src\bin\jars\ALG_0-1-1.jar<br>d:\e\src\bin\jars\IJCE_0-1-1.jar<br>d:\e\src\bin\jars\SPT_0-1-1.jar</pre>
+            </td>
+            <td>The Cryptix files. These cannot be unpacked into \e\classes, but
+              must instead be included by name.</td>
+          </tr>
+          <tr>
+            <td>
+              <pre>d:\e\src\bin\jars\swingall-1.0.3.jar</pre>
+            </td>
+            <td>If your IDE doesn't already have an adequate Swing, download <a href="swingall-1.0.3.jar">swingall-1.0.3.jar</a>,
+              and place it at this location. Note that this swing is included
+              in the <font color="#009000"><i><b><a href="windows-bin.html">E</a></b></i></font><a href="windows-bin.html">
+              0.8.4 binary distribution</a>.</td>
+          </tr>
+        </table>
+      </div>
+      <p>&nbsp;</p>
+      <p>For &quot;<tt>Output files</tt>&quot;, &quot;<tt>Output directory</tt>&quot;,
+        enter &quot;<tt>d:\e\classes</tt>&quot;. This is where Cafe's compiler
+        will place the <tt>*.class</tt> files.</p>
+      <p>Now we need to suck all the <tt>e\src\jsrc\*.java</tt> files into
+        the project. It should work to set the &quot;<tt>Source files</tt>&quot;
+        to <tt>d:\e\src\jsrc</tt>, but it doesn't. Poking around all the menus,
+        it seems impossible to do this automatically, but Jay Fenton discovered
+        a trick. Go to the &quot;<tt>Search</tt>&quot; menu, select &quot;<tt>Find
+        in Files</tt>&quot;. Go to the &quot;<tt>Name and Location</tt>&quot;
+        tab. In the &quot;<tt>Find what:</tt>&quot; enter &quot;<tt>package</tt>&quot;
+        or any other string that all Java source files are guaranteed to contain.
+        &quot;<tt>In files of type:</tt>&quot; should be &quot;<tt>*.java</tt>&quot;.
+        Select the &quot;<tt>In folder:</tt>&quot; radio button and fill in
+        &quot;<tt>d:\e\src\jsrc</tt>&quot;. Be sure &quot;<tt>Search subfolders</tt>&quot;
+        is checked. The other options don't matter. Click &quot;<tt>Find</tt>&quot;
+        and wait awhile while the &quot;<tt>Find in Files</tt>&quot; window
+        lists all out *.java files.</p>
+      <p>Once this is done, go to the &quot;<tt>Find in Files</tt>&quot; window
+        and right click to bring up a menu. Select &quot;<tt>Add All to Project</tt>&quot;
+        and wait even longer. Once this is done, be sure to save your project
+        to avoid losing all this work. (Exiting and re-entering Cafe is a foolproof
+        technique.)</p>
+      <p>Finally, on the &quot;<tt>Project</tt>&quot; menu, select &quot;<tt>Run
+        in Debugger</tt>&quot;. Hopefully, after everything successfully compiles,
+        you'll see an Elmer window. You are now running <i>Elmer</i> under the
+        Cafe debugger. Have fun!</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="Prev"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" -->x<!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --> <img src="../../images/next-gray.gif" width="64" height="32" alt="Next"><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

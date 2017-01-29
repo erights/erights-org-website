@@ -1,0 +1,465 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>TermL Specification</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">data</a>&nbsp;/&nbsp;<a href="index.html">terml</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="embeddings.html" title="On to: TermL Embedding Examples"><img src="../../images/next.gif" width="64" height="32" alt="On to: TermL Embedding Examples" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><B>TermL
+              Specification<br>
+              <font size="5"><i><font color="#009000">E</font></i>'s Term-Tree 
+              Language</font></B><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <h1 ALIGN="left">Introduction</h1>
+      <p ALIGN="left"> TermL (pronounced <i>Term-EL</i> or <i>Ter-MEL</i>) is
+        <i><b><font color="#009000">E</font></b></i>'s language and system for
+        expressing and manipulating term-trees. <i>TermL</i> stands for <b>Ter</b>m
+        <b>M</b>anipulation <b>L</b>anguage. A <i>term-tree</i> is a tree of terms.
+        A <i>term</i> (a node of a term tree) consists of a label (called a <i>functor</i>)
+        and a sequence of child terms (called <i>arguments</i>). The leaves of
+        a term-tree are simply terms with no children.</p>
+      <table cellpadding="12" align="right" bgcolor="#80ffff">
+        <tr> 
+          <th colspan="2">Some languages for symbol trees</th>
+        </tr>
+        <tr> 
+          <th>XML</th>
+          <td> <pre>&lt;add&gt;
+    &lt;var&gt;x&lt;/var&gt;
+    &lt;num&gt;3&lt;/num&gt;
+&lt;/add&gt;</pre></td>
+        </tr>
+        <tr> 
+          <th><a href="http://json.org">JSON</a></th>
+          <td> <pre>{&quot;add&quot; : {
+    &quot;var&quot; : &quot;x&quot;,
+    &quot;num&quot; : 3}}</pre></td>
+        </tr>
+        <tr> 
+          <th>S-Expressions</th>
+          <td> <pre>(add (var &quot;x&quot;) (num 3))</pre></td>
+        </tr>
+        <tr> 
+          <th>TermL</th>
+          <td> <pre>add(var(&quot;x&quot;), num(3))</pre></td>
+        </tr>
+      </table>
+      <p><i><b><font color="#009000">E</font></b></i> uses term-trees (as found
+        in Prolog and related logic programming languages) for many of the same
+        purposes that others use S-Expressions or XML. All are generic means for
+        representing trees of symbols, and are useful for representing a great
+        variety of kinds of data. Trees of symbols lie midway between sequences
+        of symbols and graphs of symbols in expressiveness. A BNF-parser converts
+        a sequence of symbols into a tree of symbols called an Abstract Syntax
+        Tree, or AST. <i><b><font color="#009000">E</font></b></i> plans to use
+        ANTLR as its parser generator, and the ASTs produced by ANTLR can be faithfully
+        converted to and from TermL term-trees. <i><b><font color="#009000">E</font></b></i>
+        thereby uses TermL as its universal AST notation. </p>
+      <p><i>Note: ANTLR's documentation may cause confusion here. It says that 
+        its ASTs are logically S-Expressions, and ANTLR's notation for their ASTs 
+        looks like S-Expressions. However, their ASTs are instead logically equivalent 
+        to mutable term-trees, and their S-Expression-like notation for these 
+        term-trees just adds to the confusion. See <a href="embeddings.html#sexprs">Differences 
+        from S-Expressions</a> table below. </i></p>
+      <P>For each BNF grammar for parsing a sequential input language into a tree,
+        one can derive a tree-BNF, or a grammar over trees, that describes the
+        exactly possible trees that could result from parsing according to the
+        original BNF. As with XML, such tree-grammars are known as <i>schemas</i>,
+        and trees accepted by a given schema are <i>valid</i> with respect to
+        that schema. Each schema reflects the infoset of a particular input language
+        -- it shows what needs to be preserved after abstracting away from the
+        sequential surface syntax. ANTLR supports tree-BNF directly. TermL does
+        not currently make use of that support, but expects to in the future.
+      <P>Again, as with S-Expressions or XML, TermL has a standard universal textual
+        syntax -- universal in the sense that any TermL term-tree can be written
+        in that notation. As with the others, this notation is designed for both
+        human and machine readability. Unlike the other systems, but like other
+        term-tree notations, TermL is designed to be familiar and natural for
+        programmers coming to <i><b><font color="#009000">E</font></b></i> from
+        the C/Java/Python syntactic tradition. We expect to also define a universal
+        binary notation for TermL that encodes exactly the same information, but
+        in an encoding optimized only for automated use.
+      <h1 ALIGN="left"><a name="syntax"></a>Syntax</h1>
+      <p ALIGN="left">This specification extends the specifications in <a href="../common-syntax/index.html">Common
+        Syntactic Elements</a>.</p>
+      <h3 ALIGN="left"><a name="charclasses"></a>Character classes </h3>
+      <table bgcolor='#f5dcb3' cellpadding="12" bordercolor="#FFFFFF">
+        <tr valign='top'>
+          <th align='left' colspan="2">Name</th>
+          <th align='center'>&nbsp;</th>
+          <th align='left'>Definition</th>
+          <th align='left'>Ascii subset</th>
+        </tr>
+        <tr valign='top'>
+          <td align='right'> <pre><a name='segStart'></a></pre></td>
+          <td align='right'> <pre>segStart</pre></td>
+          <td align='center'> <pre>::=</pre></td>
+          <td align='left'> <pre><a href="http://java.sun.com/j2se/1.3/docs/api/java/lang/Character.html#isJavaIdentifierStart(char)">isJavaIdentifierStart</a>
+</pre></td>
+          <td align='left'> <pre>'a'..'z' | 'A'..'Z' | '_' | '$'</pre></td>
+        </tr>
+        <tr valign='top'>
+          <td align='right'> <pre><a name='segPart'></a></pre></td>
+          <td align='right'> <pre>segPart</pre></td>
+          <td align='center'> <pre>::=</pre></td>
+          <td align='left'> <pre>  <a href="http://java.sun.com/j2se/1.3/docs/api/java/lang/Character.html#isJavaIdentifierPart(char)">isJavaIdentifierPart</a>
+| <a href="http://www.w3.org/TR/REC-xml-names/#NT-NCNameChar">XML-NCNameChar</a></pre></td>
+          <td align='left'> <pre><a href="#segStart">segStart</a> | <a href="../common-syntax/lexing.html#digit10">digit10</a> | '.' | '-'</pre></td>
+        </tr>
+      </table>
+      <p><i>The non-ascii cases are not yet tested in the current TermL implementation.</i></p>
+      <h3><a name="tokentypes"></a>Token Types</h3>
+      <table border='0' bgcolor='#f5dcb3' cellpadding="12">
+        <tr valign='top'> 
+          <th align='left' colspan="2">Name</th>
+          <th align='center'>&nbsp;</th>
+          <th align='left'>Definition</th>
+          <th align='left'>Denotes</th>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='Token' id="Token"></a></pre></td>
+          <td align='right'> <pre><b>Token</b></pre></td>
+          <td align='right'><pre>::=</pre></td>
+          <td > <pre>  <a href="../common-syntax/lexing.html#Integer"><b>Integer</b></a> | <a href="#Float64">Float64</a>
+| <a href="../common-syntax/lexing.html#Char">Char</a> | <a href="../common-syntax/lexing.html#String">String</a> | <a href="#Tag">Tag</a>
+| anyof(&quot;(),[]{}:&quot;) / <a href="#Chars">Chars</a> </pre></td>
+          <td align='left'>&nbsp;</td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='Float64'></a></pre></td>
+          <td align='right'> <pre><b>Float64</b></pre></td>
+          <td align='center'> <pre>::=</pre></td>
+          <td align='left'> <pre>  <a href="../common-syntax/lexing.html#Real64">Real64</a> 
+| <font class="comment"># not yet implemented:</font>
+  '%NaN' | '-'? '%Infinity'</pre></td>
+          <td align='left'> <p>A value representable in the Java subset of IEEE 
+              double precision.</p></td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'><pre><a name="Chars"></a></pre></td>
+          <td align='right'> <pre><b>Chars</b></pre></td>
+          <td align='center'> <pre>::=</pre></td>
+          <td align='left'> <pre><font>'\'' (<a href="#charConst">charConst</a>
+      | '\&quot;' 
+      | '\\' '\n'
+     )+ '\''</font></pre></td>
+          <td align='left'> <p>A sequence of Unicode characters.</p>
+            <p>'xyz' is a <a href="#charseq">shorthand</a> for ('x', 'y', 'z')</p></td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='ident'></a></pre></td>
+          <td align='right'> <pre>ident</pre></td>
+          <td align='center'> <pre>::=</pre></td>
+          <td align='left'> <pre><a href="#segStart">segStart</a> <a href="#segPart">segPart</a>*</pre></td>
+          <td align='left'>Includes all Java and <i><b><font color="#009000">E</font></b></i> 
+            identifiers and fully qualified names, and <a href="http://www.w3.org/TR/REC-xml-names/#NT-NCName">XML-NCName</a>s.</td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='special'></a></pre></td>
+          <td align='right'> <pre><font>special</font></pre></td>
+          <td align='center'> <pre><font>::=</font></pre></td>
+          <td align='left'> <pre><font>'.' <a href="#ident">ident</a></font></pre></td>
+          <td align='left'>For keyword-like tags, such as <tt>.char.</tt> or <tt>.bag.</tt>.</td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='uri'></a></pre></td>
+          <td align='right'> <pre>uri</pre></td>
+          <td align='center'> <pre><font>::=</font></pre></td>
+          <td align='left'> <pre>'&lt;' <a href="../common-syntax/lexing.html#uric">uric</a>* '&gt;'</pre></td>
+          <td align='left'>Includes all URIs prior to &quot;%&quot; interpretation.</td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='segment'></a></pre></td>
+          <td align='right'> <pre>segment</pre></td>
+          <td align='center'> <pre>::=</pre></td>
+          <td align='left'> <pre><a href="#ident">ident</a> | <a href="#special">special</a> | <a href="#uri">uri</a></pre></td>
+          <td align='left'>&nbsp;</td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='sos'></a></pre></td>
+          <td align='right'> <pre>sos</pre></td>
+          <td align='center'> <pre>::=</pre></td>
+          <td align='left'> <pre>  <a href="#segment">segment</a> 
+| <a href="../common-syntax/lexing.html#String">String</a> <font class="comment"># not yet implemented</font></pre></td>
+          <td align='left'>A &quot;segment or string&quot;. </td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='Tag'></a></pre></td>
+          <td align='right'> <pre><font><b>Tag</b></font></pre></td>
+          <td align='center'> <pre><font> ::= </font></pre></td>
+          <td align='left'> <pre>  <a href="#segment">segment</a> ('::' <a href="#sos">sos</a>)*
+| ('::' <a href="#sos">sos</a>)+</pre></td>
+          <td align='left'> <p>Can also represent unresolved and resolved <a href="http://www.w3.org/TR/REC-xml-names/#NT-QName">XML-QName</a>s.</p></td>
+        </tr>
+      </table>
+      <p>The <a href="#ident">ident</a> production should accept all the keywords
+        and identifiers allowed by most C or Algol tradition languages. This includes
+        <i><b><font color="#009000">E</font></b></i> -- identifiers in the <i><b><font color="#009000">E</font></b></i>
+        language are just like Java identifiers except they may not include a
+        '$' (dollar sign). (<i><b><font color="#009000">E</font></b></i> excludes
+        the '$' for identifiers so the use of '$' in fully qualified names will
+        be unambiguous.)</p>
+      <p>The <a href="#special">special</a> production allows keyword-like segments
+        such as <tt>.bag.</tt> that can't conflict with the Java, <i><b><font color="#009000">E</font></b></i>,
+        or <a href="http://www.w3.org/TR/REC-xml-names/#NT-NCName">XML-NCName</a>s,
+        since none of these allow an initial <tt>'.'</tt>. By convention, the
+        special names also end with a <tt>'.'</tt>. The special names are reserved
+        for use by TermL and TermL related specifications. (Much as names beginning
+        with &quot;xml&quot; are reserved for use by XML and XML-related specifications.)</p>
+      <p>In the <a href="#uri">uri</a> production, any '\\' characters read in
+        are converted to '/', and any '|' characters are converted to ':', so
+        the TermL infoset does not include these as possible characters in a <a href="#Tag">Tag</a>.
+      </p>
+      <p>Since the <a href="#uri">uri</a> production by convention will often
+        represent <a href="http://ftp.ics.uci.edu/pub/ietf/uri/rfc2396.txt">IETF-URI</a>s,
+        this sequence of <a href="../common-syntax/lexing.html#uric">uric</a> characters may often contain
+        sequences such as <tt>'%' <a href="../common-syntax/lexing.html#digit16">digit16</a> <a href="../common-syntax/lexing.html#digit16">digit16</a></tt>
+        in order to quote a non-uric character. The interpretation of such quotations
+        must <i>not</i> be done by a TermL lexer and parser, but is instead left
+        to the application if it wishes to do so. The TermL infoset includes such
+        sequences only in their uninterpreted form.</p>
+      <h3><a name="kernel"></a>Term Tree Kernel Grammar &amp; Infoset</h3>
+      <table border='0' bgcolor='#f5dcb3' cellpadding="12">
+        <tr valign='top'>
+          <th align='left' colspan="2">Name</th>
+          <th align='center'>&nbsp;</th>
+          <th align='left'>Definition</th>
+          <th align='left'>Denotes</th>
+        </tr>
+        <tr valign='top'>
+          <td align='right'> <pre><a name='term'></a></pre></td>
+          <td align='right'> <pre><b>&lt;term&gt;</b></pre></td>
+          <td align='center'> <pre>::=</pre></td>
+          <td align='left'> <pre><a href="#functor">&lt;functor&gt;</a> '(' <a href="#argList">&lt;argList&gt;</a> ')'</pre></td>
+          <td align='left'>Labeled tree-node. A term-tree is a tree of such nodes.
+          </td>
+        </tr>
+        <tr valign='top'>
+          <td align='right'> <pre><a name='functor'></a></pre></td>
+          <td align='right'> <pre><font>&lt;functor&gt;</font></pre></td>
+          <td align='center'> <pre><font> ::= </font></pre></td>
+          <td align='left'> <pre>  <a href="../common-syntax/lexing.html#Integer">Integer</a> | <a href="#Float64">Float64</a>
+| <a href="../common-syntax/lexing.html#Char">Char</a> | <a href="../common-syntax/lexing.html#String">String</a> | <a href="#Tag">Tag</a></pre></td>
+          <td align='left'>Label on a tree-node. A functor's <i>kind</i> is a
+            tag (see below).</td>
+        </tr>
+        <tr valign='top'>
+          <td align='right'> <pre><a name='argList'></a></pre></td>
+          <td align='right'> <pre>&lt;argList&gt;</pre></td>
+          <td align='center'> <pre>::=</pre></td>
+          <td align='left'> <pre>( <a href="#term">&lt;term&gt;</a> (',' <a href="#term">&lt;term&gt;</a>)* )?</pre></td>
+          <td align='left'>Sequence of ordered children of a tree-node.</td>
+        </tr>
+      </table>
+      <div>
+        <p>Each functor has a <i>kind</i>, which is a tag. Tags are an enumeration
+          of kinds -- each tag is its own kind. The four forms of literal data
+          are each represented by their own kind -- the tags shown in the following
+          table:</p>
+        <table border='0' bgcolor='#f5dcb3' cellpadding="12">
+          <tr valign='top'>
+            <th align='left' colspan="2">Token Type</th>
+            <th align='left'>Functor Kind</th>
+          </tr>
+          <tr valign='top'>
+            <td align='right'> <pre><a name='Integer'></a></pre></td>
+            <td align='right'> <pre>Integer</pre></td>
+            <td align='left'> <pre>.int.</pre></td>
+          </tr>
+          <tr valign='top'>
+            <td align='right'> <pre><a name='Integer'></a></pre></td>
+            <td align='right'> <pre>Float64</pre></td>
+            <td align='left'> <pre>.float64.</pre></td>
+          </tr>
+          <tr valign='top'>
+            <td align='right'> <pre><a name='Integer'></a></pre></td>
+            <td align='right'> <pre>Char</pre></td>
+            <td align='left'> <pre>.char.</pre></td>
+          </tr>
+          <tr valign='top'>
+            <td align='right'> <pre><a name='Integer'></a></pre></td>
+            <td align='right'> <pre>String</pre></td>
+            <td align='left'> <pre>.String.</pre></td>
+          </tr>
+          <tr valign='top'>
+            <td align='right'> <pre><a name='Integer'></a></pre></td>
+            <td align='right'> <pre>Tag</pre></td>
+            <td align='left'> <i>Each tag's kind is itself</i></td>
+          </tr>
+        </table>
+      </div>
+      <p>For a given application of TermL, such as representing ASTs from parsing
+        a particular language, there will typically be an infinite number of possible
+        functors, but a finite number of possible functor kinds. Each functor
+        kind will typically correspond to an AST node type. A TermL <i>schema</i>
+        (to be covered separately) should specify constraints in terms of functor
+        kinds rather than particular functors.</p>
+      <p>In order to preserve one-to-one correspondence with ANTLR ASTs, and because
+        it makes the TermL infoset simpler, the TermL spec allows non-tag functors
+        with children. However, this is currently discouraged until a motivating
+        use is found. Instead, terms with a non-empty list of children should
+        generally have tag functors, and non-tag functors should generally be
+        used only as leaves.</p>
+      <h3><a name="shorthands"></a>Syntactic Shorthands</h3>
+      <table border='0' bgcolor='#f5dcb3' cellpadding="12">
+        <tr valign='top'> 
+          <th align='left' colspan="2">Alternate Term Syntax</th>
+          <th align='center'>&nbsp;</th>
+          <th align='left'>Expands to</th>
+          <th align='left'>Conventional Purpose</th>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='bareFunctor'></a></pre></td>
+          <td align='right'> <pre><font><a href="#functor">&lt;functor&gt;</a></font></pre></td>
+          <td align='center'>&nbsp;</td>
+          <td align='left'> <pre>&lt;functor&gt;()</pre></td>
+          <td align='left'>Leaves are just childless nodes.</td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='tuple'></a></pre></td>
+          <td align='right'> <pre>'[' <a href="#argList">&lt;argList&gt;</a> ']'</pre></td>
+          <td align='center'>&nbsp;</td>
+          <td align='left'> <pre>.tuple.(&lt;argList&gt;)</pre></td>
+          <td align='left'>For when a term is just a sequence of ordered children.</td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='bag'></a></pre></td>
+          <td align='right'> <pre><font>'{' <a href="#argList">&lt;argList&gt;</a> '}'</font></pre></td>
+          <td align='center'>&nbsp;</td>
+          <td align='left'> <pre>.bag.(&lt;argList&gt;)</pre></td>
+          <td align='left'>For when a term is just a bag of unordered children, 
+            ie, when the order is not significant.</td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='labeledBag'></a></pre></td>
+          <td align='right'> <pre><a href="#functor">&lt;functor&gt;</a> '{' <a href="#argList">&lt;argList&gt;</a> '}'</pre></td>
+          <td align='center'>&nbsp;</td>
+          <td align='left'> <pre>&lt;functor&gt;({&lt;argList&gt;})
+
+<font class="comment"># which further expands to</font>
+
+&lt;functor&gt;(.bag.(&lt;argList&gt;))</pre></td>
+          <td align='left'>For when a term is a labeled bag of unordered children.</td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='instanceVar'></a></pre></td>
+          <td align='right'> <pre><a href="#functor">&lt;functor&gt;</a> ':' <a href="#term">&lt;term&gt;</a>
+</pre></td>
+          <td align='center'>&nbsp;</td>
+          <td align='left'> <pre>.attr.(&lt;functor&gt;(&lt;term&gt;))
+</pre></td>
+          <td align='left'><p>For when the label on a singleton child is not about 
+              properties of the child, but about its relationship to the parent.</p>
+            <p>See <a href="http://www.eros-os.org/pipermail/e-lang/2005-January/010355.html">Quasi-JSON 
+              back from the dead</a> (the section at the end of the linked page)</p></td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='charseq'></a></pre></td>
+          <td align='right'> 
+            <pre><a href="#Chars">Chars</a><a href="#term"></a>
+</pre></td>
+          <td align='center'>&nbsp;</td>
+          <td align='left'> 
+            <pre>Char, ..., Char</pre></td>
+          <td align='left'><p>'xyz' expands to ('x', 'y', 'z')</p>
+            </td>
+        </tr>
+      </table>
+      <p>The first shorthand -- being able to omit an empty argument list -- is
+        essential for human readability, and is supported by all term-tree languages.
+        It allows us to write</p>
+      <blockquote>
+        <pre>add(2, 3)</pre>
+      </blockquote>
+      <p>rather than</p>
+      <blockquote>
+        <pre>add(2(), 3())</pre>
+      </blockquote>
+      <p>The rest support some standard conventions for representing concepts
+        from more complex infosets using the simple concepts for TermL, as shown
+        by the <a href="embeddings.html">following example embeddings</a>.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">data</a>&nbsp;/&nbsp;<a href="index.html">terml</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="embeddings.html" title="On to: TermL Embedding Examples"><img src="../../images/next.gif" width="64" height="32" alt="On to: TermL Embedding Examples" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

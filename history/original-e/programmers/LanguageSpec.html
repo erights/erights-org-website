@@ -1,0 +1,1143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+   <TITLE>The E Language Specification</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.0Gold (Win95; I) [Netscape]">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+
+<PRE><IMG SRC="midi_e.gif" ALT="Electric Communities: E Programming Language" HEIGHT=30 WIDTH=30>  <A HREF="index.html">Contents</A>  <A HREF="../index.html">Home Page</A>
+</PRE>
+
+<P>
+<HR></P>
+
+<H1>The E Language Specification</H1>
+
+<P>
+<HR></P>
+
+<BLOCKQUOTE>
+<P>This chapter describes the E language specification. Generally, E follows
+Java's language specifications, plus some additions.</P>
+
+<P> <B>Additional functionality for Java keywords.</B> In E, you use regular
+Java statements such as <TT>implements</TT> and <TT>imports</TT>. Generally,
+the behavior of these keywords is the same as in Java.</P>
+
+<P> The <TT>import</TT> statement has some additional functionality when
+used in E, in that it also imports the sealers (as well as the related
+classes and methods) for the messages in the E-classes and E-interfaces.</P>
+
+<P> <B>E reserved words. </B>Besides the regular Java reserved words, the
+E runtime has its own <A HREF="#reserved">reserved words.</A></P>
+
+<P> <B>E language elements.</B> E also provides language elements that
+support the E runtime:</P>
+
+<P> </P>
+
+<UL>
+<LI><A HREF="#send">&lt;- (Send)</A> </LI>
+
+<LI><A HREF="#dist">&amp; (Distributor Operator)</A> </LI>
+
+<LI><A HREF="#eclass">eclass</A> </LI>
+
+<LI><A HREF="#emethod">emethod</A> </LI>
+
+<LI><A HREF="#eforall">eforall</A> </LI>
+
+<LI><A HREF="#eif">eif</A> </LI>
+
+<LI><A HREF="#eorif">eorif</A> </LI>
+
+<LI><A HREF="#einterface">einterface</A> </LI>
+
+<LI><A HREF="#ethrow">ethrow</A> </LI>
+
+<LI><A HREF="#etry">etry</A> </LI>
+
+<LI><A HREF="#ewhen">ewhen</A> </LI>
+
+<LI><A HREF="#eorwhen">eorwhen</A> </LI>
+
+<LI><A HREF="#ewhenever">ewhenever</A> </LI>
+
+<LI><A HREF="#forward">forward</A> </LI>
+</UL>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="reserved"></A>E reserved words</H1>
+
+<BLOCKQUOTE>
+<UL>
+<LI>ecatch<BR>
+</LI>
+
+<LI>eclass<BR>
+</LI>
+
+<LI>efalse<BR>
+</LI>
+
+<LI>eforall<BR>
+</LI>
+
+<LI>eif<BR>
+</LI>
+
+<LI>einterface<BR>
+</LI>
+
+<LI>emethod<BR>
+</LI>
+
+<LI>enull<BR>
+</LI>
+
+<LI>eorif<BR>
+</LI>
+
+<LI>eorwhen<BR>
+</LI>
+
+<LI>ethrow<BR>
+</LI>
+
+<LI>etrue<BR>
+</LI>
+
+<LI>etry<BR>
+</LI>
+
+<LI>ewhen<BR>
+</LI>
+
+<LI>ewhenever<BR>
+</LI>
+</UL>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="send"></A>&lt;- (send) </H1>
+
+<BLOCKQUOTE>
+<P><TT><I>recipientEobject</I> &lt;- <I>messageName</I> (<I>messageParameterList</I>);
+</TT></P>
+
+<P>The send operator (<TT>&lt;-)</TT>, is the operator that sends E messages
+to an E-object. The <I>messageName</I> and <I>messageParameterList</I>
+take the same form as they do in a regular Java method call. </P>
+
+<P>The <I>recipientEobject</I> denotes the E-object to which the message
+should be sent. This can be an E-object proper or a channel. If you already
+have a sealed message encapsulated in an envelope (that is, in an object
+of class <I>RtEnvelope</I>), you can send it with an expression of the
+form:</P>
+
+<P> <TT>recipientEobject &lt;- envelopeExpression; </TT></P>
+
+<P>where <I>envelopeExpression</I> is an expression whose result is the
+envelope you wish to send.</P>
+
+<P> Alternatively, the recipient can be a variable of class <I>RtEnvelope.
+</I>In this case, the message is simply sealed in a new envelope which
+is stored in the variable, but is not sent anywhere.</P>
+
+<P> </P>
+
+<H2>Examples</H2>
+
+<P>Send a message <TT>myMessage</TT> to an E-object called <TT>otherGuy</TT>.</P>
+
+<P> </P>
+
+<PRE><TT>otherGuy &lt;- myMessage ();</TT>
+</PRE>
+
+<P>The E-object <TT>otherGuy</TT> has a corresponding E-method called <TT>myMessage</TT>,
+which it executes when it receives the message.</P>
+
+<P> </P>
+
+<PRE><TT>eclass otherGuyClassDefinition {
+  .......
+  myMessage();
+  .......
+}</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="dist"></A>&amp; (distributor operator) </H1>
+
+<BLOCKQUOTE>
+<PRE><TT>&amp; </TT><I>channelName</I>
+</PRE>
+
+<P>The distributor operator (the ampersand symbol) obtains a channel variable's
+distributor (in order to send it a <TT>forward</TT> message, for example).
+The result is of class <I>EDistributor</I> and you can treat it as a normal
+value; for example, you can pass it as a message parameter.</P>
+
+<P> You can only use this operator within the scope of the channel's initial
+declaration. You cannot use this operator on a channel which has been passed
+as the parameter of an E message or Java method call, or stored as an instance
+variable of an object other than that object itself.</P>
+
+<P> All variables whose class is <I>EObject</I> (or a subclass of <I>EObject</I>)
+that have not been explicitly initialized in their declaration are implicitly
+initialized to a new instance of <I>EChannel</I>. Such channels are initially
+unforwarded (that is, they have not yet been given a destination E-object.
+See the <TT>forward</TT> statement later in this chapter for more information).
+</P>
+
+<P>To forward a channel, send the <TT>forward</TT> message to the channel's
+associated distributor, including the destination E-object as a message
+parameter (see the following example).</P>
+
+<P> </P>
+
+<H2>Example </H2>
+
+<PRE><TT>&amp;sparkPlug &lt;- forward(spark);</TT>
+</PRE>
+
+<P>This example extracts the distributor for the channel <TT>sparkPlug,</TT>
+and sends the distributor a message forwarding it to <TT>spark</TT>.</P>
+
+<P> </P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="eclass"></A>eclass </H1>
+
+<BLOCKQUOTE>
+<PRE><TT><I>modifier*</I> eclass <I>newEClassName 
+</I>  [ extends<I> superEclassName </I>]
+<I>  </I>[ implements <I>interfaceList </I>]
+  { <I>eclassBody</I> }</TT>
+</PRE>
+
+<P>The <TT>eclass</TT> statement defines a new E-class, and is similar
+to Java's <TT>class</TT> statement. </P>
+
+<P>An E-class can implement message protocols (called E-interfaces in this
+manual) as well as regular Java interfaces. You designate an E-interface
+with the <TT>einterface</TT> keyword. The optional <I>interfaceList</I>
+is a comma-separated list of interface and E-interface names.</P>
+
+<P> An E-class can only extend another E-class. If it is not explicitly
+declared to extend another E-class, its immediate superclass is <I>EObject</I>.
+E-classes inherit E-interfaces, E-methods, regular Java methods, and instance
+variables from their superclasses.</P>
+
+<P> Instance variables and Java methods in an E-class cannot be declared
+<TT>public</TT>; they can only be accessed from within the object itself.
+All references to the instance variables or Java methods of an E-class
+must be made relative to <TT>this</TT> or <TT>super</TT>, either explicitly
+or implicitly. This is because the reference may actually lead to a remote
+E-object in a different machine across a network connection; its instance
+variables and Java methods will not be directly accessible, even though
+you <I>can</I> send E-messages to it.</P>
+
+<P> An <TT>eclass</TT> body can contain any of the statements allowed inside
+regular Java <TT>class</TT> body. In addition, it can contain either E-methods
+or an <TT>eforall</TT> declaration. These are described in the following
+subsections. Both Java methods and E-methods can use the E deferring statements
+(such as <TT>ewhen</TT> <TT>and</TT> <TT>ewhenever</TT>); these statements
+are described later in this chapter.</P>
+
+<P> An E-class can have either an <TT>eforall</TT> or an <TT>emethod</TT>
+declaration; it cannot have both. However, it can still have Java methods
+in either situation.</P>
+
+<P> The <I>modifier</I>s are optional and can be either the <TT>public</TT>,
+<TT>final</TT> or <TT>abstract</TT> Java modifiers.</P>
+
+<P> </P>
+
+<H2>Example</H2>
+
+<PRE><TT>eclass EFileExampleLauncher implements ELaunchable
+  {
+    emethod go (RtEEnvironment env) {
+   <I>  eclass body...}
+  
+</I>}</TT>
+</PRE>
+
+<H2><A NAME="emethod"></A>emethod</H2>
+
+<PRE><TT>emethod <I>methodName (parameterList) {
+  methodBody}</I></TT>
+</PRE>
+
+<P>The<B> </B><TT>emethod</TT> declaration defines an E-method for an E-class.
+An E-method is a block of code that is invoked when the E-object receives
+a corresponding message with that E-method name. An E-class must have an
+<TT>emethod</TT> declaration for each message it can receive. E-methods
+and their corresponding messages are named within the scope of the containing
+package (such as <TT>ec.e.run</TT>).</P>
+
+<P> An E-method message parameter is typed in the same manner as a Java
+method parameter. The <I>parameterList</I> consists of a series of comma-separated
+entries of the form:</P>
+
+<P> </P>
+
+<PRE><TT>  <I>parameterType parameterName</I></TT></PRE>
+
+<P>The body of the E-method follows the same format as a Java method body.
+Note that no return type is declared-since E-message sends are one-way,
+there is no return value. Also, since E-methods are not &quot;called&quot;
+by objects, they do not have access specifiers such as <TT>public</TT>
+or <TT>protected</TT>.</P>
+
+<P> Java classes cannot contain E-methods, though they can send messages
+to E-objects.</P>
+
+<P> </P>
+
+<H4>Example</H4>
+
+<PRE><TT>emethod DieRollEWhen(
+  EInteger HisResult, EInteger HisKey, 
+  EDistributor MyResult, EDistributor MyKey)
+{
+<I>  DieRollEWhen code body
+
+</I>}</TT>
+</PRE>
+
+<H2><A NAME="eforall"></A>eforall</H2>
+
+<PRE><TT>eforall (<I>parameter
+</I>) {
+  <I>methodBody
+
+</I>}</TT>
+</PRE>
+
+<P>The <TT>eforall</TT> declaration is an alternative to an <TT>emethod</TT>
+declaration. It receives all messages sent to instances of its class, but
+it is given these messages in sealed envelopes which it cannot open, since
+it lacks unsealers. </P>
+
+<P>An <TT>eforall</TT> statement has a single parameter which must be of
+class <I>RtEnvelope</I>; this parameter contains the sealed message. Although
+the method cannot open the envelope, it <I>can</I> send it to other E-objects.
+You can use this feature to implement message &quot;plumbing&quot; of various
+sorts, such as forwarders, redirectors, and loggers.</P>
+
+<P> </P>
+
+<H4>Example</H4>
+
+<P>This example sends a message to an E-object <TT>newMiddleman</TT> containing
+an <TT>eforall</TT>. The <TT>eforall</TT> logs the message and then sends
+the sealed message on to another destination (<TT>theRealDestination</TT>)
+without ever &quot;opening&quot; it.</P>
+
+<P> </P>
+
+<PRE><TT>public eclass EMessagesender {
+  EMiddleman newMiddleman = new EMiddleman();
+  ....
+  distributionList&lt;-forward(newMiddleman);
+  .....
+}
+
+eclass EMiddleman {
+  eforall (RtEnvelope msg) {
+    <I>logMessage</I>(msg);
+    theRealDestination &lt;- msg;
+  } 
+}</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="eif"></A>eif </H1>
+
+<BLOCKQUOTE>
+<PRE><TT>eif (<I>condition</I>) {
+  <I>thenBlock
+</I>} [ eorif ( <I>alternativeCondition</I> ) {
+  <I>eorifBlock
+</I>} ]* [ else {
+  <I>elseBlock
+</I>} ]</TT>
+</PRE>
+
+<P>The <TT>eif</TT> statement is similar to the Java <TT>if</TT> statement,
+and handles conditional execution clauses. However, it uses optimistic
+computation to determine the <I>condition</I>. This <I>condition</I> must
+be an <I>EBoolean</I>, though it can actually be a channel to an <I>EBoolean</I>
+whose value is undetermined at the time the <TT>eif</TT> statement is initially
+executed. </P>
+
+<P>The <TT>eif</TT> statement is part of a special group of E statements
+that defer code execution until a value is furnished for a variable. These
+statements include <TT>eif</TT>, <TT>ewhen</TT>, <TT>ewhenever</TT>, and
+the <TT>ecatch</TT> portion of <TT>etry</TT>. These statements are described
+elsewhere in this chapter.</P>
+
+<P> All other non-deferring statements in the code block which contains
+the <TT>eif</TT> statement (including statements which follow the <TT>eif</TT>
+in the source text), execute before the code blocks associated with the
+<TT>eif</TT>, regardless of when the value of <I>condition</I> is furnished.
+</P>
+
+<P>An <TT>eif</TT> statement defers execution of its associated code blocks
+until <I>condition</I> furnishes a value. If there are no <TT>eorif</TT>
+clauses (documented in the following subsection), and <I>condition</I>
+is <TT>etrue</TT>, <I>thenBlock</I> executes. If <I>condition</I> is <TT>efalse</TT>,
+the <I>elseBlock</I> executes (if there is one). If no <I>EBoolean</I>
+is furnished for <I>condition</I>, neither block executes.</P>
+
+<P> </P>
+
+<H3>Using eif with Java code</H3>
+
+<P>An <TT>eif</TT> statement can only be used inside an E-class, although
+it does not need to exist inside an E-method. Note, however, that if you
+use <TT>eif</TT> inside a regular Java method, you cannot return a value
+for that method from within the <TT>eif</TT> statement. This is because
+the Java method will actually have returned before any of the blocks associated
+with the <TT>eif</TT> gets executed. You <I>can</I> use a <TT>return</TT>
+statement (without a return value) inside an <TT>eif</TT> to exit the <TT>eif</TT>
+conditional block.</P>
+
+<P> An <TT>eif</TT> statement can produce results different from Java's
+<TT>if</TT> statement, even though the code may appear logically the same.
+See the example at the end of this section for more information. </P>
+
+<H3><A NAME="eorif"></A>Multiway-guarded eif statement</H3>
+
+<P>If the <TT>eif</TT> statement contains one or more <TT>eorif</TT> clauses,
+it becomes a multiway guarded <TT>eif</TT> statement. A multiway <TT>eif</TT>
+handles conditional cases that are evaluated concurrently, such as timeouts.
+This construct consists of an <TT>eif</TT> clause, followed by one or more
+<TT>eorif</TT> clauses and an optional <TT>else</TT> clause:</P>
+
+<P> </P>
+
+<PRE><TT>eif ( <I>condition
+</I> ) {
+<I>  thenBlock
+</I>} [ eorif ( <I>alternativeCondition
+</I> ) {
+<I>  eorifBlock
+</I>} ]* [ else {
+<I>  elseBlock
+</I>} ]</TT>
+</PRE>
+
+<P>The <I>condition</I> associated with <I>thenBlock</I> and the various
+<I>alternativeConditions</I> associated with the <I>eorifBlock</I>s are
+evaluated concurrently. The first to result in <TT>etrue</TT> has its associated
+code block executed and prevents all the other code blocks from executing.
+The <I>elseBlock</I> executes only if all the conditions result in <TT>efalse</TT>.
+</P>
+
+<P>In a multiway-guarded <TT>eif</TT>, only one block will ever execute,
+though none of them will if none of the conditions furnishes a value.</P>
+
+<P> </P>
+
+<H2>Examples</H2>
+
+<PRE><TT>eif (Win) {
+  <I>WinnerCode
+
+</I>} else {
+  <I>LoserCode
+
+</I>}</TT>
+</PRE>
+
+<P>In this example, <I>WinnerCode</I> executes if the value produced from
+<TT>Win</TT> is true. <I>LoserCode</I> executes if the value is false.
+Neither code block executes if there is no value.</P>
+
+<P> </P>
+
+<H4>Sample eif program</H4>
+
+<P><TT>eif</TT> statements may produce results different from Java's <TT>if</TT>
+statements, even though the code may appear logically the same. The following
+code samples illustrate this idea.</P>
+
+<P> This program uses <TT>eif</TT>. It outputs:</P>
+
+<P> </P>
+
+<PRE><TT>  1: a=5 b=6 v=10
+  4: a=5 b=6 v=10
+  5: a=125 b=126 v=1000
+  2: a=5 b=6 v=1000
+  3: a=25 b=26 v=100
+
+public class ScopeDemoEif
+{
+  public static void main(String args[]) {
+    DemoClass theInstance = new DemoClass();
+    theInstance &lt;- go();
+  }
+
+  static void print(String tag, int a, int b, int v) {
+    System.out.println
+      (tag + &quot; a=&quot; + a + &quot; b=&quot; + b + &quot; v=&quot; + v);
+  }
+}
+
+eclass DemoClass {
+  int v = 10;
+
+  emethod go() {
+    int a = 5;
+    int b = 6;
+
+    ScopeDemoEif.print(&quot;1:&quot;, a, b, v);
+    eif (etrue) {
+      ScopeDemoEif.print(&quot;2:&quot;, a, b, v);
+      a = 25;
+      b = 26;
+      v = 100;
+      ScopeDemoEif.print(&quot;3:&quot;, a, b, v);
+    }
+    ScopeDemoEif.print(&quot;4:&quot;, a, b, v);
+    a = 125;
+    b = 126;
+    v = 1000;
+    ScopeDemoEif.print(&quot;5:&quot;, a, b, v);
+  }
+}</TT>
+</PRE>
+
+<H4>Sample if program</H4>
+
+<P>This program uses <TT>if</TT>. It outputs:</P>
+
+<P> </P>
+
+<PRE><TT>  1: a=5 b=6 v=10
+  2: a=5 b=6 v=10
+  3: a=25 b=26 v=100
+  4: a=25 b=26 v=100
+  5: a=125 b=126 v=1000
+
+public class ScopeDemoIf
+{
+  public static void main(String args[]) {
+    DemoClass theInstance = new DemoClass();
+    theInstance &lt;- go();
+  }
+
+  static void print(String tag, int a, int b, int v) {
+    System.out.println
+      (tag + &quot; a=&quot; + a + &quot; b=&quot; + b + &quot; v=&quot; + v);
+  }
+}
+
+eclass DemoClass {
+  int v = 10;
+
+  emethod go() {
+    int a = 5;
+    int b = 6;
+
+    ScopeDemoIf.print(&quot;1:&quot;, a, b, v);
+    if (true) {
+      ScopeDemoIf.print(&quot;2:&quot;, a, b, v);
+      a = 25;
+      b = 26;
+      v = 100;
+      ScopeDemoIf.print(&quot;3:&quot;, a, b, v);
+    }
+    ScopeDemoIf.print(&quot;4:&quot;, a, b, v);
+    a = 125;
+    b = 126;
+    v = 1000;
+    ScopeDemoIf.print(&quot;5:&quot;, a, b, v);
+  }
+}</TT>
+</PRE>
+
+<H4>Sample eorif program</H4>
+
+<PRE><TT>eif (AlmostAtLight) {
+<I>  SlowWayDown...
+
+</I>} eorif (StopLightBroken) {
+<I>  StopSign...
+
+</I>} eorif (StopLightYellow) {
+<I>  SpeedUp...
+
+</I>} eorif (StopLightRed) {
+<I>  Halt...
+
+</I>} else {
+<I>  ProceedAtSpeed...
+
+</I>}</TT>
+</PRE>
+
+<P>This guarded <TT>eif</TT> construct simulates decision-making when approaching
+a traffic light.</P>
+
+<P> The <TT>eorif</TT> guard clauses look for one of the following conditions
+to be true: <TT>AlmostAtLight</TT>, <TT>StopLightRed</TT>, <TT>StopLightBroken</TT>,
+<TT>StopLightYellow</TT>. </P>
+
+<P>The first one that evaluates as true causes the appropriate code block
+to execute: either <I>SlowWayDown</I>, <I>StopSign</I>, <I>SpeedUp</I>,
+or <I>Halt</I>; the rest of the construct is then disregarded. If all the
+guard conditions evaluate as false, code block <I>ProceedAtSpeed</I> executes.</P>
+
+<P> </P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="einterface"></A>einterface </H1>
+
+<BLOCKQUOTE>
+<PRE><TT>einterface <I>einterfaceName</I> 
+  [ extends <I>einterfaceList</I> ] 
+  { <I>messageDeclarations</I> }</TT>
+</PRE>
+
+<P>The <TT>einterface</TT> statement encapsulates a set of abstract E-message
+declarations, in the same way that Java's <TT>interface</TT> statement
+encapsulates a set of abstract Java method declarations. It can optionally
+<TT>extend</TT> one or more other E-interfaces. The<I> einterfaceList</I>,
+if given, is a comma-separated list of E-interface names.</P>
+
+<P> The body of the statement is a series of message declarations of the
+form:</P>
+
+<P> </P>
+
+<PRE><TT>  <I> messageName </I>(<I> parameters</I> );</TT>
+</PRE>
+
+<P>Message parameters are declared the same manner as a Java abstract method
+declaration.</P>
+
+<P> There is no return type for a message declaration; since E-messages
+are one-way, there is no return value.</P>
+
+<P> <B>NOTE:</B> Each E-class implicitly defines an E-interface of its
+own, which describes any messages the E-class implements that are not already
+declared in its implemented E-interfaces.</P>
+
+<P> </P>
+
+<H2>Example</H2>
+
+<PRE><TT>einterface ProtocolA extends ProtoB, ProtoC {
+  MessageA(int, EInteger);
+  MessageB(EBoolean);
+}</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="ethrow"></A>ethrow </H1>
+
+<BLOCKQUOTE>
+<PRE><TT>ethrow <I>expression</I>;</TT>
+</PRE>
+
+<P>The <TT>ethrow</TT> statement is similar to Java's <TT>throw</TT> statement,
+except that it throws an E-exception. <I>expression</I> is the E-exception
+that is thrown. See the information on the <TT>etry</TT> statement for
+a more detailed discussion of E's exception handling mechanism.</P>
+
+<P> </P>
+
+<H2>Example</H2>
+
+<PRE><TT>ethrow new RtDirectoryFailure(&quot;Directory not available&quot;);</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="etry"></A>etry </H1>
+
+<BLOCKQUOTE>
+<PRE><TT>etry {
+  <I>trycodeBlock
+</I>} [ ecatch (<I>exceptionType</I> <I>exceptionVariable</I>) {
+  <I>ecatchcodeBlock
+</I>} ]<I>+
+</I> </TT>
+</PRE>
+
+<P>The <TT>etry</TT> statement is similar to Java's <TT>try</TT> statement.
+It contains one or more <TT>ecatch</TT> clauses that receive E-exceptions
+and determine what to do with them. These <TT>ecatch</TT> clauses collectively
+establish a new E-exception handling environment for the execution of <I>trycodeBlock</I>.
+Any E-exceptions which are thrown by executing <I>trycodeBlock</I> are
+caught here, except those that are caught inside another <TT>etry</TT>
+statement. </P>
+
+<P>Just as the Java exception handling environment follows the flow of
+method call and return, the E-exception handling environment follows the
+flow of message sends. However, because E-message sends are one-way operations
+and E-method invocations are asynchronous, the behavior of E's exception
+mechanism differs significantly from Java's.</P>
+
+<P> The exception handling environment established by an <TT>etry</TT>
+statement accompanies any messages sent by <I>trycodeBlock</I> into the
+E-methods that process those messages. It will continue to accompany any
+messages those E-methods send in turn, unless they establish new E-exception
+environments with <TT>etry</TT> statements of their own.</P>
+
+<P> An E-exception environment persists until all messages within it have
+been processed, including any messages spawned by remote objects in response
+to messages received from the current environment. In other words, an E-exception
+handling environment is responsible for all computation initiated within
+its scope, even if remote objects are doing the computing.</P>
+
+<P> Any time an E-exception is thrown (via the <TT>ethrow</TT> statement),
+the exception is caught by whatever E-exception handling environment is
+current for the E-method that is executing.</P>
+
+<P> All other non-deferring statements in the code block which contains
+the <TT>etry</TT>, including statements which follow the <TT>etry</TT>
+in the source text, execute before the code blocks associated with the
+ecatc<TT>h</TT> clauses, regardless of when any E-exception is thrown as
+a result of <I>trycodeBlock</I>. </P>
+
+<P>Unlike Java's <TT>try</TT> statement, the <TT>etry</TT> statement cannot
+have a <TT>finally</TT> clause. Also, E does not require your E-methods
+to either catch or declare non-runtime E exceptions. Finally, E-exceptions
+(which are of class <I>RtEException) </I>are based on the Java <I>RuntimeException</I>
+class, not <I>Exception,</I> so they does not encapsulate a back stack
+trace.</P>
+
+<P> </P>
+
+<H2>Example</H2>
+
+<PRE><TT>etry {
+  env &lt;- lookup(&quot;fred&quot;, &amp;result);
+} ecatch (RtDirectoryFailure excep) {
+    recoverFromDirectoryFailure(excep);
+  }</TT></PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="ewhen"></A>ewhen </H1>
+
+<BLOCKQUOTE>
+<PRE><TT>ewhen <I>expression</I> ( <I>type valueName</I> ) {
+<I>  block
+</I>} [ eorwhen <I>alternateExpression</I> ( <I>type</I> <I>valueName</I> ) {
+  <I>alternateBlock
+</I>} ]<I>*</I></TT>
+
+</PRE>
+
+<P>An <TT>ewhen</TT> statement defers execution of the code it contains
+until an actual value is furnished from an E-object. Though similar conceptually
+to calling a Java method in that both obtain a value from an object, <TT>ewhen</TT>'s
+implementation of optimistic programming make it unique to E; there is
+nothing like it in Java. </P>
+
+<P>Since E-methods and E-object cannot return values themselves, you can
+use <TT>ewhen</TT> to get values or other data from other E-objects. This
+value can be of any Java type. This means you can use <TT>ewhen</TT> to
+obtain Java values from E-objects, and thus bridge your Java and E code.
+For example, you can use <TT>ewhen</TT> to get a Java integer value from
+an <I>EInteger</I> object, and add this value to another Java integer.
+</P>
+
+<P><I>expression</I> is an E-object, though this may actually be a channel
+to an E-object whose value is undetermined at the time the <TT>ewhen</TT>
+statement is initially executed. After this E-object furnishes a value,
+the <TT>ewhen</TT> code block can execute.</P>
+
+<P> <I>type valuename</I> is the type and name of the value furnished by
+<I>expression</I>. Since E-objects cannot return their value like ordinary
+objects, you include a value method in the E-object that lets it return
+a Java type value. See the following section<I> Getting Java values from
+E-objects with ewhen</I> for more information.</P>
+
+<P> An <TT>ewhen</TT> can only be used inside an E-class, although it does
+not need to exist inside an E-method. However, if you use <TT>ewhen</TT>
+inside a regular Java method, you cannot return a value for that method
+from within the <TT>ewhen</TT> statement. This is because the Java method
+will actually have returned before any of the blocks associated with the
+<TT>ewhen</TT> gets executed. You <I>can</I> use a <TT>return</TT> statement
+(without a return value) inside an <TT>ewhen</TT> to exit the <TT>ewhen</TT>
+block.</P>
+
+<P> <B>NOTE:</B> The <TT>ewhen</TT> statement executes <I>only the first
+time</I> a value is furnished. To execute a block of code every time a
+value is furnished, use <TT>ewhenever</TT>.</P>
+
+<P> The <TT>ewhen</TT> statement is part of a special group of E statements
+that defer code execution until a value is furnished for an E-object. These
+statements include <TT>eif</TT>, <TT>ewhen</TT>, <TT>ewhenever</TT>, and
+the <TT>ecatch</TT> portion of <TT>etry</TT>. </P>
+
+<P>All other non-deferring statements in the code block which contains
+the <TT>ewhen</TT> <TT>(</TT>including statements which follow the <TT>ewhen</TT>
+in the source text) execute before the code blocks associated with the
+<TT>ewhen</TT>, regardless of when the value of <I>expression</I> is produced.
+</P>
+
+<P>For an <TT>ewhen</TT> statement that contains no <TT>eorwhen</TT> clauses
+(see the following paragraphs for information on <TT>eorwhen</TT>), when
+<I>expression</I> reveals a value for <I>valueName</I> (which must be of
+type <I>type</I>), <I>block</I> executes.</P>
+
+<P> </P>
+
+<H2>Getting Java values from E-objects</H2>
+
+<P>An E-object responds to an <TT>ewhen</TT> statement by providing a value
+for itself. However, an E-object cannot return its value like an ordinary
+Java object. Instead, you include a method within the E-object to let it
+furnish a Java type value.</P>
+
+<P> To do this, you provide the E-object with a <TT>value</TT> method.
+This is an ordinary zero-argument Java method which should return the E-object's
+value. An E-object can return a value of any Java type. </P>
+
+<P>For example, E's own <I>EInteger</I> class, which provides an optimistic
+computation wrapper of an instance of Java <TT>int</TT>, has the following
+value method:</P>
+
+<P> </P>
+
+<PRE><TT>int value() { return(myValue); }</TT>
+</PRE>
+
+<P>(<TT>myValue</TT> is an instance variable of <I>EInteger</I> which contains
+the <TT>int</TT> that the <I>EInteger</I> is wrapping).</P>
+
+<P> To have an E-object to furnish a value, you must include this <TT>value</TT>
+method in its class definition. Although the value method is not mandatory,
+an <TT>ewhen</TT> statement cannot &quot;access&quot; an E-object that
+does not have one.</P>
+
+<P> </P>
+
+<H2>Closures</H2>
+
+<P>When your E program encounters a deferring statement like <TT>ewhen</TT>,
+it takes a snapshot of all the referenced local variables and parameters
+within the scope of that statement. This snapshot is called a <I>closure</I>.
+E saves this closure for whenever the <TT>ewhen</TT> needs it; the <TT>ewhen</TT>
+then uses the values in the closure when it executes. Each <TT>ewhen</TT>
+gets its own closure. </P>
+
+<H2><A NAME="eorwhen"></A>Multiway-guarded ewhen statement</H2>
+
+<P>If the <TT>ewhen</TT> statement contains one or more <TT>eorwhen</TT>
+clauses, it becomes a multiway guarded <TT>ewhen</TT> statement. This means
+that the <I>expression</I> associated with <I>block</I> and the various
+<I>alternateExpressions</I> associated with the <I>alternateBlocks</I>
+are evaluated concurrently. The multiway-guarded <TT>ewhen</TT> construct
+consists of an <TT>ewhen</TT> clause followed by one or more <TT>eorwhen</TT>
+clauses:</P>
+
+<P> </P>
+
+<PRE><TT>ewhen <I>expression
+</I> ( type <I>valueName
+</I> ) {
+<I>  block
+</I>} [ eorwhen <I>alternateExpression
+</I> ( type <I>valueName
+</I> ) {
+<I>  alternateBlock
+</I>} ]*</TT>
+</PRE>
+
+<P>The first code block that is furnished a result has its associated code
+block executed and prevents all the other code blocks from executing. Only
+one block ever executes. If no values are furnished for any of the expressions,
+none of the code blocks execute.</P>
+
+<P> </P>
+
+<H2>Examples</H2>
+
+<PRE><TT>emethod BakeCake (parameters) {
+  <I>Code1
+
+</I>  ewhen Bob (int SomeNumber)   {
+    <I>SomeEwhenCode
+
+</I>  }
+  ewhen Sue (int OtherNumber) {
+    <I>OtherEwhenCode
+
+</I>  }
+  <I>Code2
+
+</I>}</TT>
+</PRE>
+
+<P>In this example, <I>Code1</I> and <I>Code2</I> do not contain any <TT>ewhen</TT>,
+<TT>eif</TT> or <TT>etry</TT> statements. Computation proceeds in the following
+order:</P>
+
+<P> </P>
+
+<OL>
+<LI><I>Code1</I> executes. </LI>
+
+<LI>The two <TT>ewhen</TT> statements generate messages to obtain values
+from <TT>Bob</TT> and <TT>Sue</TT>. At this time, <I>SomeEwhenCode</I>
+and <I>OtherEwhenCode</I> do not execute, even if the requested values
+are available immediately. Instead, computation continues with <I>Code2</I>.
+</LI>
+
+<LI><I>Code2</I> executes. </LI>
+
+<LI>If <TT>Bob</TT> or <TT>Sue</TT> (or both) have furnished values for
+<TT>SomeNumber</TT> or <TT>OtherNumber</TT>, respectively, <I>SomeEwhenCode</I>
+or <I>OtherEwhenCode</I> can execute. The order of execution of <I>SomeEwhenCode</I>
+and <I>OtherEwhenCode</I> depends solely upon which happens to obtain its
+argument value first. </LI>
+</OL>
+
+<P>If an <TT>eorwhen</TT> clause had been used in place of the second <TT>ewhen</TT>
+statement, the example would look like this:</P>
+
+<P> </P>
+
+<PRE><TT>emethod BakeCake (parameters) {
+  <I>Code1
+
+</I>  ewhen Bob (int SomeNumber)   {
+    <I>SomeEwhenCode
+
+</I>  } eorwhen Sue (int OtherNumber) {
+    <I>OtherEwhenCode
+
+</I>  }
+  <I>Code2
+
+</I>}</TT>
+</PRE>
+
+<P>In this case the interpretation is very similar to that of the first
+example. However, if <TT>Bob</TT> reveals a value before <TT>Sue</TT> does,
+then <I>SomeEwhenCode</I> will be executed but <I>OtherEwhenCode</I> never
+will be. Conversely, if <TT>Sue</TT> is first to reveal a value, <I>OtherEwhenCode</I>
+executes to the exclusion of <I>SomeEwhenCode</I>.</P>
+
+<P> An <TT>ewhen</TT> statement defines the lexical environment of the
+code associated with it, tying it to the value received for the argument.
+The values of variables visible to the code inside the <TT>ewhen</TT> statement
+is the same as if it that code had executed immediately. In either of the
+above examples, the lexical environment of <I>SomeEwhenCode</I> includes
+the value for <TT>SomeNumber</TT> received from <TT>Bob</TT> in the message
+set up by the <TT>ewhen</TT> statement. In addition, if <I>SomeEwhenCode</I>
+and <I>OtherEwhenCode</I> use variables that are manipulated by both <I>Code1</I>
+and <I>Code2</I>, they see only the results produced by <I>Code1</I>. </P>
+
+<H4>Sample program</H4>
+
+<P>This program will output:</P>
+
+<P> </P>
+
+<PRE><TT>  1: a=5 b=6 v=10
+  4: a=5 b=6 v=10
+  5: a=125 b=126 v=1000
+  2: a=5 b=47 v=1000
+  3: a=25 b=26 v=100
+
+import ec.e.lang.EInteger;
+
+public class ScopeDemoEWhen
+{
+  public static void main(String args[]) {
+    DemoClass theInstance = new DemoClass();
+    theInstance &lt;- goint();
+  }
+
+  static void print(String tag, int a, int b, int v) {
+    System.out.println
+      (tag + &quot; a=&quot; + a + &quot; b=&quot; + b + &quot; v=&quot; + v);
+  }
+}
+
+eclass DemoClass {
+  int v = 10;
+
+  emethod goint() {
+    int a = 5;
+    int b = 6;
+    EInteger num = new EInteger(47);
+
+    ScopeDemoEWhen.print(&quot;1:&quot;, a, b, v);
+    ewhen num (int b_value) {
+      ScopeDemoEWhen.print(&quot;2:&quot;, a, b_value, v);
+      a = 25;
+      b_value = 26;
+      v = 100;
+      ScopeDemoEWhen.print(&quot;3:&quot;, a, b, v);
+    }
+    ScopeDemoEWhen.print(&quot;4:&quot;, a, b, v);
+    a = 125;
+    b = 126;
+    v = 1000;
+    ScopeDemoEWhen.print(&quot;5:&quot;, a, b, v);
+  }
+}</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="ewhenever"></A>ewhenever</H1>
+
+<BLOCKQUOTE>
+<PRE><TT>ewhenever <I>expression</I> ( <I>type valueName</I> ) {
+<I>  block
+</I>}</TT>
+</PRE>
+
+<P>An <TT>ewhenever</TT> statement is an <TT>ewhen</TT> statement which
+executes its code block every time it receives a value for its argument.</P>
+
+<P> Multiple executions occur when a channel is forwarded to multiple destinations,
+all of which furnish values for the <TT>ewhenever</TT> argument. An <TT>ewhen</TT>
+statement would execute <I>block</I> only once, the first time a value
+is furnished for <I>expression</I>.</P>
+
+<P> The other difference between <TT>ewhen</TT> and <TT>ewhenever</TT>
+is that an <TT>ewhenever</TT> statement may not have any <TT>eorwhen</TT>
+clauses, since the mutual exclusion which <TT>eorwhen</TT> implies does
+not really make sense in the context of a statement which executes multiple
+times.</P>
+
+<P> See the <TT>ewhen</TT> statement documentation for complete information
+about order of code execution, the lexical environment of <I>block</I>
+and so forth. </P>
+
+<P>Like an <TT>ewhen</TT>, an <TT>ewheneve</TT>r gets a snapshot of all
+its variables called a closure. However, an <TT>ewhenever</TT>'s execution
+operates on a copy of this closure, not the actual closure itself. This
+ensures that the closure retains its original values for the next <TT>ewhenever</TT>
+execution. If your <TT>ewhenever</TT> statement modifies any of the values
+in the closure, those new values are not retained. </P>
+
+<P>Be aware, however, that if your deferring statement references Java
+objects, the closure captures the reference to that object, not the value
+of the object itself. If your program subsequently modifies the object,
+the closure will reference that modified object, and the next <TT>ewhenever</TT>
+will execute using the new value.</P>
+
+<P> </P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="forward"></A>forward </H1>
+
+<BLOCKQUOTE>
+<P><TT><I>distributor</I> &lt;- forward( <I>destinationEObject ); </I></TT></P>
+
+<P>The <TT>forward</TT> message provides a channel's distributor with a
+destination. Once you have forwarded a channel, you cannot unforward it,
+though you may forward a channel more than once. </P>
+
+<P>A channel itself is an E-object, derived from class <I>EChannel</I>
+(or one of its subclasses). In E, all E-object variables that are not explicitly
+initialized in their declarations are implicitly initialized to new instances
+of <I>EChannel.</I> These channels are initially unforwarded.</P>
+
+<P> Every channel has a <I>distributor</I>, which can be obtained from
+the channel (in the channel's defining scope only) using the distributor
+operator, &quot;<TT>&amp;</TT>&quot; (see the discussion of this operator
+at the beginning of this chapter). The distributor is an E-object of class
+<I>EDistributor</I>. To forward a channel, send a <TT>forward</TT> message
+to the channel's distributor.</P>
+
+<P> When a channel is forwarded to an E-object, all messages sent to that
+channel are delivered to that E-object. You can even send messages to an
+unforwarded channel; these messages will be delivered later when the channel
+is eventually forwarded.</P>
+
+<P> You can forward a channel to many recipients; all messages sent through
+that channel will be received by all the recipients. Messaging is asynchronous:
+when you forward a channel to a new recipient, it receives all the messages
+that have ever been sent through that channel. </P>
+
+<H2>Examples</H2>
+
+<P>The most common usage would result from a message send something like
+this:</P>
+
+<P> </P>
+
+<PRE><TT>obj &lt;- req(<I>parameters</I>, &amp;someChannel);</TT></PRE>
+
+<P>The receiving E-method would look like the following:</P>
+
+<P> </P>
+
+<PRE><TT>req(<I>parameters</I>, Edistributor resultDist) {
+  <I>...do some stuff...
+
+</I>  resultDist &lt;- forward(someResultObject);
+  </TT>...
+<TT>}</TT>
+</PRE>
+
+<P>A less common case is something like:</P>
+
+<P> </P>
+
+<PRE><TT>&amp;someChannel &lt;- forward(someObject);</TT>
+</PRE>
+
+<P>This is used when you need to pass a channel to another object and want
+to control where the messages that object sends to that channel will go.</P>
+
+<P> </P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<ADDRESS>Copyright (c) 1996 Electric Communities. All rights reserved worldwide.
+<BR>
+Most recent update: 7/19/96 </ADDRESS>
+
+</BODY>
+</HTML>

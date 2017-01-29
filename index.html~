@@ -1,0 +1,270 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Sunday, November 29, 1998 11:14 PM -->
+<HTML>
+<HEAD>
+<TITLE>Welcome to ERights.Org</TITLE>
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="keywords" content="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<P>
+<TABLE BORDER="0">
+  <TR VALIGN="TOP">
+    <TD WIDTH="20%">&nbsp;</TD>
+    <TD>
+      <table width="100%" cellpadding="6">
+        <tr>
+          <td width="21%"><img src="images/small-logo.gif" width="78" height="78" alt="E logo"></td>
+          <td width="79%">
+            <div align="right"><font size="6"> <b>Open Source<br>
+              Distributed Capabilities</b></font></div>
+          </td>
+        </tr>
+      </table>
+      <hr>
+      <p align="CENTER"> <font size="5">Welcome to </font><font size="5" color="#009000"><i><tt>ERights.org</tt></i></font><font size="5">, home of </font><font size="5" color="#009000"><i><b>E</b></i></font><font size="5">,</font><br>
+        <font size="5">the secure distributed pure-object platform<br>
+        and p2p scripting language<br>
+        for writing <i>Capability-based </i>Smart Contracts.</font></p>
+      <div align="center">
+        <table cellpadding="12">
+          <tr align="center" valign="top">
+            <td colspan="2">
+              <div align="center"><a href="#quickstart">Quick Start</a> | <a href="#WhatsNew">What's New?</a> | <a href="#2levels">What's <i><b><font color="#009000">E</font></b></i>?</a><br>
+                <a href="#SmartContracts">Smart Contracts</a> | <a href="#History">History</a> | <a href="#feedback">Feedback</a></div>
+            </td>
+          </tr>
+          <tr align="center" valign="top">
+            <td>[<a href="http://www.erights.org/">California Home</a>]</td>
+            <td>[<a href="https://www.cypherpunks.to/erights/">Mirror in Virtual Tonga</a>]</td>
+          </tr>
+        </table>
+      </div>
+      <!-- Search Google -->
+      <center>
+        <FORM method=GET action=http://www.google.com/custom>
+          <TABLE bgcolor=#FFFFFF cellspacing=0 border=0>
+            <tr valign=top>
+              <td> <A HREF=http://www.google.com/search> <IMG SRC=http://www.google.com/logos/Logo_40wht.gif border=0 ALT=Google align=middle></A> </td>
+              <td>
+                <INPUT TYPE=text name=q size=31 maxlength=255 value="">
+                <INPUT type=submit name=sa VALUE="Google Search">
+                <INPUT type=hidden name=cof VALUE="LW:78;L:http://www.erights.org/images/small-logo.gif;LH:78;BGC:#ffeedd;AH:center;S:http://www.combex.com;AWFID:c67be8a0599ab4b0;">
+                <font face=arial,sans-serif size=-1>
+                <input type=hidden name=domains value="erights.org;combex.com;skyhunter.com;eros-os.org;caplet.com">
+                <br>
+                </font>
+                <table cellpadding="1">
+                  <tr valign="top">
+                    <td nowrap><font face=arial,sans-serif size=-1>
+                      <input type=radio name=sitesearch value="erights.org" checked>
+                      Search erights.org</font></td>
+                    <td nowrap><font face=arial,sans-serif size=-1>
+                      <input type=radio name=sitesearch value="combex.com">
+                      Search combex.com</font></td>
+                    <td nowrap><font face=arial,sans-serif size=-1>
+                      <input type=radio name=sitesearch value="">
+                      Search WWW </font></td>
+                  </tr>
+                  <tr valign="top">
+                    <td nowrap><font face=arial,sans-serif size=-1>
+                      <input type=radio name=sitesearch value="eros-os.org">
+Search eros-os.org<br>
+&nbsp;&nbsp;&nbsp;(includes email archives)</font></td>
+                    <td nowrap><font face=arial,sans-serif size=-1>
+                      <input type=radio name=sitesearch value="skyhunter.com">
+  Search skyhunter.com</font></td>
+                    <td nowrap><font face=arial,sans-serif size=-1>
+                      <input type=radio name=sitesearch value="caplet.com">
+  Search caplet.com</font> </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </TABLE>
+        </FORM>
+      </center>
+      <!-- Search Google -->
+      <table border="0" width="100%" cellpadding="6">
+        <tr valign="TOP">
+          <td colspan="2">
+            <h2><a name="quickstart"></a>Quick Start for <i><b><font color="#009000">E</font></b></i> Language Programming:</h2>
+          </td>
+        </tr>
+        <tr valign="TOP">
+          <td><a href="download/0-8-21/index.html"><b><font size="+1">Download</font> <i><font color="#009000">E</font></i> 0.8.21</b></a></td>
+          <td>Get your own copy of <i><b><font color="#009000">E</font></b></i>. (All <a href="download/licenses.html">licenses</a> are Mozilla or Mozilla compatible open source licenses.)</td>
+        </tr>
+        <tr valign="TOP">
+          <td>
+            <p><a href="http://www.skyhunter.com/marcs/ewalnut.html"><i><b><font color="#009000">E</font></b></i> in a Walnut<br>
+              </a><a href="http://www.skyhunter.com/marcs/ewalnut.html"><i><b><font color="#009000"><img src="images/ewalnut-pink.gif" width="118" height="120" border="0" alt="E in a Walnut"></font></b></i></a></p>
+          </td>
+          <td>Marc Stiegler's draft tutorial book on the <i><b><font color="#009000">E</font></b></i> programming language.</td>
+        </tr>
+        <tr>
+          <td><a href="elang/intro/index.html">Tutorial</a></td>
+          <td>Additional useful introductory material.</td>
+        </tr>
+        <tr>
+          <td><a href="elang/quick-ref.html">Quick Reference Card</a></td>
+          <td>Reminders of some useful patterns you've learned.</td>
+        </tr>
+        <tr>
+          <td><a href="http://mumble.net/e/faq.html"> FAQ</a> </td>
+          <td>Jonathan Rees maintains the list of Frequently Asked Questions about <i><b><font color="#009000">E</font></b></i>.</td>
+        </tr>
+        <tr>
+          <td><a href="http://www.eros-os.org/pipermail/e-lang/">email Archive</a></td>
+          <td>Browse the archive of E-Lang email list discussions. (<a href="http://web.lfw.org/ping/e-archive/">Here</a>'s some actual e-lang discussion as presented by Ping's experimental email browsing
+            software.)</td>
+        </tr>
+        <tr valign="TOP">
+          <td><a href="elib/capability/ode/index.html">An Ode to the Granovetter Diagram</a></td>
+          <td>Also known as <i>Capability-based Financial Instruments</i>. Explains the rationale for <i><b><font color="#009000">E</font></b></i> from lambda-calculus concepts up through Smart Contracts.</td>
+        </tr>
+        <tr valign="TOP">
+          <td><a href="http://www.combex.com/"><img src="images/dominos.gif" width="32" height="32" border="0" alt="Combex logo">Combex, Inc.</a></td>
+          <td>The for-profit facet of the <i><b><font color="#009000">E</font></b></i> project, featuring <a href="http://www.combex.com/tech/index.html">CapDesk</a> -- the capability secure desktop, and caplet installation and launching framework.</td>
+        </tr>
+        <tr valign="TOP">
+          <td colspan="2">
+            <hr>
+            <h2><a name="WhatsNew"></a>What's New? </h2>
+          </td>
+        </tr>
+        <tr valign="TOP">
+          <td><a href="http://swiki.squeakfoundation.org/squeak-e">The Squeak-E Swiki</a></td>
+          <td>
+            <p>The home page of the <i>Squeak-E</i> project; building a capability secure distributed Smalltalk. </p>
+          </td>
+        </tr>
+        <tr valign="TOP">
+          <td><a href="http://zesty.ca/capmyths/usenix.pdf">Capability Myths Demolished</a></td>
+          <td>gives a brief history of how capabilities have been misunderstood, and sets the
+            record straight.</td>
+        </tr>
+        <tr valign="TOP" align="left">
+          <td><a href="http://www.sims.berkeley.edu/%7Eping/sid/">User Interaction Design for Secure Systems</a></td>
+          <td>Ka-Ping Yee's paper openning up this whole new area of inquiry has just been
+            accepted by the <a href="http://www.krdl.org.sg/forthcoming%20events/icics/Homepage.html">4th International Conference on Information and Communications Security</a>. (<a href="http://www.combex.com/tech/edesk.html">CapDesk</a> largely follows these principles.)</td>
+        </tr>
+        <tr valign="TOP" align="left">
+          <td><i><b><font color="#009000">E</font></b></i> supports <a href="download/0-8-21/swt-support.html">SWT</a> starting with the 0.8.21 release.</td>
+          <td>SWT, the Standard Widget Toolkit, is IBM's alternative to Swing. Unlike Swing,
+            it's simple enough to be <i><a href="elib/legacy/taming.html">tamed</a></i> (made to follow capability discipline).</td>
+        </tr>
+        <tr valign="TOP">
+          <td><a href="new.html">Older News</a></td>
+          <td>Highlights of &quot;What's New?&quot; past.</td>
+        </tr>
+        <tr valign="TOP">
+          <td colspan="2">
+            <hr>
+            <h2><a name="2levels"></a>What is <i><b><font color="#009000">E</font></b></i>?</h2>
+            <p><font color="#009000"><i><b>E</b></i></font>&nbsp;defines and implements a pure object model of secure distributed persistent computation.
+              It has two parts:</p>
+          </td>
+        </tr>
+        <tr valign="TOP">
+          <td colspan="2"> <a href="elib/index.html"><b>ELib</b></a> provides the stuff that goes on <i>between</i> objects. </td>
+        </tr>
+        <tr valign="TOP">
+          <td valign="middle"><a href="elib/capability/ode/index.html"><img src="images/capsecure-ring.gif" width="150" height="150" border="0" alt="Granovetter diagram"></a></td>
+          <td> As a pure-Java <a href="javadoc/index.html">library</a>, ELib provides for inter-process <a href="elib/capability/index.html">capability-secure</a> distributed programming. Its cryptographic capability <a href="elib/distrib/index.html">protocol</a> enables mutually suspicious Java processes to cooperate safely, and its <a href="elib/concurrency/index.html">event-loop concurrency</a> and <a href="elib/distrib/pipeline.html">message pipelining</a> enable high performance <a href="elib/concurrency/event-loop.html#safety">deadlock free</a> distributed pure-object computing.</td>
+        </tr>
+        <tr valign="TOP">
+          <td colspan="2"> The <a href="elang/index.html"><font color="#009000"><i><b>E</b></i></font> <b>Language</b></a> can be used to express what happens <i>within</i> an object. </td>
+        </tr>
+        <tr valign="TOP">
+          <td valign="middle">
+            <table border="1" cellpadding="6">
+              <tr>
+                <td>
+                  <pre>def alice {
+    to doSomething() {
+        bob.foo(carol)
+    }
+}</pre>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td>
+            <p>The <i><b><font color="#009000">E</font></b></i> language provides a convenient and <a href="elang/grammar/index.html">familiar notation</a> for the ELib computational model, so you can program in one model rather than
+              two. Under the covers, this notation expands into <a href="elang/kernel/index.html">Kernel-E</a>, a minimalist lambda-language much like Scheme or Smalltalk.</p>
+            <p> Objects written in the <i><b><font color="#009000">E</font></b></i> language are <i>only</i> able to interact with other objects according to ELib's semantics, enabling
+              object granularity <i>intra</i>-process security, including the ability to safely run untrusted mobile code
+              (such as <i>caplets</i>).</p>
+          </td>
+        </tr>
+        <tr valign="TOP">
+          <td colspan="2">
+            <hr>
+            <h2><a name="SmartContracts"></a><a href="smart-contracts/index.html">Smart Contracts</a>: Patterns of Cooperation without Vulnerability</h2>
+          </td>
+        </tr>
+        <tr valign="TOP">
+          <td valign="middle"><img src="smart-contracts/lex-cyber-2/images/chess-small.gif" width="171" height="111" alt="Smart contract icon"></td>
+          <td>
+            <p>A <i>contract</i> is a mutually agreeable arrangement of rules among mutually suspicious parties
+              so they may cooperate with limited risks to each other's mischief.
+              It is a game both are willing to play because both expect to win.</p>
+            <p>A conventional contract is passive paper interpreted at great expense by lawyers
+              and courts.</p>
+            <p>A <i>smart contract</i> is written in program code, in which the logic of the program's execution enforce
+              the terms of the contract. Smart contracts reduce costs by orders
+              of magnitude, leading to a more cooperative world.</p>
+          </td>
+        </tr>
+        <tr valign="TOP">
+          <td colspan="2">
+            <hr>
+            <h2><a name="History"></a><a href="history/index.html">History</a>: Where does <i><b><font color="#009000">E</font></b></i> come from?</h2>
+            <h2><a href="related.html">Related Links</a></h2>
+          </td>
+        </tr>
+        <tr valign="TOP">
+          <td colspan="2">
+            <hr>
+            <h2><a name="feedback"></a>Feedback Please</h2>
+          </td>
+        </tr>
+        <tr valign="TOP">
+          <td><i><a href="mailto:webmaster@erights.org">webmaster@erights.org</a></i> </td>
+          <td>To send me comments directly. <a href="wm-pubkey.html">Here</a>'s my public key.</td>
+        </tr>
+        <tr valign="TOP">
+          <td><a href="http://bugs.sieve.net/bugs/?func=addbug&amp;group_id=16380"><i>Report a bug</i></a></td>
+          <td>Please let us know of all problems you find. Thanks!</td>
+        </tr>
+        <tr valign="TOP">
+          <td>Is this page <a href="http://validator.w3.org/check/referer">Valid HTML?</a></td>
+          <td>If not, please <a href="mailto:webmaster@erights.org">tell me</a> or <a href="http://bugs.sieve.net/bugs/?func=addbug&amp;group_id=16380">report the bug</a>.</td>
+        </tr>
+        <tr valign="TOP">
+          <td><a href="http://www.blindpay.com/crit-me-now.cgi"><img src="images/cmn.gif" width="98" height="21" border="0" alt="Crit Me Now!"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+          <td>See this page as annotated by others, or annotate it yourself. </td>
+        </tr>
+        <tr valign="TOP">
+          <td><a href="donate.html">Donations</a></td>
+          <td>Please help support the <i><b><font color="#009000">E</font></b></i> Project.</td>
+        </tr>
+        <tr valign="TOP">
+          <td><a href="http://www.caplet.com/domains.html"><img
+              src="http://www.caplet.com/images/for-sale-small.gif"
+              width="129" height="62" border="0" alt="Domains for sale"></a></td>
+          <td>Click to see prices for this and other related domain names.</td>
+        </tr>
+      </table>
+    </TD>
+    <TD WIDTH="20%">&nbsp;</TD>
+  </TR>
+</TABLE>
+</BODY>
+</HTML>

@@ -1,0 +1,1613 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>Institutions as Abstraction Boundaries</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">talks</a>&nbsp;/&nbsp;<a href="index.html">categories</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><img src="../../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Institutions 
+              as Abstraction Boundaries</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <DIV style="margin-bottom: 0.04in" TYPE=HEADER> <SDFIELD TYPE=PAGE SUBTYPE=RANDOM FORMAT=PAGE></SDFIELD>
+<P ALIGN=CENTER STYLE="margin-top: 0in; margin-bottom: 0.04in"><FONT FACE="Arial, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Institutions 
+          as Abstraction Boundaries</B></FONT></FONT></P>
+        <P CLASS="western" ALIGN=CENTER> </P>
+        <P CLASS="western" ALIGN=CENTER>Bill Tulloh, <BR>
+          George Mason University<BR>
+          btulloh-at-gmail.com</P>
+        <P CLASS="western" ALIGN=CENTER>Mark S. Miller<BR>
+          Virus Safe Computing Project<BR>
+          Hewlett Packard Labs<BR>
+          Johns Hopkins University<BR>
+          erights-at-gmail.com</P>
+        <P CLASS="western">To appear in Jack High (ed) Social Learning: Essays 
+          in Honor of Don Lavoie.</P>
+        <P CLASS="western" ALIGN=CENTER>&nbsp;</P>
+        <P CLASS="western"><B>Abstract</B>: A central claim of the modern Austrian 
+          school is that a competitive market order can solve the knowledge problem 
+          while a centrally planned economy cannot. While Austrians such as Hayek 
+          have focused on the essential role of abstract rules and the coordinating 
+          role of prices, they have largely neglected the familiar, day-to-day 
+          institutions of store fronts, standardized contracts, and specific markets 
+          towards which people orient their actions. These secondary institutions, 
+          as Lachmann calls them, are examples of what software developers call 
+          abstraction boundaries. Abstraction boundaries both categorize knowledge 
+          into productive divisions and coordinate plans through time. We apply 
+          the software concepts of abstraction and modularity to better understand 
+          how these institutions promote both coherence and change. We argue that 
+          the drawing and redrawing of abstraction boundaries is a neglected aspect 
+          of the market process. </P>
+        <P CLASS="western">* The authors would like to thank Darius Bacon, Howard 
+          Baetjer, Jack High, Ken Kahn, Thomas McQuade, Nick Szabo, and Lauren 
+          Williams for helpful comments.</P>
+        <H1 CLASS="western" STYLE="widows: 0; orphans: 0; page-break-before: always; page-break-after: auto"> 
+          Introduction</H1>
+        <P CLASS="western">The exploration of the knowledge problem &ndash; the 
+          ability of an economic system to generate and sustain a complex structure 
+          of production based on an extensive division of knowledge &ndash; formed 
+          a central theme of Don Lavoie&rsquo;s research. His critique of central 
+          planning and investigations into the nature of knowledge led him to 
+          emphasize the indispensable role of the market process in solving the 
+          knowledge problem.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote1anc" HREF="#sdendnote1sym"><SUP>1</SUP></A></FONT></FONT></SUP> 
+          Only the market process can harness the diverse knowledge of millions 
+          of people into an evolving pattern of cooperative relationships that 
+          serves an ever increasing variety of individual purposes. </P>
+        <P CLASS="western">According to the critique of central planning developed 
+          by Mises, Hayek, Lavoie and others, central planners lack the knowledge 
+          necessary to successfully plan production and calculate economic tradeoffs. 
+          Central planners do not have access to the tacit and contextual knowledge 
+          that individuals use in planning their activities, nor do they have 
+          access to competitive price and profit signals that are required for 
+          calculating tradeoffs among the myriad uses of scarce means. The effective 
+          use of knowledge, Lavoie argues, requires a decentralized solution &ndash; 
+          a solution provided by the market process. </P>
+        <P CLASS="western">For the market process to make effective use of knowledge, 
+          it must solve two problems: 1) it must divide knowledge to capture gains 
+          from specialization, and 2) it must coordinate the separate plans of 
+          market participants to secure gains from cooperation. Gains from specialization 
+          arise when &lsquo;people can use other people&rsquo;s knowledge to their 
+          own advantage without themselves acquiring it.&rsquo; (Vaughn, 1999, 
+          p. 133) Specialization economizes on knowledge production by reusing 
+          proven solutions. Specialization increases knowledge production by encouraging 
+          the discovery of new solutions; knowledge, as Brian Loasby reminds us, 
+          &lsquo;grows through division.&rsquo; (Loasby, 1999, p. 50)</P>
+        <P CLASS="western">Each increase in specialization &lsquo;necessitates 
+          additional coordination somewhere in the social structure.&rsquo; (High, 
+          1986, p. 117) Specialized activities must be combined with complementary 
+          activities, and individual plans based on time and place specific knowledge 
+          must be coordinated with those of others. (Hayek 1937, 1945) The market 
+          process must do more than just coordinate plans based on dispersed knowledge 
+          that exists at a point in time; it must also adapt these plans to new 
+          knowledge constantly being created in the pursuit of further gains from 
+          specialization and cooperation. </P>
+        <P CLASS="western">The market process solves the twin problems of the 
+          division and coordination of knowledge through abstraction. Abstraction 
+          modularizes knowledge. Abstractions, by selectively hiding information, 
+          enable market participants to make use of a complex network of specialized 
+          knowledge without needing to acquire the knowledge themselves. As one 
+          computer scientist (Turbak, 2002, p. 4) describes it: </P>
+        <P STYLE="margin-left: 0.5in">Abstraction is ubiquitous in the modern 
+          world and we depend on it for functioning in our day-to-day lives. We 
+          are able to use a wide array of machines and devices (e.g. cars, telephones, 
+          stereos, computers) without having to understand the details of how 
+          they work. Supermarkets, department stores, and utilities are purveyors 
+          of abstractions; for the most part, we do not need or want to know how 
+          a loaf of bread is baked, how a piece of clothing is made, or how our 
+          electricity, water, and gas are produced. </P>
+        <P CLASS="western">To facilitate cooperation, abstractions must be made 
+          meaningful to others so that they can use them for their own purposes. 
+          Programmers call the process of carving up knowledge into meaningful 
+          units creating abstraction boundaries. An abstraction boundary captures 
+          a specialized solution to a type of problem and packages it for reuse. 
+          The abstraction boundary hides the details of how the solution is implemented 
+          from potential users, while providing them with the information they 
+          need to apply the solution to their particular problem. Programmers 
+          use abstraction to divide programs into modules that can be combined 
+          with other modules through well-defined interfaces (the boundaries) 
+          to create complex behavior. </P>
+        <P CLASS="western"> Abstraction boundaries enhance cooperation by reducing 
+          the cost of using the solutions.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote2anc" HREF="#sdendnote2sym"><SUP>2</SUP></A></FONT></FONT></SUP> 
+          Abstraction boundaries limit what clients need to know about solution 
+          providers, and what solution providers need to know about their clients. 
+          The boundary defines what the solution is, but not how it is provided, 
+          nor why it is used. Clients, by orienting their plans to the boundary, 
+          can ignore implementation details which are likely to change.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote3anc" HREF="#sdendnote3sym"><SUP>3</SUP></A></FONT></FONT></SUP> 
+          Providers, meanwhile, are free to change how they provide the solution 
+          so long as they continue to provide the type of solution defined by 
+          the boundary. Abstraction boundaries enable both solution providers 
+          and their clients to coordinate and adapt their particular plans based 
+          on the abstract plans embodied in the boundary. </P>
+        <P CLASS="western">By borrowing concepts from software engineering, we 
+          are drawing on work, done during the late 1980s and early 1990s by Lavoie, 
+          the current authors and others. The Agorics Project explored the relationships 
+          between object-oriented concepts from software engineering and the market 
+          institutions of property and contract.<SUP><A CLASS="sdendnoteanc" NAME="sdendnote4anc" HREF="#sdendnote4sym"><SUP>4</SUP></A></SUP> 
+          As Lavoie remarked, &lsquo;In particular, the concepts surrounding the 
+          idea of &ldquo;modularity&rdquo; have proven valuable in rethinking 
+          the nature of property rights and evolutionary change in market systems.&rsquo; 
+          (Lavoie, 1994, p. xi) The recognition that software developers faced 
+          an analogous knowledge problem to that of markets and that they had 
+          independently evolved solutions that resemble market solutions suggested 
+          that this would be a fruitful line of research to increase our understanding 
+          of both systems. </P>
+        <P CLASS="western">We argue that the commonality of solutions is no mere 
+          coincidence, but a consequence of underlying principles for organizing 
+          complex adaptive systems. The concepts of abstraction and modularity 
+          that underlie the object-oriented approach to organizing a complex software 
+          system also underlie the market process approach to organizing a complex 
+          structure of production.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote5anc" HREF="#sdendnote5sym"><SUP>5</SUP></A></FONT></FONT></SUP> 
+        </P>
+        <P CLASS="western">The Austrian vision of the market process can be enhanced 
+          by recognizing the role that abstraction boundaries play in dividing 
+          knowledge and coordinating plans. Hayek&rsquo;s (1973, 1976) account 
+          of an abstract order based on abstract rules provides a framework for 
+          understanding abstraction boundaries, but fails to acknowledge their 
+          role. What Lachmann (1971) calls secondary institutions &ndash; the 
+          day-to-day institutions towards which people orient their actions &ndash; 
+          fills the gap, capturing what we mean by abstraction boundaries. Abstraction 
+          boundaries also shed light on how markets deal with the problem of institutional 
+          coherence and change. (Lachmann 1971, 1979, 1991) By facilitating orderly 
+          change, abstraction boundaries coordinate plans through time. Following 
+          Lavoie, we argue that abstraction boundaries emerge as part of the market 
+          process; they are best viewed as negotiated categories resulting from 
+          the dynamic process of exchange and dialogue. </P>
+        <P CLASS="western"><FONT FACE="Arial, sans-serif"><FONT SIZE=4><B>Between 
+          abstract rules and concrete purposes</B></FONT></FONT></P>
+        <P CLASS="western">Friedrich Hayek, in particular, emphasizes the fundamental 
+          importance of abstraction. Abstractions, he explains, &lsquo;are a means 
+          to cope with the complexity of the concrete which our mind is not capable 
+          of fully mastering.&rsquo; (1973, p. 29) What he calls &lsquo;the primacy 
+          of the abstract&rsquo; (1978), is deeply woven into his vision of the 
+          market order, visible in many diverse strands of his thought. The primacy 
+          of the abstract stems from his work on the mind, begun while he was 
+          his twenties and later elaborated and presented in <I>The Sensory Order</I>. 
+          (1952b) His theory of the mind informs numerous aspects of his work 
+          including the limits to understanding complex phenomena, his concept 
+          of spontaneous order, and the importance of abstract rules of conduct. 
+          While Hayek paints a complex picture of the multi-faceted role of abstraction, 
+          he does not seem to recognize the role of abstraction boundaries. Abstraction 
+          boundaries, we argue, emerge as a natural complement to his discussion 
+          of abstract orders based on abstract rules. </P>
+        <P CLASS="western">Hayek presents the mind as a system of classification. 
+          We do not first perceive the world in its detailed particulars and then 
+          build up more abstract representations. To the contrary, our ability 
+          to perceive particulars depends on pre-existing abstractions which we 
+          use to classify our various sense perceptions. Perception must be viewed 
+          as an act of classification; we perceive only certain abstract properties 
+          of objects, not concrete details. As Heinrich Kl&uuml;ver elaborates, 
+          &lsquo;What we perceive are never unique properties of individual objects, 
+          but always only properties which the objects have in common with other 
+          objects. Perception is thus always an interpretation, the placing of 
+          something into one of several classes of objects.&rsquo; (Hayek, 1952b, 
+          p. xviii)</P>
+        <P CLASS="western">As Hayek makes clear, the classifying of objects does 
+          not proceed based on a simple one-to-one mapping of observed objects 
+          into mental categories. It is rather the &lsquo;product of superimposition 
+          of many &ldquo;classifications&rdquo; of the events perceived according 
+          to their significance in many respects.&rsquo; (1978b, p. 36) Each classification 
+          triggers a response in terms of a kind of action; we respond to a certain 
+          class of events with a disposition to a certain kind of action. It is 
+          only through the superimposition of many classifications and dispositions 
+          that a particular action is specified: &lsquo;both the specification 
+          of a particular experienced event and the specification of a particular 
+          response to it are the result of a superimposition of many such dispositions.&rsquo; 
+          (Hayek, 1978b, p. 40)</P>
+        <P CLASS="western">Specification by superimposition, Hayek claims, is 
+          the &lsquo;best description of the mechanism for the operation of &hellip; 
+          the primacy of the abstract, because each of its causal determinants 
+          decides only one of the attributes of the resulting action.&rsquo; (1978b, 
+          p. 48) The specification of action through the superimposition of multiple 
+          dispositions enables the individual to make use of knowledge of typical 
+          aspects of a situation while adapting the response to the unique aspects. 
+          The various dispositions serve as adaptations to the typical features 
+          of the environment. By superimposing many dispositions, we are able 
+          to generate unique responses to novel situations.</P>
+        <P CLASS="western"><FONT COLOR="#000000">Hayek, especially in his later 
+          work, presents a vision of the market order that is remarkably similar 
+          to his account of the sensory order. Both mind and market are examples 
+          of what Butos and McQuade (1999) describe as knowledge-generating orders 
+          &ndash; orders where the knowledge generated consists of classifications 
+          meaningful in the context of that order. They argue that </FONT><FONT FACE="TimesNewRoman, serif">&lsquo;it 
+          is strictly incorrect to say that the market gathers up &ldquo;divided&rdquo; 
+          individual knowledge and makes this information available to many others 
+          &hellip;. </FONT>Instead, the market takes, as input, knowledge in the 
+          individual sense &hellip; and classifies this, producing a totally different 
+          kind of knowledge.&rsquo; <FONT COLOR="#000000">(1999, p. 29)</FONT></P>
+        <P CLASS="western">Classifications provide knowledge that others can use. 
+          They abstract from detailed particular circumstances and purposes to 
+          provide reusable knowledge of general circumstances that can be applied 
+          to multiple purposes. They enable individuals to economize on knowledge 
+          by substituting abstract knowledge of the class for specific knowledge 
+          of the instances. Hayek&rsquo;s work suggests that these classifications 
+          exist at multiple layers and adjust continuously to changing circumstances 
+          and accumulated experience. This multi-layered view of the knowledge-generating 
+          properties of the market order stands in contrast however, to the stark 
+          distinction Hayek seems to draw between the roles that abstract rules 
+          and concrete purposes play in creating that order.</P>
+        <P CLASS="western">Hayek argues that the emergence of the extended order 
+          of cooperation (1989) rests on the gradual change from a society organized 
+          around the common pursuit of a limited number of concrete purposes to 
+          a society organized around adherence to a common set of abstract rules 
+          of conduct that coordinate a countless number of diverse purposes.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote6anc" HREF="#sdendnote6sym"><SUP>6</SUP></A></FONT></FONT></SUP> 
+          Rules of conduct are abstract in the sense that they abstract from the 
+          concrete purposes and circumstances. They abstract from particular circumstances 
+          of time and place to capture certain general circumstances that have 
+          proven useful for the pursuit of many diverse plans. Abstract rules 
+          are purpose independent: they serve no particular purpose, but improve 
+          the chances for success of a large number of different purposes. </P>
+        <P CLASS="western">Actions based on abstract rules generate an abstract 
+          order. Abstract orders are formed spontaneously, not by deliberate arrangement. 
+          They are based on abstract relations serving multiple purposes, not 
+          concrete relations serving a single purpose. By serving multiple purposes, 
+          the complexity of abstract orders is &lsquo;not limited to what a human 
+          mind can master.&rsquo; (1973, p. 38) The abstract order exists independently 
+          of any particular member; the order persists through the abstract relations 
+          that define it. Hayek (1973, p. 39) tells us that abstract orders</P>
+        <P STYLE="margin-left: 0.5in; margin-bottom: 0.17in">&hellip; consist 
+          of a system of abstract relations between elements which are also defined 
+          only by abstract properties&hellip;. The significance of the abstract 
+          character of such orders rests on the fact that they may persist while 
+          all the particular elements they comprise, and even the number of such 
+          elements, change. All that is necessary to preserve such an abstract 
+          order is that a certain structure of relationships be maintained, or 
+          that elements of a certain kind (but variable in number) continue to 
+          be related in a certain manner. </P>
+        <P CLASS="western">Abstract rules enhance the ability of individuals to 
+          predict the actions of others. They increase predictability by delimiting 
+          protected domains of actions. Domains of action provide a place where 
+          individuals can plan based on their particular knowledge. They provide 
+          a space where individuals can make use of their resources free from 
+          interference by others. Abstract rules must do more, however, than just 
+          prevent plan interference by delimiting protected domains of actions. 
+          They must provide us with a way to connect these separate domains into 
+          cooperative relationships. Hayek (1973, p. 99) tells us that:</P>
+        <P STYLE="margin-left: 0.5in">What is required if the separate actions 
+          of the individuals are to result in an overall order is that they not 
+          only do not unnecessarily interfere with one another, but also that 
+          in those respects in which the success of the action of the individuals 
+          depends on some matching action by others, there will be at least a 
+          good chance that this correspondence will actually occur. But all rules 
+          can achieve in this respect is to make it easier for people &hellip; 
+          to form that match; abstract rules cannot actually secure that this 
+          will always happen. </P>
+        <P CLASS="western">While Hayek highlights the importance of matching complementary 
+          actions, he provides us with little guidance on how the matching process 
+          takes place. His distinction between purpose-independent rules and purposeful 
+          action suggests that coordination occurs at the level of concrete purposes 
+          and plans. The attempt to match concrete plans directly with other concrete 
+          plans, however, leads to plan failure as circumstances change. In the 
+          face of change, people must constantly adapt their plans in unforeseeable 
+          ways. Concrete plans are highly brittle in the face of such changes. 
+          All plans, however, need not share the same level of concreteness; plans 
+          may differ in their degree of specificity. Abstract plans, that encompass 
+          a range of specific purposes, are likely to be more robust in the face 
+          of changing circumstances. By capturing the abstract aspects of many 
+          individual plans and embodying them in market institutions, market participants 
+          can enhance their ability to coordinate their plans through time. The 
+          matching process occurs not through direct matching of concrete plans 
+          but through matching of abstract plans embodied in institutions.</P>
+        <P CLASS="western">The problem with Hayek&rsquo;s treatment of abstract 
+          rules, one might say, is that it is too abstract. He does not explain 
+          how these abstract rules are specified into concrete actions that coordinate 
+          plans. While he highlights the importance of judge-made law in delimiting 
+          domains of action, he fails to provide an account of how market participants 
+          through their everyday actions convert abstract rules into institutions 
+          that facilitate the matching of complementary activities. The boundaries 
+          defined by abstract rules must do more than separate activities where 
+          they conflict. They must also combine activities where they complement. 
+          Hayek&rsquo;s account leaves a large gap in how this occurs; it leaves 
+          a gap between abstract rules and concrete purposes. What is missing 
+          is the role that market institutions play in filling the gap by classifying 
+          useful knowledge and facilitating the matching process required for 
+          its reuse.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote7anc" HREF="#sdendnote7sym"><SUP>7</SUP></A></FONT></FONT></SUP> 
+        </P>
+        <H1 CLASS="western">Secondary institutions as abstraction boundaries</H1>
+        <P CLASS="western">Ludwig Lachmann, in his 1971 book, <I>The Legacy of 
+          Max Weber</I>, discusses the role that market institutions play in coordinating 
+          plans. Like Hayek, he highlights the fundamental role played by property, 
+          contract, and the rule of law in shaping the market order. Unlike Hayek, 
+          he moves beyond abstract rules to discuss the specific institutions 
+          of the market order, what he calls secondary institutions. Secondary 
+          institutions &lsquo;gradually evolve as a result of market processes 
+          and other forms of spontaneous individual action.&rsquo; (1971, p. 81) 
+          They are the familiar institutions of day-to-day life: the restaurants, 
+          the banks, the post offices, the stock exchanges, and so on.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote8anc" HREF="#sdendnote8sym"><SUP>8</SUP></A></FONT></FONT></SUP> 
+        </P>
+        <P CLASS="western">These concrete institutions embody abstract plans. 
+          They fill the gap between purpose-independent abstract rules and specific 
+          concrete purposes. A plan, Lachmann tell us, &lsquo;is but a generalization 
+          of purpose.&rsquo; (1971, p. 33) It abstracts the multiple purposes, 
+          means, and obstacles pursued by an individual into a comprehensive framework 
+          for action. Similarly, a secondary institution is but a generalization 
+          of plan, it abstracts from the multiple plans of various individuals 
+          to provide a common point of orientation. As Lachmann explains, &lsquo;If 
+          the plan is a mental scheme in which the conditions of action are coordinated, 
+          we may regard institutions as it were, as orientation schemes of the 
+          second order, to which planners orient their plans as actors orient 
+          their actions to a plan.&rsquo; (1971, p. 50)</P>
+        <P CLASS="western">Secondary institutions serve as means of orientation 
+          that help coordinate action in society. By orienting our plans towards 
+          these institutions, we make use of a vast amount of knowledge without 
+          the need to acquire it in detail. Lachmann (1971, p. 50) gives the example 
+          of a post office. </P>
+        <P STYLE="margin-left: 0.5in">Whether we post a letter, wait for a train, 
+          or draw a cheque, our action is in each case orientated towards a complex 
+          network of human action of which we know enough to make it serve our 
+          ends, though we may know next to nothing about the internal working 
+          order of these institutions. We know of course that such an internal 
+          working-order exists, but in our everyday life take no interest whatever 
+          in its details. We know very well that the Post Office works according 
+          to a general plan, but such knowledge as we have about it is usually 
+          quite irrelevant to the achievement of our purpose in posting a letter. 
+          Only a few aspects of this general plan, perhaps the times of collection 
+          and delivery of mail, need be of concern to us. </P>
+        <P CLASS="western">By drawing our attention to the aspects of an institution 
+          with which one interacts, Lachmann is presenting what software designers 
+          refer to as an abstraction boundary &ndash; the interface between actors. 
+          The abstraction boundary captures the abstract plan common to the various 
+          actors. The actors coordinate their actions to the boundary, not to 
+          the detailed plans of the other actors. As Lachmann notes, the postal 
+          customers need concern themselves with only a few aspects of the post 
+          office&rsquo;s plan. These few aspects form the abstraction boundary. 
+          The post office communicates these aspects to the postal customers, 
+          who rely on these details in forming their own particular plans.</P>
+        <P CLASS="western"><FONT COLOR="#000000">The abstraction boundary defines 
+          a division of knowledge. Instead of each of us having to deliver our 
+          own letters and packages, we can rely on the specialized services of 
+          a post office. We no longer deliver our own mail because some entrepreneur, 
+          forgotten to history, recognized a profitable division of labor and 
+          created an abstraction boundary.</FONT><SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT COLOR="#000000"><A CLASS="sdendnoteanc" NAME="sdendnote9anc" HREF="#sdendnote9sym"><SUP>9</SUP></A></FONT></FONT></FONT></SUP><FONT COLOR="#000000"> 
+          The entrepreneur 1) recognized an abstraction &ndash; the commonalities 
+          in the separate plans of people delivering their own letters, 2) drew 
+          a boundary around the abstraction defining the service of mail delivery, 
+          and 3) encapsulated the implementation of these services behind the 
+          abstraction boundary while convincing others that it would serve their 
+          purposes to use this new service.</FONT><SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT COLOR="#000000"><A CLASS="sdendnoteanc" NAME="sdendnote10anc" HREF="#sdendnote10sym"><SUP>10</SUP></A></FONT></FONT></FONT></SUP><FONT COLOR="#000000"> 
+          The post office, by reusing its specialized knowledge across many instances 
+          of mail delivery, is able to capture economies of specialization. Postal 
+          customers benefit when the cost of their using a post office to deliver 
+          a letter is less than the cost of their delivering it themselves. </FONT> 
+        </P>
+        <P CLASS="western">Institutions as abstraction boundaries are not the 
+          same as organizations. An abstraction boundary is the interface that 
+          lies between actors, such as that between postal customers and the post 
+          office. The post office as an organization differs from post office 
+          as an abstraction boundary. The post office as an abstraction boundary 
+          represents a particular kind of provider-client relationship. The post 
+          office as an organization implements the services defined by the abstraction 
+          boundary. The boundary defines how the post office as an organization 
+          relates to other elements of the more comprehensive order of which it 
+          is part. A concrete post office instantiates the abstract interface 
+          and implements the delivery services. It is part of a larger postal 
+          system that encompasses additional entities such as delivery vehicles, 
+          warehouses, sorting machines, and tracking facilities. From the point 
+          of view of the postal customer, however, the implementation detail is 
+          hidden behind the abstraction boundary of the post office.</P>
+        <P align="center" CLASS="western"><IMG SRC="images/figure1.jpg" NAME="graphics1" ALIGN=BOTTOM WIDTH=602 HEIGHT=362 BORDER=0></P>
+        <P CLASS="western">The abstraction boundary of the post office separates 
+          the relationship into distinct actors; it forms the interface between 
+          a postal customer requesting delivery of a letter and a post office 
+          that fulfills that request. The boundary describes the vocabulary used 
+          in the dialogue between a post office and its customers: post my letter, 
+          change my address, certify delivery, and so on.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT COLOR="#000000"><A CLASS="sdendnoteanc" NAME="sdendnote11anc" HREF="#sdendnote11sym"><SUP>11</SUP></A></FONT></FONT></FONT></SUP> 
+          The abstraction boundary also defines what it means for a post office 
+          to be an instance of the type post office.<FONT COLOR="#000000"> Objects 
+          of the same type share the same interface. The abstraction boundary 
+          embodies and reifies what it means to be an object of a particular type. 
+          </FONT>It defines what services can be expected from a post office, 
+          while distinguishing this type of service from other types of services.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote12anc" HREF="#sdendnote12sym"><SUP>12</SUP></A></FONT></FONT></SUP></P>
+        <H3 CLASS="western" STYLE="margin-top: 0.25in">Abstract plans serving 
+          abstract purposes</H3>
+        <P CLASS="western">The abstraction boundary enables what software designers 
+          refer to as separation of concerns; it separates:</P>
+        <UL>
+          <LI> 
+            <P CLASS="western"><I>why</I> a customer wants to mail a letter (the 
+              concern of the postal customer) from,</P>
+          <LI> 
+            <P CLASS="western"><I>what</I> it means to mail a letter (the mutual 
+              concern of the parties) from,</P>
+          <LI> 
+            <P CLASS="western"><I>how</I> a letter gets delivered (the concern 
+              of the postal system). </P>
+        </UL>
+        <P CLASS="western">The post office does not need to know that Alice wants 
+          to invite Bob to a birthday party, or that Carol wants to send her monthly 
+          payment to the power company. The boundary abstracts from the details 
+          of the customers&rsquo; plans to focus on the common attributes of transporting 
+          a sealed envelope to a specified address. Similarly, the postal customer 
+          does not need to know how the commitment to deliver a letter will be 
+          implemented. They do not need to know that the mail will be delivered 
+          using a tractor-trailer truck if the address is within 500 miles, or 
+          delivered by airplane if the address is more than 500 miles away. Both 
+          parties, however, need to know the &lsquo;what,&rsquo; that is, the 
+          specific steps needed to post the letter. This is the boundary.</P>
+        <P CLASS="western">By abstracting on the one side from the specific purpose 
+          of a request, and on the other side from the specific way the requested 
+          action is implemented, the abstraction boundary enables a large degree 
+          of flexibility on both sides. The post office can accommodate a large 
+          range of specific reasons for mailing a letter, including ones not yet 
+          known. At the same time, the post office is free to try to discover 
+          better ways of delivering letters. The entities obtain this flexibility 
+          because of the stability of the boundary. The abstraction boundary by 
+          capturing the mutual concerns of both parties while abstracting from 
+          their particular purposes is able to remain relatively stable in the 
+          face of change. The stability and familiarity of the category of a post 
+          office makes it easy, for example, for someone visiting a new town to 
+          locate a new instance of the type post office and mail a post card home 
+          even without any prior knowledge of that particular post office. </P>
+        <P CLASS="western">The creation of an abstraction boundary converts a 
+          specific relationship into an abstract relationship. A specific relationship 
+          directly links a particular solution to a particular purpose. An abstract 
+          relationship links a type of solution to a type of purpose through an 
+          abstraction boundary. A relationship is abstract when the common services 
+          defined in the boundary can be used for multiple purposes, and provided 
+          by multiple providers. The abstraction boundary limits what the parties 
+          need to know about each other; it allows the provider to treat as common 
+          a diverse set of clients, and the client to treat as substitutes a diverse 
+          set of providers.</P>
+        <P align="center" CLASS="western"> <IMG SRC="images/figure2.jpg" NAME="graphics2" ALIGN=BOTTOM WIDTH=556 HEIGHT=507 BORDER=0></P>
+        <P CLASS="western">An abstract relationship combines both reusability 
+          and polymorphism. Reusability occurs when a single solution can be reused 
+          for multiple purposes. Polymorphism occurs when multiple providers can 
+          serve a single purpose. Reusability generalizes across the purposes 
+          of the various clients (the particular whys) to focus on the aspects 
+          they share in common. Polymorphism generalizes across the implementations 
+          of the various providers (the particular hows) to focus on the common 
+          services that they provide. Polymorphism enables clients to substitute 
+          one provider for another so long as they provide the same type of service; 
+          it shields the clients not only from how the services are provided, 
+          but also from who provides the service. </P>
+        <P CLASS="western">Lachmann&rsquo;s post office example highlights the 
+          advantages of moving from specific to abstract relationships. Organizing 
+          around specific relationships is neither economical nor adaptable. We 
+          would not expect to see mail delivery organized around specific relationships 
+          on a large scale: a post office specializing in delivering Alice&rsquo;s 
+          birthday cards to her grandmother, or a post office specializing in 
+          delivering Bob&rsquo;s payment to the gas company. By abstracting from 
+          the various purposes, a provider can reuse the common mail delivery 
+          solution for multiple purposes. </P>
+        <P CLASS="western">By abstracting from the particular implementations, 
+          clients can substitute different providers of those services, based 
+          on their more exact requirements. Wirfs-Brock and McKean (2002, p. 3) 
+          use the example of mail delivery to make this point to programmers.</P>
+        <P STYLE="margin-left: 0.5in">Objects that play the same role can be interchanged. 
+          For example, there are several providers that can deliver letters and 
+          packages: DHL, FedEx, UPS, Post, Airborne. They all have the same purpose, 
+          if not the same way of carrying out their business. You choose from 
+          among them according to the requirements that you have for delivery. 
+          Is it one-day, book rate, valuable, heavy, flammable? You pick the mail 
+          carrier that meets your requirements.</P>
+        <P CLASS="western">Abstraction boundaries play an important cognitive 
+          role by classifying various activities into types of activities, and 
+          by making these classifications accessible to others. The boundary takes 
+          an abstraction and makes it concrete. It reifies the abstraction by 
+          articulating it in the design of the interface &ndash; in its contracts, 
+          in its store designs, in its customer-facing procedures, and in the 
+          design of its products. The abstraction boundary is the invention of 
+          the possibility that two entities can interact in a particular way; 
+          without the boundary the abstraction is too intangible to be useful.</P>
+        <P CLASS="western">In the market context, abstraction boundaries often 
+          take the form of transaction boundaries. The abstraction boundary increases 
+          the potential for gains from trade by reducing the costs for people 
+          seeking a particular kind of trade. An abstraction boundary increases 
+          the chances that a particular kind of trade will happen by limiting 
+          the types of transactions that can occur through the boundary. There 
+          are all sorts of potential gains from trade that may exist between a 
+          particular postal customer and a particular postal worker. For example, 
+          the postal customer may be in the market for a used car, and the postal 
+          worker may be looking to sell his old one. However, this kind of transaction 
+          is not permitted through the boundary of the post office. The post office 
+          enables the realization of some of the potential gains from trade between 
+          postal customers and the postal workers, while ignoring a vast number 
+          of other potential gains from trade. By doing so, it increases the chances 
+          that many more postal customers and post offices will realize the gains 
+          from posting a letter. The abstraction boundary serves as a meeting 
+          place for people seeking a particular kind of gain from trade; it provides 
+          a familiar place to which people seeking a type of transaction can orient 
+          their plans.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote13anc" HREF="#sdendnote13sym"><SUP>13</SUP></A></FONT></FONT></SUP></P>
+        <P CLASS="western">The concept of abstraction boundary can also help us 
+          answer Lachmann&rsquo;s question of &lsquo;How is the need for coherence 
+          and permanence reconciled with that for flexibility in the real world?&rsquo; 
+          (1971, p.90) Secondary institutions provide stability with flexibility. 
+          Lachmann uses the metaphor of a hinge. He writes, &lsquo;one is tempted 
+          to think of the institutional order as an array of hinges: the institutions 
+          within each hinge can move a good deal, if within limits, but the hinges 
+          themselves cannot.&rsquo; (1979, p. 253) Abstraction boundaries play 
+          the role of the hinges, enabling flexibility on both sides of the boundary. 
+          Relatively stable abstraction boundaries permit a wide range of changes 
+          in purposes and implementations through the separation of concerns. 
+          Changes on either side of the boundary will not upset plans so long 
+          as the interface does not change. </P>
+        <P CLASS="western">Abstraction boundaries can coordinate existing plans 
+          while supporting new requirements through what programmers call subtyping. 
+          A subtype extends the scope of an existing abstraction boundary by adding 
+          additional behaviors. Since a subtype must fulfill all of the obligations 
+          defined by its supertype, it can be substituted in place of its supertype 
+          without upsetting the expectations of existing clients for that type. 
+          This enables what Lachmann calls the widening of institutions.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote14anc" HREF="#sdendnote14sym"><SUP>14</SUP></A></FONT></FONT></SUP> 
+          We can adapt to change &lsquo;not by the creation of a new institution, 
+          nor by replacing an old by a new, but by &ldquo;widening&rdquo; an existing 
+          institution in such a way that it can serve new interests without upsetting 
+          the plans which have thus far made use of it.&rsquo; (1971, p. 91)</P>
+        <H1 CLASS="western">Programming as plan coordination</H1>
+        <P CLASS="western">As Lachmann&rsquo;s post office example suggests, programming 
+          can be usefully analyzed in terms of the Hayekian notion of plan coordination. 
+          Programs perform actions: plans are specified by the programmer at design-time; 
+          plans are executed by the computer at run-time.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote15anc" HREF="#sdendnote15sym"><SUP>15</SUP></A></FONT></FONT></SUP> 
+          In order to cope with the <FONT COLOR="#000000">intellectual complexity 
+          of large programs</FONT>, programmers divide a program into separate 
+          modules, each embodying its own plan of action. The challenge facing 
+          programmers can therefore be seen as one of plan coordination; programmers 
+          must coordinate the plans of the various modules to ensure the harmonious 
+          working of the overall system. </P>
+        <P CLASS="western">Most software bugs result from plan interference. Breakdown 
+          occurs because of coordination failure between parts of the program. 
+          Actions taken by one module destroy the assumptions used by another 
+          module in planning its actions. Hidden dependencies between modules 
+          render assumptions unstable and plans mutually incompatible. For example 
+          with procedural programming, the plans of two subroutines may conflict 
+          because they unknowingly share the same data. Subroutine A performs 
+          a calculation and stores the resulting data for future use. Meanwhile, 
+          subroutine B performs its operation overwriting A&rsquo;s data. Subroutine 
+          A retrieves the data for further processing, not realizing that it has 
+          been modified by B &ndash; leading to unexpected results and potential 
+          system failure. </P>
+        <P CLASS="western"><FONT COLOR="#000000">The history of software development 
+          can be seen as an ongoing development of techniques &ndash; embodied 
+          in programming languages and development methods &ndash; to cope with 
+          the challenges of plan coordination through time.</FONT><SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote16anc" HREF="#sdendnote16sym"><SUP>16</SUP></A></FONT></FONT></SUP><FONT COLOR="#000000"> 
+          Centrally planned approaches to software development broke down in the 
+          face of increasing complexity, forcing programmers to introduce a division 
+          of labor into their programs. Attempts to divide labor according to 
+          the principles of procedural programming enabled programmers to build 
+          more complex programs, but were subject to massive plan failure when 
+          program requirements changed. Procedural programming, which divided 
+          the tasks into subroutines while keeping program data in common, could 
+          not easily adapt to changing circumstances. Object-oriented programming 
+          improved on procedural programming by dividing both the tasks and the 
+          data; it combined the data with the procedures that act on it. By eliminating 
+          the dependencies caused by shared data, it provided greater flexibility 
+          in adapting to change. </FONT> </P>
+        <P CLASS="western">Object-oriented programming divides a program into 
+          separate objects that are each instances of a particular type. An object 
+          combines a set of related behaviors (its methods) with its private data 
+          (its state). The object&rsquo;s type is defined by its set of methods. 
+          An object&rsquo;s state &ndash; its particular circumstances of time 
+          and place &ndash; is said to be encapsulated because only its methods 
+          have the ability to access or modify that state. Other objects cannot 
+          directly access the internal state of another object; they must send 
+          a request to the object asking it to perform a particular action.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote17anc" HREF="#sdendnote17sym"><SUP>17</SUP></A></FONT></FONT></SUP> 
+        </P>
+        <P CLASS="western">The move from procedural programming to object-oriented 
+          programming can be seen as a move from concrete plans to abstract plans. 
+          Objects do not coordinate their actions with the specific plans of other 
+          objects; they coordinate their actions to the abstract aspects of those 
+          plans. An object&rsquo;s interface abstracts from a specific plan to 
+          a kind of plan. Object-oriented programming, or more generally the move 
+          to encapsulation, message passing, and polymorphism, is essentially 
+          trying to move from plan coordination to pattern coordination, (O&rsquo;Driscoll 
+          and Rizzo, 1985) where what is meant by patterns is abstracted plans. 
+          It does this by re-discovering the virtues of property rights and contract.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote18anc" HREF="#sdendnote18sym"><SUP>18</SUP></A></FONT></FONT></SUP></P>
+        <P CLASS="western">Hayek&rsquo;s explanation of the primary virtue of 
+          property rights for organizing large scale economic activity parallels 
+          the rationale for encapsulation in object-oriented systems: to provide 
+          a domain (an object&rsquo;s encapsulation boundary) in which an agent 
+          (the object) can execute plans (the object&rsquo;s methods) that use 
+          resources (an object&rsquo;s private state), where the proper functioning 
+          of these plans depends on these resources not being used simultaneously 
+          by conflicting plans. By dividing up the resources of society (the state 
+          of a computational system) into separately owned chunks (private object 
+          states), we enable a massive number of plans to make use of a massive 
+          number of resources without needing to resolve a massive number of conflicting 
+          assumptions.</P>
+        <P CLASS="western">Objects must collaborate to fulfill their responsibilities. 
+          They collaborate by sending messages requesting other objects to perform 
+          an action. Message passing distributes the responsibility for performing 
+          the work of an application across many objects. Each object is responsible 
+          for performing services or knowing information useful to others. (Wirfs-Brock 
+          and McKean, 2002) The object receiving the message is responsible for 
+          determining how to respond to the message. The object&rsquo;s interface 
+          defines the set of messages to which it will respond. The interface 
+          represents a contract between the object making requests and the object 
+          providing the requested service.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote19anc" HREF="#sdendnote19sym"><SUP>19</SUP></A></FONT></FONT></SUP> 
+          The contract provides &lsquo;a list of the requests that can be made 
+          of the server by the client. Both must fulfill the contract: the client 
+          by making only those requests it specifies, and the server by responding 
+          only to those requests.&rsquo; (Wirfs-Brock and Wilkerson 1989, p. 72)</P>
+        <P CLASS="western">Object-oriented programming reduces plan interference 
+          by encapsulating the computational state of a system into separate objects. 
+          It increases plan coordination by combining objects through message 
+          passing. Message passing increases the adaptability of the system by 
+          basing the interaction between specific objects on the abstraction boundary 
+          &ndash; the abstract relationship between types of objects. Collaboration 
+          between concrete plans occurs through the coordination of abstract plans. 
+        </P>
+        <H3 CLASS="western">Orient plans to an interface, not an implementation</H3>
+        <P CLASS="western">The run-time composition of objects by message passing 
+          stands in contrast to the design-time organization of abstraction boundaries 
+          into a type hierarchy. The type hierarchy defines a static relationship 
+          between types, organizing them from more general supertypes to more 
+          specific subtypes. The run-time interaction of objects consists of the 
+          dynamically formed relationships among specific objects.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote20anc" HREF="#sdendnote20sym"><SUP>20</SUP></A></FONT></FONT></SUP> 
+          Programmers can enhance the ability of the program to adapt to unforeseen 
+          change by &lsquo;programming to an interface and not an implementation.&rsquo; 
+          (Gamma et al, 1995, p. 18) By programming to an interface, the programmer 
+          orients the behavior of an object to the abstract plans of other objects, 
+          not to the concrete plans of specific objects. Objects with different 
+          concrete plans can be substituted for one another at run-time without 
+          requiring the programmer to rewrite and recompile the program. Market 
+          participants, similarly, gain adaptability by orienting their plans 
+          to an interface and not an implementation. Programmers and market participants 
+          benefit from orienting their plans to stable boundaries, not frequently 
+          changing concrete plans. </P>
+        <P CLASS="western"><FONT FACE="Tms Rmn, Times New Roman, serif"><FONT COLOR="#000000">Programmers 
+          create the abstraction boundaries of the program at design-time. </FONT></FONT>T<FONT FACE="Tms Rmn, Times New Roman, serif"><FONT COLOR="#000000">he 
+          major creative act of programming is to look at some large set of computational 
+          activity and to discover boundaries in it &ndash; to find distinctions 
+          that enable programmers to see commonalities or patterns. The distinction 
+          reveals commonalities &ndash; among providers on one side and clients 
+          on the other &ndash; that were previously unnoticed. Once the commonality 
+          or pattern is recognized, programmers attempt to find a way to package 
+          it, so that they can embody the usefulness of that part of the computational 
+          space into a module that other programmers can use. </FONT></FONT> </P>
+        <P CLASS="western">The perspective of programming as plan coordination 
+          also sheds light on the role of the entrepreneur. It suggests that the 
+          role of the entrepreneur is to create and adapt abstraction boundaries. 
+          Programming to abstraction boundaries adds flexibility at run-time. 
+          The boundaries, however, remained fixed; interaction occurs between 
+          objects with fixed boundaries. The abstract plans are fixed by the programmer 
+          in advance; they do not change during run-time. </P>
+        <P CLASS="western">Several software designers have proposed moving to 
+          market-oriented programming as a way to increase run-time flexibility.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote21anc" HREF="#sdendnote21sym"><SUP>21</SUP></A></FONT></FONT></SUP> 
+          Market-oriented programming introduces price signals into a program. 
+          Price signals allow objects to dynamically trade-off the scarce computational 
+          resources used in carrying out their plans. Objects are alert to opportunities 
+          presented by changes in price, and thus able to dynamically shift from 
+          one plan to another. All of the adaptation of plans, however, must still 
+          take place within the divisions created by the programmer; the system 
+          still does not have creativity in the sense of being able to create 
+          new divisions. New abstractions are created outside of the system. It 
+          is the programmers, the human beings, who create new abstraction boundaries; 
+          the evenly rotating carrying out of plans is something we get the computer 
+          to do.</P>
+        <P CLASS="western">Our distinction bears a resemblance to the one that 
+          Buchanan and Vanberg (2002) make between creative and reactive choice. 
+          Creative choice creates alternatives from which other individuals choose; 
+          reactive choice is choice among the alternatives presented. Abstraction 
+          boundaries define what alternatives are available. New alternatives 
+          are created by changing the abstraction boundaries. Objects at run-time 
+          can react to the alternatives presented to them by the existing abstraction 
+          boundaries, but they normally cannot change the boundaries to create 
+          new alternatives.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote22anc" HREF="#sdendnote22sym"><SUP>22</SUP></A></FONT></FONT></SUP> 
+        </P>
+        <H1 CLASS="western">Lavoie and the re-categorization of the market order</H1>
+        <P CLASS="western">By recognizing the role of the software designer in 
+          creating abstraction boundaries, we highlight an important difference 
+          between abstraction boundaries in software and those in markets. In 
+          markets, there is no programmer standing outside the economy ready to 
+          change the boundaries; there is no exogenous source of change. Changes 
+          to abstraction boundaries occur as part of the ongoing market process. 
+          Market participants are engaged in the process of drawing and redrawing 
+          abstraction boundaries. Abstraction boundaries emerge as negotiated 
+          categories that help orient plans.</P>
+        <P CLASS="western">The software design process is highly collaborative; 
+          software designers engage in a process of dialogue &ndash; with each 
+          other and with prospective users of the system &ndash; in order to discover 
+          abstraction boundaries.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote23anc" HREF="#sdendnote23sym"><SUP>23</SUP></A></FONT></FONT></SUP> 
+          The importance of dialogue in creating abstraction boundaries should 
+          not be surprising. As Hayek tells us, &lsquo;We learn to classify through 
+          language, with which we not merely label known kinds of objects but 
+          specify what we are to regard as objects or events of the same or different 
+          kinds.&rsquo; (1989, p. 15)</P>
+        <P CLASS="western">Don Lavoie (1990b, 2003), in particular, has emphasized 
+          the creative role of dialogue in markets. He draws on the work of Gadamer 
+          (1989) to emphasize the emergence of new meaning from the spontaneous 
+          ordering process of dialogue &ndash; a process writ large in the spontaneous 
+          ordering process of the market. Lavoie argues that , &lsquo;Markets 
+          are an extension of language, and they work through concrete acts of 
+          articulation, whether oral or written or electronic. You could say that 
+          markets simply add whole new kinds of texts, prices, profits, contracts, 
+          advertising, etc., to the conversation.&rsquo; (2003, p. 12) He goes 
+          on to urge that, &lsquo;Among the institutional forms that Austrian 
+          economists ought to pay attention to are the articulation processes 
+          and the resulting texts through which human actors communicate their 
+          meanings.&rsquo; (2003, p. 16)</P>
+        <P CLASS="western">We suggest that we ought to pay attention to these 
+          institutional forms because they represent the process by which abstraction 
+          boundaries evolve and the means by which they are formed. Market articulations 
+          are attempts to create shared categories of meaning that enable us to 
+          coordinate our actions. Abstraction boundaries, in order to serve as 
+          orientation points, must be articulated; they must be made concrete.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote24anc" HREF="#sdendnote24sym"><SUP>24</SUP></A></FONT></FONT></SUP> 
+          Articulation in dialogue &ndash; by words and by texts &ndash; creates 
+          a space where shared meanings can form. Articulation in markets &ndash; 
+          by contracts, by product designs, and by other marketing efforts &ndash; 
+          creates a space where shared categories can form. These shared categories 
+          serve as points of orientation that help coordinate plans. As Peter 
+          Lewin writes, &lsquo;Expectations and plans are, for the most part, 
+          fulfilled because of the existence in the social world of shared categories 
+          and standards that facilitate the synchronization and coordination of 
+          activities.&rsquo; (1999, p. 34)</P>
+        <P CLASS="western">Lewin illustrates this point by examining the emergence 
+          of new categories of products. These categories emerge from attempts 
+          to articulate the purpose of new products &ndash; how they are similar, 
+          how they are different, and how they relate to other products. He (1999, 
+          p. 39) writes:</P>
+        <P STYLE="margin-left: 0.5in">We cope with the complexity in the world 
+          by converging on institutions. Thus once the arrival of new products, 
+          made possible by the development of a new technology, has been digested, 
+          new categories of classifications tend to be developed, into which these 
+          products are grouped. These categories emerge spontaneously out of individual 
+          attempts to communicate the attributes of the new products. A good example 
+          is the products of the computer industry. A whole range of products 
+          exist, whose workings remain a mystery to the vast majority of people, 
+          but whose purposes needed to be explained. Laptops evolved into notebooks, 
+          micro computers into desktops&hellip;. All these shorthands provide 
+          the increasingly informed public with a way to tailor their expectations 
+          when choosing between products. </P>
+        <P CLASS="western"> Shared categories, the abstraction boundaries of the 
+          market, emerge from the interaction of entrepreneurs and their potential 
+          customers. They emerge from the attempt by entrepreneurs to define what 
+          services their products can provide; and the attempt by their customers 
+          to express what services they desire. Entrepreneurs orient their actions 
+          to existing categories: they mimic current categories by imitation; 
+          they modify them by differentiation; and they try to create new ones 
+          through innovation. Successful categories, those that persist, reflect 
+          not just the action of entrepreneurs, but also the responses of potential 
+          customers. Potential customers express their requirements through various 
+          means, through negotiation, through novel uses of products, through 
+          responses to market research, and ultimately through their purchase 
+          or failure to purchase the entrepreneur&rsquo;s offering. The resulting 
+          categories become embodied in the design of products, in the design 
+          of secondary institutions, and in the grouping of product and institutional 
+          types into more general categories that help orient people&rsquo;s actions. 
+          Shared categories emerge from the market process of dialogue and exchange.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote25anc" HREF="#sdendnote25sym"><SUP>25</SUP></A></FONT></FONT></SUP> 
+        </P>
+        <P CLASS="western">Lavoie argues that &lsquo;entrepreneurship should be 
+          conceptualized as a social process of mutual orientation.&rsquo; (2003, 
+          p. 6) He argues that &lsquo;Our ability to coordinate with one another 
+          may depend on our capabilities for mutual orientation, to see not the 
+          things themselves, but to see how one another are seeing things.&rsquo; 
+          (2003, p. 2) The focus on mutual orientation suggests that we shift 
+          our attention to how market participants articulate and share meanings, 
+          and how they negotiate shared categories that orient their actions.</P>
+        <P CLASS="western">In recasting entrepreneurship as mutual orientation, 
+          Lavoie generalizes the account of the entrepreneur provided by Lachmann.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote26anc" HREF="#sdendnote26sym"><SUP>26</SUP></A></FONT></FONT></SUP> 
+          Lachmann (1956) presents the function of the entrepreneur as one of 
+          combining heterogeneous capital goods into a specific production plan 
+          which must fit into a complex capital structure. Lachmann emphasizes 
+          both the need to specify a concrete use, and the need to fit the particular 
+          use into a complex web of complementary capital goods.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote27anc" HREF="#sdendnote27sym"><SUP>27</SUP></A></FONT></FONT></SUP> 
+          As we have seen, abstraction boundaries are the key to flexibly combining 
+          complementary activities. The process of &lsquo;specifying&rsquo; and 
+          &lsquo;fitting&rsquo; requires both the discovery of an abstraction 
+          and the creation of a boundary that allows it to connect to complementary 
+          activities. Entrepreneurs must look beyond existing categories to specify 
+          new solutions, yet at the same time fit the new solution into a pattern 
+          of complementary activities. The entrepreneur oriented to the existing 
+          categories reads a situation anew, identifies a problem or opportunity, 
+          specifies a solution and fits the solution into a complementary web 
+          of activity so that the plans of others can be easily reoriented to 
+          the new categories.</P>
+        <H3 CLASS="western">Self-reorganization of the market order</H3>
+        <P CLASS="western">Entrepreneurs and marketers look beyond existing boundaries 
+          to identify commonalities currently hidden behind those boundaries. 
+          By creating new distinctions (new abstractions), entrepreneurs are identifying 
+          both what should be treated as similar and what should be treated as 
+          different. They re-categorize existing shared categories in order to 
+          capture overlooked commonalities, or to separate overlooked differences. 
+          Entrepreneurs create value by creating new distinctions: where two similar 
+          things are being treated as different, there are gains to be had from 
+          removing the differences; where two different things are being treated 
+          as similar; there are gains to be had from removing the similarities.</P>
+        <P CLASS="western">Israel Kirzner&rsquo;s (1992) theory of entrepreneurship 
+          as arbitrage provides an example of one way that entrepreneurs can capture 
+          gains from removing differences. The entrepreneur notices that two similar 
+          goods are being treated as if they were different; two instances of 
+          the same type of good are selling for two different prices. The alert 
+          entrepreneur, by buying low and selling high, can profit from removing 
+          this difference. The entrepreneur helps re-categorize the undervalued 
+          good by bringing it to the attention of those who value it more.</P>
+        <P CLASS="western">Arbitrage, however, is not the only source of potential 
+          gains from noticing commonalities; recognizing commonalities can also 
+          lead to economies of scale and scope. Langlois (1999) argues that economies 
+          of scale and scope result primarily from the reuse of knowledge.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote28anc" HREF="#sdendnote28sym"><SUP>28</SUP></A></FONT></FONT></SUP> 
+          Economies arise from abstracting out the common aspects of a solution 
+          and reusing them across multiple instances. He gives the example of 
+          multiplex cinemas: cinema owners gain economies of scale by reusing 
+          the services of ticket windows, lobbies, restrooms, snack bars, and 
+          management across multiple individual theaters. The common features 
+          of stand-alone cinemas were abstracted out, and packaged for reuse by 
+          the theatres in the multiplex.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote29anc" HREF="#sdendnote29sym"><SUP>29</SUP></A></FONT></FONT></SUP> 
+        </P>
+        <P CLASS="western">Gains can also be had by recognizing differences where 
+          others see similarities. Fred Smith (2002), for example, when starting 
+          Federal Express (now FedEx) recognized that shippers and recipients 
+          of small packages differed in the value they placed on the timeliness 
+          and reliability of delivery. He recognized that customers who value 
+          speed and reliability (for example those who need spare parts to keep 
+          expensive capital equipment running) would be willing to pay for guaranteed 
+          overnight delivery. Standard approaches to package delivery abstracted 
+          from these differences treating them all the same. By looking past the 
+          existing boundary, Smith was able to discern differences in why people 
+          wanted package delivery services. By identifying a new commonality among 
+          these differences (desire for guaranteed overnight deliver), he was 
+          able to create a new abstraction boundary defining this new type of 
+          service.<SUP><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 11pt"><A CLASS="sdendnoteanc" NAME="sdendnote30anc" HREF="#sdendnote30sym"><SUP>30</SUP></A></FONT></FONT></SUP></P>
+        <P CLASS="western">Just recognizing the new abstraction, however, was 
+          not enough. Federal Express had to create new capital combinations, 
+          and fit them into an evolving capital structure. Airplanes were purchased 
+          and flight routes were organized into a then novel hub-and-spoke configuration. 
+          Air delivery was combined with delivery trucks to provide door-to-door 
+          service. New interfaces that defined this new type of service were created 
+          and marketed to both shippers and receivers of packages. The creation 
+          of the new abstraction boundary of overnight delivery required a reconfiguration 
+          of the capital structure involved in providing that service. The change 
+          in abstraction boundary generated a new structure of cooperating objects 
+          involved in providing guaranteed overnight delivery. By hiding these 
+          changes from the customers, the abstraction boundary made it easy for 
+          customers to adapt their plans. </P>
+        <P CLASS="western">As the FedEx example suggests, abstractions boundaries, 
+          by virtue of being abstract, provide a source for endogenous change. 
+          Abstractions, by emphasizing commonalities and suppressing differences, 
+          create opportunities for changing the boundaries. When the differences 
+          being hidden are unimportant, there is no incentive to change the boundary; 
+          when the differences being hidden start to make a difference, there 
+          is an incentive for the boundary to change. An abstraction necessarily 
+          hides the diversity of the various instances of the particular type. 
+          As long as those differences can be ignored for the purpose at hand, 
+          the abstraction boundary will be dynamically maintained by the system. 
+          When certain types of purposes and characteristics being hidden behind 
+          the abstraction become identifiably important, the abstraction boundaries 
+          will need to adapt to accommodate them.</P>
+        <P CLASS="western">The pervasiveness of the creation of new abstraction 
+          boundaries is illustrated by the role of marketing: marketers look across 
+          existing boundaries to better understand the &lsquo;whys&rsquo; of their 
+          customers and potential customers. It is marketing's job to identify 
+          commonalities that may be hidden behind existing boundaries, and to 
+          identify new ways of servicing these commonalities. Marketing theorist, 
+          Wroe Alderson (1957), argues that marketing involves trying to match 
+          segments of heterogeneous supply to segments of heterogeneous demand. 
+          Marketers try to create offerings that provide value to a particular 
+          market segment. The market segment identifies a group that shares certain 
+          requirements in common despite their underlying diversity. Marketers 
+          design new products and services that serve these common needs, while 
+          at the same time trying to identify opportunities for further segmentation 
+          and differentiation.</P>
+        <P CLASS="western">Marketers, however, must go beyond the creation of 
+          offerings matched to the needs of particular market segments. They must 
+          also invest in creating secondary institutions that reduce the costs 
+          of transactions. Secondary institutions reduce the transaction costs 
+          associated with a type of transaction. Streit and Wegner (1992), also 
+          drawing on Lachmann, calls these &lsquo;the sunk costs of transactions.&rsquo; 
+          They emphasize that the costs incurred to create an interface for a 
+          particular type of transaction are sunk costs from the perspective of 
+          a particular transaction occurring through the interface. They write, 
+          &lsquo;The costs of making economic agents familiar with institutions 
+          become the sunk costs of transactions as soon as the corresponding knowledge 
+          is used repeatedly. What remains as a source of current transaction 
+          costs is the task of adapting or supplementing the institutional framework 
+          to make it fit individual transactions.&rsquo; (1992, p. 138)</P>
+        <P CLASS="western">From this perspective, the essential role of marketing 
+          is making markets &ndash; both creating a type of product or service, 
+          and creating secondary institutions to facilitate transactions of that 
+          type. Market institutions provide the customers &lsquo;with readily-usable 
+          knowledge about how to make particular classes of transactions.&rsquo; 
+          (Loasby, 2000, p. 306) They are attempts to lower the information costs 
+          (Dahlman, 1979; Streit and Wegner, 1992) associated with a type of transaction. 
+          The particular shape of market abstraction boundaries will be influenced 
+          by the nature of those information costs&ndash; the cost of discovering 
+          whom to transact with, of informing others of exchange opportunities, 
+          of comparing options, of negotiating terms of trade, and of policing 
+          and monitoring compliance. Streit and Wegner give the example of negotiation 
+          costs: &lsquo;quite a number of internal [secondary] institutions have 
+          evolved precisely to reduce this highly uncertain cost component, e.g. 
+          standardized contracts, and general conditions of sale.&rsquo; (1992, 
+          p. 137) Marketing efforts are investments in creating secondary institutions 
+          that generate informational externalities designed to lower the current 
+          costs of transactions. Secondary institutions by reducing these costs 
+          for a class of transactions remove the need for individuals to incur 
+          these costs for each specific transaction. </P>
+        <P CLASS="western">Alderson (1957) makes a similar point with his distinction 
+          between fully negotiated transactions and routine transactions. Fully 
+          negotiated transactions are unique or non-recurring transactions, which 
+          involve bilateral negotiations between the parties. Routine transactions 
+          are recurring transactions of a particular type: &lsquo;transaction 
+          routines apply to classes of transactions that are judged to be essentially 
+          similar in their purposes and in the means of carrying them out.&rsquo; 
+          (Alderson, 1957, p. 297) With fully negotiated transactions all transaction 
+          costs are current; with routine transactions many of the transaction 
+          costs are sunk. Investments in secondary institutions reduce the costs 
+          of routine transactions; previous marketing activities and institutions 
+          replace the need to negotiate every feature of each transaction</P>
+        <P CLASS="western">Abstraction boundaries bring the benefits of separation 
+          of concerns, but they also provide an incentive for providers to look 
+          across the boundary for unmet needs, and an incentive for customers 
+          to express needs that are not being met. The potential for gains from 
+          reconfiguring the boundaries always exists. The abstraction boundaries 
+          are necessary to coordinate actions and to match segments of supply 
+          to segments of demand. Yet the essential diversity being hidden behind 
+          the abstraction provides an incentive for the discovery of new commonalities, 
+          and the creation of new abstraction boundaries to service them. The 
+          particular form of market abstraction boundaries will be shaped by the 
+          nature of the solution as well as the transaction costs associated with 
+          that type of solution. By ignoring the role of entrepreneurs and marketers 
+          in creating new products and new secondary institutions, economists 
+          do themselves a disservice. They miss an important source of endogenous 
+          changes to abstractions and their boundaries. </P>
+        <H1 CLASS="western">Conclusion</H1>
+        <P CLASS="western">We are embedded in a world of abstraction boundaries; 
+          their very familiarity renders them largely invisible. We shop at instances 
+          of the type grocery store, we mail letters at instances of the type 
+          post office, and we live in instances of the type house purchased through 
+          instances of standardized mortgage contracts which are in turn bundled 
+          and sold on instances of the type secondary mortgage market. While we 
+          always interact with concrete instances, it is the abstract boundary 
+          that enables us to coordinate our plans and adapt to changing circumstances. 
+        </P>
+        <P CLASS="western">Abstraction boundaries represent abstract plans that 
+          fill the gap between abstract rules and concrete purposes. The abstraction 
+          boundary enforces a separation of concerns: it separates particular 
+          implementations of a solution from particular uses of the solutions. 
+          Abstraction boundaries convert specific relationships into abstract 
+          relationships: they enable the reuse of solutions by multiple clients, 
+          and the provision of solutions by multiple providers. By orienting their 
+          actions to the abstract plan defined in the boundary, the parties on 
+          both sides of the boundaries can more easily coordinate and adapt their 
+          particular plans. Abstraction boundaries enhance coordination by making 
+          it easier to separate plans where they conflict, and combine them where 
+          they complement. By abstracting from the particulars on both sides, 
+          boundaries provide a point of stability in the face of change. This 
+          abstractness however also provides an incentive for people to look beyond 
+          existing boundaries and create new ones that may better serve needs 
+          hidden by the boundaries.</P>
+        <P CLASS="western">Secondary institutions, understood as abstraction boundaries, 
+          play an important but overlooked role in the market process. They are 
+          the chief means by which the market classifies knowledge into reusable 
+          solutions, and by which the market reduces the costs of reusing the 
+          solutions. They enable market participants to make use of a wide range 
+          of knowledge without the need to acquire it themselves. As such, they 
+          are indispensable for understanding how the market process solves the 
+          knowledge problem. Abstraction boundaries are the negotiated categories 
+          that emerge from what Lavoie calls the dialogue of the market. From 
+          the boundaries of the firm (Langlois 2002) to the emergence of new markets 
+          (Loasby 2000), new capital goods (Baetjer 1998), new products (McNulty 
+          1984) and new product categories (Lewin 1999), the definition and redefinition 
+          of abstraction boundaries permeates the market process. </P>
+        <P CLASS="western" ALIGN=left STYLE="page-break-before: always"><B>References</B></P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Alderson, Wroe (1957), Marketing Behavior and Executive Action, Homewood 
+          IL: Richard D. Irwin.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Baetjer, Howard (1998), Software as Capital: An Economic Perspective 
+          on Software Engineering, Los Alamitos, CA: IEEE Computer Society. </P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Baldwin Carliss Y. and Clark, Kim B. (1997), &lsquo;Managing in an age 
+          of modularity&rsquo;, Harvard Business Review, September/October, pp. 
+          84-93.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Baum, Eric B. (1999), &lsquo;Toward a Model of Intelligence as an Economy 
+          of Agents&rsquo;, Machine Learning, 35 (2), pp. 155-185.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Buchanan, James M. and Viktor J. Vanberg (2002), &lsquo;Constitutional 
+          Implications of Radical Subjectivism&rsquo;, Review of Austrian Economics, 
+          15 (2/3), pp. 121-129.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Butos, William N. and Thomas J. McQuade, (2002), &lsquo;Mind, Market, 
+          and Institutions: the Knowledge Problem in Hayek&rsquo;s Thought<I>&rsquo;</I>,<I> 
+          </I>in Jack Birner, Pierre Garrouste and Thierry Aimar, F. A. Hayek 
+          as a Political Economist, New York, US and London, UK: Routledge, pp. 
+          113-133.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Carrano, Frank M. and Janet Prichard (2001), Data Abstraction and Problem 
+          Solving with Java: Walls and Mirrors, Reading, MA: Addison-Wesley. </P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Cox, Brad (1996), Superdistribution: Objects as Property on the Electronic 
+          Frontier, Reading MA: Addison-Wesley.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Cunningham, Ward and Kent Beck (1989), &lsquo;Constructing Abstractions 
+          for Object-Oriented Applications&rsquo;, Journal of Object-Oriented 
+          Programming, July/August, pp. 17-19.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Dahlman, Carl J. (1979), &lsquo;The Problem of Externality,&rsquo; The 
+          Journal of Law and Economics, 22 (1), April, pp. 141-162.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Demsetz, Harold (1988), &lsquo;Theory of the Firm Revisited&rsquo;, 
+          Journal of Law, Economics and Organization, 4, pp. 141-16l. </P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Drexler, Eric and Mark S. Miller (1988), &lsquo;Incentive Engineering 
+          for Computational Resource Management&rsquo;, in Bernard A. Huberman, 
+          (ed), The Ecology of Computation, Amsterdam: North-Holland, pp. 231-266.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Encyclopedia<U> </U>Britannica (2003), &lsquo;Postal System&rsquo;, 
+          Encyclopedia Britannica Online, 31 March, 2003, http://search.eb.com/eb/article?eu=115192.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Gamma, Eric, Richard Helm, Ralph Johnson and John Vlissides, (1995),<I> 
+          </I>Design Patterns: Elements of Reusable Object-Oriented Software, 
+          Boston: Addison-Wesley. </P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Gadamer, Hans Georg, (1989), Truth and Method<I>, </I>second revised 
+          edition, New York: Crossroad Publishing.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Garud, Raghu, Arun Kumaraswamy and Richard N. Langlois, (2002), Managing 
+          in the Modular Age: Architectures, Networks, and Organizations, New 
+          York: Blackwell Publishers.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Hayek, Friedrich A. (1937), &lsquo;Economics and Knowledge&rsquo;, Economica 
+          (4), February, pp. 33-54.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          ______, (1945), &lsquo;Use of Knowledge in Society&rsquo;, American 
+          Economic Review, 35, September, pp. 519-530.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          ______, (1952a), The Counter-Revolution of Science: Studies in the Abuse 
+          of Reason, Glencoe, Illinois: The Free Press. </P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          ______, (1952b<I>), </I>The Sensory Order: An Inquiry into the Foundations 
+          of Theoretical Psychology, London: Routledge &amp; Keegan Paul Limited.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          ______, (1973), Law, Legislation and Liberty, Vol. I: Rules and Order, 
+          Chicago: University of Chicago Press.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          ______, (1976), Law, Legislation and Liberty, Vol. II: The Mirage of 
+          Social Justice,&nbsp;Chicago: University of Chicago Press. &nbsp;</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          ______, (1978), &lsquo;The Primacy of the Abstract&rsquo;,&nbsp;New 
+          Studies in Philosophy, Politics, Economics and the History of Ideas<I>,</I> 
+          Chicago: University of Chicago Press, pp. 35-49.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          ______, (1979), Law, Legislation and Liberty, Vol. III: The Political 
+          Order of a Free People<I>,</I> Chicago: University of Chicago Press.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          ______, (1989), The Fatal Conceit: The Errors of Socialism. The Collected 
+          Works of F. A. Hayek, Vol. 1, edited by W. W. Bartley, Chicago: University 
+          of Chicago Press.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          High, Jack (1986), &lsquo;Equilibration and Disequilibration in Market 
+          Processes&rsquo; in Israel Kirzner, (ed), Subjectivism, Intelligibility 
+          and Economic Understanding: Essays in Honor of Ludwig M. Lachmann on 
+          his Eightieth Birthday, New York: New York University Press, pp. 111-121. 
+        </P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Horwitz, Steven G., (1998), &lsquo;Hierarchical Metaphors in Austrian 
+          Institutionalism: A Friendly Subjectivist Caveat&rsquo;, in Roger Koppl 
+          and Gary Mongiovi, (eds), Subjectivism and Economic Analysis: Essays 
+          in Memory of Ludwig M. Lachmann, New York, US and London, UK: Routledge, 
+          pp. 143-162. </P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Kirzner, Israel M., (1992), The Meaning of the Market Process: Essays 
+          in the Development of Modern Austrian Economics, New York, US and London, 
+          UK: Routledge.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Lachmann, Ludwig, (1956), Capital and Its Structure, Kansas City: Sheed 
+          Andrews and McNeel Inc.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          ______, (1971), The Legacy of Max Weber, Berkley, CA: Glendessary Press.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          ______, (1979), &lsquo;The Flow of Legislation and the Permanence of 
+          the Legal Order&rsquo;, Ordo<I>,</I> pp. 69-77, reprinted in Don Lavoie 
+          (ed), (1994), Expectations and the Meaning of Institutions: Essays by 
+          Ludwig Lachmann, New York, US and London, UK: Routledge, pp. 249-260.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          ______, (1991), &lsquo;Austrian Economics: A Hermeneutic Approach&rsquo;, 
+          in Don Lavoie, ed. Economics and Hermeneutics, New York, US and London, 
+          UK: Routledge, pp. 134-146, reprinted in Don Lavoie (ed), (1994), Expectations 
+          and the Meaning of Institutions: Essays by Ludwig Lachmann, New York, 
+          US and London, UK: Routledge, pp. 276-290.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Langlois, Richard N., (1986), &lsquo;Coherence and Flexibility: Social 
+          Institutions in a World of Radical Uncertainty&rsquo;, in Israel Kirzner, 
+          (ed), Subjectivism, Intelligibility, and Economic Understanding: Essays 
+          in Honor of the Eightieth Birthday of Ludwig Lachmann, New York: New 
+          York University Press, pp. 171-191.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          ______, (1999), &lsquo;Scale, Scope, and the Reuse of Knowledge&rsquo;, 
+          in Sheila C. Dow and Peter E. Earl, (eds), Economic Organization and 
+          Economic Knowledge: Essays in Honour of Brian J. Loasby, Northampton, 
+          US and Cheltenham, UK: Edward Elgar, pp. 239-254.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          ______, (2002), &lsquo;Modularity in Technology and Organization&rsquo;, 
+          Journal of Economic Behavior and Organization 49 (1), September, pp. 
+          19-37.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Lavoie, Don, (1985a), National Economic Planning: What is Left? Cambridge: 
+          Ballinger. </P>
+        <P CLASS="western">______, (1985b), Rivalry and Central Planning: The 
+          Socialist Calculation Debate Reconsidered, Cambridge: Cambridge University 
+          Press.</P>
+        <P CLASS="western">______, (1986), &lsquo;The Market as a Procedure for 
+          the Discovery and Conveyance of Inarticulate Knowledge&rsquo;, Comparative 
+          Economic Studies, 28, Spring, pp. 1-19.</P>
+        <P CLASS="western">______, (1990a), &lsquo;Prefatory Note: The Origins 
+          of &ldquo;The Agorics Project&rdquo;&rsquo;, Market Process, v8, Spring, 
+          pp. 116-119. </P>
+        <P CLASS="western" STYLE="margin-left: 0.5in; text-indent: -0.5in">______, 
+          (1990b), &lsquo;Understanding Differently: Hermeneutics and the Spontaneous 
+          Order of Communicative Processes&rsquo;, in Bruce Caldwell, (ed), Carl 
+          Menger and his Legacy in Economics, History of Political Economy, annual 
+          supplement to volume 22, pp. 359-377.</P>
+        <P CLASS="western" STYLE="margin-left: 0.5in; text-indent: -0.5in">______, 
+          (1991), &lsquo;The Discovery and Interpretation of Profit Opportunities: 
+          Culture and the Kirznerian Entrepreneur&rsquo;, in Brigitte Berger, 
+          (ed) The Culture of Entrepreneurship. San Francisco: Institute for Contemporary 
+          Studies, pp. 33-51.</P>
+        <P CLASS="western" STYLE="margin-left: 0.5in; text-indent: -0.5in">______, 
+          (1994), &lsquo;Preface: The Meaning of Market Process&rsquo;, in Peter 
+          Boettke and David Prychitko, (eds), The Market Process: Essays in Contemporary 
+          Austrian Economics, Brookfield US and Aldershot, UK: Edward Elgar, pp. 
+          ix-xii.</P>
+        <P CLASS="western" STYLE="margin-left: 0.5in; text-indent: -0.5in">______, 
+          (2003), &lsquo;Subjectivism, Entrepreneurship, and the Convergence of 
+          Groupware and Hypertext,&rsquo; in Birner, Jack and Pierre Garrouste, 
+          eds., Markets, Information, and Communication: An Austrian Perspective 
+          on the Internet Economy, New York, US and London, UK: Routledge, pp. 
+          21-46.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Lavoie, Don, Howard Baetjer and Bill Tulloh, (1990), &lsquo;High Tech 
+          Hayekians: Some Possible Research Topics in the Economics of Computation&rsquo;, 
+          Market Process, 8, Spring, 120-141, reprinted in (2004) Jack Birner 
+          and Pierre Garrouste, Markets, Information, and Communication: An Austrian 
+          Perspective on the Internet Economy, New York, US and London, UK: Routledge, 
+          pp. 91-120.</P>
+        <P CLASS="western" STYLE="margin-left: 0.5in; text-indent: -0.5in">______, 
+          (1991a.), &lsquo;Coping with Complexity: OOPS and the Economist&rsquo;s 
+          Critique of Central Planning&rsquo;, Hotline on Object-Oriented Technology, 
+          3 (1), November, pp. 6-8.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          ______, (1991b), &lsquo;Order in Complex Systems: Object-Oriented Programming 
+          and the Economists&rsquo; Critique of Central Planning&rsquo;, unpublished 
+          manuscript.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Lavoie, Don, Howard Baetjer, Bill Tulloh, and Richard Langlois, (1993), 
+          Component Software: A Market Perspective on the Coming Revolution in 
+          Software, Patricia Seybold Group Special Research Report, Strategic 
+          Technologies Series.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Lewin, Peter, (1999), Capital in Disequilibrium: The Role of Capital 
+          in a Changing World, New York, US and London, UK: Routledge. </P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Liskov, Barbara, with John Guttag, (2001), Program Development in Java: 
+          Abstraction, Specification, and Object-Oriented Design, Boston: Addison-Wesley.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Loasby, Brian, (1999), Knowledge, Institutions and Evolution in Economics, 
+          New York, US and London, UK: Routledge.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          ______, (2000), &lsquo;Market Institutions and Economic Evolution&rsquo;, 
+          Journal of Evolutionary Economics, 10 (3), pp. 297-309.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Malone, Thomas W., Richard E. Fikes, Kenneth R. Grant, and Michael T. 
+          Howard, (1988), &lsquo;Enterprise: A Market-like Task Scheduler for 
+          Distributed Computing Environments&rsquo;, in Bernardo A. Huberman, 
+          (ed) The Ecology of Computation, Amsterdam: North-Holland, pp. 177-205.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          O&rsquo;Driscoll, Jr., Gerald P. and Mario Rizzo, (1985), The Economics 
+          of Time and Ignorance, New York, US and Oxford UK: Basil Blackwell.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Paul McNulty, (1984), &lsquo;On the Nature &amp; Theory of Economic 
+          Organization: The Role of the Firm Reconsidered&rsquo;, History of Political 
+          Economy, 16 (2), pp. 233-253.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Meyer, Bertrand, (1997), Object-Oriented Software Construction, 2nd 
+          Edition, Upper Saddle River, NJ: Prentice Hall.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Miller, Mark S. and Eric Drexler (1988a), &lsquo;Comparative Ecology: 
+          A Computational Perspective&rsquo; in Bernardo A. Huberman, (ed) The 
+          Ecology of Computation, Amsterdam: North-Holland, pp. 51-76.</P>
+        <P CLASS="western">______, (1988b), &lsquo;Markets and Computation: Agoric 
+          Open Systems&rsquo;, in Bernardo A. Huberman, (ed) The Ecology of Computation, 
+          Amsterdam: North-Holland, pp. 133&ndash;176.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Miller, Mark S., Chip Morningstar, and Bill Frantz, (2000), &lsquo;Capability-based 
+          Financial Instruments&rsquo;, in Yair Frankel, (ed), Financial Cryptography, 
+          4<SUP>th</SUP> International Conference, FC 2000 Proceedings, Lecture 
+          Notes in Computer Science, 1962, Springer, pp. 349-378.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Parnas, David L., (1972), &lsquo;On the Criteria to Be Used in Decomposing 
+          Systems into Modules&rsquo;, Communications of the ACM,<I> </I>15, December, 
+          pp. 1053-1058.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Schelling, Thomas C., (1960), The Strategy of Conflict, Cambridge, MA: 
+          Harvard University Press.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Smith, Fred, (2002), &lsquo;How I Delivered the Goods&rsquo;, Fortune 
+          Small Business, October. Online at http://www.fortune.com/fortune/fsb/specials/innovators/smith.html.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Spinoza, Charles, Fernando Flores, and Hubert L. Dreyfus (1997), Disclosing 
+          New Worlds: Entrepreneurship, Democratic Action, and the Cultivation 
+          of Solidarity, Cambridge MA: MIT Press. </P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Streit, Manfred and Peter Wegner, (1992), &lsquo;Information, Transaction, 
+          and Catallaxy, Reflections on some Key Concepts of Evolutionary Market 
+          Theory<SPAN LANG="en-GB">&rsquo;,</SPAN> in: Ulrich Witt, (ed), Explaining 
+          Process and Change. Approaches of Evolutionary Economics, Ann Arbor: 
+          University of Michigan Press, pp. 125-149.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          <SPAN LANG="en-GB">Turbak, Franklyn, (2002), &lsquo;Big Ideas&rsquo;, 
+          course notes from CS111: Introduction to Programming and Problem Solving, 
+          Spring 2002, on the web at http://cs.wellesley.edu.</SPAN><FONT FACE="Courier, Courier New, monospace"><FONT COLOR="#000000"> 
+          </FONT></FONT> </P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Vaughn, Karen, <SPAN LANG="en-GB">(1999), &lsquo;Hayek&rsquo;s Implicit 
+          Economics: Rules and the Problem of Order&rsquo;, Review of Austrian 
+          Economics, 11, pp. 129-144.</SPAN></P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          <SPAN LANG="en-GB">Wellman, Michael P. (1996), &lsquo;Market-oriented 
+          Programming: Some Early Lessons&rsquo;, in </SPAN>S. Clearwater (ed.), 
+          Market-Based Control: A Paradigm for Distributed Resource Allocation, 
+          River Edge, NJ: World Scientific, pp. 74-95.</P>
+        <P STYLE="margin-left: 0.5in; text-indent: -0.5in; line-height: 100%"> 
+          Wirfs-Brock, Rebecca and Alan McKean, (2002), Object Design: Roles, 
+          Responsibilities and Collaborations, Boston: Addison-Wesley. </P>
+        <P CLASS="sdendnote-western" STYLE="margin-left: 0.5in; text-indent: -0.5in"> 
+          Wirfs-Brock, Rebecca and Brian Wilkerson, (1989), &lsquo;Object-Oriented 
+          Design: A Responsibility-Driven Approach&rsquo;, OOPSLA &rsquo;89 Conference 
+          Proceedings, ACM: pp. 71-75.</P>
+        <DIV ID="sdendnote1"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote1sym" HREF="#sdendnote1anc">1</A>Lavoie 
+            (1985b) provides an historical overview of the calculation debate 
+            which focused on the limits of comprehensive planning. Lavoie (1985a) 
+            extends this critique to non-comprehensive planning. Lavoie (1986), 
+            drawing on the work of Michael Polanyi, emphasizes the role of inarticulate 
+            knowledge. His subsequent investigations into the nature of the knowledge 
+            problem, influenced especially by the hermeneutic philosopher Hans 
+            Georg Gadamer, led him to focus on the interplay of articulate and 
+            inarticulate knowledge. See for example, Lavoie (1990b, 1991 and 2003). 
+            </FONT> </P>
+        </DIV>
+        <DIV ID="sdendnote2"> 
+          <P CLASS="western"><A CLASS="sdendnotesym-western" NAME="sdendnote2sym" HREF="#sdendnote2anc">2</A> 
+            Abstraction boundaries enhance productivity by bundling reusable solutions 
+            to common problems. The reusable solution embodies a resolved decision: 
+            &lsquo;the decision to use an abstraction replaces the decisions resolved 
+            by the abstraction. Abstractions increase productivity when the former 
+            decisions are more easily resolved than the latter.&rsquo; (Cunningham 
+            and Beck, 1989, p. 17) Demsetz describes a similar process occurring 
+            in the market: &lsquo;A production process reaches the stage of yielding 
+            a salable product when downstream users can work with, or consume, 
+            the &lsquo;product&rsquo; without themselves being knowledgeable about 
+            its production.&rsquo; (1988, p. 159)</P>
+        </DIV>
+        <DIV ID="sdendnote3"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote3sym" HREF="#sdendnote3anc">3</A> 
+            The separation of interface from implementation is known in software 
+            engineering as information hiding. (Parnas 1972) Information hiding 
+            is a key principle for good modular design. </FONT> </P>
+        </DIV>
+        <DIV ID="sdendnote4"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote4sym" HREF="#sdendnote4anc">4</A> 
+            The name comes from the &lsquo;agoric systems&rsquo; papers (Miller 
+            and Drexler 1989a, 1989b, and Drexler and Miller 1989) which applied 
+            Hayekian insights to coordinating software systems. The discovery 
+            of these papers by Tulloh inspired Lavoie to launch the Agorics Project 
+            as an interdisciplinary research effort between economists and software 
+            engineers. The Agorics Project consisted of Lavoie and a group of 
+            his graduate students, including Bill Tulloh, Howard Baetjer and Kevin 
+            Lacobie, in collaboration with a number of software engineers, including 
+            Phil Salin, Mark S. Miller, Dean Tribble, and Eric Drexler. See Lavoie 
+            (1990a) and Lavoie, Baetjer, Tulloh (1990) for an overview of the 
+            Agorics Project. </FONT> </P>
+        </DIV>
+        <DIV ID="sdendnote5"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote5sym" HREF="#sdendnote5anc">5</A> 
+            See Lavoie, Baetjer, Tulloh (1991a, 1991b), Lavoie, Baetjer, Tulloh 
+            and Langlois (1993), Cox (1996), and Baetjer (1998) for explorations 
+            of the relationship between object oriented programming and market 
+            processes. See Baldwin and Clark (1997), Langlois (2002), and Garud, 
+            Kumaraswamy, and Langlois (2002) for recent and complementary discussions 
+            on the role of modularity in markets. </FONT> </P>
+        </DIV>
+        <DIV ID="sdendnote6"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote6sym" HREF="#sdendnote6anc">6</A> 
+            Hayek (1988, p. 12) explains the nature of abstract rules: &lsquo;What 
+            are chiefly responsible for having generated this extraordinary order, 
+            and the existence of mankind in its present size and structure, are 
+            those rules of human conduct that gradually evolved (especially those 
+            dealing with several property, honesty, contract, exchange, trade, 
+            competition, gain, and privacy). These rules are handed down by tradition, 
+            teaching, and imitation, rather than by instinct, and largely consist 
+            of prohibitions (&ldquo;shall not&rsquo;s&rdquo;) that designate adjustable 
+            domains for individual decisions.&rsquo; </FONT> </P>
+        </DIV>
+        <DIV ID="sdendnote7"> 
+          <P CLASS="sdendnote-western"><A CLASS="sdendnotesym-western" NAME="sdendnote7sym" HREF="#sdendnote7anc">7</A><FONT SIZE=2 STYLE="font-size: 11pt"> 
+            <FONT FACE="TimesNewRoman, serif">Vaughn (1999, p. 140) recognizes 
+            a similar gap in Hayek&rsquo;s account of the market order. </FONT></FONT> 
+          </P>
+        </DIV>
+        <DIV ID="sdendnote8"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote8sym" HREF="#sdendnote8anc">8</A> 
+            Lachmann (1971) seems to be groping for the right terminology: he 
+            distinguishes first between external and internal institutions, only 
+            to later switch to a distinction between fundamental and secondary 
+            institutions. See Horwitz (1998) for a criticism of Lachmann&rsquo;s 
+            distinction between external and internal institutions. Langlois (1986) 
+            provides an insightful analysis of Lachmann&rsquo;s theory of institutions.</FONT></P>
+        </DIV>
+        <DIV ID="sdendnote9"> 
+          <P><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote9sym" HREF="#sdendnote9anc">9</A> 
+            We oversimplify to make a point, but this can be misleading. By presenting 
+            the creation of the abstraction boundary as the result of a single 
+            entrepreneurial act, we are ignoring the interaction between providers, 
+            customers, and other interests that shape the evolution of most abstraction 
+            boundaries. This is particularly true of the gradual development of 
+            the postal system into its current familiar shape. As one commentator 
+            notes, &lsquo;Although the basic need for a system to exchange written 
+            communications has been felt by all human societies and has been met 
+            in many ways, the evolution of varied postal systems adopted by different 
+            societies through the centuries into the basically similar pattern 
+            of today's state monopoly service has been a long and difficult process.&rsquo; 
+            (Encyclopedia Britannica, 2003) </FONT> </P>
+        </DIV>
+        <DIV ID="sdendnote10"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote10sym" HREF="#sdendnote10anc">10</A> 
+            Liskov (2002, p. xvii) identifies three steps that programmers use 
+            to create abstraction boundary: 1) abstraction - the programmer abstracts 
+            a common solution to a recurring problem, 2) specification - the programmer 
+            defines a boundary that captures the meaning of the abstraction in 
+            terms of the services it provides potential users, and 3) encapsulation 
+            &ndash; the programmer hides the details of how the services are to 
+            be provided behind the abstraction boundary. </FONT> </P>
+        </DIV>
+        <DIV ID="sdendnote11"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote11sym" HREF="#sdendnote11anc">11</A> 
+            Wirfs-Brock and McKean explain, &lsquo;An interface describes the 
+            vocabulary used in the dialog between an object and its customers: 
+            &ldquo;Shine my shoes. Give me my shoes. That&rsquo;ll be five bucks 
+            please. Here is your receipt.&rdquo; The interface advertises the 
+            services and explains how to ask for them.&rsquo; (2002, p. 12)</FONT></P>
+        </DIV>
+        <DIV ID="sdendnote12"> 
+          <P CLASS="sdendnote-western"><A CLASS="sdendnotesym-western" NAME="sdendnote12sym" HREF="#sdendnote12anc">12</A><FONT SIZE=2 STYLE="font-size: 11pt"> 
+            Type and interface are used by programmers as synonyms for abstraction 
+            boundary. They can be seen as emphasizing two related notions of abstraction: 
+            interface refers to what an object does abstracted from how it does 
+            it; type refers to what kind of object it is abstracted from concrete 
+            instances of that type. The two are related because we classify objects 
+            based on what services they provide; we classify what an object is, 
+            by what the object does. Compare Hayek who writes, </FONT>&lsquo;People 
+            behave in the same manner toward things, not because these things 
+            are identical in a physical sense, but because they have learned to 
+            classify them as belonging to the same group, because they can put 
+            them to the same use or expect from them what to the people concerned 
+            is an equivalent effect.&rsquo; (<FONT SIZE=2 STYLE="font-size: 11pt">1952a 
+            pp.44)</FONT></P>
+        </DIV>
+        <DIV ID="sdendnote13"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote13sym" HREF="#sdendnote13anc">13</A> 
+            Abstraction boundaries serve as focal points for a type of transaction. 
+            (Schelling, 1960)</FONT></P>
+        </DIV>
+        <DIV ID="sdendnote14"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote14sym" HREF="#sdendnote14anc">14</A> 
+            Lachmann&rsquo;s widening is sometimes referred to as narrowing by 
+            software engineers. This apparent contradiction results from different 
+            perspectives. For software engineers, the subtype is narrower than 
+            the supertype because it is less general: a smaller set of providers 
+            provide the more specific functionality of the subtype. For Lachmann 
+            the subtype is wider since the new services that are provided by the 
+            subtype serve a broader range of client purposes.</FONT></P>
+        </DIV>
+        <DIV ID="sdendnote15"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote15sym" HREF="#sdendnote15anc">15</A> 
+            Run-time is what occurs when a program is run on a specific computer. 
+            Design-time is what occurs when a programmer designs and codes the 
+            program. A programmer writes source code (readable by the programmer) 
+            that embodies the design of the program. The source code is compiled 
+            into machine-readable code that is capable of being run on a particular 
+            type of computer. The user executes this code when running the program.</FONT></P>
+        </DIV>
+        <DIV ID="sdendnote16"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote16sym" HREF="#sdendnote16anc">16</A> 
+            Software design provides a language for thinking about plan coordination. 
+            It provides a set of concepts for reasoning about the problem of dividing 
+            and recombining knowledge. This language is much richer than we are 
+            able to show here. It also exists in two important senses: 1) as a 
+            set of concepts for thinking about these distinctions, and 2) as programming 
+            language constructs for implementing these distinctions. As an engineering 
+            discipline, software design concepts must pass the empirical test 
+            of building better programs. For good overviews of these distinctions 
+            see Meyer (1998), Gamma et al (1995), and Liskov (2001). The E programming 
+            language (Miller et al, 2000, www.erights.org) is an open source programming 
+            language that takes a rights-based approach to problems of plan coordination 
+            in programming. </FONT> </P>
+        </DIV>
+        <DIV ID="sdendnote17"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote17sym" HREF="#sdendnote17anc">17</A> 
+            In addition to types and objects, object-oriented programming has 
+            the concept of class. A class is a template for creating objects; 
+            it implements an object&rsquo;s methods, but not its state. For simplicity, 
+            we ignore this distinction in this paper. </FONT> </P>
+        </DIV>
+        <DIV ID="sdendnote18"> 
+          <P CLASS="sdendnote-western"><A CLASS="sdendnotesym-western" NAME="sdendnote18sym" HREF="#sdendnote18anc">18</A><FONT SIZE=2 STYLE="font-size: 11pt"> 
+            The similarity between object and market concepts has been widely 
+            recognized by software designers (Miller and Drexler 1988b, Cox 1996, 
+            Meyer 1997). For example, Bertrand Meyer writes, <FONT COLOR="#000000">&lsquo;like 
+            an economist of the most passionate supply-side, invisible-hand, let-the-free-market 
+            decide school, we are interested in individual agents not so much 
+            for what they are internally as for what they have to offer to each 
+            other ... The economic analogy will indeed accompany us throughout 
+            this presentation; the agents &ndash; the software modules &ndash; 
+            are called suppliers and clients; the protocols will be called contracts, 
+            and much of object-oriented design is indeed <I>Design by Contract</I>.&rsquo; 
+            </FONT>(1997, p. 127)</FONT></P>
+        </DIV>
+        <DIV ID="sdendnote19"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote19sym" HREF="#sdendnote19anc">19</A> 
+            Contract in this sense is another name for abstraction boundary, a 
+            standardized contract for a type of interaction. Meyer (1997) provides 
+            a narrower definition of object contracts which emphasizes the terms 
+            and conditions (assertions) required for an object to respond correctly 
+            to a particular request. </FONT> </P>
+        </DIV>
+        <DIV ID="sdendnote20"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote20sym" HREF="#sdendnote20anc">20</A> 
+            Gamma et al. caution, &lsquo;Trying to understand one from the other 
+            is like trying to understand the dynamism of living ecosystems from 
+            the static taxonomy of plants and animals and vice versa.&rsquo; (1995, 
+            p. 22)</FONT></P>
+        </DIV>
+        <DIV ID="sdendnote21"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote21sym" HREF="#sdendnote21anc">21</A> 
+            For example, Malone et al. (1988), Miller and Drexler (1988b), and 
+            Wellman (1996).</FONT></P>
+        </DIV>
+        <DIV ID="sdendnote22"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote22sym" HREF="#sdendnote22anc">22</A> 
+            Evolutionary programming techniques can be seen as attempts to build 
+            creative choice into programs. See Baum (1999) for a market-oriented 
+            approach to evolutionary programming inspired by Hayek.</FONT></P>
+        </DIV>
+        <DIV ID="sdendnote23"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote23sym" HREF="#sdendnote23anc">23</A> 
+            See Baetjer (1999) for a description of the role of dialogue in software 
+            development.</FONT></P>
+        </DIV>
+        <DIV ID="sdendnote24"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote24sym" HREF="#sdendnote24anc">24</A> 
+            Articulations, while concrete utterances, are also necessarily abstract. 
+            Lavoie (1985a, p. 60) explains, &lsquo;nothing can be completely articulated, 
+            since the very process of articulation involves the abstraction from 
+            some real features of the entity or process that is being described.&rsquo;</FONT></P>
+        </DIV>
+        <DIV ID="sdendnote25"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote25sym" HREF="#sdendnote25anc">25</A> 
+            Lavoie writes, &lsquo;Entrepreneurship is not an individual act of 
+            perception &hellip; it is an interpretive and communicative process 
+            involving efforts of different persons to communicate meaning about 
+            the future to one another. It is perhaps misleading to even present 
+            this coordinating process in terms of the activity of &ldquo;the entrepreneur,&rdquo; 
+            the single individual who is more or less alert to opportunities. 
+            What we have here is a coordination process that is taking place among 
+            persons who are oriented towards the future.&rsquo; (2003, p. 15)</FONT></P>
+        </DIV>
+        <DIV ID="sdendnote26"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote26sym" HREF="#sdendnote26anc">26</A> 
+            See especially Lavoie (1991 and 2003). See also Spinoza, Flores and 
+            Dreyfus (1997).</FONT></P>
+        </DIV>
+        <DIV ID="sdendnote27"> 
+          <P CLASS="sdendnote-western"><A CLASS="sdendnotesym-western" NAME="sdendnote27sym" HREF="#sdendnote27anc">27</A><FONT SIZE=2 STYLE="font-size: 11pt"> 
+            Lavoie explains, &lsquo;Lachmann&rsquo;s work <I>Capital and Its Structure</I> 
+            depicts the entrepreneur as involved in trying to mesh her plans with 
+            those of the ultimate consumers, by in some sense &ldquo;fitting&rdquo; 
+            into an evolving structure of capital. This idea of fit is what Lachmann 
+            called &ldquo;complementarity.&rdquo; The process of economic production 
+            involves the continuous adaptation of heterogeneous parts of the capital 
+            structure to one another. It is in this context that he sees the essential 
+            role of the entrepreneur as one of figuring out how to specify particular 
+            ways of using heterogeneous capital goods that in principle can be 
+            used in a multiplicity of alternative ways. Lachmann identifies the 
+            key role of the entrepreneur in terms of deciding how to initially 
+            select (or later adapt) particular patterns of use of capital goods.&rsquo; 
+            (2003, p. 8)</FONT></P>
+        </DIV>
+        <DIV ID="sdendnote28"> 
+          <P CLASS="sdendnote-western"><FONT SIZE=2><A CLASS="sdendnotesym-western" NAME="sdendnote28sym" HREF="#sdendnote28anc">28</A> 
+            As Langlois (1999) points out, there is a blurry line between economies 
+            of scale and scope: scale economies result from the reuse of knowledge 
+            across many identical units; scope economies result from the reuse 
+            of knowledge across many similar units. </FONT> </P>
+        </DIV>
+        <DIV ID="sdendnote29"> 
+          <P CLASS="sdendnote-western"><A CLASS="sdendnotesym-western" NAME="sdendnote29sym" HREF="#sdendnote29anc">29</A><FONT SIZE=2 STYLE="font-size: 11pt"> 
+            The emergence of online ticket vendors, such as </FONT>www.fandango.com<FONT SIZE=2 STYLE="font-size: 11pt">, 
+            shows how boundaries can also support polymorphism.</FONT></P>
+        </DIV>
+        <DIV ID="sdendnote30"> 
+          <P CLASS="western"><A CLASS="sdendnotesym-western" NAME="sdendnote30sym" HREF="#sdendnote30anc">30</A> 
+            <FONT COLOR="#000000"><FONT FACE="Helv, sans-serif"><SPAN LANG="en-US"><FONT FACE="Times New Roman, serif">This 
+            is an example of subtyping. The type post office can be extended to 
+            meet more specific purposes. A subtype of post office can be created 
+            that includes the ability to post a letter with guaranteed overnight 
+            delivery. New instances of this subtype can be substituted to provide 
+            these new enhanced services. FedEx makes use of the postal customer&rsquo;s 
+            familiarity with the same general interface (delivering a sealed envelope 
+            to a specified address) to offer the innovation of overnight delivery, 
+            adding more specific services without upsetting those with more general 
+            plans.</FONT></SPAN></FONT></FONT></P>
+        </DIV>
+      </DIV>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">talks</a>&nbsp;/&nbsp;<a href="index.html">categories</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><img src="../../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

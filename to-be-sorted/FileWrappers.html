@@ -1,0 +1,213 @@
+<HTML>
+
+<HEAD>
+
+<TITLE>Design Document Template</TITLE>
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="GENERATOR" CONTENT="Internet Assistant for Microsoft Word 2.0z">
+</HEAD>
+
+<BODY BGCOLOR="#ffeedd" TEXT="#000000" LINK="#0000FF" VLINK="#800080">
+
+<H1>File Wrappers </H1>
+
+<P>
+<B>Last updated:</B> [98/05/14 Chip]
+<P> <I>This page was written by <I>Chip,</I> based on <I>Arturo's</I> excellent 
+  <A HREF="http://www-int.communities.com/engineering/neocosm/SubsystemDocTemplate.html"><I>template.</I></A> 
+  <BR>
+</I>
+<H2>Introduction </H2>
+
+<P>
+The file wrapper subsystem provides an alternative API for Java
+file I/O. It provides essentially the same functionality as the
+standard <FONT FACE="Courier">java.io</FONT> classes (if fact,
+it is built on top of them), but does so in a way that is capability
+secure and Vat-safe. The idea is to treat file and directory accessors
+as the objects from which file access is derived, rather than
+allowing file name strings to designate access.<BR>
+
+<H2>Requirements </H2>
+
+<P>
+The principal requirement of the file wrapper subsystem was to
+provide a Vat-safe means for objects running in the Vat to access
+files. The standard Java file access classes are not suitable
+because they grant access via static methods and variables (thus
+preventing control over which objects can access what) and because
+they cannot be made to behave appropriately in a quake (either
+by surviving or by letting themselves be cleanly smashed).<BR>
+
+<H2>Architecture </H2>
+
+<P>
+The <FONT FACE="Courier">ec.e.file package</FONT> provides capability-secure
+file access to guest objects in the Vat. This overview describes
+the basic architecture of the package: what the classes are and
+how they relate to each other. For the specific details of the
+interfaces of these classes, consult the appropriate javadoc pages.
+<P>
+Files and directories are represented as objects. There is a set
+of objects for files and a set of objects for directories. Within
+each set, different classes of object encapsulate different sorts
+of access to the files or directories which their instances describe.
+<P>
+There are three varieties of directory object:
+<P>
+<B>EReadableDirectory</B> - read-only access to contained files
+and directories
+<P>
+<B>EAccessibleDirectory</B> - read-only access to contained directories,
+edit access to contained files
+<P>
+<B>EEditableDirectory</B> - edit access to contained files and
+directories
+<P>
+And three varieties of file object:
+<P>
+<B>EReadableFile</B> - read-only access to a file, optionally
+random access
+<P>
+<B>EAppendableFile</B> - append-only write access to a file
+<P>
+<B>EEditableFile</B> - read/write access to a file, optionally
+random access
+<P>
+All of the objects of classes <B>EXxxxDirectory</B> or <B>EXxxxFile</B>
+are instances of <B>EDirectoryEntry</B> and support a common interface
+that allows you to determine if the described entity in fact exists,
+find out if it is a file or directory, and find out if it is contained
+by a particular directory.
+<P>
+All the <B>EXxxxDirectory</B> objects can provide a list of their
+contents, in the form of a <B>ReadOnlyHashtable</B> which maps
+from <B>Strings</B> to <B>EDirectoryEntry</B> objects (<FONT FACE="Courier">org.erights.e.elib.util.ReadOnlyHashtable</FONT>
+works like a regular Java hashtable, except that you can't modify
+it).
+<P>
+From an <B>EReadableDirectory</B> object you can obtain <B>EReadableDirectory</B>
+and <B>EReadableFile</B> objects for the directories and files
+within that directory.
+<P>
+From an <B>EAccessibleDirectory</B> object you can obtain <B>EAccessibleDirectory</B>
+and <B>EEditableFile</B> objects for the directories and files
+within that directory. In addition, from an <B>EAccessibleDirectory</B>
+object you can obtain an <B>EReadableDirectory</B> object for
+the same directory.
+<P>
+From an <B>EEditableDirectory</B> object you can obtain <B>EEditableDirectory</B>
+and <B>EEditableFile</B> objects for the directories and files
+within that directory. In addition, from an <B>EEditableDirectory</B>
+object you can obtain an <B>EReadableDirectory</B> or <B>EAccessibleDirectory</B>
+object for the same directory. Furthermore, an <B>EEditableDirectory</B>
+object allows you to modify the directory it represents by adding,
+deleting, renaming and relocating the files and directories within
+it.
+<P>
+From an <B>EReadableFile</B> or an <B>EEditable</B> file object
+you can obtain an input stream for sequential read access or an
+<B>EFileReader</B> object for random access reading of the corresponding
+file.
+<P>
+From an <B>EEditableFile</B> object or an <B>EAppendableFile</B>
+object you can obtain an output stream for sequential write access
+(to the end of) the corresponding file.
+<P>
+From an <B>EEditableFile</B> object you can obtain an <B>EFileEditor</B>
+object for random access reading and writing of the corresponding
+file. In addition, from an <B>EEditableFile</B> object you can
+obtain an <B>EReadableFile</B> or <B>EAppendableFile</B> object
+for the same file.
+<P>
+Note that the file and directory access provided by the above
+described objects are circular in nature: the only way to get
+a file or directory object is from another file or directory object.
+This raises the question of how you get a file or directory object
+to begin with. The answer is that there is an <B>EDirectoryRootMaker</B>
+object (of which only one instance exists) which has the power
+to produce an <B>EEditableDirectory</B> object given only a string
+representing the pathname of the directory in question. The <B>EDirectoryRootMaker</B>
+object is generated at startup time and should be closely held.
+<P>
+The <B>EFileReader</B> and <B>EFileEditor</B> objects, as well
+as the input and output stream objects obtainable from <B>EXxxxFile</B>
+objects, are fragile. That is, they get smashed in a quake. Attempts
+to perform I/O after a quake will result in a <B>SmashedException</B>
+(which is a type of <B>IOExcpetion</B>). However, the <B>EXxxxDirectory</B>
+and <B>EXxxxFile</B> objects are sturdy. They survive a quake
+just fine, though do not guarantee that the state of the file
+system will be the same after the quake as before (they will,
+however, always present a correct view of the <I>current</I> state
+of the file system).
+<P>
+The input and output streams provided by the file classes are
+implemented by <B>EInputStream</B> and <B>EOutputStream</B>, which
+are streams that behave appropriately (i.e., the get smashed)
+in a quake. There is also an alternative version of <B>EOutputStream</B>
+called <B>QuakeProofAppendFile</B> whose behavior on return from
+a quake is to seek to the end of the file and resume writing.
+<P>
+The <B>EStdio</B> class provides access in the Vat to the standard
+I/O streams that the class <B>System</B> provides outside the
+Vat. The methods <B>EStdio.out()</B>, <B>EStdio.in()</B> and <B>EStdio.err()</B>
+correspond to the same input or output streams as <B>System.out</B>,
+<B>System.in</B> and <B>System.err</B>, respectively. The difference
+is that the streams provided by <B>EStdio</B> are sturdy whereas
+those provided by <B>System</B> are not. And yes, these <I>are</I>
+static methods; talk to MarkM or me about why we decided that
+these were OK even though they break one of the cardinal rules.
+<H4>Off the shelf alternatives </H4>
+
+<P>
+The obvious alternative to using this package is simply to use
+the regular Java I/O classes, if Vat safety and/or capability
+security are not concerns.<BR>
+
+<H2>Current implementation </H2>
+
+<H4>Which directories on our tree does this subsystem cover? 
+</H4>
+
+<P>
+All the classes in this subsystem are in the package <FONT FACE="Courier">ec.e.file</FONT>,
+which are in the single directory <FONT FACE="Courier">ec4/javasrc/ec/e/file</FONT>.
+<H4>Is it JavaDoc'ed? </H4>
+
+<P>
+The file wrapper package is completely JavaDoc'd, except for a
+mysterious class of unknown provenenance called <B>URLStreamMaker</B>.
+<H4>Testing and Debugging </H4>
+
+<P>
+In the older ec3 tree, in <FONT FACE="Courier">ec3/E/runtime/e/file</FONT>,
+are a couple of test programs, <FONT FACE="Courier">FileTest.e</FONT>
+and <FONT FACE="Courier">QuakeFileTest.e</FONT>. These have not
+been converted for ec4 or later environments. The file wrapper
+package itself is fairly small and simple and has not required
+much further maintenance since it was first released. Thes test
+programs were fairly ad hoc and informal; they are probably not
+worth converting.<BR>
+
+<H2>Design Issues</H2>
+
+<H4>Open Issues </H4>
+
+<P>
+The future need for this package is debatable. In a future product
+which allows user-submitted Java code to run in our environment,
+the capability-secure aspects of this file access paradigm will
+be essential. However, the Vat-safety aspects are less critical
+now that we have switched to state-bundle persistence rather than
+orthogonal persistence. The paradigm is also somewhat awkward
+to use for programmers used to simply naming a file with a string.
+And there is a further question as to whether user-submitted Java
+code should be accessing files at all. On the other hand, the
+implementation has proven reasonably reliable and trouble free
+and we have a fair quantity of code in our source base which depends
+on it. Maintaining a capability-safe source base is probably a
+wise thing to do, all other cost factors being equal.
+</BODY>
+
+</HTML>

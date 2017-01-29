@@ -1,0 +1,1690 @@
+<html>
+<head>
+<title>An Ode to the Granovetter Diagram</title>
+</head>
+
+<body bgcolor="#FFEEDD">
+<h1 align="center">Capability-based Financial Instruments</h1>
+
+      <h3 ALIGN="center"><i>Draft paper <a href="http://crit.org/http://fc00.uwm.edu/committee.html%FF:words:(Capability-based-Financial-Instruments)#M1-target">presented</a>
+        at <a href="http://www.fc00.ai/">Financial Cryptography 2000</a></i></h3>
+      <p ALIGN="center">Mark S. Miller, ERights.org<br>
+        Chip Morningstar, Communities.com<br>
+        Bill Frantz, Communities.com</p>
+      <p align="left"><i>(For <a href="index.html">reading on-line</a>.<br>
+        <a href="ode.pdf">PDF</a> or <a href="ode-linear.html">linearized html</a>
+        for printing.<br>
+        <a href="ode-submission.html">Earlier draft</a> as originally accepted
+        by the conference.)</i></p>
+      <h1 align="left"><a name="abstract"></a>Abstract</h1>
+      <p align="left"> Every novel cooperative arrangement of mutually suspicious
+        parties interacting electronically -- every smart contract -- effectively
+        requires a new cryptographic protocol. However, if every new contract
+        requires new cryptographic protocol <i>design</i>, our dreams of cryptographically
+        enabled electronic commerce would be unreachable. Cryptographic protocol
+        design is too hard and expensive, given our unlimited need for new contracts.</p>
+      <p align="left">Just as the digital logic gate abstraction allows digital
+        circuit designers to create large analog circuits without doing analog
+        circuit design, we present cryptographic <i>capabilities</i> as an abstraction
+        allowing a similar economy of engineering effort in creating smart contracts.
+        We explain the E system, which embodies these principles, and show a covered-call-option
+        as a smart contract written in a simple security formalism independent
+        of cryptography, but automatically implemented as a cryptographic protocol
+        coordinating five mutually suspicious parties.</p>
+      <h1 align="left"><a name="intro"></a>Introduction</h1>
+      <p align="left">From simple abstractions, great power may bloom. Sometimes,
+        this power comes not from wholly new ideas, but rather from the emergent
+        insights that arise when bits of common wisdom from disjoint communities
+        come together. For example, Shannon's formalization of the notion of <i>information</i>
+        [<a href="ode-references.html#Shannon48">Shannon48</a>] built a bridge
+        between the electrical engineer's intuitions about signals, encodings,
+        and noise, and the mechanical engineer's intuitions about temperature
+        and thermodynamic efficiency.</p>
+      <p align="left">This paper takes a first step in unifying the work of the
+        object programming community, the capability-based secure operating systems
+        community, and the financial cryptography community. Historically:</p>
+      <p align="left">
+      <ul>
+        <li>
+          <p>objects have been strong on abstraction and composition,</p>
+        </li>
+        <li>
+          <p>operating systems have been strong on providing a shared platform
+            in which disparate processes can interact without being able to damage
+            one another, even if they contain malicious code, and </p>
+        </li>
+        <li>
+          <p> financial cryptography has been strong on cooperative protocols
+            allowing mutually suspicious parties to trade a diversity of rights
+            in the absence of a mutually-trusted platform.</p>
+        </li>
+      </ul>
+      <p>Unfortunately, each has been weak in the areas where the other two are
+        strong. By bridging the intuitions of these communities, we can engineer
+        systems with the strengths of all three. The bridge described in this
+        paper is based on a joint appreciation, across all three communities,
+        of a common abstraction, illustrated by the <i>Granovetter Diagram</i>
+        shown on the right. The sociologist Mark Granovetter originally developed
+        diagrams of this type to illustrate how the topology of interpersonal
+        relationships changes over time, as people introduce people they know
+        to each other [<a href="ode-references.html#Granovetter73">Granovetter73</a>].
+        Though Granovetter devised this diagram in the context of human relations,
+        we have found it to be a powerful notation for understanding the relations
+        between computational objects in a network.</p>
+      <p><img src="images/fundamental.gif" width="238" height="219" align="right">We
+        present this abstraction from six perspectives: </p>
+      <p>
+      <ol>
+        <li>As the basic step of <i><a href="#perspective-objects">Object Computation</a></i>.</li>
+        <li>As the foundation for <i><a href="#perspective-caps">Capability Security</a></i>.</li>
+        <li>As a <i><a href="#perspective-crypto">Cryptographic Protocol</a></i>
+          implementing distributed capabilities.</li>
+        <li>As a <i><a href="#perspective-pki">Public Key Infrastructure</a></i>,
+          where certificates act like messages, transmitting authorization among
+          the players.</li>
+        <li>As the core <i><a href="#perspective-game">Game-Rule</a></i> for secure
+          computation modeled as a vast multi-player game. </li>
+        <li>As material from which to build a diversity of <i><a href="#perspective-bearer">Financial
+          Bearer Instruments</a></i>.</li>
+      </ol>
+      <p>We are building the E system [<a href="ode-references.html#E">E</a>]
+        to unify these perspectives. E is a simple, secure, distributed, pure-object,
+        persistent programming language. E blends the lambda calculus, capability
+        security, and modern cryptography. In integrating these diverse features,
+        E brings the diverse virtues of the Granovetter Operator to life. Throughout
+        the paper we present our examples in E, explaining the language briefly
+        as needed.
+      <p>Since we can only touch upon each perspective briefly within the space
+        allowed for this paper, we have chosen breadth over depth, so that even
+        a brief treatment can unify the perspectives. Hopefully our references
+        and future writings will provide the needed depth as well.
+      <p></p>
+      <h1 align="left"><a name="perspectives"></a>Six Perspectives</h1>
+      <p align="left">
+      <ol>
+        <li>
+          <p><b><a name="perspective-objects"></a>Objects</b>. Most importantly,
+            the Granovetter Diagram shows the computation step fundamental to
+            all object computation: the &quot;message send&quot; (in Smalltalk
+            terminology) or the &quot;virtual member function call&quot; (in C++
+            terminology). Alice, Bob, and Carol are three objects. In the initial
+            conditions, Alice holds a reference to (points at, has access to)
+            Bob and Carol. Dynamically, we see that Alice is sending a <tt>foo</tt>
+            message to (calling the <tt>foo</tt> member function of) Bob,
+            in which a parameter of the message (call) is a copy of Alice's reference
+            (pointer, access) to Carol. For conciseness, we will refer to this
+            computation step as the <i>Granovetter Operator</i>. </p>
+          <p>Object-oriented message passing, along with encapsulation and polymorphism,
+            enables modular programming. By designing the interfaces between modules
+            on a <i>need-to-know</i> basis, we satisfy the <i>principle of information
+            hiding</i> [<a href="ode-references.html#Parnas72">Parnas72</a>] that
+            is the basis of much important software engineering theory and practice.</p>
+        </li>
+        <li>
+          <p><b><a name="perspective-caps"></a>Capability Security</b>. The Granovetter
+            Operator becomes a security primitive given the following constraint:
+            If Bob does not already have a reference to Carol, Bob can only come
+            to have a reference to Carol if a third party, such as Alice,</p>
+          <p>
+          <ul>
+            <li> <a name="already-carol"></a>already has a reference to Carol,
+              and</li>
+            <li><a name="already-bob"></a>already has a reference to Bob, and</li>
+            <li>
+              <p><a name="decides"></a>voluntarily <i>decides</i> to share with
+                Bob her reference to Carol.</p>
+            </li>
+          </ul>
+          <p>Adding this property to an object system transforms it into a <i>capability
+            system</i>. In a capability system, <i>only connectivity begets connectivity</i>.
+            In a capability system, an object's authority to affect the world
+            outside itself is determined <i>solely</i> by what references it holds,
+            since the only way the object can cause an external effect is to send
+            a message via one of these references. Consequently, the mechanics
+            of reference-passing determine how authority can change over time.</p>
+          <p>The capability model prohibits certain possibilities, such as forgeable
+            references or mutable global variables, that the object computation
+            model allows (though it does not require them either). Although, in
+            principle, the object computation model is perfectly compatible with
+            these prohibitions, most embodiments of object computation (typically
+            in the form of programming languages) disregard the boundaries imposed
+            by the capability model [<a href="ode-references.html#Kahn88">Kahn88</a>].
+            We explain why E <i>does</i> stay within these boundaries, and so
+            is capability-secure (as are these systems [<a href="ode-references.html#Hewitt73">Hewitt73</a>,
+            <a href="ode-references.html#Tribble95">Tribble95</a>, <a href="ode-references.html#Rees96">Rees96</a>]).
+            We will present an implementation of capability-based money as an
+            example.</p>
+          <p>The main capability-system design rule, the <i>principle of least
+            authority</i> (sometimes called the &quot;principle of least privilege&quot;
+            [<a href="ode-references.html#Saltzer75">Saltzer75</a>]) requires
+            one to design interfaces such that authority is handed out only on
+            a <i>need-to-do</i> basis [<a href="ode-references.html#Crockford97">Crockford97</a>].</p>
+        </li>
+        <li>
+          <p><b><a name="perspective-crypto"></a>Cryptographic Protocol</b>. Imagine
+            now that Alice, Bob, and Carol are objects residing on three separate
+            machines on a computer network. Distributed object systems, such as
+            CORBA [<a href="ode-references.html#CORBA">CORBA</a>] and RMI [<a href="ode-references.html#Wollrath99">Wollrath99</a>],
+            provide for the diagrammed message send to proceed over the network,
+            while preserving the core semantics of the object computation model.
+            However, these are <i>cooperative protocols</i>, in that they rely
+            on the assumption that the machines involved are correctly cooperating.
+            By contrast, a <i>cryptographic protocol</i> implementing the Granovetter
+            Operator must also preserve the semantics of the capability model,
+            including the prohibitions, in the presence of mutually suspicious
+            objects residing on mutually suspicious machines. </p>
+          <p>We briefly explain Pluribus, E's cryptographic capability protocol,
+            turning E into a securely distributed language. We examine how the
+            money example (from the previous section) transparently distributes
+            by showing how Pluribus automatically maps the pieces of the example
+            to stock cryptographic-protocol elements. </p>
+        </li>
+        <li>
+          <p><b><a name="perspective-pki"></a>Public Key Infrastructure</b>. Some
+            PKIs, like SPKI (the Simple Public Key Infrastructure [<a href="ode-references.html#Ellison99">Ellison99</a>]),
+            interpret digital certificates primarily as statements authorizing
+            the players to perform various actions on various resources. In the
+            Granovetter Diagram, the message arrow <tt>foo</tt> can be seen
+            as such a certificate, signed by Alice, stating that Bob has the authority
+            to perform the action represented by Carol. This certificate is meaningful
+            if and only if there is a similar certificate granting Alice this
+            right, and so on, back to the creator/owner of Carol. Should Bob choose
+            to exercise this authority, he would present the certificate-chain
+            (or its logical equivalent) as proof that he has received this authorization.</p>
+          <p>The enforceable subset of SPKI can be seen as an off-line, auditable,
+            heavyweight, non-confinable, semi-capability system, as opposed to
+            E's on-line, repudiatable-by-default, lightweight, confinable, full-capability
+            system. Perhaps, by comparing these, we may figure out how to build
+            systems with some of the best of both.</p>
+        </li>
+        <li>
+          <p><b><a name="perspective-game"></a>Game Rules</b>. During a player's
+            turn in a board game, the state of the board constrains what moves
+            that player may make. From these possible moves, the player chooses
+            a particular move, which changes the board and thereby alters the
+            moves then available to the other players. Recall the three conditions
+            needed for Bob to receive a reference to Carol from Alice. The first
+            two conditions are constraints on the possible moves available to
+            Alice (and so correspond to <i>mandatory security</i>). The third
+            condition is that Alice must choose to make this move (and so corresponds
+            to <i>discretionary security</i>). If Alice actually does choose to
+            make this move, she thereby changes the moves available to Bob --
+            afterwards Bob may both send messages to Carol and send messages to
+            yet other parties introducing Carol to them, whereas previously he
+            could not.</p>
+          <p>Attempts to formalize the semantics of computation, including secure
+            computation, have failed to capture the core intuitions of computer
+            security practitioners. Fundamental to these intuitions is the notion
+            of mutually suspicious, separately interested agents, interacting
+            within a framework of rules, under constraints of partial knowledge,
+            each in order to pursue their own interests. The formal tools for
+            capturing such intuitions are to be found in non-zero-sum, partial-information
+            game theory [<a href="ode-references.html#Schelling63">Schelling63</a>].
+            The Granovetter Diagram expresses the core game-rule governing secure
+            capability-based distributed multi-agent computation, viewed as a
+            vast multi-player game.</p>
+          <p>We have yet to exploit this perspective in order to apply game theory
+            to computation in this manner, but we hope this explanation may point
+            the way. We do not explore the game perspective further in this paper.</p>
+        </li>
+        <li>
+          <p><b><a name="perspective-bearer"></a>Financial Bearer Instruments</b>.
+            If Carol provides a useful service, then the ability to send messages
+            to Carol may be a useful <i>right</i>. Perhaps Carol answers questions
+            from a store of knowledge that she alone is privy to. Perhaps she
+            can affect some aspect of the external world, such as pixels on a
+            display or the cash dispenser of an automated teller machine. Any
+            secure system of <i>electronic rights</i> must solve at least three
+            problems: </p>
+          <ul>
+            <li>How to represent who currently has what rights.</li>
+            <li>How to enable rights holders to exercise those rights they have,
+              and no more.</li>
+            <li>
+              <p>How to enable rights holders to securely transfer these rights.</p>
+            </li>
+          </ul>
+          <p>The static reference relationships among objects exactly represent
+            who currently has what rights. Since a right is exercised by sending
+            a message to an object that embodies the right, such as Carol, the
+            rule that you can send a message to any object you have a reference
+            to, but no others, provides for the exercise of those rights you have,
+            and no others. Finally, the transition shown on the Granovetter Diagram
+            is both the secure transfer to Bob of the right to pass messages to
+            Carol, as well as the exercise, by Alice, of whatever right Bob may
+            represent.</p>
+          <p>In the face of widespread misuse of the term &quot;electronic commerce&quot;,
+            we should remember that &quot;commerce&quot; entails more than just
+            the ability of a merchant to accept monetary payment. Commerce is
+            a rich set of market interactions that emerge when territory and abilities
+            are abstracted into &quot;rights&quot;, and a rich set of arrangements
+            that emerge for the mutually acceptable transfer of these rights.
+            For large scale electronic commerce, we should concern ourselves with
+            those rights which are both representable electronically and enforceable
+            electronically, and with mutually-enforceable arrangements for their
+            transfer. </p>
+          <p>The Granovetter Diagram by itself shows the simplest -- in the electronic
+            world -- interesting such electronic right: a non-exclusive, specific,
+            exercisable, non-assayable bearer instrument. By contrast, the money
+            example from sections 2 and 3 shows an exclusive, fungible, non-exercisable,
+            assayable bearer instrument. We sketch a taxonomy of other enforceable
+            electronic rights, and show how most of these can be built by simple
+            compositions of the Granovetter Operator. Derivative rights, including
+            derivative financial instruments, are composed from underlying rights
+            via familiar object abstraction. We show a covered call option as
+            an example.</p>
+        </li>
+      </ol>
+
+<hr><h1><a name="objects"></a>From Functions To Objects</h1>
+      <p>Object computation can be understood as the sum of three elements [<a href="ode-references.html#Goldberg76">Goldberg76</a>]
+        [<a href="ode-references.html#Hewitt73">Hewitt73</a>]: </p>
+      <div align="center">
+        <p align="center"><b>Objects == Lambda Abstraction + Message Dispatch
+          + Local Side Effects </b></p>
+      </div>
+      <p align="left">(footnote: The remaining feature often thought to be defining
+        of object-oriented programming is inheritance. Though we do not view inheritance
+        as as a fundamental ingredient of object computation, its widespread use
+        in object-oriented programming practice motivates its inclusion in E.
+        However, E's reconciliation of inheritance with capability security principles
+        [<a href="ode-references.html#Miller99">Miller99</a>] is beyond the scope
+        of this paper.) </p>
+      <h2 align="left"><a name="lambda"></a>Lambda Abstraction</h2>
+      <p align="left">Lambda abstraction [<a href="ode-references.html#Church41">Church41</a>]
+        is a pure theory of nested function definition and application. In E notation,
+        conventional function definition and application should look familiar:
+      <p align="left">
+      <blockquote>
+        <pre>define factorial(n) :any {
+    if (n &lt;= 0) {
+        1
+    } else {
+        n * factorial(n-1)
+    }
+}
+
+<b>? </b><i>factorial(3)</i>
+<b># value: 6</b></pre>
+      </blockquote>
+      The only unfamiliar element is the use of &quot;<tt>:any</tt>&quot;
+      rather than an explicit return statement. Like Lisp and Smalltalk, E is
+      an expression language -- the value of a block of expressions is the value
+      of the last expression in that block. This value is filtered through the
+      optional <i>returns type declaration</i>. &quot;<tt>:any</tt>&quot;
+      allows any value to be returned. If no return type is declared, then null
+      is returned. <font color="#CC0000">(*** This detail comes too early. Must
+      move into a footnote or something.) </font>
+      <p>Nested function definition, familiar from all lexical lambda languages
+        including ALGOL60, Scheme, and ML, should also look familiar:</p>
+      <p align="left">
+      <blockquote>
+        <pre>define adderCreator(x) :any {
+    define adder(y) :any {
+        x + y
+    }
+}
+
+<b>? </b><i>define addThree := adderCreator(3)
+</i><b># value: &lt;adder&gt;
+
+? </b><i>addThree(5)
+</i><b># value: 8</b></pre>
+      </blockquote>
+      <p align="left">The call to <tt>adderCreator</tt> returns a version
+        of the <tt>adder</tt> function that adds <tt>3</tt> to its argument.
+        Church originally thought about this as substitution -- return an <tt>adder</tt>
+        function in which <tt>x</tt> has been replaced by <tt>3</tt>.
+        Unfortunately, this simple perspective generalizes poorly. An alternative
+        perspective is to consider a function, such as that held in the <tt>addThree</tt>
+        variable, to be a combination of a <i>behavior</i> -- the static code
+        for adder, and <i>state</i> -- the runtime bindings for its <i>free</i>
+        variables. <tt>x</tt> in <tt>adder</tt> is a free variable in
+        that <tt>adder</tt> uses <tt>x</tt>, but the corresponding definition
+        of <tt>x</tt> is inherited from <tt>adder</tt>'s creating context.
+        In the remainder of this paper, we will refer to such free state variables
+        as <i>instance variables</i>.
+      <p align="left">Such functions already have the most often cited attribute
+        of objects: they are a combination of encapsulated state together with
+        behavior that has exclusive access to that state. Ignoring for a moment
+        the message-name <tt>foo</tt>, the Granovetter Diagram describes an
+        important aspect of the lambda calculus. Imagine that Alice, Bob, and
+        Carol are three functions. If, in the initial conditions, Alice contains
+        a binding for Bob and Carol, then Alice's behavior can give Bob access
+        to Carol.
+      <p align="left">
+      <blockquote>
+        <pre>define ... {                 <font face="Times New Roman, Times, serif"># enclosing context</font>
+    define bob := ...        <font face="Times New Roman, Times, serif"># instance variable </font>bob<font face="Times New Roman, Times, serif"> somehow bound to Bob</font>
+    define carol := ...      <font face="Times New Roman, Times, serif"># instance variable </font>carol<font face="Times New Roman, Times, serif"> somehow bound to Carol</font>
+    define alice(...) {      <font face="Times New Roman, Times, serif"># defines Alice </font>
+        bob(..., carol, ...) <font face="Times New Roman, Times, serif"># Alice sends Bob a reference to Carol</font>
+    }
+    ...
+}</pre>
+      </blockquote>
+      <h2 align="left"><a name="dispatch"></a>Adding Message Dispatch</h2>
+      <p>The most visible difference between a function and an object is that
+        a function's behavior is written to satisfy just one kind of request,
+        and all calls on that function are forms of that one request. By contrast,
+        an object's behavior enables it to satisfy a variety of different requests
+        (each with a separate <i>method</i>). A request to an object (a <i>message</i>)
+        identifies which of these requests is being made. There is nothing fundamental
+        here; objects have been trivially built from functions, and vice-versa,
+        many times in the history of computer science. In E, behaviors-as-bundles-of-methods
+        and requests-as-messages are the more primitive notions, of which functions
+        are a degenerate case.</p>
+      <p>
+      <blockquote>
+        <pre>define PointMaker(x,y) :any {
+    define Point {
+        to printOn(out)    { out print(`&lt;$x,$y&gt;`) }
+        to getX       :any { x }
+        to getY       :any { y }
+        to add(other) :any {
+            PointMaker(x + other getX, y + other getY)
+        }
+    }
+}
+
+<b>? </b><i>define p := PointMaker(3,5)
+</i><b># value: <3,5>
+
+? </b><i>p getX</i><b>
+# value: 3
+
+? </b><i>p + PointMaker(4,8)
+</i><b># value: <7,13></b></pre>
+      </blockquote>
+      <p>From a lambda-calculus perspective, <tt>PointMaker</tt> is like <tt>adderCreator</tt>
+        -- it is a lexically enclosing function that defines the variable bindings
+        used by the object it both defines and returns. From an object perspective,
+        <tt>PointMaker</tt> is simultaneously like a class and constructor
+        -- both defining the instance variables for <tt>Point</tt>s, and creating,
+        initializing, and returning individual <tt>Point</tt>s. We have found
+        such lambda-based object definition to be simpler, more expressive, and
+        more intuitive, than either of the common choices -- class-based and prototype-based
+        object definition. The lambda-based technique for defining objects dates
+        back at least to 1973 [<a href="ode-references.html#Hewitt73">Hewitt73</a>],
+        so we find it distressing that the other two are often assumed to be the
+        only available choices.</p>
+      <p>The returned <tt>Point</tt>s are clearly object-like rather than
+        function-like. Each <tt>Point</tt>'s behavior contains four methods
+        -- <tt>printOn</tt>, <tt>getX</tt>, <tt>getY</tt>, and <tt>add</tt>
+        -- and every request to a <tt>Point</tt> starts by naming which of
+        these services is being requested. Now we see that the <tt>foo</tt>
+        in the Granovetter Diagram is simply a message-name. Extending our earlier
+        example, Alice's behavior would be:</p>
+      <p>
+      <blockquote>
+        <pre>        bob foo(..., carol, ...)</pre>
+      </blockquote>
+      <p>Some shortcuts above need a brief explanation. </p>
+      <p>
+      <ul>
+        <li>&quot;<tt>a + b</tt>&quot; is merely syntactic shorthand for &quot;<tt>a
+          add(b)</tt>&quot;, and similarly for other expression operators. </li>
+        <li>The command line interpreter prints a value by sending it the <tt>printOn</tt>
+          message. </li>
+        <li>The string between back-quotes and containing $-prefixed expressions
+          is a quasi-string. Like interpolated strings in Perl, it evaluates to
+          a string by evaluating the nested expressions and printing them into
+          the enclosing string. </li>
+        <li>Methods, like <tt>getX</tt>, that have no parameters may be defined
+          and called without writing the empty parameter list, &quot;<tt>()</tt>&quot;.
+        </li>
+        <li>Finally, functions are simply one-method objects where the method
+          is named &quot;<tt>run</tt>&quot;. The previous <tt>adderCreator</tt>
+          is therefor just syntactic shorthand for:</li>
+      </ul>
+      <p></p>
+      <p align="left">
+      <blockquote>
+        <pre>define adderCreator {
+    to run(x) :any {
+        define adder {
+            to run(y) :any {
+                x add(y)
+            }
+        }
+    }
+}
+</pre>
+      </blockquote>
+      <p align="left">
+      <h2><a name="side-effects"></a>Adding Side Effects</h2>
+      <p>Two features of object programming implied by the Granovetter Diagram
+        have been left out of computation as so far described. </p>
+      <p>
+      <ul>
+        <li>
+          <p>First, the diagram implies that Bob is obtaining access to Carol,
+            but computation as so far described gives Bob no means for holding
+            on to this access. </p>
+        </li>
+        <li>
+          <p>Second, we understand the diagram to say that Alice is giving Bob
+            access to Carol herself, not a copy of Carol [<a href="ode-references.html#Deutsch99">Deutsch99</a>].
+            However, in computation as has been described so far, Carol is indistinguishable
+            from a copy of Carol. We cannot distinguish between pass-by-reference-sharing
+            and pass-by-copy, but the Granovetter Diagram clearly intends to show
+            specifically pass-by-reference-sharing. Were computation adequately
+            described purely in terms of pass-by-copy, the Granovetter Diagram
+            would be unnecessary. </p>
+        </li>
+      </ul>
+      <p></p>
+      <p>The introduction of side effects solves both of these problems.</p>
+      <p>Starting with lambda calculus (or with lambda plus message dispatch),
+        there are many ways to add side effects. The approach used by E, Scheme,
+        ML and many other lambda languages is to introduce assignment.</p>
+      <p>How does assignment make Carol potentially distinct from a duplicate
+        of Carol? Consider:</p>
+      <p>
+      <blockquote>
+        <pre>define CounterMaker() :any {
+    define count := 0
+    define Counter {
+        to getCount :any { count }
+        to incr          { count += 1 }
+    }
+}
+
+<b>? </b><i>define carol := CounterMaker()
+</i><b># value: &lt;counter&gt;
+
+? </b><i>carol getCount
+</i><b># value: 0
+
+? </b><i>carol incr
+</i><b>
+? </b><i>carol getCount
+</i><b># value: 1</b></pre>
+      </blockquote>
+      <p>Two otherwise identical <tt>Counter</tt>s are distinct because they
+        have distinct <tt>count</tt> variables that increment separately.
+        All those who have access to the same <tt>Counter</tt> are able to
+        see the side effects of <tt>incr</tt> messages sent by others who
+        have access to this same <tt>Counter</tt>.</p>
+      <p>How does assignment enable Bob to retain access he has been given to
+        Carol? By assigning an incoming message-argument to an<tt></tt> instance
+        variable:</p>
+      <p>
+      <blockquote>
+        <pre>define BobMaker() :any {
+    define carol := null
+    define Bob {
+        to foo(..., newCarol, ...) {
+            carol := newCarol
+        }
+        ...
+    }
+}</pre>
+      </blockquote>
+      <p></p>
+      <h2><a name="facets"></a>Composites &amp; Facets</h2>
+      <p>Technically, by introducing assignment, we have made each variable into
+        a distinct primitive variable-object. A user-defined object then contains
+        bindings from the names of these variables to these variable-objects.
+        The variable-objects in turn contain the bindings to the current values
+        of the variables. When the programmer writes a use-occurrence of the variable
+        in an expression, this causes the containing object to send a <tt>getValue</tt>
+        message to the variable-object to get its current value. When the programmer
+        writes an assignment, this causes the containing object to send a <tt>setValue</tt>
+        message to the variable-object.</p>
+      <p>When a variable is only in the scope of one object, as in all the above
+        examples, we usually ignore this distinction, and speak as if the containing
+        object has bindings directly from the variable names to the current values
+        of these variables. But this shortcut does not work for code such as:</p>
+      <p>
+      <blockquote>
+        <pre>define getterSetterPair(value) :any {
+    define getter()    :any { value }
+    define setter(newValue) { value := newValue }
+    [getter, setter]
+}</pre>
+      </blockquote>
+      <p></p>
+      <p>Each time <tt>getterSetterPair</tt> is called, it defines a new <tt>value</tt>
+        variable and returns a list of two functions, one that will get the value
+        of this variable and one that will set it. This is a trivial example of
+        a useful technique -- defining several objects in the same scope, each
+        providing different operations for manipulating a common state held in
+        that scope. </p>
+      <p align="center"><img src="images/share.gif" width="444" height="131"></p>
+      <p>On the left we see, diagrammed in explicit detail, the objects and relationships
+        resulting from a call to <tt>getterSetterPair</tt>. On the right,
+        the triple is visualized as a single composite. Like an individual object,
+        a composite is a combination of state and behavior. Like an individual
+        object, the state consists of all of the variables within the composite.
+        The behavior consists of all of the code within the composite, but here
+        we have an important difference. </p>
+      <p>The behavior elicited by a message to the composite depends not just
+        on the message, but, obviously, on which object of the composite receives
+        the message. Objects on the surface of the composite -- objects which
+        may be referred to from outside the composite, like <tt>getter</tt>
+        and <tt>setter</tt> -- are <i>facets</i> of the composite. The variable-object,
+        <tt>value</tt>, need not be considered a facet since we can tell that
+        no reference to it can escape from the composite.</p>
+      <p>The aggregation of a network of objects into a composite is purely subjective
+        -- it allows us to hide detail when we wish. The technique works because
+        the possible interactions among composites obey the same rules as the
+        possible interactions among individual objects -- these rules are therefor
+        <i>compositional</i>. </p>
+      <h2><a name="dyna-graph"></a>The Dynamic Reference Graph</h2>
+      <p>When speaking of object computation, all too much emphasis is often placed
+        on the objects themselves. The fabric of an object system is the dynamic
+        reference graph. As suggested by the Granovetter Diagram, objects (or
+        composites) are the nodes of this graph and references are the arcs. Only
+        computation <i>within</i> the graph brings about changes to the topology
+        of the graph (the <i>who refers to whom</i> relationships), and it only
+        brings about those changes that are enabled by the graph's current topology.
+        To learn the perspective of the Granovetter Diagram is to see the dynamic
+        reference graph as primary, and objects themselves as secondary [<a href="ode-references.html#Kay99">Kay99</a>].</p>
+
+<hr><h1><a name="capabilities"></a>From Objects to Capabilities</h1>
+      <h2><a name="cap-os"></a>Capability Operating Systems</h2>
+      <p>The <i>capability</i> was first invented by secure operating system designers.
+        It started as a way to protect &quot;primitive&quot; resources such as
+        memory segments [<a href="ode-references.html#Dennis66">Dennis66</a>],
+        but was soon generalized [<a href="ode-references.html#Wulf74">Wulf74</a>]
+        into a protected ability to invoke arbitrary services provided by other
+        processes. For each process, there is a table associating small numbers
+        (similar in spirit to Unix file descriptors) with the capabilities held
+        by that process. These small numbers serve the same function as variable
+        names do in the lambda calculus [<a href="ode-references.html#Rees96">Rees96</a>].
+        In a pure capability operating system, such as KeyKOS [<a href="ode-references.html#Hardy85">Hardy85</a>]
+        or EROS [<a href="ode-references.html#Shapiro99">Shapiro99</a>], a process's
+        only source of authority is the capabilities that it holds.
+      <p>A capability is normally thought of as a pairing of a designated process
+        with a set of services that the process provides. For example, in KeyKOS
+        a capability carries a numeric tag which an invoked process receives along
+        with an incoming message. The process then typically dispatches to a specific
+        method based on both the numeric tag and the KeyKOS equivalent of a message
+        name. The equivalence with objects is clear: the behavior looked up in
+        this way, paired with the process-state, is the same sort of state-and-behavior
+        that defines an object. When different capabilities make different behaviors
+        from the same process available via different numeric tags, we can view
+        the process as a composite and each of its capabilities as a facet.
+      <h2><a name="patt-coop"></a>Patterns of Cooperation Without Vulnerability</h2>
+      <p>The capability model is, in a sense, the object model taken to its logical
+        extreme. Where object programmers seek modularity -- a decrease in the
+        dependencies between separately thought-out units -- capability programmers
+        seek security, recognizing that required trust is a form of dependency.
+        Object programmers wish to guard against bugs: a bug in module A should
+        not propagate to module B. Capability programmers wish to guard against
+        malice. However, if B is designed to be invulnerable to A's malice, it
+        is likely also invulnerable to A's bugs.
+      <p>Historically, although capability programmers have created stronger modularity
+        in this sense, they have harvested fewer of modularity's benefits. Object
+        programmers have explored <i>patterns</i> [<a href="ode-references.html#Gamma95">Gamma95</a>]
+        -- a taxonomy of stereotyped arrangements of abstractions that successfully
+        work together. These abstractions work well together because the modularity
+        boundaries between them aid their combination rather than obstructing
+        it. In unifying the object paradigm with the capability paradigm, we hope
+        to see a growing taxonomy of <i>patterns of cooperation without vulnerability</i>
+        -- stereotyped arrangements in which mutually suspicious, separately interested
+        agents may work together safely to achieve diverse goals. This paper explains
+        a few such patterns.
+      <p>So how do we get from objects to capabilities? It suffices to prohibit
+        certain deviations from pure object computation. (It is also convenient,
+        though not essential, to add a <i>rights amplification</i> primitive as
+        explained below.) What are these new prohibitions?
+      <p>
+      <ol>
+        <li>
+          <p><b><a name="begets"></a>Only Connectivity Begets Connectivity</b>.
+            Consider all the ways Bob can obtain access to Carol. Only four possibilities
+            are allowed:</p>
+          <ul>
+            <p>
+            <li>
+              
+        <p><b><a name="by-intro"></a>Connectivity by Introduction</b>. Somebody 
+          sends Bob a reference to Carol, as shown in the Granovetter Diagram 
+          -- If Bob and Carol already exist, this is the only way Bob can obtain 
+          access: via a third party, such as Alice, under the three conditions 
+          stated <a href="#perspective-caps">in the <b>Perspectives</b> section 
+          above</a>.</p>
+            </li>
+            <li>
+              <p><b><a name="by-parent"></a>Connectivity by Parenthood</b>. If
+                Bob already exists and Carol does not, Bob may create Carol. Any
+                object system must have an object creation primitive. Should Bob
+                use this primitive to create Carol, Bob then has the <i>only</i>
+                reference to Carol, unless and until he sends this reference to
+                someone else. In the earlier example of a <tt>PointMaker</tt>
+                creating a <tt>Point</tt>, the <tt>PointMaker</tt> at
+                that moment has exclusive access to the new <tt>Point</tt>.</p>
+            </li>
+            <li>
+              <p> <b><a name="by-endow"></a>Connectivity by Endowment</b>. If
+                Carol already exists and Bob does not, and if Bob's creator has
+                access to Carol at the time of Bob's creation, Bob may be created
+                sharing this access -- In essence, Bob is born holding a reference
+                to Carol. Refering again to the <tt>PointMaker</tt> example,
+                the <tt>PointMaker</tt>, with access to <tt>x</tt> as
+                a parameter, creates a new <tt>Point</tt> that has access
+                to <tt>x</tt> as part of its initial endowment.</p>
+            </li>
+            <li>
+              <p><b><a name="by-bigbang"></a>Connectivity by Initial Conditions</b>.
+                Capabilities explain how connectivity in an already connected
+                system evolves over time. For any system <i></i> of objects to
+                which we apply this analysis, there is some earliest state of
+                the system that is our starting point. Bob and Carol may both
+                already exist and already be connected in this earliest state.
+                Without this case, one cannot bootstrap the others.</p>
+            </li>
+          </ul>
+          <p>Languages that satisfy this constraint are sometimes called <i>memory-safe
+            languages. </i>Object systems with garbage collection depend on this
+            property to enable garbage collection to be semantically transparent.
+            Since a disjoint subgraph cannot become reconnected, its storage may
+            be silently recycled. </p>
+          <p>
+        </li>
+        <li>
+          <p><b><a name="encap"></a>Absolute Encapsulation</b>. From outside an
+            object, one must not be able to gain access to the object's internals
+            without the object's consent, even if one has a reference to the object.
+            For operating systems, this corresponds to the separation of processes,
+            and is quite common (even if imperfect) outside of capability operating
+            systems. For example, operating systems often control a computer's
+            memory management hardware so that one process cannot read or write
+            another's address space or access its (for example) file descriptors,
+            even if the two processes are communicating.</p>
+        </li>
+        <li>
+          <p><b><a name="ref-only"></a>All Authority Accessed Only by References</b>.
+            The authority an object has to affect the world outside of itself
+            should be exactly represented by the references it holds. All primitives
+            for interacting with the external world must be embodied by primitive
+            objects, and one must obtain references to these primitive objects
+            in order to exercise the associated primitive functions. Anything
+            globally accessible must therefor be transitively immutable, otherwise
+            it would constitute an unconditional source of authority not controlled
+            by the reference-passing rules [<a href="ode-references.html#Kahn88">Kahn88</a>,
+            <a href="ode-references.html#Rees96">Rees96</a>].</p>
+        </li>
+      </ol>
+      <h2><a name="rights-amp"></a>Rights Amplification</h2>
+      <p><img src="images/rights-amp.gif" width="284" height="322" align="right">There
+        is one feature that most capability systems provide as a primitive but
+        which is not motivated solely from pure object programming -- rights amplification.
+        With rights amplification, the authority accessible from bringing two
+        references together can exceed the sum of authorities provided by each
+        individually. The classic example is the can and the can-opener -- only
+        by bringing the two together do we obtain the food in the can.
+      <p>Two common forms of rights amplification are sibling communication [<a href="ode-references.html#Hardy">Hardy</a>,
+        <a href="ode-references.html#Gosling96">Gosling96</a>, <a href="ode-references.html#Shalit96">Shalit96</a>]
+        and sealer/unsealer pairs [<a href="ode-references.html#Morris73">Morris73</a>,
+        <a href="ode-references.html#Miller87">Miller87</a>, <a href="ode-references.html#Tribble95">Tribble95</a>
+        <a href="ftp://www.agorics.com/pub1/agorics/postscript/MANUAL.B17.ps.Z">Appendix
+        D</a>, <a href="ode-references.html#Rees96">Rees96</a>]. E primitively
+        provides sealer/unsealer pairs. The money example below builds sibling
+        communication from sealer/unsealer pairs.
+      <p>Sealer/unsealer pairs are similar in concept to public/private key pairs.
+        The sealer is like an encryption key, and the unsealer like a decryption
+        key. The provided primitive, <tt>BrandMaker</tt>, makes and returns
+        such a pair. When the sealer is asked to seal an object it returns an
+        envelope which can only be unsealed by the corresponding unsealer.
+      <p>
+      <blockquote>
+        <pre><b>? </b><i>define [sealer, unsealer] := BrandMaker pair("MarkM")</i><b>
+# value: [&lt;MarkM sealer&gt;, &lt;MarkM unsealer&gt;]
+
+? </b><i>define envelope := sealer seal("Tuna")
+</i><b># value: &lt;sealed by MarkM&gt;
+
+? </b><i>unsealer unseal(envelope)
+</i><b># value: Tuna</b></pre>
+      </blockquote>
+      <p>If the envelope is the can and the unsealer is the can-opener (specific
+        to this brand of cans), then <tt>Tuna</tt> is the food. <i>(The name-string
+        <tt>&quot;MarkM&quot;</tt> provided as an argument to the <tt>pair</tt>
+        message is purely for documentation and debugging purposes.) </i>
+      <h2> <a name="simple-money"></a>Simple Money</h2>
+      <p>Before presenting the following simple example of capability-based money,
+        we must attempt to head off a confusion this example repeatedly causes.
+        <b><i><font color="#FF0000">We are not proposing to actually do money
+        this way!</font> </i></b>A desirable money system must also provide for:</p>
+      <p>
+      <ul>
+        <li>blinding, to maintain the anonymity of cash [<a href="ode-references.html#Chaum82">Chaum82</a>],
+        </li>
+        <li>non-repudiation, i.e., reliable receipts [<a href="ode-references.html#Rivest77">Rivest77</a>],
+        </li>
+        <li>accounting controls, so the mint (issuer) can be caught if it cheats
+          [<a href="ode-references.html#Bodnar87">Bodnar87</a>], </li>
+        <li>and backing (redeemability) by assets that are already widely valued
+          [<a href="ode-references.html#e-gold">e-gold</a>]. </li>
+      </ul>
+      <p>The following money provides none of these. Nevertheless, this simple
+        money is a wonderful small example of the directness and simplicity with
+        which capabilities allow the expression of <a href="index.html"> </a>
+        arrangements in which mutually suspicious parties can cooperate safely.
+      
+<p>The following code is somewhat more nested than you may be used to. The outer 
+  function, <tt>MintMaker</tt>, makes <tt>mint</tt>s. Each <tt>mint</tt> 
+  defines a separate currency that isn't directly convertible with other currencies 
+  -- although, of course, money changers could trade one for the other, providing 
+  indirect convertibility. A <tt>mint</tt> can make <tt>purse</tt>s that 
+  hold new units of its currency, thereby inflating that currency. A <tt>purse</tt> 
+  can report its <tt>balance</tt> and make a new empty <tt>purse</tt> 
+  of the same currency. Given two <tt>purse</tt>s of the same currency, you 
+  can <tt>deposit</tt> money into one from the other.&nbsp; 
+<blockquote> 
+  <pre>def <b>MintMaker</b>(name) :any {
+    def [sealer, unsealer] := BrandMaker pair(name)
+    def mint {
+        to printOn(out) { out print(`&lt;$name's mint>`) }
+
+        to makePurse(balance :(integer >= 0)) :any { #See <a href="#integer-note">Note below</a>
+            def <b>decr</b>(amount :(0..balance)) {
+                balance -= amount
+            }
+            def purse {
+                to printOn(out)      { out print(`&lt;has $balance $name bucks>`) }
+                to getBalance() :any { balance }
+                to sprout()     :any { mint makePurse(0) }
+                to getDecr()    :any { sealer <b>seal</b>(decr) }
+
+                to <b>deposit</b>(amount :integer, src) {
+                    unsealer <b>unseal</b>(src getDecr())(amount)
+                    balance += amount
+                }
+            }
+        }
+    }
+}</pre>
+</blockquote>
+<p><i>(The "<tt>name</tt>" variable and the "<tt>printOn</tt>" methods illustrate 
+  no security properties. They exist purely for debugging purposes.) </i></p>
+<p><i><a name="integer-note"></a>Note: The proper form of the expression </i>&quot;<tt>(integer 
+  &gt;= 0)</tt>&quot;<i> depends on the version of E. In E &lt;= 0.8.9, this 
+  is written as </i>&quot;<tt>(_ &gt;= 0)</tt>&quot;<i>. In E &gt; 0.8.9 &amp; 
+  E &lt; 0.8.10, this is written as </i>&quot;<tt>(any &gt;= 0)</tt>&quot;<i>. 
+  In E &gt;= 0.8.10, this is written as </i>&quot;<tt>(integer &gt;= 0)</tt>&quot;<i>, 
+  as shown above.</i></p>
+<p>This simple piece of code demonstrably has the following security properties&nbsp; 
+<ol>
+        <li> Only someone with the mint of a given currency can violate conservation
+          of that currency.</li>
+        <li> The mint can only inflate its own currency.</li>
+        <li> No one can affect the balance of a purse they don't have.</li>
+        <li> With two purses of the same currency, one can transfer money between
+          them.</li>
+        <li> Balances are always non-negative integers.</li>
+        <li> A reported successful deposit can be trusted as much as one trusts
+          the purse one is depositing into.</li>
+      </ol>
+      <p>To understand this, let's walk through how Alice pays Bob $10. We skip
+        how we arrive at our initial conditions, where Alice and Bob each have
+        a main purse of the same currency, and Alice already has at least $10.
+      </p>
+      <p>First, playing Alice, we would sprout a new purse from our main purse,
+        and then transfer $10 into it:</p>
+      <p>
+      <blockquote>
+        <pre><b>? </b><i>define paymentForBob := AliceMainPurse sprout</i><b>
+# value: &lt;has 0 MarkM bucks>
+
+? </b><i>paymentForBob deposit(10, AliceMainPurse)</i></pre>
+      </blockquote>
+      <p>Then, we send a <tt>foo</tt> request to Bob, providing the purse
+        containing $10 as payment:</p>
+      <p>
+      <blockquote>
+        <pre><b>? </b><i>bob foo(..., paymentForBob, ...)</i></pre>
+      </blockquote>
+      <p align="center"><img src="images/mint.gif" width="460" height="334"></p>
+      <p><i>(Although it may not be obvious, in the above figure the three rightward
+        arrows refer to three different purses.)</i></p>
+      <p>What might Bob's foo method look like?</p>
+      <p>
+      <blockquote>
+        <pre>define Bob {
+    ...
+    to foo(..., payment, ...) {
+        BobMainPurse deposit(10, payment)
+        <font face="Times New Roman, Times, serif"># proceed only if we got $10</font>
+        ...
+    }
+}</pre>
+      </blockquote>
+      <p>This last <tt>deposit</tt> operation is key. Its success assures
+        Bob that his main purse has been credited with $10. Under all other conditions
+        it must fail. Under <i>all</i> conditions, the integrity of the money
+        system must be conserved. All this despite the use of the payment parameter
+        which, since it was received from an untrusted source, may be any arbitrary
+        object. The <tt>deposit</tt> method must verify that the <tt>src</tt>
+        purse is a purse of the same currency, and if so, that it has adequate
+        funds to cover the transfer. If so it must decrement the <tt>src</tt>
+        purse's <tt>balance</tt> by this amount and increment its own <tt>balance</tt>
+        by that same amount. The problem? How can we allow the <tt>src</tt>
+        purse to be told to decrement its <tt>balance</tt> by a sibling purse
+        (one of the same currency), but not allow a client of the purse, such
+        as Alice, to violate conservation of currency by making the same request?
+        Conversely, how can we prevent Alice from providing a bogus purse that
+        claims it has decremented itself, only to fool Bob's purse into incrementing
+        itself at no cost to Alice?</p>
+      <p>In the <tt>deposit</tt> method, the payment is bound to the <tt>src</tt>
+        parameter and the following body is executed:</p>
+      <p>
+      <blockquote>
+        <pre>unsealer <b>unseal</b>(src getDecr)(amount)</pre>
+      </blockquote>
+      <p>This asks the <tt>src</tt> purse for its <tt>decr</tt> function.
+        A purse implemented by the above code will return an envelope containing
+        the <tt>decr</tt> function and sealed with the sealer of its creating
+        mint. Other objects might return anything. Whatever we get back from <tt>getDecr</tt>
+        we then unseal with the unsealer of our creating mint. This will succeed
+        only if the argument is an envelope sealed with the corresponding sealer.
+        One can only get such an envelope from a purse created by the same mint,
+        and therefor of the same currency. Otherwise it will throw an exception,
+        preventing further action.</p>
+      <p>If we succeed at unsealing, we know we have a <tt>decr</tt>-function
+        facet of some purse of the same currency. We call it with the amount to
+        transfer. Its <tt>amount</tt> parameter is declared:</p>
+      <p>
+      <blockquote>
+        <pre>amount : (0..balance)</pre>
+      </blockquote>
+      <p></p>
+      <p>which only binds to the argument if the argument is between <tt>0</tt>
+        and <tt>balance</tt>. Otherwise, the attempted parameter binding throws
+        an exception. Finally, only if the call to the hidden <tt>decr</tt>
+        function succeeds do we increment our own balance.</p>
+      <p>Notice how the scoping rules together with the capability rules allow
+        us to &quot;prove&quot; many security properties through a simple visual
+        inspection:</p>
+      <p>
+      <ul>
+        <li>By scanning for all occurrences of <tt>sealer</tt> and <tt>unsealer</tt>,
+          we can quickly determine that they never escape from the mint and purses
+          of their creating currency.</li>
+        <li>Since the sealer is only used to seal the <tt>decr</tt> function,
+          a successful unseal can only result in a <tt>decr</tt> function
+          of the same currency.</li>
+        <li>By scanning for all occurrences of <tt>decr</tt>, we see that
+          it can only escape sealed in an envelope. Since the unsealer cannot
+          escape, the sealed <tt>decr</tt> can only appear as the result of
+          visible unseal operations. Since this unseal-result is only invoked
+          and never sent in a message, <tt>decr</tt> cannot escape. </li>
+      </ul>
+
+<hr><h1><a name="protocol"></a>Capabilities As A Cryptographic Protocol</h1>
+      <p align="left">First we explain a simplified version of the E's communications
+        protocol, <i>Pluribus</i>, identical from a security point of view, but
+        less efficient. The purpose of Pluribus is to provide the Granovetter
+        Operator, with all its implied security properties, even when Alice, Bob,
+        and Carol are on separate machines. </p>
+      <h2 align="left"><a name="distrib-obj"></a>Distributed Objects</h2>
+      <p align="left">Objects are aggregated into units called <i>vats</i>. Each
+        E object exists in exactly one vat -- we speak of an object being <i>hosted</i>
+        by its vat. A vat typically hosts many objects. Similarly, each vat exists
+        on one machine at a time, but a machine may host many vats. A good first
+        approximation is to think of a vat as a process full of objects -- an
+        address space full of objects plus a thread of control. Unlike a typical
+        OS process, a vat persists (that is, its state is saved to persistent
+        storage when its hosting process is terminated or interrupted), so think
+        of a vat-hosting OS process as an incarnation of a vat. The vat maintains
+        its identity and state as it passes serially through a sequence of incarnations.
+      <p align="center"><img src="images/numberpair.gif" width="556"
+height="600">
+      <p align="left">To enable objects in separate vats to send messages to each
+        other, we must bridge from the world of local, intra-address-space language-implementation
+        technology to the world of network communications protocols. Our first
+        step is conventional: each vat contains a communications system allowing
+        it to make connections to, and accept connections from, other vats. Each
+        vat's communications system contains objects called <i>proxies</i> (shown
+        by half circles in the figure above). When an object in a vat refers to
+        an object in a different vat, it actually refers to a proxy object, which
+        is the local representative of the remote object. In the illustration,
+        when a proxy (b1) is sent a local message (step 1), it encodes the message
+        arguments (c1) into a packet which it sends out as a network message (step
+        2). When VatB receives the network message, it decodes it into a message
+        local to VatB, handshaking with remote vats (VatC) as necessary to create
+        the needed proxies (c2, step 3). The decoded message is finally delivered
+        to Bob (step 4).
+      <p align="left">The description so far applies equally well to many distributed
+        object systems, such as CORBA and RMI, that have no ambitions to capability
+        security. What more do we need to make this into a secure protocol? (See
+        also [<a href="ode-references.html#Donnelley81">Donnelley81</a>, <a href="ode-references.html#Tanenbaum86">Tanenbaum86</a>,
+        <a href="ode-references.html#Sansom86">Sansom86</a>, <a href="ode-references.html#Doorn96">Doorn96</a>,
+        <a href="ode-references.html#Close99">Close99</a>])
+      <h2 align="left"><a name="crypto-cap"></a>Cryptographic Capabilities</h2>
+      <p align="left">On creation, each vat generates a public/private key pair.
+        The fingerprint of the vat's public key is its vat Identity, or VatID.
+        What does the VatID identify? The VatID can only be said to designate
+        any vat which knows and uses the corresponding private key apparently
+        according to the protocol.
+      <p align="left">Within a single vat, a capability-arrow is implemented as
+        a traditional memory address pointer. Capability security within an address
+        space is built out of safe language techniques (made popular by Java,
+        but going back to LISP 1.5 and ALGOL 60). A capability-arrow can also
+        go between vats. If Alice, Bob, and Carol are in three separate vats,
+        then Alice can talk to Carol only because VatA can talk to VatC. An inter-vat
+        data connection is secure and authenticated. We care about inductive correctness
+        -- assuming a preexisting secure connection between Alice and Bob, and
+        another between Alice and Carol, can we establish a similarly secure connection
+        between Bob and Carol?
+      <p align="left">When VatC first exported, across the vat boundary, a capability
+        to access Carol, VatC assigned an unguessable randomly chosen number to
+        Carol. We call this a "Swiss number", since it has the knowledge-is-authority
+        logic loosely attributed to Swiss bank accounts. When VatA first received
+        this capability, VatA thereby came to know Carol's Swiss number and VatC's
+        VatID.
+      <p align="left">When Alice sends Bob a reference to Carol, VatA tells VatB
+        Carol's Swiss number and VatC's VatID. VatB now wishes to obtain the tail
+        of a vat-crossing capability-arrow referring directly to Carol, so that
+        it may deliver this arrow-tail to Bob. VatB first contacts an alleged
+        VatC (using location routing/hint information which Pluribus allows to
+        be communicated along with the VatID) and asks it for VatC's public key.
+        It verifies that this key matches the fingerprint that (it was told) is
+        VatC's VatID. The handshake logic then proceeds along the lines of SSL
+        (though without certificates, and with perfect forward secrecy): VatC
+        proves her knowledge of the corresponding private key, then Diffie-Hellman
+        key agreement leads to a shared session key for the duration of the inter-vat
+        connection. <i>Only</i> once an authenticated, secure data pipe is set
+        up between them does VatB reveal Carol's Swiss number to VatC, enabling
+        VatC to associate messages, sent inside VatB to the proxy c2 and then
+        encoded over the network to VatC, with Carol.
+      <p align="left">A capability is an arrow, and an arrow has two ends. There
+        is an impostor problem in both directions. The VatID ensures that the
+        entity that Bob is speaking to is the one that Alice meant to introduce
+        him to. The Swiss number ensures that the entity allowed to speak to Carol
+        is the one that Alice chose to enable to do so.
+      <h2 align="center"><a name="subj-aggregate"></a>Subjective Aggregation<br>
+        --or--<br>
+        Only Trust Makes Distinctions</h2>
+      <p align="left">Although correct, there's something peculiar in the above
+        description. On the one hand, the analysis seems to assume that we aren't
+        trusting VatB, which is why Carol's Swiss number isn't revealed to VatB
+        until someone reveals it to an object, such as Bob, which is hosted by
+        VatB. On the other hand, Alice's intention is to give Bob access to Carol,
+        but not to give this access to any other objects, such as Joe, that might
+        be hosted by VatB. However, Alice must trust VatB to play by these rules,
+        since Alice, by sending it Carol's Swiss number, has enabled it to do
+        otherwise.</p>
+      <p align="left">There are two forms of mutual suspicion simultaneously supported
+        by this protocol: inter-vat (or inter-machine) mutual suspicion, and inter-object
+        mutual suspicion. It would be a mistake for anyone to trust Bob any more
+        than they trust VatB. To the objects within a vat, their hosting vat is
+        their <i>Trusted Computing Base</i> (TCB). Their own operation is completely
+        at the mercy of their TCB, with no escape. Bob's behavior can be seen
+        as an aspect of VatB's behavior. </p>
+      <p align="left">Only if Alice trusts VatB to behave properly -- that is,
+        as if it is actually hosting separate objects interacting with each other
+        by capability rules -- does it make sense for Alice to even reason about
+        Bob as being in any way separately trusted from Joe. If Alice does not
+        trust VatB, then Alice should reason about VatB as a single conspiring
+        group of objects pretending to be several separately trustable objects.
+        Alice should represent her suspicion by modeling VatB simply as a monolithic
+        composite, and all its externally accessible objects (such as Bob and
+        Joe) as facets of this composite. Notice that Pluribus grants VatB, considered
+        either as a malicious vat or as a monolithic composite, exactly the authority
+        it should receive according to capability rules.</p>
+      <p align="left">Put another way, mistrust of a vat is equivalent to ignorance
+        of the internal relationships among the objects hosted by that vat. A
+        malicious vat hosting one set of objects can only cause external effects
+        equivalent to a correct vat hosting some different (maliciously coded)
+        set of objects. This is the main economy of the distributed capability
+        model: we can, without loss of generality, reason as if we are only suspicious
+        of objects.</p>
+      <p align="left">The capability model, by limiting authority within the transitive
+        connectivity of graphs, allows a participant to subjectively aggregate
+        arbitrary sets of objects into composites. Given the same graph of objects,
+        different participants will employ different aggregations according to
+        their own subjective ignorance or suspicions, as we have seen, or merely
+        their own lack of interest in making finer distinctions. Capabilities
+        are the only security model that simultaneously supports the economy of
+        aggregation and the necessary subjectivity in deciding how to aggregate.</p>
+      <p align="left">A fully paranoid actor should indeed assume the entire world
+        is a monolithic conspiracy against them. Only with some trust that parts
+        of the world are independent can we gain evidence of any other hypothesis.</p>
+      <h2 align="left"><a name="crypto-payment"></a>Payment in the Crypto Protocol</h2>
+      <p>We now revisit the payment example from the Capability Security section,
+        describing the behavior of the underlying Pluribus cryptographic protocol.
+        Assume that Alice, Bob and the mint are hosted by three separate vats
+        (VatA, VatB and VatM) on three separate machines.
+      <p>First Alice sprouts a new purse from her main purse, and transfers $10
+        into it:
+      <p>
+      <blockquote>
+        <pre><b>? </b><i>define paymentForBob := AliceMainPurse sprout</i><b>
+# value: &lt;has 0 MarkM bucks></b></pre>
+      </blockquote>
+      <p>This statement causes Alice's vat (VatA) to send a message to the mint's
+        vat (VatM). The message includes the Swiss number of <tt>AliceMainPurse</tt>
+        and the operation <tt>sprout</tt>. VatM creates a new object as a
+        result of the message and sends its Swiss number back to Alice.
+      <blockquote>
+        <pre><b>? </b><i>paymentForBob deposit(10, AliceMainPurse)</i></pre>
+      </blockquote>
+      <p>VatA sends another message to VatM including the Swiss number of the
+        newly created <tt>paymentForBob</tt> purse and the <tt>deposit</tt>
+        request. The parameters are the immutable number 10 and the Swiss number
+        of <tt>AliceMainPurse</tt>. VatM performs the requested operation
+        and returns a <tt>null</tt> to indicate that the request succeeded.
+      <p>Then Alice sends a <tt>foo</tt> message to Bob, providing the purse
+        containing $10 as payment.
+      <p>
+      <blockquote>
+        <pre><b>? </b><i>bob foo(..., paymentForBob, ...)</i></pre>
+      </blockquote>
+      <p>VatA sends a message to Bob's vat (VatB) passing the Swiss number of
+        the <tt>bob</tt> object and the operation <tt>foo</tt>. The parameters
+        include the Swiss number on VatM of the <tt>paymentForBob</tt> object,
+        and the VatID of VatM. This information will allow VatB to make a connection
+        to VatM and use the <tt>paymentForBob</tt> object.
+      <p>When Bob performs the <tt>deposit</tt> operation:
+      <p>
+      <blockquote>
+        <pre><i>BobMainPurse deposit(10, payment)</i></pre>
+      </blockquote>
+      <p>VatB builds the connection to VatM. The connection building process checks
+        that VatM has the private key corresponding to the VatM VatID. After the
+        connection has been authenticated and secured, VatB sends a <tt>deposit</tt>
+        message to the object with the Swiss number of <tt>BobMainPurse</tt>
+        passing 10 and the Swiss number of the purse he received from Alice.
+      <h2><a name="crypto-reuse"></a>Generic Protocols, Reusable Security</h2>
+      <p>Cryptographic protocol design is hard and error prone [<a href="ode-references.html#Schneier96">Schneier96</a>].
+        When we can, we should design generic protocols that implement highly
+        reusable security abstractions.
+      <p>The messages sent between the Alice, Bob, and the mint above are like
+        those that might have been part of a simple cryptographic payment protocol.
+        However, rather than having to design a specialized cryptographic protocol
+        for payment, we have instead reused a generic cryptographic protocol,
+        implementing only distributed capabilities, in combination with a simple
+        specialized object protocol to yield the same effect.
+
+<hr><h1><a name="pki"></a>Capabilities As A Public Key Infrastructure</h1>
+      <p><img src="images/spki.gif" width="295" height="252" align="right">It
+        is illuminating to compare and contrast the properties of the capability
+        model, as outlined above, with those of a public key infrastructure. For
+        concreteness, we will examine SPKI (RFC2693) [<a href="ode-references.html#Ellison99">Ellison99</a>]
+        since it has the most capability-like protocol, though all the functions
+        we will discuss can be performed by suitable use of the facilities provided
+        by X.509 version 3 [<a href="ode-references.html#Ellison99">Ellison99</a>].
+        SPKI is concerned with the specification and transfer of <i>authorizations</i>.
+        Examples of these authorizations include such things as the ability to
+        access an FTP directory, use a network printer, or logon to a remote system.
+      </p>
+      <p> In SPKI, the entity wishing to transfer an authorization, called the
+        Issuer, signs a <i>certificate</i> which specifies the public key of the
+        Issuer, the public key of the Subject, the Authorization, the validity
+        period, and an admittedly unenforceable [<a href="ode-references.html#Ellison99">Ellison99</a>
+        section 4.1.4] indication of whether the Subject may further delegate
+        the authorization. When the Subject wishes to exercise an authorization,
+        it presents a chain of certificates to a verifier, which checks the signatures
+        and verifies that the Subject holds the private key corresponding to the
+        public key specified by the certificate; this ensures that the Subject
+        has received the authorization from an authorized issuer.
+      <p> When we look at the Granovetter Diagram for a public key infrastructure,
+        we notice that there are some significant differences from the diagram
+        for a capability system. The most obvious is that there is no direct link
+        between the Issuer and the Subject. The SPKI authorization could be anonymously
+        posted to a USENET newsgroup or sent through an anonymous remailer. Because
+        the Subject identifies itself by possessing the private half of a public/private
+        key pair, the Issuer only needs to sign the certificate and publicly post
+        it. The entire process can take place offline. Except for maintaining
+        the secrecy of the private keys, secrecy is not needed to protect the
+        rights transfer. All communications can be "in the clear". There is no
+        way of confining the Issuer, to limit the entities that it can authorize.
+        The lack of a line between Issuer and Subject in the diagram reflects
+        this situation.
+      <p> Another difference is that the resource need not be an object. The verifier
+        which checks the authorization acts as a gatekeeper, in the same way that
+        Pluribus acts as a gatekeeper to distributed E objects. However, the authorizations
+        can be interpreted using conventional access control techniques.
+      <p> In an SPKI system, auditing who performed an action and who authorized
+        it fall naturally out of the public key structure. The auditor needs only
+        to record the public keys of the issuer and the subject. Auditing in a
+        Pluribus system requires the introduction of intermediary objects accompanying
+        each rights transfer in order to keep track of the authorization path.
+      <p> Because an SPKI authorization does not include a direct designation
+        of the resource being authorized, it introduces the possibility of a confused
+        deputy [<a href="ode-references.html#Hardy88">Hardy88</a>]. (A confused
+        deputy uses an authorization given to it by one party to access a resource
+        designated by a different party. In so doing, the confused deputy performs
+        an unintended rights transfer.) If the authorizations are narrow, this
+        problem can be minimized.
+      <p> Authorization in SPKI is expensive. At a minimum each authorization
+        decision requires two signature verification operations by the verifier.
+        The signature on the certificate must be checked, and the signature of
+        the Subject, proving possession of the private key, must also be checked.
+        In addition, the Subject must sign a challenge from the verifier if the
+        system is to remain safe from replay attacks. Compare this cost with Pluribus,
+        where the public key operations are limited to connection establishment.
+        In recognition of this cost, SPKI provides the Certificate Result Certificate
+        which permits an entire certificate chain to be collapsed into one certificate.
+
+<hr><h1><a name="bearer"></a>From Capabilities To Financial Instruments</h1>
+      <h2><a name="cows"></a>From Stuff to Financial Instruments and Smart Contracts</h2>
+      <p>Real world markets started out with direct trade of physical objects.
+        To oversimplify greatly, ownership usually went along with possession
+        and use, and, because of the locality of matter, all three together were
+        exclusive. The user interface was intuitive -- you knew what rights you
+        had because you could see your stuff. For Alice to transfer ownership
+        of a cow to Bob, Alice and Bob would move the cow's physical location
+        from Alice's territory to Bob's. Both would then effortlessly have common
+        knowledge that the transfer had occurred, and who had which cows. Absent
+        theft, possession would be an adequate record of ownership. Cows were
+        bearer instruments. <i>(There is some evidence that the first money was
+        coins redeemable for cows [<a href="ode-references.html#Selgin88">Selgin88</a>].)</i>
+        Over time, of course, more abstract rights were invented, as were more
+        complex arrangements for their transfer, usually with ghastly user interfaces
+        and more room for misunderstandings and disputes.</p>
+      <p>A major aspect of the emergence of capitalism from feudalism was the
+        rise of contract. By creating a contract, you could define and transfer
+        an arbitrary bundle of rights. The complexity of trade could now bloom,
+        unrestrained by the simple limits of physical matter. During the twentieth
+        century, a great variety of financial instruments were invented. These
+        instruments represent the discovery of many new kinds of rights, and ways
+        of deriving these rights from more primitive rights. We should hope the
+        growth of financial cryptography will only accelerate this trend. For
+        this hope to be realized, we should seek not just the secure computational
+        expression of the contracts representing existing instruments, but the
+        creation of secure material from which similar new contracts can easily
+        be built. Following Nick Szabo [<a href="ode-references.html#Szabo97">Szabo97</a>],
+        we refer to a partially self-enforcing computational embodiment of a contract
+        as a <i>smart contract</i>.</p>
+      <p>To understand the job ahead of us, we start by classifying the characteristics
+        of rights.</p>
+      <p></p>
+      <p></p>
+      <h2><a name="taxonomy"></a>A Taxonomy of Kinds of Rights</h2>
+      <p>By contrasting some of the rights and rights-transfer mechanisms we have
+        already seen -- capability-passing <i>vs.</i> SPKI certificates <i>vs.</i>
+        our example money -- we can start to develop a taxonomy of rights. <i>(Economics
+        elaborates this taxonomy much more fully, but we will only present the
+        subset relevant to this paper.)</i> </p>
+      <table cellpadding="6">
+        <tr>
+          <th>&nbsp;</th>
+          <th>Capabilities</th>
+          <th>SPKI</th>
+          <th>Example Purse-Money</th>
+        </tr>
+        <tr>
+          <th colspan="4">
+            <hr>
+          </th>
+        </tr>
+        <tr>
+          <th valign="top"> shareable <i>vs.</i> exclusive </th>
+          <td valign="top">Alice <i>shares</i> with Bob her right to access Carol.</td>
+          <td valign="top">Issuer <i>shares</i> with Subject the authorization
+            to the Resource.</td>
+          <td valign="top">When Bob deposits the payment from Alice, he <i>knows
+            he has excluded</i> anyone else from using that money.</td>
+        </tr>
+        <tr>
+          <td colspan="4">
+            <p>In the capability case, if Alice drops the capability after passing
+              it to Bob, Bob happens to have exclusive access to Carol, but this
+              isn't an exclusive right since Bob is unable to know that he is
+              the only one who has it.</p>
+            In the real world, information is sharable and physical objects are
+            exclusive.
+            <hr>
+          </td>
+        </tr>
+        <tr>
+          <th> specific <i>vs. </i>fungible </th>
+          <td valign="top">A capability designates a <i>specific</i> object.</td>
+          <td valign="top">Authorization can be for specific objects, or for some
+            number of units. </td>
+          <td valign="top">Money is <i>fungible</i>, since we care only about
+            quantity, not individual bills. </td>
+        </tr>
+        <tr>
+          <td colspan="4"> In the real world, real estate is specific and barrels
+            of (a given grade of) oil are fungible. Peaches in the supermarket
+            are specific -- you buy the ones you pick out. Peaches ordered over
+            Peapod are fungible -- you order only by quantity.
+            <hr>
+          </td>
+        </tr>
+        <tr>
+          <th> opaque <i>vs.</i> assayable </th>
+          <td valign="top">A capability is <i>opaque</i>, since from the capability
+            alone all you can determine is what the designated object alleges
+            about itself.</td>
+          <td valign="top">An authorization can be read as well as used. Reading
+            it may suffice to <i>assay</i> what value it would provide.</td>
+          <td valign="top">Bob can reliably <i>assay</i> the amount in an alleged
+            purse only by transferring into a purse he trusts.</td>
+        </tr>
+        <tr>
+          <td colspan="4">Assayability is needed for trade, since you must be
+            able to determine what you would be getting <i>before</i> deciding
+            to purchase. However, exclusive rights can only be reliably assayed
+            by actually obtaining exclusive access to them, since otherwise, after
+            you've assayed them, someone else may gain the exclusive, cutting
+            you out. Trade of exclusives may therefor require a trusted third
+            party who can hold them in escrow.
+            <hr>
+          </td>
+        </tr>
+        <tr>
+          <th> exercisable <i>vs.</i> symbolic </th>
+          <td valign="top">A capability has value only because it can be <i>exercised</i>,
+            by sending a message to the object it designates.</td>
+          <td valign="top">An authorization may be for either or both.</td>
+          <td valign="top">As with fiat money, our example money is purely <i>symbolic</i>,
+            since one can't do anything with it other than transfer it further.</td>
+        </tr>
+        <tr>
+          <td colspan="4">There are many goods that are both exercisable and have
+            symbolic value. For example, gold is commonly used as a pure symbol
+            of value, but gold is also used to create electronic hardware and
+            decorative jewelry.
+            <hr>
+          </td>
+        </tr>
+      </table>
+      <p>It is curious that our example money is so different from capabilities,
+        when the money is trivially built out of capabilities. More puzzling is
+        the transfer. Alice passed to Bob only a capability, which therefor had
+        all the rights-transfer properties of our first column. However, by doing
+        so, she also paid him money, which has all the properties of the last
+        column. Unsurprisingly, to resolve this we have to think in terms of two
+        levels of abstraction. We must understand how these levels relate to each
+        other, but we must keep them distinct.</p>
+      <p>At the capability level, Alice is <i>sharing</i> with Bob the <i>specific</i>
+        right to (at the money level) gain an <i>exclusive</i> on 10 <i>fungible</i>
+        units of a particular currency. At the moment when Bob's <tt>foo</tt>
+        method binds the incoming purse to the <tt>payment</tt> parameter-variable,
+        Bob is now (capability level) sharing with Alice this specific right.
+        In the next statement, where Bob deposits the money into his own purse,
+        he is <i>exercising</i> this right to gain an exclusive, and thereby obtaining
+        exclusive rights.</p>
+      <p>To discuss the instruments presented below, we need to exercise similar
+        care in keeping the levels straight.</p>
+      <h2><a name="options-intro"></a>Options</h2>
+      <p>From the point of view of a buyer, an option is the right to buy or sell
+        some amount of some underlying instrument, such as stock, for a fixed
+        price, within a period of time. From the point of view of the seller (called
+        an option-writer), it is an offer to sell or buy at a locked in price,
+        where the offer expires at a future time. Here we deal only with a covered
+        call option. <i>Call</i> means the option holder may buy the stock. <i>Covered</i>
+        means that the option seller puts aside stock to cover the possible exercise
+        of the option as long as the option is outstanding, ensuring that he has
+        the stock to sell should the option holder exercise her rights to buy.</p>
+      <p>Due to space limitations, the following is an idealization which nevertheless
+        should present the essence of a covered call option as a smart contract.
+        Assume the existence of a broker mutually trusted by the option buyer
+        and seller. The option seller &quot;writes&quot; the contract by delivering
+        to the broker the last four parameters of the <tt>CoveredCallOptionMaker</tt>
+        below. (The first three parameters come from the broker.) The broker invokes
+        a <tt>CoveredCallOptionMaker</tt> within a vat he is running (so the
+        mutual trust of the contract-platform can be inherited from mutual trust
+        in the broker), and delivers to the option buyer the resulting <tt>CoveredCallOption</tt>.
+        The option buyer can exercise the option, paying the exercise price and
+        gaining the stock, by calling the <tt>exercise</tt> method before
+        the deadline has expired.</p>
+      <p>Among the simplifications: This protocol assumes share ownership is handled
+        using the same code we've been using for money. This seems plausible,
+        as stock ownership is also exclusive, fungible, and assayable. However,
+        it is also exercisable -- by voting and collecting dividends [<a href="ode-references.html#MacKenzie99">MacKenzie99</a>].
+        When stock is put aside to cover a call, the owner loses the right to
+        sell it, but, until the option is exercised, retains the exercise rights
+        of the stock. The following code ignores this issue.</p>
+      <p>The only abstraction used below that is not yet explained is <i>timer</i>.
+        <tt>timer</tt> provides access to real-world time. Its relevant operations
+        are:</p>
+      <p>
+      <blockquote>
+        <table cellpadding="4">
+          <tr>
+            <td>
+              <pre>timer after(duration, thunk)</pre>
+            </td>
+            <td>&nbsp;</td>
+            <td>This tells the timer to call <tt>thunk</tt> after <tt>duration</tt>
+              time has passed. (A thunk is a no-argument procedure, such as <tt>cancel()</tt>.)</td>
+          </tr>
+          <tr>
+            <td>
+              <pre>timer now</pre>
+            </td>
+            <td>&nbsp;</td>
+            <td>What's the current time?</td>
+          </tr>
+          <tr>
+            <td>
+              <pre>timer date(time)</pre>
+            </td>
+            <td>&nbsp;</td>
+            <td>Returns a readable date string representing <tt>time</tt></td>
+          </tr>
+        </table>
+      </blockquote>
+      <p>In a typical object system, such a timer service might be globally accessible,
+        but this would violate the capability constraints. No amount of internal
+        computation would enable an object to determine the time, so access to
+        time gives the object the ability to be affected by the outside world.
+        By making this access into a first class object, we can instead supply
+        other sources of time, as would be required, e.g., for deterministic replay.</p>
+      <p>Again due to space limitations, the following code ignores distribution
+        and concurrency issues.</p>
+      <h2><a name="options-contract"></a>An Options Smart Contract</h2>
+      <p>
+      <blockquote>
+        <pre>define CoveredCallOptionMaker(timer,                   <font face="Times New Roman, Times, serif"># access to a real-world time service</font>
+                              escrowedStock,           <font face="Times New Roman, Times, serif"># reserves stock while offer is OPEN</font>
+                              escrowedMoney            <font face="Times New Roman, Times, serif"># intermediate money-transfer purse
+</font>                                    <font face="Times New Roman, Times, serif"># The 3 args above are from broker. The 4 below  from options-writer</font>
+                              stockSrc,                <font face="Times New Roman, Times, serif"># provides the stock offered for sale</font>
+                              deadline : integer,      <font face="Times New Roman, Times, serif"># time until which the offer is OPEN</font>
+                              moneyDest,               <font face="Times New Roman, Times, serif"># where the seller receives payment</font>
+                              exercisePrice : integer) <font face="Times New Roman, Times, serif"># the price that must be paid for the stock</font>
+:any {
+    define numShares : integer := stockSrc getBalance  <font face="Times New Roman, Times, serif"># how many shares are offered
+</font>    escrowedStock deposit(numShares, stockSrc)         <font face="Times New Roman, Times, serif"># escrow all the shares in stockSrc</font>
+    define state := "OPEN"                             <font face="Times New Roman, Times, serif"># one of OPEN, CLOSED, or CANCELLED</font>
+
+    define cancel() {
+        if (state == "OPEN") {
+            stockSrc deposit(numShares, escrowedStock) <font face="Times New Roman, Times, serif"># return the stock to the seller</font>
+            state := "CANCELLED"
+        }
+    }
+    timer after(deadline - timer now, cancel)          <font face="Times New Roman, Times, serif"># after the deadline passes, call cancel()
+</font>
+    define CoveredCallOption {
+        to printOn(out) {
+            if (state == "OPEN") {
+                define expiration := timer date(deadline) <font face="Times New Roman, Times, serif"># converts to readable date string
+</font>                out print(`&lt;option to buy $numShares ` +
+                          `for $exercisePrice by $expiration&gt;`)
+            } else {
+                out print(`<$state OPTION>`)
+            }
+        }
+        to getState         :any { state }
+        to getNumShares     :any { numShares }
+        to getExercisePrice :any { exercisePrice }
+        to getDeadline      :any { deadline }
+
+        to exercise(moneySrc, stockDest) {
+            require(state == "OPEN", _{"not open"})    <font face="Times New Roman, Times, serif"># throws &quot;not open&quot; if test fails</font>
+            require(timer now < deadline, _{"too late"})
+
+            escrowedMoney deposit(exercisePrice, moneySrc)
+            <font face="Times New Roman, Times, serif"># only if the call-writer can be  properly paid do we proceed
+</font>            state := "CLOSED"
+            try {
+                moneyDest deposit(exercisePrice, escrowedMoney)
+            finally {
+                stockDest deposit(numShares, escrowedStock)
+            }
+        }
+    }
+}
+</pre>
+      </blockquote>
+      <p>When the option is written, the stock in the purse provided by the option
+        seller is put into escrow within the returned <tt>CoveredCallOption</tt>,
+        but the original purse is remembered in case the stock needs to be returned.
+        The <tt>CoveredCallOption</tt> and the <tt>cancel</tt> function
+        share the same state. They can be seen as facets of the option-composite.
+        Only the timer holds a reference to the <tt>cancel</tt> facet.</p>
+      <p>If the option holder calls <tt>exercise</tt>, then the option will
+        first attempt to deposit from the holder's <tt>moneySrc</tt> purse
+        into the broker's empty <tt>escrowedMoney</tt> purse. <i>Only</i>
+        if this succeeds does the option then transfer the money and stock from
+        the purses in which they are escrowed into the writer's <tt>moneyDest</tt>
+        purse and the holder's <tt>stockDest</tt> purse, respectively, and
+        close the option. If the money is not successfully escrowed, the stock
+        isn't transferred and the option remains open.</p>
+      <p>Alternatively, if the deadline passes before the option is exercised,
+        the escrowed stock is transferred back into the purse it came from and
+        the option is cancelled.</p>
+      <p>So what kind of a right have we created here? It is specific, but fungible
+        options can be created. It isn't quite assayable, as the options holder
+        cannot reliably tell which stock is being offered or which currency is
+        demanded in exchange, but a more complex contract in the spirit of the
+        above code can provide full assayability (given trust in the broker, of
+        course). It is certainly exercisable! It also introduces a new dimension
+        -- it is perishable rather than durable. The right to exercise spoils
+        after a time.</p>
+      <p>However, unlike a real-world option, it is sharable rather than exclusive.
+        If Alice, the initial options holder, wishes to give Bob the option, Bob
+        must assume that Alice still holds it, and therefor may still exercise
+        it. As with the purse, they are sharing rights to manipulate exclusive
+        rights. However, Bob cannot cope in the same manner, since the exclusive
+        he wants now is not an exclusive on the underlying stock but an exclusive
+        on the right to exercise the option. How can we make an exclusive option?</p>
+      <p>We could try rewriting the above code to provide exclusivity as well,
+        but the result would mix separate concerns into one abstraction. Better
+        to add exclusivity to the above code by composition. Here's an adaptation
+        of our money code to provide exclusivity for a single specific exercisable
+        object:</p>
+      <p>
+      <blockquote>
+        <pre>define TitleCompanyMaker(precious, name) :any {
+    require(precious != null, _{&quot;must provide an object&quot;})
+    define [sealer, unsealer] := BrandMaker pair(name)
+    define PurseMaker(myPrecious) :any {
+        define extract() :any {
+            require(myPrecious != null, _{"empty"})
+            define result := myPrecious
+            myPrecious := null
+            result
+        }
+        define purse {
+            to printOn(out)    { out print(`&lt;holds $myPrecious&gt;`) }
+            to isFull     :any { myPrecious != null }
+            to sprout     :any { PurseMaker(null) }
+            to getExtract :any { sealer seal(extract) }
+            to deposit(src) {
+                require(myPrecious == null, _{"full"})
+                myPrecious := unsealer unseal(src getExtract)()
+            }
+            to exercise(verb, args) :any {
+                E call(myPrecious, verb, args)
+            }
+        }
+    }
+    PurseMaker(precious)
+}
+</pre>
+      </blockquote>
+      <p>Given a single object, this returns an initial purse holding this object.
+        This purse is able to sprout other empty purses all able to hold only
+        this object. Among such sibling purses, only one holds the object at a
+        time. To move the object from one purse to another, one must have both
+        purses.</p>
+      <p>Such a purse is also an exercisable right. The holder of a purse may
+        invoke any method on the underlying object. Care must be taken when programming
+        objects that are intended to be held in such purses -- they should be
+        designed not to return references to themselves as the result of any operation,
+        as this would invalidate the exclusivity property.</p>
+      <p>Once the broker creates the option, using the arguments from the option
+        seller, it wouldn't release this non-exclusive options object to the first
+        buyer, because the first buyer would then be unable to resell it. Instead,
+        it would call <tt>TitleCompanyMaker(<i>option</i>, ...)</tt> and give
+        the first buyer, Alice, the resulting purse. It would also hold on to
+        this purse, indexed by a description of the option it created. </p>
+      <p>When Bob wants to buy an exclusive on the option from Alice, Bob would
+        first go to the broker to acquire an empty purse for holding the option
+        that meets his description. The broker looks up the original purse from
+        the description, and gives Bob a new sprout of this purse. When Alice
+        gives Bob her option-holding, he deposits it into the purse he got from
+        the broker. If this succeeds, he knows he now has an exclusive on the
+        option to gain an exclusive on some amount of stock.</p>
+      <h2><a name="composable-readable"></a>Composable Security, Readable Contracts</h2>
+      <p>The kind of composition of abstractions demonstrated above is familiar
+        in the object programming world, but without the security shown. The creation
+        of cryptographic protocols for securely trading a variety of financial
+        instruments is familiar in the financial cryptography world, but without
+        the separation of concerns and easy composability shown. The best capability
+        operating system work [<a href="ode-references.html#Hardy85">Hardy85</a>]
+        does combine abstraction and security in this way, but without a notation
+        to make the issues clear, and only when all parties fully trust one common
+        platform.</p>
+      <p>By using the Granovetter Operator as a bridge, we are able to apply strengths
+        from all three worlds synergistically to the engineering of a single integrated
+        system.</p>
+      <p>Financial cryptography is a broad field encompasing a wide range of more
+        specialized problem areas: cryptosystems, transactional protocols, user
+        interface design, interface with existing financial and legal institutions,
+        accounting, interface with legacy systems, creation of innovative financial
+        instruments and institutions, the list is endless. However, the benefits
+        achievable from specialization in any of these subfields have been limited
+        by the costs of systems integration. It has hitherto been difficult to
+        layer abstractions so that one can think clearly about one part of a system
+        design without having to think about all the other parts of the system
+        design simultaneously. This is especially troublesome in the development
+        of financial systems where developers must proceed very cautiously due
+        to the enormous potential cost of errors. It is our hope that the abstractions,
+        tools and notation we have presented here will go a long way towards filling
+        the need for the kinds of compositional power that will enable us to realize
+        the tremendous promise of the world of electronic commerce.</p>
+
+<hr><h1><a name="ack"></a>Acknowledgements</h1>
+      <P ALIGN="left">The authors would like to gratefully acknowledge the advice
+        and encouragement of the following people in the writing of this paper:
+        Paul Baclace, Howie Baetjer, Danfuzz Bornstein, Michael Butler, Marc Briceno,
+        Norm Hardy, Chris Hibbert, Kevin Lacobie, Charlie Landau, Brian Marick,
+        Eric Messick, Jonathan Shapiro, Terry Stanley, Marc Stiegler, and especially
+        Nick Szabo.
+
+<hr><h1><a name="references"></a>References</h1>
+      <p><a name="Bodnar87"></a>[Bodnar87] George H. Bodnar and William S. Hopwood,
+        1987. &quot;<b>Accounting Information Systems</b>&quot;, 3rd ed. Boston:
+        Allyn and Bacon. </p>
+      <p><a name="Chaum82"></a>[Chaum82] David Chaum, "<b>Blind Signatures for
+        Untraceable Payments</b>," in Advances in Cryptology Proceedings of Crypto
+        82, D. Chaum, R.L. Rivest, & A.T. Sherman (Eds.), Plenum, pp. 199-203.
+      </p>
+      <p><a name="Church41"></a>[Church41] Alonzo Church, "<b>The Calculi of Lambda
+        Conversion</b> ", Annals of Mathematical Studies no. 6. Princeton University
+        Press (Princeton, 1941). Reprinted by Klaus Reprint Corp. (New York, 1965).</p>
+      <p><a name="Close99"></a>[Close99] Tyler Close, &quot;<b>Droplet Security</b>&quot;,
+        1999, <a href="http://www.waterken.com/Droplet/security.html">http://www.waterken.com/Droplet/security.html</a></p>
+      <p><a name="CORBA"></a>[CORBA] <a href="http://www.omg.org/">http://www.omg.org/</a></p>
+      <p></p>
+      <p><a name="Crockford97"></a>[Crockford97] Douglas Crockford, personal communications.</p>
+      <p><a name="Dennis66"></a>[Dennis66] Dennis and E. Van Horn, "<b>Programming
+        semantics for multiprogrammed computations</b>," CACM, vol. 9, pp. 143155,
+        Mar. 1966. (I-B5, II-B1, II-E).</p>
+      <p><a name="Deutsch99"></a>[Deutsch99] Peter Deutsch, personal communications.</p>
+      <p><a name="Donnelley81"></a>[Donnelley81] Jed E. Donnelley, &quot;<b>Managing
+        Domains in a Network Operating System</b>&quot; (1981) Proceedings of
+        the Conference on Local Networks and Distributed Office Systems, Online,
+        pp. 345-361. </p>
+      <p><a name="Doorn96"></a>[Doorn96] Leendert van Doorn, Martín Abadi, Michael
+        Burrows, and Edward P. Wobber. &quot;<b>Secure Network Objects</b>&quot;
+        in Proceedings of the 1996 IEEE Symposium on Security and Privacy, pages
+        211-221. IEEE Computer Society, May 1996 <a href="ftp://ftp.digital.com/pub/DEC/SRC/publications/wobber/sno.ps">ftp://ftp.digital.com/pub/DEC/SRC/publications/wobber/sno.ps</a></p>
+      <p><a name="E"></a>[E] <a href="http://www.erights.org">http://www.erights.org</a></p>
+      <p><a name="e-gold"></a>[e-gold] <a href="http://www.e-gold.com/e-gold.asp?cid=101791">http://www.e-gold.com/e-gold.asp?cid=101791</a></p>
+      <p><a name="Ellison99"></a>[Ellison99] Carl Ellison, Bill Frantz, Butler
+        Lampson, Ron Rivest, B. Thomas, and T. Ylonen, "<b>SPKI Certificate Theory</b>"
+        IETF RFC 2693. <a href="http://www.ietf.org/rfc/rfc2693.txt">http://www.ietf.org/rfc/rfc2693.txt</a></p>
+      <p><a name="Gamma95"></a>[Gamma95] Erich Gamma, Richard Helm, Ralph Johnson,
+        John Vlissides, "<b>Design Patterns: Elements of Reusable Object-Oriented
+        Software</b>" Addison-Wesley Professional Computing, 1995.</p>
+      <p><a name="Goldberg76"></a>[Goldberg76] Edited by Adele Goldberg and Alan
+        Kay &quot;<b>Smalltalk 72 Instruction Manual</b>&quot;, Xerox PARC, March
+        1976.</p>
+      <p><a name="Gosling96"></a>[Gosling96] James Gosling, Bill Joy, Guy Steele,
+        Chapter 7 of "<b>The Java Language Specification</b>", Addison-Wesley,
+        1996.</p>
+      <p><a name="Granovetter73"></a>[Granovetter73] Mark Granovetter, "<b>The
+        Strength of Weak Ties</b>", in: American Journal of Sociology (1973) Vol.
+        78, pp.1360-1380.</p>
+      <p><a name="Hardy"></a>[Hardy] Norm Hardy, "<b>Synergy, Rights Amplification,
+        Sibling Communication, and Sealing</b>", <a href="http://www.cap-lore.com/CapTheory/Synergy.html">http://cap-lore.com/CapTheory/Synergy.html</a></p>
+      <p></p>
+      <p><a name="Hardy85"></a>[Hardy85] Norm Hardy, "<b>The KeyKOS Architecture</b>",
+        Operating Systems Review, September 1985, pp. 8-25. Updated at <a href="http://www.cis.upenn.edu/%7EKeyKOS/OSRpaper.html">http://www.cis.upenn.edu/~KeyKOS/OSRpaper.html</a>
+      </p>
+      <p><a name="Hardy88"></a>[Hardy88] Norm Hardy, "<b>The Confused Deputy,
+        or why capabilities might have been invented</b>", Operating Systems Review,
+        pp. 36:38, Oct., 1988, <a href="http://www.cap-lore.com/CapTheory/ConfusedDeputy.html">http://cap-lore.com/CapTheory/ConfusedDeputy.html</a></p>
+      <p><a name="Hewitt73"></a>[Hewitt73] Carl Hewitt, Peter Bishop, Richard
+        Stieger, "<b>A Universal Modular Actor Formalism for Artificial Intelligence</b>",
+        Proceedings of the 1973 International Joint Conference on Artificial Intelligence,
+        pp. 235-246. </p>
+      <p><a name="Kahn88"></a>[Kahn88] Kenneth Kahn, and Mark S. Miller, "<b>Language
+        Design and Open Systems</b>", in, Bernardo Huberman (ed.), Ecology of
+        Computation (Elsevier Science Publishers/North-Holland, 1988).</p>
+      <p><a name="Kay99"></a>[Kay99] derived from remarks by Alan Kay, personal
+        communications.</p>
+      <p><a name="MacKenzie99"></a>[MacKenzie99] Philip MacKenzie and Jeffrey
+        Sorensen, &quot;<b>Anonymous Investing: Hiding the Identities of Stockholders</b>&quot;,
+        Matthew Franklin, ed., Financial Cryptography, Proceedings of the Third
+        International Conference, 1999, Springer Lecture Notes in Computer Science,
+        1648.</p>
+      <p><a name="Miller87"></a>[Miller87] Mark S. Miller, Daniel G. Bobrow, Eric
+        Dean Tribble, and Jacob Levy, "<b>Logical Secrets</b>", in: Shapiro, Ehud,
+        (ed.), Concurrent Prolog: Collected Papers (MIT Press, Cambridge, MA,
+        1987).</p>
+
+<p><a name="Miller99"></a>[Miller99] Mark S. Miller, "<b>Inheritance By Static
+  Delegation</b>", <a href="../../../elang/blocks/inheritance.html">http://www.erights.org/elang/blocks/inheritance.html</a>,
+  1999.</p>
+      <p><a name="Morris73"></a>[Morris73] James H. Morris, "<b>Protection in
+        Programming Languages</b>", CACM 16(1):15-21, 1973.</p>
+      <p><a name="Parnas72"></a>[Parnas72] David Parnas, "<b>On the Criteria To
+        Be Used in Decomposing Systems into Modules</b>", CACM, vol 15, num. 12,
+        Dec. 1972.</p>
+      <p><a name="Rees96"></a>[Rees96] Jonathan Rees, "<b>A Security Kernel Based
+        on the Lambda-Calculus</b>", (MIT, Cambridge, MA, 1996) MIT AI Memo No.
+        1564. <a href="http://mumble.net/jar/pubs/secureos/">http://mumble.net/jar/pubs/secureos/</a></p>
+      <p><a name="Rivest77"></a>[Rivest77] Ronald L. Rivest, Adi Shamir, Len Adelman,
+        "<b>A Method for Obtaining Digital Signatures and Public Key Cryptosystems</b>,"
+        MIT LCS Technical Memorandum 82 (Revised August 1977) at 10. <a href="http://theory.lcs.mit.edu/%7Ecis/pubs/rivest/rsapaper.ps">http://theory.lcs.mit.edu/~cis/pubs/rivest/rsapaper.ps</a></p>
+      <p><a name="Saltzer75"></a>[Saltzer75] Jerome H. Saltzer, Michael D. Schroeder,
+        &quot;<b>The Protection of Information in Computer Systems</b>&quot;,
+        Proceedings of the IEEE. Vol. 63, No. 9 (September 1975), pp. 1278-1308.
+        <a href="http://www.cap-lore.com/CapTheory/ProtInf/">http://cap-lore.com/CapTheory/ProtInf/</a>
+      </p>
+      <p><a name="Sansom86"></a>[Sansom86] Robert D. Sansom, D. P. Julian, Richard
+        Rashid, &quot;<b>Extending a Capability Based System Into a Network Environment</b>&quot;
+        (1986) Research sponsored by DOD, pp. 265-274. </p>
+      <p><a name="Schelling63"></a>[Schelling63] Thomas C. Schelling, &quot;<b>The
+        Strategy of Conflict</b>&quot;, Oxford University Press, New York, 1963</p>
+      <p><a name="Schneier96"></a>[Schneier96] Bruce Schneier, &quot;<b>Why Cryptography
+        Is Harder Than It Looks</b>&quot;, Counterpane Systems, 1996, <a href="http://www.counterpane.com/whycrypto.html">http://www.counterpane.com/whycrypto.html</a></p>
+      <p><a name="Selgin88"></a>[Selgin88] George Selgin, "<b>The Theory of Free
+        Banking: Money Supply Under Competitive Note Issue</b>", Rowman & Littlefield,
+        1988.</p>
+      <p><a name="Shalit96"></a>[Shalit96] Andrew Shalit, &quot;<b>The Dylan Reference
+        Manual: The Definitive Guide to the New Object-Oriented Dynamic Language</b>&quot;,
+        Addison Wesley, 1996, chapter on Modules <a href="http://www.gwydiondylan.org/drm/drm_26.htm">http://www.gwydiondylan.org/drm/drm_26.htm</a></p>
+      <p><a name="Shannon48"></a>[Shannon48] Claude E. Shannon, ``<b>A Mathematical
+        Theory of Communication</b>,'' Bell System Technical Journal, vol. 27,
+        pp. 379-423 and 623-656, July and October, 1948. <a href="http://cm.bell-labs.com/cm/ms/what/shannonday/shannon1948.pdf">http://cm.bell-labs.com/cm/ms/what/shannonday/shannon1948.pdf</a></p>
+      <p><a name="Shapiro99"></a>[Shapiro99] Jonathan S. Shapiro, "<b>EROS: A
+        Capability System</b>", Ph.D. thesis, University of Pennsylvania, 1999.
+        <a href="http://www.cis.upenn.edu/%7Eshap/EROS/thesis.ps">http://www.cis.upenn.edu/~shap/EROS/thesis.ps</a>
+      </p>
+      <p><a name="Szabo97"></a>[Szabo97] Nick Szabo, &quot;<b>Formalizing and
+        Securing Relationships on Public Networks</b>&quot;, First Monday, vol
+        2 no 9, updated copy at <a href="http://szabo.best.vwh.net/formalize.html">http://szabo.best.vwh.net/formalize.html</a>
+      </p>
+      <p><a name="Tanenbaum86"></a>[Tanenbaum86] Andrew S. Tanenbaum, Sape J.
+        Mullender, Robbert van Renesse, &quot;<b>Using Sparse Capabilities in
+        a Distributed Operating System</b>&quot; (1986) Proc. Sixth Int'l Conf.
+        On Distributed Computing Systems, IEEE, pp. 558-563. <a href="http://www.scs.carleton.ca/%7Ecsgs/resources/amoeba/5.ps.gz">http://www.scs.carleton.ca/~csgs/resources/amoeba/5.ps.gz</a></p>
+      <p><a name="Tribble95"></a>[Tribble95] Eric Dean Tribble, Mark S. Miller,
+        Norm Hardy, Dave Krieger, "<b>Joule: Distributed Application Foundations</b>",
+        <a href="http://www.agorics.com/joule.html">http://www.agorics.com/joule.html</a>,
+        1995.</p>
+      <p><a name="Wollrath99"></a>[Wollrath99] Ann Wollrath and Jim Waldo, "<b>Trail:
+        RMI</b>" in "The Java Tutorial, <a href="http://java.sun.com/docs/books/tutorial/rmi/index.html">http://java.sun.com/docs/books/tutorial/rmi/index.html</a>,
+        1999.</p>
+      <p><a name="Wulf74"></a>[Wulf74] William Wulf et al, "<b>HYDRA: The kernel
+        of a multiprocessor operating system</b>," CACM, vol. 17, pp. 337-345,
+        June 1974. (I-A2, II-B3, III-A).</p>
+      <P ALIGN="left">&nbsp;
+
+</body>
+</html>

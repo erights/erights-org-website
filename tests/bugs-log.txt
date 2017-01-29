@@ -1,0 +1,43 @@
+new Function('var break = 1;');
+
+Uncaught TypeError: Cannot read property 'line' of undefined
+DebuggerScript._frameMirrorToJSCallFrame        :206
+DebuggerScript.currentCallFrame                 :140
+InjectedScript.callFrames                       :297
+(anonymous function)                            :2
+InjectedScript._evaluateOn                      :277
+InjectedScript._evaluateAndWrap                 :259
+InjectedScript.evaluate                         :253
+
+
+V8 version 2.3.9 [console: dumb]
+d8> 
+
+new Function('var break = 1;');
+
+Uncaught TypeError: Cannot read property 'line' of undefined
+DebuggerScript._frameMirrorToJSCallFrame:206
+DebuggerScript.currentCallFrame:140
+InjectedScript.callFrames:297
+d8> d8> undefined:2: SyntaxError: Unexpected token break
+var break = 1;
+    ^^^^^
+d8> d8> (d8):1: SyntaxError: Unexpected identifier
+Uncaught TypeError: Cannot read property 'line' of undefined
+         ^^^^^^^^^
+d8> (d8):1: SyntaxError: Unexpected token :
+DebuggerScript._frameMirrorToJSCallFrame:206
+                                        ^
+d8> (d8):1: SyntaxError: Unexpected token :
+DebuggerScript.currentCallFrame:140
+                               ^
+d8> (d8):1: SyntaxError: Unexpected token :
+InjectedScript.callFrames:297
+                         ^
+d8> ^D
+Generate:0:$ v8
+V8 version 2.3.9 [console: dumb]
+d8> new Function('var break = 1;');
+undefined:2: SyntaxError: Unexpected token break
+var break = 1;
+    ^^^^^

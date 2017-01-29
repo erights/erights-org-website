@@ -1,0 +1,197 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>E 0.9.0a: Installing on MSWindows</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">download</a>&nbsp;/&nbsp;<a href="index.html">0-9-0</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="purej-install.html" title="Back to: E 0.9.0a: Installing &quot;purej&quot;"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: E 0.9.0a: Installing &quot;purej&quot;" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="linux-motif-x86-install.html" title="On to: E 0.9.0a: Installing on Linux"><img src="../../images/next.gif" width="64" height="32" alt="On to: E 0.9.0a: Installing on Linux" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Installing
+              </B><font size="7"><i><font color="#009000"><b>E</b></font></i></font><B>
+              0.9.0a on MSWindows<font size="5"><br>
+              (x86)</font> </B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+
+      <p></p>
+      <h1>Installing The Java Runtime</h1>
+      <p>We recommend these:</p>
+      <div align="center">
+        <table cellpadding="12" border="2">
+          <tr>
+            <td>
+              <div align="center"></div>
+            </td>
+            <th>
+              <div align="center">jre</div>
+            </th>
+            <th>
+              <div align="center">jdk</div>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <div align="center"><b>Win95/98/NT</b> </div>
+            </th>
+            <td>
+              <div align="center"><a href="http://java.sun.com/j2se/1.3/jre/download-windows.html">jre
+                1.3.x</a></div>
+            </td>
+            <td>
+              <div align="center"><a href="http://java.sun.com/j2se/1.3/download-windows.html">jdk
+                1.3.x</a></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <p>See the <a href="index.html#dependencies">Dependencies</a> section for
+        information on obtaining an appropriate version of Java.</p>
+      <h1>Installing <font color="#009000"><i>E</i></font></h1>
+      <p> <font color="#009000"><i></i></font>We do not yet have an uninstaller.
+        If you have installed a previous version of E, you probably should remove
+        the directories &quot;<tt>c:/erights.org</tt>&quot; and &quot;<tt>c:/Windows/Start&nbsp;Menu/Programs/erights.org</tt>&quot;,
+        and the file &quot;<tt>C:/usr/local/bin/e.exe</tt>&quot;. (If you have
+        no other use for the directory &quot;<tt>C:/usr</tt>&quot;, as is likely,
+        you should remove it as well.)</p>
+      <p>For MSWindows users, we recommend downloading the <a href="https://www.cypherpunks.to/erights/download/0-9-0/E-win32-x86-0.9.0a.zip">zip
+        of E</a> binary distribution.</p>
+      <p>Unpack the distribution into the directory you wish to install it into,
+        such as &quot;<tt>c:/Program Files/erights.org</tt>&quot; and read the
+        <tt>README.txt</tt> file you'll find there. If you're feeling lucky, try
+        just double clicking on the <tt>e.jar</tt>.file. If this doesn't work,
+        see the <tt>README.txt</tt> file for more information, or check this page
+        again for more news. If you succeed, at the end of the install you should
+        see a box like</p>
+      <div align="center">
+        <table border="2" cellpadding="4" bgcolor="#C0C0C0">
+          <tr bgcolor="#3333FF">
+            <td>
+              <div align="center"><font color="#FFFFFF"><b>Welcome to E 0.9.0a</b></font></div>
+            </td>
+          </tr>
+          <tr bgcolor="#CCCCCC">
+            <td>
+              <div align="center">E is installed
+                <table border="2">
+                  <tr bgcolor="#FFFFFF">
+                    <td>OK</td>
+                  </tr>
+                </table>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <p>&nbsp;</p>
+      <p>Once this is done, you can start <font color="#009000"><i><b>E</b></i></font>
+        from your desktop or start menu (under &quot;<tt>Programs &gt;&gt; erights.org</tt>&quot;)
+        by selecting the <b><img src="../../images/carrot.gif" width="32" height="32" align="middle"></b>(&quot;<tt>elmer</tt>&quot;)
+        shortcut. See the <a href="../../elang/intro/index.html">E Tutorial</a>
+        to make progress from here.</p>
+      <p>If you wish to use <i><b><font color="#009000">E</font></b></i> from
+        a command line, the <a href="http://sources.redhat.com/cygwin/">Cygwin</a>
+        command line is required. Download and install Cygwin and then procees
+        to <a href="linux-motif-x86-install.html">Installing on Unixoids</a>.</p>
+      <h1>Agreeing on &quot;<tt>~</tt>&quot;</h1>
+      <p><font color="#FF0000">***To be written, here are some notes:</font></p>
+      <h2>Windows 2000 (and presumably NT and XP):</h2>
+      <blockquote>
+        <pre>c:/Documents and Settings/&lt;userid&gt;</pre>
+      </blockquote>
+      <p>for example</p>
+      <blockquote>
+        <pre>c:/Documents and Settings/Administrator</pre>
+      </blockquote>
+      <h2>Getting cygwin to agree</h2>
+      <blockquote>
+        <pre>$ cd ~
+$ cp -r * .??* /cygdrive/c/Documents\ and\ Settings\Administrator
+$ cd ..
+$ mv Administrator Administrator.cya
+$ ln -s /cygdrive/c/Documents\ and\ Settings\Administrator Administrator</pre>
+      </blockquote>
+      <h2>Getting emacs to agree</h2>
+      In the Enviroments tab of ??? set HOME to &quot;c:/Documents and Settings/Administrator&quot;
+      <p>&nbsp;</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">download</a>&nbsp;/&nbsp;<a href="index.html">0-9-0</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="purej-install.html" title="Back to: E 0.9.0a: Installing &quot;purej&quot;"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: E 0.9.0a: Installing &quot;purej&quot;" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="linux-motif-x86-install.html" title="On to: E 0.9.0a: Installing on Linux"><img src="../../images/next.gif" width="64" height="32" alt="On to: E 0.9.0a: Installing on Linux" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

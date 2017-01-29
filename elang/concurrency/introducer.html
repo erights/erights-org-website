@@ -1,0 +1,399 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Introducing Remote Objects</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">concurrency</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="race.html" title="On to: Concurrency Races"><img src="../../images/next.gif" width="64" height="32" alt="On to: Concurrency Races" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>Introducing<br>
+              Remote Objects</b></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p>This section shows how to use <i><b><font color="#009000">E</font></b></i> for secure distributed programming. Distributed
+        <i><b><font color="#009000">E</font></b></i> programming starts by using the &quot;<tt>introducer</tt>&quot;,
+        which should be in your initial name-space:</p>
+      <blockquote>
+        <pre><i>?? in new vat VatA</i>
+
+<span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+? <b>introducer</b>
+# value: &lt;Off The Air&gt;
+</pre>
+      </blockquote>
+      <p>When you type this in, you should see either &quot;<tt>Off The Air</tt>&quot;
+        as above, &quot;<tt>On The Air</tt>&quot;, or &quot;<tt>null</tt>&quot;.
+        If you see &quot;<tt>null</tt>&quot;, you aren't using full E, but
+        rather a space-local subset of <i><b><font color="#009000">E</font></b></i>. As explained on the <a href="../../download/0-8-9/index.html">download
+        page</a>, the <i>space-local subset</i> is the subset of <i><b><font color="#009000">E</font></b></i> supporting
+        only conventional non-distributed programming. </p>
+      <p>Normally you'll see &quot;<tt>Off The Air</tt>&quot;, which means
+        your <i><b><font color="#009000">E</font></b></i> should be capable of distributed object programming, but it hasn't
+        been turned on yet. To turn it on, say:</p>
+      <blockquote>
+        <pre>? introducer.<b>onTheAir</b>()
+# value: [&quot;3DES_SDH_M2&quot;, &quot;3DES_SDH_M&quot;]</pre>
+      </blockquote>
+      <p>which can take anywhere from 2 seconds to a minute to respond, depending
+        on your platform. Assuming this returns without indicating a problem,
+        printing the introducer should now look like:</p>
+      <blockquote>
+        <pre>? introducer
+# value: &lt;On The Air [&quot;3DES_SDH_M2&quot;, &quot;3DES_SDH_M&quot;]&gt;</pre>
+      </blockquote>
+      <p><i>(The list in square brackets is the set of protocols that your <i><b><font color="#009000">E</font></b></i> process
+        is willing to speak. If you see </i><tt>[&quot;AUTH_SDH_M&quot;, &quot;NONE_SDH_M&quot;]</tt><i>
+        instead of </i><tt>[&quot;3DES_SDH_M&quot;]</tt><i>or </i><tt>[&quot;3DES_SDH_M2&quot;,
+        &quot;3DES_SDH_M&quot;]</tt><i>, you are running daffE rather than E,
+        and your process will only be able to communicate with other daffE processes.
+        As explained on the <a href="../../download/0-8-9/index.html">download
+        page</a>, daffE was an insecure variant of E, built domestically and crypto-crippled
+        to appease export bureaucrats. Except under peculiar circomstances, you
+        should always use <i><b><font color="#009000">E</font></b></i> instead.)</i></p>
+      <p>Since we are about to demonstrate distributed object programming, you
+        need to bring up another <i><b><font color="#009000">E</font></b></i> processes and go through the above steps again.
+        It shouldn't matter whether the two <i><b><font color="#009000">E</font></b></i> processes are on the same machine
+        or not. However, if you use two different machines, they must be able
+        to communicate to each other using TCP/IP. If you aren't sure about this,
+        you should ask someone who understands your network. In the meantime,
+        you should be able to do distributed programming using multiple processes
+        on one machine.</p>
+      <p>To talk through examples involving two <i><b><font color="#009000">E</font></b></i> processes, we'll show the second
+        one further indented and green. Let's go on the air with our second process:</p>
+      <blockquote>
+        <blockquote>
+          <blockquote>
+            <blockquote>
+              <blockquote>
+                <blockquote>
+                  <pre><font color="#008800"><i>?? in new vat VatC</i>
+
+<span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+? introducer
+# value: &lt;Off The Air&gt;
+
+? introducer.onTheAir()
+# value: [&quot;3DES_SDH_M2&quot;, &quot;3DES_SDH_M&quot;]
+
+? introducer
+# value: &lt;On The Air [&quot;3DES_SDH_M2&quot;, &quot;3DES_SDH_M&quot;]&gt;</font>
+</pre>
+                </blockquote>
+              </blockquote>
+            </blockquote>
+          </blockquote>
+        </blockquote>
+      </blockquote>
+      <p>Once both processes are &quot;<tt>On The Air</tt>&quot;, you are
+        ready for distributed object programming.</p>
+      <h3>Turning a Live Reference Into a String</h3>
+      <p>Many people think distributed secure programming must be hard. Here's
+        a counter example:</p>
+      <blockquote>
+        <pre><i>?? in vat VatA</i>
+
+? var x := 0
+# value: 0
+
+
+? def counter {
+>     to incr() :any {
+>         x += 1
+>     }
+> }
+# value: &lt;counter&gt;
+
+? x
+# value: 0
+
+? counter.incr()
+# value: 1
+
+? x
+# value: 1
+</pre>
+      </blockquote>
+      <p>Nothing new so far. The <tt>counter</tt> object has a method that increments
+        the <tt>x</tt> variable. Now let's share this counter object with our
+        other <i><b><font color="#009000">E</font></b></i> process. The variable
+        &quot;<tt>counter</tt>&quot; holds a normal, or <i>live</i> reference
+        to our counter object. In order to share the object, we instead need a
+        <i>sturdy</i> reference to this object. Once we are on the air, we can
+        create a sturdy reference with the <i>makeSturdyRef.temp</i> method:</p>
+      <blockquote>
+        <pre>? def sr := <b>makeSturdyRef.temp</b>(counter)
+# value: &lt;SturdyRef to &lt;counter&gt;&gt;
+</pre>
+      </blockquote>
+      <table width="100%" border="2" cellspacing="2" cellpadding="6">
+        <tr>
+          <td>
+            <p>Why are there two kinds of references, live and sturdy?</p>
+            <p>Once we start doing distributed programming we have to put up with
+              communications failure, like losing a phone connection. Messages
+              can be sent over live references, and these messages will be delivered
+              reliably and in order, unless the live reference breaks. A live
+              reference that goes between processes will break if a communications
+              problem prevents these processes from continuing to talk to each
+              other.</p>
+            <p>A sturdy reference, on the other hand, doesn't break; but neither
+              does it pass messages to the object it points to. Rather, it simply
+              gives us the ability to ask for a new live reference in case the
+              old one fails, as we'll see later. <font color="#ff0000">***need
+              to show partition recovery.</font></p>
+          </td>
+        </tr>
+      </table>
+      <p>Now that we have a sturdy reference to the counter, we can generate a
+        URI string for it.</p>
+      <blockquote>
+        <pre>? def uri := introducer.<b>sturdyToURI</b>(sr)
+# example value: cap://127.0.0.1:1107/080nrRvgvO8fMq...
+</pre>
+      </blockquote>
+      <p>The particulars of the URI string will differ each time, as this string
+        encodes unique cryptographic information specific to the sharing of this
+        individual object. You now need to convey this string to the other <i><b><font color="#009000">E</font></b></i> process.
+        For example, if the two machines have a file system in common, you can
+        write the string out to a file in the first process</p>
+      <blockquote>
+        <pre>? &lt;file:counter.cap&gt;.setText(uri)
+</pre>
+      </blockquote>
+      <p>and read it from this file in the second process</p>
+      <blockquote>
+        <blockquote>
+          <blockquote>
+            <blockquote>
+              <blockquote>
+                <blockquote>
+                  <pre><font color="#008800"><i>?? in vat VatC
+
+</i>? def uri := &lt;file:counter.cap&gt;.getText()
+# example value: cap://127.0.0.1:1107/080nrRvgvO8fMq...</font>
+</pre>
+                </blockquote>
+              </blockquote>
+            </blockquote>
+          </blockquote>
+        </blockquote>
+      </blockquote>
+      <p>Alternatively, if you have windows to both processes in front of you,
+        you can just copy and paste from one to the other. Or you could email
+        the uri to an account you can read on the other machine -- whatever works.
+        This is the act of <i>initial introduction</i>. In situations where security
+        is important you must convey this string from one process to the other
+        in a secure manner, such as in a PGP-encrypted email message. Assuming
+        this has been done, <i><b><font color="#009000">E</font></b></i> ensures that all further communication between these
+        processes remains secure. </p>
+      <p align="center"><img src="images/uri-intro.gif" width="308" height="312"></p>
+      <p>This act of introduction is another example of the <a href="../../elib/capability/ode/index.html">Granovetter
+        Diagram</a>. In this example, the role of Carol is played by the counter
+        object. Bob is the green process whose transcript is on the right, and
+        you are Alice. In order for the Bob process to obtain access to the counter,
+        some entity with access both to the counter and to Bob--Alice--must give
+        Bob access to the counter. When all three roles are objects already connected
+        by E, this introduction (corresponding to the thick blue arrow) is just
+        a normal object-oriented message pass. However, when Alice is human--in
+        this case, you--the eright to access the counter must be represented in
+        a way that can be transferred outside of <i><b><font color="#009000">E</font></b></i> computation. That's the purpose
+        of the URI.</p>
+      <h3>Turning a String Into a Live Reference</h3>
+      <p>Given that the variable <i>uri</i> in the second process has somehow
+        come to hold the URI string created in the first process, we can obtain
+        a strurdy reference to the counter object in the first process:</p>
+      <blockquote>
+        <blockquote>
+          <blockquote>
+            <blockquote>
+              <blockquote>
+                <blockquote>
+                  <pre><font color="#008800">? def sr := introducer.<b>sturdyFromURI</b>(uri)
+# value: &lt;SturdyRef&gt;</font></pre>
+                </blockquote>
+              </blockquote>
+            </blockquote>
+          </blockquote>
+        </blockquote>
+      </blockquote>
+      <p><tt>sr</tt> now holds a sturdy reference to the counter in the first
+        process, just as <tt>sr</tt> in the first process does. This is true
+        even if the two processes are not currently able to connect to each other
+        over the network -- that's what makes such references <i>sturdy</i>. However,
+        to interact with the counter remotely, we need a live reference. Let's
+        get one, and use it to increment the counter.</p>
+      <blockquote>
+        <blockquote>
+          <blockquote>
+            <blockquote>
+              <blockquote>
+                <blockquote>
+                  <pre><font color="#008800">? def remote := sr.<b>getRcvr</b>()
+# value: &lt;Remote Promise&gt;
+
+? remote.incr()
+# problem: Failed: not synchronously callable</font></pre>
+                </blockquote>
+              </blockquote>
+            </blockquote>
+          </blockquote>
+        </blockquote>
+      </blockquote>
+      <p>References to objects in other processes are <i>deferred</i> references,
+        and do not support synchronous calls. Instead, we must use the eventually
+        operator, &quot;<tt>&lt;-</tt>&quot;, to do an asynchronous send.
+        As we do so, let's check up on the <tt>x</tt> variable in the first
+        process.</p>
+      <blockquote>
+        <pre><i>?? in vat VatA</i>
+
+? x
+# value: 1
+</pre>
+        <blockquote>
+          <blockquote>
+            <blockquote>
+              <blockquote>
+                <blockquote>
+                  <pre><font color="#008800"><i>?? in vat VatC</i>
+
+? def val := remote &lt;- incr()
+# value: &lt;Remote Promise&gt;</font></pre>
+                </blockquote>
+              </blockquote>
+            </blockquote>
+          </blockquote>
+        </blockquote>
+      </blockquote>
+      <p>wait until <tt>val</tt> is resolved, we use &quot;<tt>waitAtTop(..)</tt>&quot;.
+        Or, if running this test manually, you can just wait a moment instead.</p>
+      <blockquote>
+        <blockquote>
+          <blockquote>
+            <blockquote>
+              <blockquote>
+                <blockquote>
+                  <pre><font color="#008800">? interp.waitAtTop(val)</font></pre>
+                </blockquote>
+              </blockquote>
+            </blockquote>
+          </blockquote>
+        </blockquote>
+      </blockquote>
+      <p>and now let's check the value of <tt>val</tt>:</p>
+      <blockquote>
+        <blockquote>
+          <blockquote>
+            <blockquote>
+              <blockquote>
+                <blockquote>
+                  <pre><font color="#008800">? val
+# value: 2</font></pre>
+                </blockquote>
+              </blockquote>
+            </blockquote>
+          </blockquote>
+        </blockquote>
+        <pre><i>?? in vat VatA</i>
+
+? x
+# value: 2
+</pre>
+      </blockquote>
+      <p>By giving the URI string to the second process, you have given the second
+        process the electronic right (or <i>eright</i>) to increment the variable
+        <tt>x</tt>, and to see its value after incrementing, but you have
+        granted it no other rights. For example, in the first process we can reset
+        the count by doing</p>
+      <blockquote>
+        <pre>? x := 1
+# value: 1
+</pre>
+      </blockquote>
+      <p>But no possible action in the second process will have this effect. By
+        defining, and sharing, the counter object, we have defined, and shared,
+        a new limited eright over the variable <tt>x</tt>.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">concurrency</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="race.html" title="On to: Concurrency Races"><img src="../../images/next.gif" width="64" height="32" alt="On to: Concurrency Races" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

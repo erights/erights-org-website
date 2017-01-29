@@ -1,0 +1,463 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>E stl-0.8.9k Download and Install E</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">download</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="../0-8-9/index.html"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: E 0.8.9 Download and Install E" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><a href="windows-bin.html"><img src="../../images/first.gif" width="32" height="64" alt="1st child: E stl-0.8.9k: Installing on Windows" border="0"></a><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="../stl-0-8-9-p/index.html"><img src="../../images/next.gif" width="64" height="32" alt="On to: E stl-0.8.9p Download and Install E" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b><font size="5">Download
+              and Install</font></b><font size="5" color="#009000"><i><b><br>
+              </b></i></font><i><font color="#009000"><b>E</b></font></i><b> stl-0.8.9k</b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p>Jump to </p>
+      <blockquote>
+        <p><a href="#Highlights">Highlights this Version</a><br>
+          <a href="#variants">Variants and Subsets of E</a><br>
+          <a href="#dependencies">Dependencies</a><br>
+          <a href="#platforms">Download by Platforms &amp; Versions</a></p>
+      </blockquote>
+      <p></p>
+      <h1 align="center"><a href="../index.html">Are you sure you want the stl-0.8.9k
+        version?</a></h1>
+      <h2>First, the anti-highlights</h2>
+      <p><i><font color="#009000"><b>E</b></font></i><b> stl-0.8.9k</b> is an
+        interim non-distributed release, but supporting a more modern version
+        of the E language spec. It's primary motivation is to support work on
+        compiling E, but it may also be preferred by those using E for non-distributed
+        programming. </p>
+      <p>The E installer is much improved for MSWindows, but these improvements
+        have not yet been ported to other platforms, so this release is an MSWindows-only
+        release. <i>This is a very temporary situation -- the vast majority of
+        E is fully platform independent.</i></p>
+      <p>As of this version E only support Java &gt;= 2 (ie, a JDK/JRE &gt;= 1.2).</p>
+      <hr>
+      <h1><a name="Highlights"></a>Highlights of this Version</h1>
+      <p>The following is a list of the names of the major changes, but without
+        yet any explanations. As each change is explained in the upcoming release
+        notes, the item below will be linked to that explanation. Most of these
+        notes will be messages to the <a href="http://www.eros-os.org/pipermail/e-lang/">e-lang</a>
+        list, so the link should also serve as the <a href="http://www.eros-os.org/pipermail/e-lang/2000-November/003934.html">root</a>
+        of a discussion about each change.</p>
+      <ul>
+        <li>This is the first version of E supporting <b><a href="http://www.eros-os.org/pipermail/e-lang/2000-November/003936.html">locally
+          untrusted code</a></b></li>
+        <li>Closer conformance to the <a href="../../elang/kernel/index.html">Kernel
+          E spec</a></li>
+        <li>Closer conformance to Marc Stiegler's draft book <a href="http://www.skyhunter.com/marcs/ewalnut.html">E
+          in a Walnut</a></li>
+        <li>Experimental bundling of the Waterken <a href="http://www.waterken.com/Hydro/2.0">Hydro
+          2.0</a> capability-oriented collection library </li>
+        <li>New Minimal-XML DOM tree and QuasiParser</li>
+        <li>Concurrency improvements
+          <ul>
+            <li>Extended when-catch syntax</li>
+            <li>Extensible Promise architecture, enabling CapTP to be
+              rewritten in unprivileged E code</li>
+            <li>The <i>Dead Man Switch</i></li>
+          </ul>
+        </li>
+        <li>Improvements to the &quot;<tt>e</tt>&quot; driver program</li>
+        <li>Installation improvements (MSWindows only for now)</li>
+        <li>Syntax changes, including
+          <ul>
+            <li>a lighter-weight syntax for anonymous closures.</li>
+            <li>&quot;<tt>typedef</tt>&quot; for describing object protocols</li>
+          </ul>
+        </li>
+        <li>And, as always, various terminology changes</li>
+      </ul>
+      <hr>
+      <h1><a name="variants"></a>Variants and Subsets of E</h1>
+      <p>A complete <font color="#009000"><i><b>E</b></i></font> system is persistent,
+        distributed, and capability-secure both within and between processes.
+        Incomplete variants of <font color="#009000"><i><b>E</b></i></font>
+        are tagged by which of these features are left out.</p>
+      <center>
+        <p>
+        <table border="2" cellpadding="6">
+          <tr>
+            <th>Feature</th>
+            <th>Prefix if<br>
+              feature is absent</th>
+            <th>What it stands for</th>
+          </tr>
+          <tr>
+            <td>
+              <p align="center">Persistent</p>
+            </td>
+            <td>
+              <p align="center">tl-</p>
+            </td>
+            <td>
+              <p align="center"><b>T</b>ime-<b>L</b>ocal</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p align="center">Distributed</p>
+            </td>
+            <td>
+              <p align="center">sl-</p>
+            </td>
+            <td>
+              <p align="center"><b>S</b>pace-<b>L</b>ocal</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div align="center">Local<br>
+                capability security </div>
+            </td>
+            <td>
+              <div align="center">otc-</div>
+            </td>
+            <td>
+              <div align="center"><b>O</b>nly-<b>T</b>rusted-<b>C</b>ode</div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p align="center">Distributed<br>
+                capability security </p>
+            </td>
+            <td>
+              <p align="center">daff<i>E</i></p>
+            </td>
+            <td>
+              <p align="center"><b>D</b>istributed <b>A</b>pplication <b>F</b>ramework<br>
+                <b>F</b>orsaking <b>E</b>ncryption</p>
+            </td>
+          </tr>
+        </table>
+        <p></p>
+      </center>
+      <p>A non-persistent <font color="#009000"><i><b>E</b></i></font> is called
+        <i>time-local</i> since an object only exist as long as its hosting process
+        does. A non-distributed <font color="#009000"><i><b>E</b></i></font>
+        is called <i>space-local</i> if an object and all references to it only
+        exist within its hosting process. </p>
+      <p><b>This release is space-time-local</b>, meaning it is non-distributed
+        and non-persistent, and so is prefixed with &quot;<b>stl-</b>&quot;. Being
+        non-distributed, this release is much less useful than the <a href="../0-8-9/index.html">0.8.9
+        release</a>. This version is being released mainly to support work on
+        compiling E, since its interpreter conforms more closely to the definition
+        of <a href="../../elang/kernel/index.html">Kernel-E</a>. If this is not
+        a concern, you should probably stick with the 0.8.9 release.</p>
+      <p><font color="#009000"><i><b>E</b></i></font> <i>by definition</i> provides
+        distributed capability-security -- the ability for objects in mutually
+        suspicious processes to safely cooperate. If it looks like <font color="#009000"><i><b>E</b></i></font>
+        and it quacks like <font color="#009000"><i><b>E</b></i></font>, it
+        might be a duck; but if it doesn't provide distributed capability security,
+        it's not <font color="#009000"><i><b>E</b></i></font>. A system that's
+        otherwise equivalent to <font color="#009000"><i><b>E</b></i></font>,
+        but doesn't provide distributed capability security, is called <i>daffE</i>.
+        A distributed <font color="#009000"><i><b>E</b></i></font> can only
+        be implemented by means of strong crypto, of course, for which we are
+        bundling a subset of the <a href="http://ai.cryptix.org/"> Cryptix</a>
+        library. In a space-local system, no distributed insecurity can arise,
+        so such a system would be an <font color="#009000"><i><b>sl-E</b></i></font>
+        rather than an <i>sl-daffE</i>. <b>This release is non-distributed </b>
+        and so is an <font color="#009000"><i><b>E</b></i></font> rather than
+        a <i>daffE</i>. </p>
+      <p><font color="#009000"><i><b>E</b></i></font> is designed to provide
+        local capabillity-security -- the ability for mutually suspicious objects
+        hosted by the same process to safely cooperate, and the use of capability
+        discipline to determine which of its hosting process's authorities it
+        may exercise. Such objects could be executing <i>untrusted code</i> --
+        code that the hosting process (or its owner) doesn't need to fully trust.
+        This is the first version of <font color="#009000"><i><b>E</b></i></font>
+        to support this feature, including <a href="../../elib/capability/confinement.html">confinement</a>,
+        and so is the first that doesn't need to be prefixed with &quot;otc-&quot;.</p>
+      <hr>
+      <h1><a name="dependencies"></a>Dependencies</h1>
+      <h3>Versions &amp; Types of Java</h3>
+      <p>In referring to various versions of Java, we follow Sun's terminology
+        and numbering. A Java Runtime, or <b>jre</b>, is adequate to run standard
+        Java binary programs (class files &amp; resources). A Java Development
+        Kit, or <b>jdk</b>, is adequate both to build a program from sources and
+        to run it. A jdk is a superset of the corresponding jre, and their version
+        numbers are always in synch. Each successive version of the jdk/jre from
+        Sun effectively defines a new version of the Java &amp; JVM standards,
+        except that Sun has introduced a <a href="http://java.sun.com/products/jdk/1.2/java2.html">numbering
+        inconsistency</a>: The Java/JVM 2.x standard corresponds to Sun's jdk/jre
+        1.2.x. We ignore this inconsistency and refer to both as 1.2.x.</p>
+      <p>Starting with this version, <font color="#009000"><i><b>E</b></i></font>
+        requires a jre &gt;= 1.2.x. E no longer supports Java &lt; 1.2. To build
+        <font color="#009000"><i><b>E</b></i></font> from sources, a corresponding
+        jdk is required. We recommend one &gt;= 1.3.x. In particular, we recommend
+        against 1.2.2. (Sun's Swing implementation in 1.2.2 does not, ahem, live
+        up to Sun's usual quality standards.) </p>
+      <p><font color="#009000"><i><b>E</b></i></font> makes heavier use of Java
+        reflection than most Java vendors have encountered. Some implementations
+        of Java (like IBM's VisualAge 1.1.7) have failed to run <font color="#009000"><i><b>E</b></i></font>
+        because of bugs in their implementation of reflection. As you encounter
+        information to add to the table below, please let me know.</p>
+      <div align="center">
+        <table border="2" cellpadding="12">
+          <tr>
+            <th>this <font color="#009000"><i><b>E</b></i></font> doesn't run</th>
+            <th>this <font color="#009000"><i><b>E</b></i></font> seems fine</th>
+          </tr>
+          <tr valign="top">
+            <td> Kaffe<br>
+              Java &lt; 1.2.x</td>
+            <td>Sun jre/jdk &gt;= 1.2.x<br>
+              Blackdown jdk &gt;= 1.2<br>
+              Symantec Cafe 4.0a</td>
+          </tr>
+        </table>
+        <br>
+      </div>
+      <p>Some places to get some a jre or jdk:</p>
+      <div align="center">
+        <table cellpadding="12" border="2">
+          <tr>
+            <td>&nbsp; </td>
+            <td>
+              <div align="center"> <b>Linux</b></div>
+            </td>
+            <th>Solaris</th>
+            <td>
+              <div align="center"> <b>Win95/98/NT</b></div>
+            </td>
+          </tr>
+          <tr>
+            <th>
+              <div align="center"> jre</div>
+            </th>
+            <td>
+              <div align="center"> <a href="http://www.blackdown.org/java-linux/mirrors.html">blackdown.org<br>
+                </a><a href="http://java.sun.com/j2se/1.3/jre/download-linux.html">sun</a>
+              </div>
+            </td>
+            <td>
+              <div align="center"><a href="http://www.sun.com/software/solaris/jre/download.html">jre
+                1.3.x</a></div>
+            </td>
+            <td>
+              <div align="center"> <a href="http://java.sun.com/j2se/1.3/jre/download-windows.html">jre
+                1.3.x</a></div>
+            </td>
+          </tr>
+          <tr>
+            <th>
+              <div align="center"> jdk</div>
+            </th>
+            <td>
+              <div align="center"><a href="http://www.blackdown.org/java-linux/mirrors.html">blackdown.org<br>
+                </a><a href="http://java.sun.com/j2se/1.3/download-linux.html">sun</a>
+              </div>
+            </td>
+            <td> <a href="http://www.sun.com/software/solaris/java/download.html">jdk
+              1.3.x</a></td>
+            <td>
+              <div align="center"> <a href="http://java.sun.com/j2se/1.3/download-windows.html">jdk
+                1.3.x</a></div>
+            </td>
+          </tr>
+        </table>
+        <br>
+      </div>
+      <h3>Versions of <a href="http://ai.cryptix.org/"><img src="../images/cryptix.gif" width="50" height="46" border="0" align="middle">
+        Cryptix</a></h3>
+      <p>This release of <font color="#009000"><i><b>E</b></i></font> bundles
+        in a subset of the <a href="http://ai.cryptix.org/products/cryptix31/#download">Cryptix
+        3.1.1</a> strong cryptography library. However, since this E is not distributed,
+        it doesn't depend on it, so the version issues (Cryptix vs JDK1.3) don't
+        matter for this release.</p>
+      <h2></h2>
+      <h3>Versions of Swing</h3>
+      <p></p>
+      <p>Now that we have dropped support for Java &lt; 1.2.x, the Swing package
+        path issue should no longer matter. E depends on Swing as it appears in
+        Java &gt;= 1.2.x.</p>
+      <h2>Build-Only Dependencies</h2>
+      <p>If you are only installing <font color="#009000"><i><b>E</b></i></font>
+        from a binary distribution, or only rebuilding the Java portion for your
+        own use, you can ignore this section. However, if you wish to build an
+        <font color="#009000"><i><b>E</b></i></font> distribution from sources,
+        then you will need the equivalent of the following tools as well.</p>
+      <h3>The <a href="http://sources.redhat.com/cygwin/"><tt>Cygwin</tt></a>
+        Distribution</h3>
+      <p>The <font color="#009000"><i><b>E</b></i></font> building process relies
+        on a number of UNIX tools. These are available for Windows from Cygnus
+        Support as the Cygwin package. If you wish to build <font color="#009000"><i><b>E</b></i></font>
+        on Windows, you should <a href="http://sources.redhat.com/cygwin/download.html">download</a>
+        and install a version &gt;= 1.0.</p>
+      <h3>BYacc/J (Berkeley Yacc for Java)</h3>
+      <p>The E source distribution contains the executable binary program byaccj.exe
+        for Windows, and <tt>byaccj</tt> for Linux/386/glibc. These are actually
+        <a href="http://www.lincom-asg.com/%7Erjamison/byacc/">BYacc/Java</a>
+        from Bob Jamison and <a href="http://www.lincom-asg.com/%7Erjamison/byacc/ACKNOWLEDGEMEN">others</a>.
+        BYacc/Java is the Berkeley Yacc program extended with a &quot;-j&quot;
+        flag and others for producing Java output. BYacc/Java is covered by the
+        Berkeley License. If you are on a Unix system other than glibc Linux,
+        you need to download your own version of <tt>byaccj</tt> and overwrite
+        the one in <tt>src/bin/linux-386-glibc</tt> that our Makefile is using.</p>
+      <h3>Zip Files</h3>
+      <p>Our build process packs up the <tt>*.zip</tt> files in the distribution
+        by using <a href="ftp://ftp.freesoftware.com/pub/infozip/">Info-Zip</a>'s
+        highy portable, and highly ported, <tt>zip</tt> program. Info-Zip's
+        zipping tools are open-sourced with a license that seems to resemble the
+        X11 license, but before redistributing it, you should read it for yourself.
+        The <font color="#009000"><i><b>E</b></i></font> distributions do not
+        bundle in these tools.</p>
+      <hr>
+      <h1><a name="platforms"></a>Download by Platforms &amp; Versions</h1>
+      <p>Earlier versions of <font color="#009000"><i><b>E</b></i></font> have
+        been tested and run on MSWindows (95, 98 FE, NT, 2000), and Linux. It
+        <i>should</i> run with minor porting effort on other UNIX platforms. Pervious
+        versions have also experienced problems on Windows 98 SE that we're not
+        sure if we've diagnosed, but we hope those are fixed as of this release.
+        It should also run without problems on MSWin ME, but as far as we are
+        aware, no one has tried this. If you experience any problems, or have
+        any other informative experiences, please let me know.</p>
+      <p> The <i>Installing</i> links below describe how to install, and run various
+        forms of the binary distribution. The <i>Building</i> links describe how
+        to build E from the source release. The <i>Download</i> links will download
+        each corresponding form of the release to your machine. </p>
+      <div align="center">
+        <p></p>
+        <div align="center">
+          <table cellpadding="12" border="2">
+            <tr>
+              <td>&nbsp; </td>
+              <th>
+                <div align="center">Binary<br>
+                  Distribution</div>
+              </th>
+              <th>
+                <div align="center">Source<br>
+                  Distribution</div>
+              </th>
+            </tr>
+            <tr>
+              <th>
+                <div align="center"><b>MSWin9x/NT/2k</b><br>
+                  (zip files)</div>
+              </th>
+              <td>
+                <div align="center"><a href="windows-bin.html">Installing</a><br>
+                  <a href="https://www.cypherpunks.to/erights/download/stl-0-8-9-k/stl-E-win32-0.8.9k.zip">Download E</a></div>
+              </td>
+              <td>
+                <div align="center"><a href="windows-src.html">Building</a><br>
+                  <a href="https://www.cypherpunks.to/erights/download/stl-0-8-9-k/stl-E-src-0.8.9k.zip">Download E</a></div>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <div align="center"><b>Linux</b><br>
+                  (coming back soon)</div>
+              </th>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <th>
+                <p>FreeBSD<br>
+                  (coming soon)</p>
+              </th>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <th>Mac OS X<br>
+                (coming soon)</th>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <p>&nbsp; </p>
+      <p><a href="https://www.cypherpunks.to/erights/download/javadoc.tar.gz">javadoc.tar.gz</a> contains the javadoc-umentation
+        of the ELib Java API, obtained by Javadocing the E source tree.</p>
+      <p>In the very near future, we will once again have the Linux row filled
+        in. If later future releases, we hope to fill in the rows of the table
+        for FreeBSD and Macintosh OS X. Much thanks to Charlie Evans for donating
+        a Mac G4 to the E project to make this possible.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="Prev"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" -->x<!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --> <img src="../../images/next-gray.gif" width="64" height="32" alt="Next"><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

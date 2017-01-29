@@ -1,0 +1,140 @@
+# E Configuration File (or E Configuration Template File)
+#
+# If you are looking at eprops-template.txt, then
+# you are looking at a template to be used to construct eprops.txt.
+# In this case, for each property definition, you should instead see
+# text of the form, for example,
+#
+#     e.version=$<<e.version>>
+#
+# but with curly brackets instead of angle brackets.
+#
+# In the comment preceding this line, you should be an example of a
+# possible value of this property, such as "0.8.9".  Were this
+# property to have this value in the eprops.txt file, it would appear
+# as
+#
+#     e.version=0.8.9
+#
+# The eprops.txt file is written in a restricted form of Java's
+# Properties file save/load syntax.  All these property definitions
+# get loaded into an E process' System.properties.  If you are looking
+# at an eprops.txt file, each property definition should have this
+# form.
+#
+# Notice that there are no quotes around the value.  This is correct
+# even if the property value contains spaces, since the Java property
+# syntax reads all text till the end of the line.
+#
+# When a property value is a file or directory path name, it should be
+# absolute and use forward slashes ("/"), regardless of the local
+# platform's convention.  If it's a non-top-level directory, a
+# terminal slash is optional.  Note: On MSWindows, you must specify
+# drives the MSWindows/Java way ("c:...") rather than the Cygwin way
+# ("//c/...").
+#
+# When a property value is a pathlist (a list of paths, sometimes also
+# confusingly refered to as a "path", as in the PATH or CLASSPATH
+# variables), then the entries should be separated by a semicolon
+# (";"), independent of platform.  (As opposed to the Java convention,
+# which is either ";" or ":" depending on platform.)
+#
+# The eprops.txt file should serve as a record of everywhere (outside
+# of the install directory itself) that installation placed files, so
+# that a future uninstaller will know (fingers crossed) what files to
+# remove.
+#
+# @author Mark S. Miller
+
+
+
+# What version of E is this?
+#
+# For example, "0.8.9".
+
+e.version=0.8.9p
+
+
+# Where is E installed?  If this file is eprops.txt (as opposed to
+# eprops-template.txt) then this eprops.txt file should be in this
+# directory.
+#
+# For example, "c:/Program Files/erights.org/"
+
+e.home=/home/markm/ehome/
+
+
+# What is the absolute path of the Java executable command?  This must
+# be a Java compatible with Sun's JDK >= 1.2.  Though it's strongly
+# prefered to use a Java compatible with JDK >= 1.3 or one important
+# feature of E (Generic Deflectors) won't work.  Soon, E will no
+# longer support Javas not compatible with >= 1.3.
+#
+# For example, "d:/jdk1.3/bin/java.exe"
+
+e.javacmd=java
+
+
+# When E shortcuts are launched from the desktop, where should their
+# current directory be?  Under *nix currently, this option does
+# nothing.  On MSWindows, this option affects only newly generated
+# shortcuts.  After changing this option, rerun the setupWindows.e
+# command to generate new shortcuts.
+#
+# For example: "c:/WINDOWS/Desktop" or "".
+
+e.launch.dir=/home/markm
+
+
+# Where does trace data go?  This directory will accumulate
+# debugging information provided by running E programs in order to
+# facilitate a post-mortem analysis of problems.  The trace system
+# treats the directory as a large circular buffer giving a finite
+# window into the past in exchange for a finite memory burden.
+#
+# For example: "c:/WINDOWS/temp/etrace" or "".
+
+TraceLog_dir=/home/markm/etrace
+
+
+
+# Where are copies of the "e" bash script placed?  On MSWIndows, this
+# option is only relevant to Cygwin users.  The "e" script should be
+# placed somewhere on the PATH visible from a shell.  (On MSWindows,
+# this means Cygwin shells, but not the MSDOS shell).
+#
+# For example: "c:/WINDOWS/;/home/markm/bin"
+
+e.put.bash.pathlist=/home/markm/bin
+
+
+# Where are copies of the shortcuts placed?
+#
+# For example: "c:/WINDOWS/Desktop;c:/WINDOWS/Start Menu/Programs/erights.org".
+
+e.put.shortcut.pathlist=
+
+
+# Which of .e, .emaker, .updoc, .vat, and .cap should be associated
+# with icons, registry types, mime types, launching programs, and
+# other right button menu commands?  Currently, this definition does
+# nothing, and setup.e simply grabs whatever extensions it likes
+# (which are these 5).
+#
+# ".e;.maker;.updoc;.vat;.cap" or any subset.
+
+e.extensionslist=.e;.maker;.updoc;.vat;.cap
+
+
+# Name of vendor providing this E implementation
+#
+# For example: "ERights.org"
+
+e.vendor=ERights.org
+
+
+# URL of vendor's website
+#
+# For example: "http://www.erights.org/"
+
+e.vendor.url=http://www.erights.org/

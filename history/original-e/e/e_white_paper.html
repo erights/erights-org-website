@@ -1,0 +1,257 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.03 [en] (Win95; U) [Netscape]">
+   <TITLE>The E Extensions to Java</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+
+<BLOCKQUOTE>
+<CENTER>
+<H1>
+The E Extensions to Java</H1></CENTER>
+
+<CENTER>
+    An&nbsp;<IMG SRC="mini_electric.gif"  ALIGN=BOTTOM> White Paper
+</CENTER>
+
+
+<P><I><FONT SIZE=-1>Electric Communities has developed a set of extensions
+to Java, called E, to help developers write distributed applications. E
+combines Sun's Java programming language with some powerful enhancements:
+communications extensions for the development of distributed applications;
+optimistic computation, a powerful method for reducing the effect of communications
+latency in distributed systems; and an improved security model based on
+capability semantics and public-key cryptography, permitting fine-grained
+control over access to system resources without sacrificing security.</FONT></I>
+
+<P><I><FONT SIZE=-1>E is intended for programmers writing network applications,
+including databases, groupware, publishing systems, and multimedia.</FONT></I>
+
+<P>
+<HR>
+<H2>
+What is E?</H2>
+E is a programming language designed for developers who write distributed
+applications. It builds on the strength of Sun's Java language, an open
+standard that already provides some flexibility for developers writing
+World Wide Web applets. However, developers are finding that Java is not
+well suited to more ambitious distributed applications because Java's incomplete
+security model requires unacceptable trade-offs between expressive power
+and safety.
+
+<P>The E language improves on Java's security model and provides other
+powerful communications-oriented features. These include:
+<UL>
+<LI>
+Distributed communication: E features a built-in model for remote object
+communications, allowing an object to send messages directly to objects
+that exist in other machines.</LI>
+
+<LI>
+Capability semantics: a sophisticated security model that allows for extremely
+detailed control over sensitive functions within a single machine or across
+a network.</LI>
+
+<LI>
+Optimistic computation: a powerful method for reducing the effect of communications
+latency in distributed systems.</LI>
+</UL>
+
+<H2>
+Distributed Communication</H2>
+Distributed communication provides a single messaging facility that allows
+an object to send a message to another object, even if the other object
+is in a different machine on the network. The E language lets a programmer
+automatically establish connections between objects without having to deal
+directly with the underlying network protocols.
+<H2>
+Capability Semantics</H2>
+E's capability semantics provides a security model based on the use of
+capabilities, which grant permissions to send particular messages to particular
+objects in a distributed system.
+
+<P>E's security model is quite different from Java's. Java's basic assumption
+is simple: all code that originated on the local hard disk drive is trusted;
+all code that originated from the network is not trusted. Based on this
+model, Java provides system security by checking each time a "potentially
+dangerous" method is invoked; if no untrusted class is on the stack, the
+method is allowed to execute.
+
+<P>This all-or-nothing approach can be secure, but it has some basic weaknesses.
+A Java applet that establishes network connections, reads a configuration
+file, or manipulates a database, must first be downloaded to the user's
+local hard disk. Once it is local, that code is automatically assumed to
+be completely trustworthy. It is entrusted with resources that it might
+not need, which can help foster viruses and trojan horses. It is not possible
+in Java to assign access selectively, on an as-needed basis. In order to
+grant some power to an applet, all powers must be granted.
+
+<P>In contrast to Java's all-or-nothing model, E's approach to system protection
+is flexible and general. E's security model is built on its distributed
+communications and capabilities semantics features. Security is maintained
+by restricting the ability of objects to send specific messages to specific
+objects. It is impossible for an object to send an unauthorized message.
+Once the capability to reference an object or send a message has been granted,
+no further run-time check is required.
+
+<P>Capabilities are granted to E objects at load time. A cryptographic
+signature and a set of capability requirements are attached to every E
+object. The E object can have several kinds of "trustedness," independent
+of whether it exists on the local hard disk or whether it originated on
+the network. Based on the trustedness of the signature, the set of capabilities
+is granted or refused.
+
+<P>For example, you would not want to give a relatively untrusted application
+the ability to write anywhere in the file system. But you might want to
+give that application the ability to add a limited number of records to
+a database, and nothing else. By creating a trusted object that implements
+limited capabilities, and giving the untrusted application the ability
+to send messages to this new object, you can obtain more interesting functionality
+from the untrusted code without compromising security.
+<H2>
+Optimistic Computation</H2>
+Optimistic computation helps solve the troublesome problems of deadlock
+and race conditions which plague distributed systems. E's implementation
+of optimistic computation lets your program send a message to an object
+requesting a value, and still continue executing the rest of the code "optimistically"
+as if it already has the answer it needs.
+
+<P>Optimistic computation simplifies design and increases reliability while
+decreasing network latency. E implements this by adding channels to its
+distributed communications model.
+
+<P>E classes rely on sending messages rather than on the traditional call/return
+semantics of Java. Messages do not have return results; they are merely
+sent. When an object actually requires a value as the result of sending
+a message to another object, it includes a channel as one of the message
+parameters. The channel acts as a container into which the result will
+be placed. The object providing the channel uses it as a reference to the
+return value and can begin sending messages to it immediately, even before
+the actual value has been determined. Thus, the sender of the message can
+continue executing without stopping to wait for the result. E also includes
+an exception handling mechanism to deal with bad messages or return values
+that never materialize.
+
+<P>By allowing computation to continue, more messages can be sent over
+the network in a given period of time, allowing for better utilization
+of the available bandwidth. Because many message roundtrips can now overlap,
+total latency is effectively reduced.
+
+<P>Another advantage of optimistic computation is the elimination of unnecessary
+network roundtrips. As a protocol is carried out, channels can be nested
+within channels so that the anticipated result can be altered "through
+the pipeline," as it were, before it is actually received. A series of
+messages with commands such as "multiply these," "add one to the result,"
+"send your result to the following object" can be sent through a series
+of channels without ever requiring a packet to be received back across
+the network. Thus, latency is reduced because fewer network round trips
+are made.
+
+<P>E's message passing semantics eliminates deadlocks and the need for
+locking. Only one method at a time may be executed by a single instance
+of an E object, if that object contains mutable state information.
+
+<P>By operating under these assumptions, the E environment guarantees that
+object state information will remain consistent and that processes can
+execute to completion.
+<H2>
+E Classes and Java Classes</H2>
+E classes can interoperate with standard Java classes. The coding of E
+methods is similar to Java method coding, with some syntactic extensions.
+E classes can contain ordinary Java methods internally.
+
+<P>The E environment still utilizes Java's call and return semantics for
+communication between Java objects. Between E objects, however, optimistic
+computation is used. E classes can encapsulate Java code, enabling it to
+interact with other E objects optimistically.
+<H2>
+Product Features</H2>
+The E language is implemented as a compiler that maps E source code directly
+into Java byte codes. Java and E code can coexist in the same program--you
+can write Java classes in an E program, and implement private Java methods
+within E classes. Since E is built on Java, you can take full advantage
+of E features and yet easily integrate it with your Java code.
+
+<P>The E product includes a runtime library that supports E features such
+as security management, object persistence, communications, and access-controlled
+objects. There is also a unique distributed garbage collector that works
+with local collection systems to identify and collect obsolete cycles of
+objects on the network.
+
+<P>The E product also includes an example suite, which demonstrate E's
+unique feature set. The product documentation includes example source code
+and conceptual explanations.
+<H2>
+Summary</H2>
+E adds this set of powerful features to the popular Java language, transforming
+it from an applet language to a language for distributed applications:
+<UL>
+<LI>
+Transparent object-to-object communications</LI>
+
+<LI>
+Non-blocking message send</LI>
+
+<LI>
+Automatic connection management</LI>
+
+<LI>
+Access controlled messages and objects</LI>
+
+<LI>
+Cryptographic capability management</LI>
+
+<LI>
+Deadlock and race avoidance</LI>
+
+<LI>
+Latency compensation</LI>
+
+<LI>
+Interoperability with Java</LI>
+
+<LI>
+Orthogonal persistence</LI>
+
+<LI>
+Distributed garbage collection</LI>
+</UL>
+Remember that E allows developers to create secure applications, but it
+cannot guarantee security on its own. The features that E provides must
+be utilized with care and common sense on the part of developers.
+<H2>
+About Electric Communities</H2>
+Founded in 1993, Electric Communities is a software development company
+based in the Silicon Valley. The founders of Electric Communities are leaders
+in the technology and sociology of human interaction in computer-mediated
+environments. We have a history of developing and delivering first-of-their-kind
+products, including Lucasfilm's Habitat, the first graphical online community,
+and AMiX, the American Information Exchange, the first online information
+marketplace. Our goal is to create comfortable, extensible environments
+for online entertainment and commerce.
+
+<P>Electric Communities
+<BR>10101 N. De Anza Boulevard, Suite 100
+<BR>Cupertino, CA 95014
+<BR>408.342.9500
+<BR>408.777.9200 fax
+<BR>electric@communities.com
+<BR>http://www.communities.com/
+<BR>&nbsp;
+<BR>&nbsp;
+
+<P>Electric Communities and the E logo are trademarks of Electric Communities.
+Use of the E logo for commercial purposes without the prior written consent
+of Electric Communities may constitute trademark infringement and unfair
+competition in violation of federal and state laws.
+
+<P>This document is copyrighted by Electric Communities with all rights
+reserved worldwide. Under copyright laws, this document may not be copied,
+in whole or in part, without the written consent of Electric Communities.
+Under the law, copying includes translating into another language.
+
+<P>Java(TM) is a trademark of Sun Microsystems, Inc.</BLOCKQUOTE>
+
+</BODY>
+</HTML>

@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Distributed Capability Confinement</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">capability</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="factory.html" title="Back to: The KeyKOS Factory"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: The KeyKOS Factory" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="deputy.html" title="On to: The Confused Deputy"><img src="../../images/next.gif" width="64" height="32" alt="On to: The Confused Deputy" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>Distributed<br>
+              Capability Confinement<br>
+              </b></FONT><font size="3">An observation of Norm Hardy's,<br>
+              written up by Mark S. Miller and Melora Svoboda</font><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <P ALIGN="left">This chapter explains how one can confine distributed capabilities
+        even when one can't outwardly confine bits.
+      <h2>Full Confinement <i>vs</i>. Capability Confinement</h2>
+      In a system in which capabilities are not <i>accessibly represented</i>
+      as bits, the ability to outwardly leak bits does not enable the ability
+      to leak capabilities. We first explore a single-machine pure capability
+      system, such as the world of Java instances.
+      <p><i>Accessible representation</i> can be illustrated by the Java object
+        reference, which is implemented as just a 32-bit pointer. To Java objects,
+        object references are completely opaque--even with knowledge of the 32
+        bits that constitute a pointer (which can typically be obtained by <tt>Object.toString()</tt>),
+        there is no operation for obtaining the corresponding pointer.
+      <p>Assume four objects:
+      <ol>
+        <li> a confined object, Bob</li>
+        <li> an unconfined conspirator, Mallet</li>
+        <li> a customer of the confined object, Alice</li>
+        <li> an authority-granting object, eg, an expense account</li>
+      </ol>
+      Alice gives Bob access to an object that provides some authority, such as
+      an expense account. Alice has proper access to Bob, and Alice interacts
+      with Bob counting on Bob's inability to interact with Mallet. Alice feels
+      safe handing Bob the expense account since Bob is presumably confined. Alice
+      is confident Bob can only spend the money on the things Bob may access within
+      the confinement rules.
+      <p>Mallet, not being confined, has a broader range of spending options available.
+        Since Bob and Mallet are conspirators, if Bob <i>could</i> transmit the
+        capability to spend to Mallet, he would do so. Covert channels do enable
+        Bob to transmit bits to Mallet, but Bob cannot transmit an object reference
+        to Mallet, even though the object reference is implemented only out of
+        bits. This is an example of a defensible confinement claim in a system
+        in which bits cannot be confined.
+      <h2> Inward <i>vs.</i> Outward Bit Confinement</h2>
+      &lt;need an explicit discussion of the differences>&nbsp;
+      <hr>
+      <h2> Distributed Capabilities</h2>
+      Within a programming language's virtual machine or a single-machine operating
+      system, there exists a special mechanism--the kernel--that sits underneath
+      all of the participants and is mutually trusted. We use that special status
+      to create a universe of capabilities among those participants. On an open
+      network, on the other hand, there is no common mutually trusted mechanism.
+      Therefore, distributed capabilities have to live within stricter constraints.
+      Distributed capabilities on open networks can only be implemented cryptographically,
+      and cryptography can only represent capabilities as bits. The bit representation
+      of a capability is necessarily accessible to a machine participating in
+      the network that holds that capability. Therefore, a machine on an open
+      network cannot be fully confined or even be capability confined.
+      <h2> Having <i>vs. </i>Knowing</h2>
+      In cryptography, authorization is necessarily based on knowledge of secrets.
+      Therefore, to have a right is only to know something, and knowledge of that
+      secret thereby provides the right. In a pure capability system, on the other
+      hand (such as the world of Java instances), <i>having</i> an object is absolutely
+      different than <i>knowledge</i> of the object. It is novel to have such
+      a distinction in computation because of the doctrine that within computation
+      there is <i>only information.</i> However, in Java and in the physical world,
+      no amount of <i>knowledge about </i>an object can provide <i>access to</i>
+      the object.
+      <p>This is the basic contrast between having and knowing, and between cryptography
+        and pure capabilities.
+      <h2> The Fallacy</h2>
+      In the Pluribus network protocol a distributed capability is turned into a unguessable
+      secret number, such that knowledge of the secret constitutes the ability
+      to invoke the object. (A distributed capability also includes the fingerprint
+      of the public key of the process hosting the object, but that is beyond
+      the scope of this note.) Since the ability to invoke the object is simply
+      secret <i>bits</i>, someone who knows that secret <i>can</i> choose to communicate
+      it to anyone they wish. The na&iuml;ve conclusion is that one cannot capability-confine
+      a distributed computation. Why might one think this?
+      <p>In the network protocol capabilities are necessarily represented as bits.
+        A distributed computation necessarily makes use of the network protocol.
+        Therefore, the ability to leak bits would enable a distributed confined
+        computation to leak these bits to a conspirator that can turn the bits
+        back into a capability. Fortunately, there is a flaw in this reasoning.
+      <h2> The Solution</h2>
+      <center>
+        <img src="images/bob-in-a-box.gif" height=301 width=401 alt="Distributed Confinement Box"> 
+      </center>
+      <center>
+      </center>
+      <center>
+        Figure 1: Distributed Confinement
+      </center>
+      <p>What we have in Figure 1 is a confined Bob as an object graph distributed
+        between machines A and B. (We call the part of Bob present on machine
+        A <i>presence X</i>, and the part of Bob present on machine B <i>presence
+        Y</i>.) The capabilities which cross between the machines are necessarily
+        represented by bits accessible to the participating machines. The machines
+        themselves are assumed to be mutually suspicious. Within the comm system
+        bits and capabilities are interchangeable, therefore the comm system cannot
+        be confined.
+      <p>Given that machines A and B do in fact collaborate to confine the Bob,
+        Bob cannot leak distributed capabilities over covert channels, even though
+        the distributed capabilities would seem to be represented by unconfinable
+        bits. Machines A and B deny to their respective parts of Bob knowledge
+        of the bits that correspond to the remote capabilities they hold. However,
+        the comm system <i>can</i> present to Presence X or Y <i>encapsulated
+        proxies</i> that give the presence a capability designating a remote object
+        while denying to the presence the knowledge of the secret number used
+        to represent the capability on the network. As a result, Bob is a distributed
+        computation that is in a distributed confinement box.
+      <p>Machines A and B, and their respective comm systems, are playing by crypto
+        rules where having and knowing are equivalent. However, they can still
+        arrange to constrain Bob to play by pure capability rules where having
+        and knowing are absolutely different.
+      <P ALIGN="left">&nbsp;
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">capability</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="factory.html" title="Back to: The KeyKOS Factory"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: The KeyKOS Factory" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="deputy.html" title="On to: The Confused Deputy"><img src="../../images/next.gif" width="64" height="32" alt="On to: The Confused Deputy" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

@@ -1,0 +1,540 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>float64 Type</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">scalars</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="integer-ref.html" title="Back to: integer Type"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: integer Type" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="boolean-ref.html" title="On to: boolean Type"><img src="../../images/next.gif" width="64" height="32" alt="On to: boolean Type" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Scalar
+              Type:<br>
+              float64 </B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p>E's float64s are the subset of standard IEEE double precision floating
+        point values specified by Java. This is identical to the IEEE standard
+        except that there's only one (non-signalling) NaN value, and the only
+        rounding mode supported is round-to-even. Therefore, a float64 can only
+        have one of four kinds of values:</p>
+      <ul>
+        <li>A real number, eg, 3.0</li>
+        <li>Positive Infinity, eg, the result of 1.0/0.0</li>
+        <li>Negative Infinity, eg, the result of -1.0/0.0</li>
+        <li>NaN (Not a Number), eg, the result of 0.0/0.0</li>
+      </ul>
+      <table width="100%" border="2" cellspacing="2" cellpadding="2">
+        <tr>
+          <td>Having only 64 bits, a float64 can only represent a finite set of
+            real numbers. We often think of a floating point value as approximating
+            a real number, but it's better to think of one as representing an
+            exact real values, but only approximating arithmetic. Since only a
+            finite set of reals can be represented, we might not be able to represent
+            the real sum of <tt>a</tt> and <tt>b</tt>. If this sum is
+            representable, IEEE, Java, and E all guarantee that &quot;<tt>a
+            + b</tt>&quot; produce the value exactly representing this sum.
+            Otherwise, round-to-even guarantees that we choose the value representing
+            the nearest real number, with rules for tie breaking and edge conditions
+            of concern only to the hard core numerical analyst.</td>
+        </tr>
+      </table>
+      <h3><a name="SameFloat64"></a>Boolean Comparisons (non-associative)</h3>
+      <p>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Example</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+          <th>Value</th>
+        </tr>
+        <tr>
+          <td><tt>5.1 == 5.1</tt></td>
+          <td>Are they the same?</td>
+          <td><tt>__equalizer.sameEver(5.1, 5.1)</tt></td>
+          <td><tt>true</tt></td>
+        </tr>
+        <tr>
+          <td><tt>5.1 == 6.1</tt></td>
+          <td>Are they the same?</td>
+          <td><tt>__equalizer.sameEver(5.1, 6.1)</tt></td>
+          <td><tt>false</tt></td>
+        </tr>
+        <tr>
+          <td><tt>5.1 != 6.1</tt></td>
+          <td>Are they different?</td>
+          <td><tt>__equalizer.sameEver(5.1, 6.1).not()</tt></td>
+          <td><tt>true</tt></td>
+        </tr>
+      </table>
+      <p></p>
+      <p>As explained in <i><a href="../same-ref.html">When Are Two Things the
+        Same?</a></i>, &quot;==&quot; tests whether two values are computationally
+        equivanelent. As applied to float64 values, leaving aside NaNs, -0.0,
+        or mixing float64s with integers, this is the same as arithmetic equality
+        (as defined by the IEEE floating point standard). </p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+<span class="stdout">? </span>5.1 == 5.1
+<span class="stdout"># value: true</span>
+</pre>
+      </blockquote>
+      <p>You can use &quot;<tt>&lt;=&gt;</tt>&quot; operator to test for arithmetic
+        equality:</p>
+      <p>The following cases are all those for which being the same differs from
+        being arithmetically equal:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>NaN == NaN
+<span class="stdout"># value: true
+
+? </span>NaN &lt;=&gt; NaN
+<span class="stdout"># value: false</span>
+</pre>
+      </blockquote>
+      <p>These are clearly the same, and E says so. However, according to the
+        IEEE standard, NaNs are not arithmetically equal to anything, including
+        themselves.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>0.0 == -0.0
+<span class="stdout"># value: false
+
+? </span>0.0 &lt;=&gt; -0.0
+<span class="stdout"># value: true</span>
+</pre>
+      </blockquote>
+      <p>IEEE states that positive zero and negative zero are distinct values
+        that are nevertheless arithmetically equal. Since they're distinct, they
+        aren't the same, and E says so.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>3.0 == 3
+<span class="stdout"># value: false
+
+? </span>3.0 &lt;=&gt; 3
+<span class="stdout"># value: true</span>
+</pre>
+      </blockquote>
+      <p>Of course, integer values are distinct from floating point values, even
+        when they represent the same real number.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>3 == 3.0
+<span class="stdout"># value: false
+
+? </span>3 &lt;=&gt; 3.0
+<span class="stdout"># value: true</span>
+</pre>
+      </blockquote>
+      <p>In all cases, &quot;<tt>a != b</tt>&quot; is equivalent to &quot;<tt>!(a
+        == b)</tt>&quot;.</p>
+      <h3>Magnitude Comparisons (non-associative)</h3>
+      <p>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Example</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+          <th>Value</th>
+        </tr>
+        <tr>
+          <td>
+            <pre><tt>5.1 &lt; 6.1</tt></pre>
+          </td>
+          <td>less than</td>
+          <td>
+            <pre><tt>5.1.compareTo(6.1).belowZero()</tt></pre>
+          </td>
+          <td><tt>true</tt></td>
+        </tr>
+        <tr>
+          <td>
+            <pre><tt>5.1 &lt;= 6.1</tt></pre>
+          </td>
+          <td>less or equal to</td>
+          <td>
+            <pre><tt>5.1.compareTo(6.1).atMostZero()</tt></pre>
+          </td>
+          <td><tt>true</tt></td>
+        </tr>
+        <tr>
+          <td>
+            <pre><tt>5.1 &gt;= 6.1</tt></pre>
+          </td>
+          <td>greater or equal to</td>
+          <td>
+            <pre><tt>5.1.compareTo(6.1).atLeastZero()</tt></pre>
+          </td>
+          <td><tt>false</tt></td>
+        </tr>
+        <tr>
+          <td>
+            <pre><tt>5.1 &gt; 6.1</tt></pre>
+          </td>
+          <td>greater than</td>
+          <td>
+            <pre><tt>5.1.compareTo(6.1).aboveZero()</tt></pre>
+          </td>
+          <td><tt>false</tt></td>
+        </tr>
+      </table>
+      <p></p>
+      <p>On float64, these have the standard conventional meaning, but you may
+        find this meaning surprising:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>3.0 &lt;= NaN
+<span class="stdout"># value: false
+
+? </span>NaN &lt;= 3.0
+<span class="stdout"># value: false
+
+? </span>NaN &gt;= 3.0
+<span class="stdout"># value: false
+
+? </span>NaN &lt;= NaN
+<span class="stdout"># value: false</span></pre>
+      </blockquote>
+      <p>Yup. If at least one of the operands is a NaN, the answer's always false.
+        This means that the double precision floating point values are not fully
+        ordered, and many sorting algorithms many fail to sort them. All this
+        applies equally to Java.</p>
+      <h3>Interval Expressions (non-associative)</h3>
+      <p>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Example</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+          <th>Value</th>
+        </tr>
+        <tr>
+          <td><tt>5.0..9.0</tt></td>
+          <td>the numbers from 5.0 inclusive to 9.0 inclusive</td>
+          <td><tt>__makeOrderedSpace.op__thru(5.0, 9.0)</tt></td>
+          <td><tt>5.0..9.0</tt></td>
+        </tr>
+        <tr>
+          <td><tt>5.0..!9.0</tt></td>
+          <td>the numbers from 5.0 inclusive to 9.0 exclusive</td>
+          <td><tt>__makeOrderedSpace.op__till(5.0, 9.0)</tt></td>
+          <td><tt>5.0..!9.0</tt></td>
+        </tr>
+      </table>
+      <p></p>
+      <p>Whereas on integers, 5..!9 is equivalent to 5..8, on float64s 5.0..!9.0
+        includes all the double precision floating point numbers up to but excluding
+        9.0. It approximates the mathematical concept of a closed-open interval.
+        We have yet to determine what the protocol is of the resulting float64
+        interval, but (unlike integer intervals) it cannot act like a ConstList,
+        as it would be too exhausting to enumerate one.</p>
+      <h3>Additive Expressions (left associative)</h3>
+      <p>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Example</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+          <th>Value</th>
+        </tr>
+        <tr>
+          <td><tt>5.0 + 6.0</tt></td>
+          <td>addition</td>
+          <td><tt>5.0.add(6.0)</tt></td>
+          <td><tt>11.0</tt></td>
+        </tr>
+        <tr>
+          <td><tt>5.0 - 6.0</tt></td>
+          <td>subtraction</td>
+          <td><tt>5.0.subtract(6.0)</tt></td>
+          <td><tt>-1.0</tt></td>
+        </tr>
+      </table>
+      <p></p>
+      <p>As you'd expect.</p>
+      <h3>Multiplicative Expressions (left associative)</h3>
+      <p>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Example</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+          <th>Value</th>
+        </tr>
+        <tr>
+          <td>
+            <pre><tt>-5.1 * 3.1</tt></pre>
+          </td>
+          <td>multiplication</td>
+          <td>
+            <pre><tt>(-5.1).multiply(3.1)</tt></pre>
+          </td>
+          <td><tt>-15.81</tt></td>
+        </tr>
+        <tr>
+          <td>
+            <pre><tt>-5.1 / 3.1</tt></pre>
+          </td>
+          <td>floating-point division</td>
+          <td>
+            <pre><tt>(-5.1).approxDivide(3.1)</tt></pre>
+          </td>
+          <td><tt>-1.64516</tt></td>
+        </tr>
+        <tr>
+          <td>
+            <pre><tt>-5.1 // 3.1</tt></pre>
+          </td>
+          <td>integer division, rounding down</td>
+          <td>
+            <pre><tt>(-5.1).floorDivide(3.1)</tt></pre>
+          </td>
+          <td><tt>-2</tt></td>
+        </tr>
+        <tr>
+          <td>
+            <pre><tt>-5.1 % 3.1</tt></pre>
+          </td>
+          <td>remainder</td>
+          <td>
+            <pre><tt>(-5.1).remainder(3.1)</tt></pre>
+          </td>
+          <td><tt>-2.0</tt></td>
+        </tr>
+        <tr>
+          <td>
+            <pre><tt>-5.1 %% 3.1</tt></pre>
+          </td>
+          <td>modulo</td>
+          <td>
+            <pre><tt>(-5.1).mod(3.1)</tt></pre>
+          </td>
+          <td><tt>1.1</tt></td>
+        </tr>
+        <tr>
+          <td>
+            <pre><tt>2.1 ** 5.1 %% 3.1</tt></pre>
+          </td>
+          <td>modular exponentiation</td>
+          <td>
+            <pre><tt>2.1.modPow(5.1, 3.1)</tt></pre>
+          </td>
+          <td><tt>0.586398</tt></td>
+        </tr>
+      </table>
+      <p></p>
+      <p>These mean the same as they do for integers. Notice that for both integers
+        and float64s, &quot;/&quot; produces a float64 and &quot;//&quot; produces
+        an integer.</p>
+      <h3>Exponentiation Expression (non associative)</h3>
+      <p>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Example</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+          <th>Value</th>
+        </tr>
+        <tr>
+          <td>
+            <pre><tt>2.0 ** -3.0</tt></pre>
+          </td>
+          <td>exponentiation</td>
+          <td>
+            <pre><tt>2.0.pow(-3.0)</tt></pre>
+          </td>
+          <td>
+            <pre><tt>0.125</tt></pre>
+          </td>
+        </tr>
+      </table>
+      <p></p>
+      <p>As you'd expect.</p>
+      <h3>Negation Expression (left associative)</h3>
+      <p>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Example</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+          <th>Value</th>
+        </tr>
+        <tr>
+          <td>
+            <pre><tt>-5.0</tt></pre>
+          </td>
+          <td>negation</td>
+          <td>
+            <pre><tt>5.0.negate()</tt></pre>
+          </td>
+          <td>
+            <pre><tt>-5.0</tt></pre>
+          </td>
+        </tr>
+      </table>
+      <p></p>
+      <p>As you'd expect.</p>
+      <p>
+      <hr align="CENTER">
+      <p></p>
+      <h2>Additional float64 Messages</h2>
+      <p>In addition to the messages corresponding to the above operators, float64s
+        respond to the following messages.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>(-5.1).truncDivide(3.1)
+<span class="stdout"># value: -1</span></pre>
+      </blockquote>
+      <p>&quot;truncDivide&quot; is integer division where the answer is rounded
+        to an integer by rounding towards zero. It correspond to Java's &quot;/&quot;
+        operator on integers.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>(-5.1).ceil()
+<span class="stdout"># value: -5</span></pre>
+      </blockquote>
+      <p>Nearest integer by rounding towards positive infinity.
+      <blockquote>
+        <pre><span class="stdout">? </span>(-5.1).floor()
+<span class="stdout"># value: -6</span></pre>
+      </blockquote>
+      <p>Nearest integer by rounding towards negative infinity.
+      <blockquote>
+        <pre><span class="stdout">? </span>(-5.1).round()
+<span class="stdout"># value: -5
+
+? </span>(-5.6).round()
+<span class="stdout"># value: -6</span></pre>
+      </blockquote>
+      <p>The actually nearest integer.
+      <blockquote>
+        <pre><span class="stdout">? </span>(-5.1).truncate()
+<span class="stdout"># value: -5
+
+? </span>(-5.1).truncate()
+<span class="stdout"># value: -5</span></pre>
+      </blockquote>
+      <p>Nearest integer by rounding towards zero.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>(-5.1).abs()
+<span class="stdout"># value: 5.1</span></pre>
+      </blockquote>
+      <p>Absolute value.</p>
+      <p>
+      <hr align="CENTER">
+      <p></p>
+      <p>Additional messages <b><tt>log</tt></b><tt>, <b>sin</b>, <b>cos</b>,
+        <b>tan</b>, <b>sqrt</b>, <b>exp</b>, <b>asin</b>, <b>acos</b>, <b>atan</b>,
+        <b>atan2</b>(y), <b>min</b>(other), </tt>and<tt> <b>max</b>(other)</tt>
+        are simply the corresponding static methods of <tt>java.lang.Math</tt>
+        turned into instance methods of float64. See the javadoc-umentation of
+        java.lang.Math for their specification.</p>
+      <p>Some useful constants and corresponding tests:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>NaN.isNaN()
+<span class="stdout"># value: true</span></pre>
+        <pre><span class="stdout">? </span>Infinity.isInfinite()
+<span class="stdout"># value: true</span></pre>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">PI</span> := (0.0.acos()) * 2.0
+<span class="stdout"># value: 3.141592653589793
+
+? </span><span class="keyword">def</span> <span class="defvar">e</span> := 1.0.exp()
+<span class="stdout"># value: 2.7182818284590455</span></pre>
+      </blockquote>
+      <p>
+      <hr align="CENTER">
+      <h3>Mixing integers and float64s</h3>
+      <p><font color="#FF0000">Obsolete: </font>E adopts a simple but strange
+        rule regarding expressions of mixed arithmetic type: unless specified
+        otherwise, the right operand must always adapt to the left operand. This
+        is known as the <i>left-side-wins</i> rule. Integers are happy to adapt
+        by automatically converting to float64. However, since there's no one
+        right way for a float64 to convert to an integer, the programmer must
+        specify:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>3.1 + 5
+<span class="stdout"># value: 8.1
+
+? </span>3 + 5.1
+<span class="stdout"># value: 8.1
+
+? </span>3 + 5.1.round()
+<span class="stdout"># value: 8</span></pre>
+      </blockquote>
+      <p>The chapter on capability programming style will explain how the left-side-wins
+        rule accomodates both extensibility and security.
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">scalars</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="integer-ref.html" title="Back to: integer Type"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: integer Type" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="boolean-ref.html" title="On to: boolean Type"><img src="../../images/next.gif" width="64" height="32" alt="On to: boolean Type" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

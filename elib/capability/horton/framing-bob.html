@@ -1,0 +1,381 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>Alice Frames Bob</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">capability</a>&nbsp;/&nbsp;<a href="index.html">horton</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="nary.html" title="Back to: Handling N Arguments"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Handling N Arguments" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="framing-carol.html" title="On to: Alice Frames Carol"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Alice Frames Carol" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b>Alice 
+              Frames Bob</b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> If Horton's wrap/unwrap functions were 
+      instead simple identity functions, then Alice <a href="#attack">could fool</a> 
+      Carol into blaming Bob for messages sent by Alice. 
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.9</span>&quot;)</pre>
+      </blockquote>
+      <p>Changed from <a href="nary.html">the nary original</a> so that C can 
+        also be asked to be evil, and so that A can ask its c to be evil.</p>
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defobj">c</span> {
+<span class="stdout">&gt; </span>    <span class="keyword">to</span> <span class="defverb">hi</span>() {
+<span class="stdout">&gt; </span>        println("<span class="litchars">hi</span>")
+<span class="stdout">&gt; </span>    }
+<span class="stdout">&gt; </span>    <span class="keyword">to</span> <span class="defverb">beEvil</span>() {                   <span class="comment"># ADDED!</span>
+<span class="stdout">&gt; </span>        println(&quot;<span class="litchars">a bad word</span>&quot;)
+<span class="stdout">&gt; </span>    }
+<span class="stdout">&gt; </span>}
+<span class="stdout"># value: &lt;c&gt;
+ 
+</span><span class="stdout">? </span>c.hi()
+<span class="stdout"># stdout: hi
+#
+ 
+? </span>c.beEvil()                          <span class="comment"># ADDED!</span>
+<span class="stdout"># stdout: a bad word
+#
+ 
+</span><span class="stdout">? </span><span class="keyword">def</span> <span class="defobj">b</span> {
+<span class="stdout">&gt; </span>    <span class="keyword">to</span> <span class="defverb">foo</span>(<span class="defvar">c</span>) {
+<span class="stdout">&gt; </span>        c.hi()
+<span class="stdout">&gt; </span>    }
+<span class="stdout">&gt; </span>}
+<span class="stdout"># value: &lt;b&gt;
+ 
+? </span>b.foo(c)
+<span class="stdout"># stdout: hi
+#
+ 
+? </span><span class="keyword">def</span> <span class="defobj">makeA</span>(<span class="defvar">b</span>, <span class="defvar">c</span>) {
+<span class="stdout">&gt; </span>    <span class="keyword">def</span> <span class="defobj">a</span> {
+<span class="stdout">&gt; </span>        <span class="keyword">to</span> <span class="defverb">start</span>() {
+<span class="stdout">&gt; </span>            b.foo(c)
+<span class="stdout">&gt; </span>        }
+<span class="stdout">&gt; </span>        <span class="keyword">to</span> <span class="defverb">badStart</span>() {            <span class="comment"># ADDED!</span>
+<span class="stdout">&gt; </span>            c.beEvil()
+<span class="stdout">&gt; </span>        }
+<span class="stdout"></span><span class="stdout">&gt; </span>    }
+<span class="stdout">&gt; </span>    <span class="keyword">return</span> a
+<span class="stdout">&gt; </span>}
+<span class="stdout"># value: &lt;makeA&gt;
+ 
+? </span><span class="keyword">def</span> <span class="defvar">directA</span> := makeA(b, c)
+<span class="stdout"># value: &lt;a&gt;
+ 
+? </span>directA.start()
+<span class="stdout"># stdout: hi
+#
+ 
+? </span>directA.badStart()                 <span class="comment"># ADDED!</span>
+<span class="stdout"># stdout: a bad word
+#</span></pre>
+      </blockquote>
+      <p>The only change from <a href="nary.html">the nary original</a> is to 
+        simplify the wrap/unwrap functions to be identity functions: </p>
+      <blockquote> 
+        <pre><span class="comment"># E sample</span>
+ 
+<span class="keyword">def</span> <span class="defvar">makeQuoteln</span> := &lt;elang:<span class="litchars">interp.makeQuoteln</span>&gt;
+ 
+<span class="keyword">def</span> <span class="defobj">makeProxy</span>(<span class="defvar">whoBlame</span>, <span class="defvar">stub</span>, <span class="defvar">reportln</span>) {
+    <span class="keyword">def</span> <span class="defvar">log</span> := makeQuoteln(reportln,
+                           `<span class="litchars">I ask </span>${whoBlame.getBrand()}<span class="litchars"> to:</span>`,
+                           75)
+    <span class="keyword">def</span> <span class="defobj">proxy</span> {
+        <span class="keyword">to</span> <span class="defverb">getGuts</span>() {
+            <span class="keyword">return</span> [stub, whoBlame]
+        }
+        <span class="keyword">match</span> [<span class="defvar">verb</span>, <span class="defvar">args</span>] {
+            log(`$verb<span class="litchars">/</span>${args.size()}`)
+            <span class="keyword">var</span> <span class="defvar">pDescs</span> := []
+            <span class="keyword">for</span> <span class="defvar">p2</span> <span class="keyword">in</span> args {
+                <span class="keyword">def</span> [<span class="defvar">s2</span>, <span class="defvar">whoCarol</span>] := p2.getGuts()
+                <span class="keyword">def</span> <span class="defvar">gs3</span> := s2.intro(whoBlame)
+                <span class="keyword">def</span> <span class="defvar">p3Desc</span> := [gs3, whoCarol]
+                pDescs with= p3Desc
+            }
+            stub.deliver(verb, pDescs)
+        }
+    }
+    <span class="keyword">return</span> proxy
+}
+ 
+<span class="keyword">def</span> <span class="defobj">wrap</span>(<span class="defvar">s3</span>, <span class="keyword">_</span>, <span class="keyword">_</span>) {             <span class="comment"># CHANGED!</span>
+    <span class="keyword">return</span> s3
+}
+ 
+<span class="keyword">def</span> <span class="defobj">unwrap</span>(<span class="defvar">gs3</span>, <span class="keyword">_</span>, <span class="keyword">_</span>) {          <span class="comment"># CHANGED!</span>
+    <span class="keyword">return</span> gs3
+}
+ 
+<span class="keyword">def</span> <span class="defobj">makeStub</span>(<span class="defvar">beMe</span>, <span class="defvar">whoBlame</span>, <span class="defvar">targ</span>, <span class="defvar">reportln</span>) {
+    <span class="keyword">def</span> <span class="defvar">log</span> := makeQuoteln(reportln,
+                           `${whoBlame.getBrand()}<span class="litchars"> asks me to:</span>`,
+                           75)
+    <span class="keyword">def</span> <span class="defobj">stub</span> {
+        <span class="keyword">to</span> <span class="defverb">intro</span>(<span class="defvar">whoBob</span>) {
+            log(`<span class="litchars">meet </span>${whoBob.getBrand()}`)
+            <span class="keyword">def</span> <span class="defvar">s3</span> := makeStub(beMe,whoBob,targ,reportln)
+            <span class="keyword">return</span> wrap(s3, whoBob, beMe)
+        }
+        <span class="keyword">to</span> <span class="defverb">deliver</span>(<span class="defvar">verb</span>, <span class="defvar">pDescs</span>) {
+            log(`$verb<span class="litchars">/</span>${pDescs.size()}`)
+            <span class="keyword">var</span> <span class="defvar">args</span> := []
+            <span class="keyword">for</span> <span class="defvar">p3Desc</span> <span class="keyword">in</span> pDescs {
+                <span class="keyword">def</span> [<span class="defvar">gs3</span>, <span class="defvar">whoCarol</span>] := p3Desc
+                <span class="keyword">def</span> <span class="defvar">s3</span> := unwrap(gs3, whoCarol, beMe)
+                <span class="keyword">def</span> <span class="defvar">p3</span> := makeProxy(whoCarol, s3, reportln)
+                args with= p3
+            }
+            E.call(targ, verb, args)
+        }
+    }
+    <span class="keyword">return</span> stub
+}</pre>
+      </blockquote>
+      <p>Unchanged from <a href="base.html">the original</a>: </p>
+      <blockquote> 
+        <pre><span class="comment"># E sample</span>
+ 
+<span class="keyword">def</span> <span class="defvar">makeBrand</span> := &lt;elib:<span class="litchars">sealing.makeBrand</span>&gt;
+ 
+<span class="keyword">def</span> <span class="defobj">makePrincipal</span>(<span class="defvar">label</span> :String) {
+    <span class="keyword">def</span> <span class="defvar">reportln</span> := makeQuoteln(println, `$label<span class="litchars"> said:</span>`, 77)
+    <span class="keyword">def</span> [<span class="defvar">whoMe</span>, <span class="defvar">beMe</span>] := makeBrand(label)
+    <span class="keyword">def</span> <span class="defobj">principal</span> {
+        <span class="keyword">to</span> <span class="defverb">__printOn</span>(<span class="defvar">out</span> :TextWriter) {
+            out.print(label)
+        }
+        <span class="keyword">to</span> <span class="defverb">who</span>() {
+            <span class="keyword">return</span> whoMe
+        }
+        <span class="keyword">to</span> <span class="defverb">encodeFor</span>(<span class="defvar">targ</span>, <span class="defvar">whoBlame</span>) {
+            <span class="keyword">def</span> <span class="defvar">stub</span> := makeStub(beMe, whoBlame, targ, reportln)
+            <span class="keyword">return</span> wrap(stub, whoBlame, beMe)}
+        <span class="keyword">to</span> <span class="defverb">decodeFrom</span>(<span class="defvar">gift</span>, <span class="defvar">whoBlame</span>) {
+            <span class="keyword">def</span> <span class="defvar">stub</span> := unwrap(gift, whoBlame, beMe)
+            <span class="keyword">return</span> makeProxy(whoBlame, stub, reportln)
+        }
+    }
+    <span class="keyword">return</span> principal
+}</pre>
+      </blockquote>
+      <p>Unchanged from <a href="base.html">the original</a>: </p>
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">alice</span> := makePrincipal("<span class="litchars">Alice</span>")
+<span class="stdout"># value: Alice
+ 
+? </span><span class="keyword">def</span> <span class="defvar">bob</span> := makePrincipal("<span class="litchars">Bob</span>")
+<span class="stdout"># value: Bob
+ 
+? </span><span class="keyword">def</span> <span class="defvar">carol</span> := makePrincipal("<span class="litchars">Carol</span>")
+<span class="stdout"># value: Carol</span></pre>
+      </blockquote>
+      <p>Unchanged from <a href="base.html">the original</a>: </p>
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">gs1</span> := bob.encodeFor(b, alice.who())
+ 
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">gs2</span> := carol.encodeFor(c, alice.who())
+ 
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">p1</span>  := alice.decodeFrom(gs1, bob.who())
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">p2</span>  := alice.decodeFrom(gs2, carol.who())
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">a</span> := makeA(p1, p2)</pre>
+      </blockquote>
+      <p>Unchanged from <a href="base.html">the nary original</a>: </p>
+      <blockquote> 
+        <pre><span class="stdout">? </span>a.start()
+<span class="stdout"># stdout: Alice said:
+#         &gt; I ask Bob to:
+#         &gt; &gt; foo/1
+#         Carol said:
+#         &gt; Alice asks me to:
+#         &gt; &gt; meet Bob
+#         Bob said:
+#         &gt; Alice asks me to:
+#         &gt; &gt; foo/1
+#         Bob said:
+#         &gt; I ask Carol to:
+#         &gt; &gt; hi/0
+#         Carol said:
+#         &gt; Bob asks me to:
+#         &gt; &gt; hi/0
+#         hi
+#</span></pre>
+      </blockquote>
+      <p>In the following example, Carol properly records that Alice is the one 
+        that asked her to be evil, and Alice properly records that Carol is the 
+        one she'll blame if evil does not happen as requested.</p>
+      <blockquote> 
+        <pre><span class="stdout">? </span>a.badStart()
+<span class="stdout"># stdout: Alice said:
+#         &gt; I ask Carol to:
+#         &gt; &gt; beEvil/0
+#         Carol said:
+#         &gt; Alice asks me to:
+#         &gt; &gt; beEvil/0
+#         a bad word
+#</span></pre>
+      </blockquote>
+      <p>This shows everything works as it's supposed to. But how can things go 
+        wrong?</p>
+      <hr>
+      <h1><a name="attack"></a>Attack!</h1>
+      <p>BadAlice is like Alice, except that when her proxy (P2) is asked (by 
+        A) to <tt>beEvil()</tt>, rather than sending the message to s2, which 
+        will cause Carol to properly blame Alice as shown above, Alice instead 
+        asks Carol to make a stub (S3) for Bob's use. BadAlice then uses this 
+        stub directly, succesfully fooling Carol into blaming Bob for asking her 
+        to be evil.</p>
+      <blockquote> 
+        <pre><span class="comment"># E sample</span><span class="keyword">
+ 
+def</span> <span class="defobj">makeBadProxy</span>(<span class="defvar">whoBlame</span>, <span class="defvar">stub</span>, <span class="defvar">reportln</span>, <span class="defvar">whoFrame</span>) {
+    <span class="keyword">def</span> <span class="defvar">log</span> := makeQuoteln(reportln,
+                           `<span class="litchars">I ask </span>${whoBlame.getBrand()}<span class="litchars"> to:</span>`,
+                           75)
+    <span class="keyword">def</span> <span class="defobj">badProxy</span> <span class="keyword">extends</span> makeProxy(whoBlame, stub, reportln) {
+        <span class="keyword">to</span> <span class="defverb">beEvil</span>() {
+            log(`<span class="litchars">beEvil/0</span>`)
+            <span class="keyword">def</span> <span class="defvar">gs3</span> := stub.intro(whoFrame)
+            <span class="comment"># because wrap is an identity function, gs3 is simply stub S3.</span>
+            gs3.deliver(&quot;<span class="litchars">beEvil</span>&quot;, [])
+        }
+    }
+    <span class="keyword">return</span> badProxy
+}
+ 
+<span class="keyword">def</span> <span class="defobj">makeBadPrincipal</span>(<span class="defvar">label</span> :String, <span class="defvar">whoFrame</span>) {
+    <span class="keyword">def</span> <span class="defvar">reportln</span> := makeQuoteln(println, `$label<span class="litchars"> said:</span>`, 77)
+    <span class="keyword">def</span> [<span class="defvar">whoMe</span>, <span class="defvar">beMe</span>] := makeBrand(label)
+    <span class="keyword">def</span> <span class="defobj">badPrincipal</span> {
+        <span class="keyword">to</span> <span class="defverb">__printOn</span>(<span class="defvar">out</span> :TextWriter) {
+            out.print(label)
+        }
+        <span class="keyword">to</span> <span class="defverb">who</span>() {
+            <span class="keyword">return</span> whoMe
+        }
+        <span class="keyword">to</span> <span class="defverb">encodeFor</span>(<span class="defvar">targ</span>, <span class="defvar">whoBlame</span>) {
+            <span class="keyword">def</span> <span class="defvar">stub</span> := makeStub(beMe, whoBlame, targ, reportln)
+            <span class="keyword">return</span> wrap(stub, whoBlame, beMe)}
+        <span class="keyword">to</span> <span class="defverb">decodeFrom</span>(<span class="defvar">gift</span>, <span class="defvar">whoBlame</span>) {
+            <span class="keyword">def</span> <span class="defvar">stub</span> := unwrap(gift, whoBlame, beMe)
+            <span class="keyword">return</span> makeBadProxy(whoBlame, stub, reportln, whoFrame)
+        }
+    }
+    <span class="keyword">return</span> badPrincipal
+}</pre>
+      </blockquote>
+      <p>Now we need to set up new initial conditions with BadAlice in place of 
+        Alice. For this example, we can reuse our existing Bob and Carol, since 
+        they are memoryless and don't depend on Alice.</p>
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">badAlice</span> := makeBadPrincipal("<span class="litchars">BadAlice</span>", bob.who())
+<span class="stdout"># value: BadAlice
+ 
+? </span><span class="keyword">def</span> <span class="defvar">badGS1</span> := bob.encodeFor(b, badAlice.who())
+ 
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">badGS2</span> := carol.encodeFor(c, badAlice.who())
+ 
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">badP1</span>  := badAlice.decodeFrom(badGS1, bob.who())
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">badP2</span>  := badAlice.decodeFrom(badGS2, carol.who())
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">badA</span> := makeA(badP1, badP2)
+ 
+<span class="stdout">? </span>badA.badStart()
+<span class="stdout"># stdout: BadAlice said:
+#         &gt; I ask Carol to:
+#         &gt; &gt; beEvil/0
+#         Carol said:
+#         &gt; BadAlice asks me to:
+#         &gt; &gt; meet Bob
+#         Carol said:
+#         &gt; Bob asks me to:
+#         &gt; &gt; beEvil/0
+#         a bad word
+#</span></pre>
+      </blockquote>
+      <p>Although Bob never asked anyone to beEvil(), and in fact contains no 
+        code which could, Carol nevertheless records that Bob asked her to be 
+        evil. </p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">capability</a>&nbsp;/&nbsp;<a href="index.html">horton</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="nary.html" title="Back to: Handling N Arguments"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Handling N Arguments" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="framing-carol.html" title="On to: Alice Frames Carol"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Alice Frames Carol" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

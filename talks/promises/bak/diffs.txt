@@ -1,0 +1,227 @@
+111c111
+< interference, and how trade brings about their cooperative alignment
+---
+> interference and how trade brings about their cooperative alignment
+151c151
+< \item[Why Not Shared-state Concurrency.] This section shows several
+---
+> \item[Why Not Shared-state Concurrency] shows several
+153c153
+< \sys{Java}, and the ways each suffers from plan interference by
+---
+> \sys{Java} and the ways each suffers from plan interference by
+172c172
+< regain access following a partition or crash, and explains the issues
+---
+> regain access following a partition or crash and explains the issues
+178c178
+< \item[From Objects to Actors and Back Again.] This section presents a
+---
+> \item[From Objects to Actors and Back Again] presents a
+334c334
+< \cite{hoare:monitors,hansen:monitors}, and rendezvous
+---
+> \cite{hoare:monitors,hansen:monitors} and rendezvous
+396c396
+< lock during notification, and thus avoids the obvious deadlock
+---
+> lock during notification and thus avoids the obvious deadlock
+419c419
+< result is that all the associated objects are locked, and other
+---
+> result is that all the associated objects are locked and other
+442c442
+< to notify the subscribers, and thus avoids the deadlock
+---
+> to notify the subscribers and thus avoids the deadlock
+444,445c444,445
+< style still suffers from the same race condition hazards, and so still
+< fails to eliminate enough interleavings. We could compensate for this
+---
+> style still suffers from the same race condition hazards and so still
+> fails to eliminate the right interleavings. We could compensate for this
+495c495
+< a new object with the enclosed method definitions, and binds the new
+---
+> a new object with the enclosed method definitions and binds the new
+507c507
+< is bound to the incoming message, and the body selects a method to run
+---
+> is bound to the incoming message and the body selects a method to run
+551c551
+< has two simple choices of when to do $Y$:
+---
+> has two simple alternatives of when to do $Y$:
+558c558
+< \item[Eventually:] Put $Y$ on a ``to-do'' list, and work on it after
+---
+> \item[Eventually:] Put $Y$ on a ``to-do'' list and work on it after
+646,647c646,647
+< Each E object lives in exactly one vat, and a vat may host many
+< objects.  Each vat lives on one machine at a time, and a machine may
+---
+> Each E object lives in exactly one vat and a vat may host many
+> objects.  Each vat lives on one machine at a time and a machine may
+687c687
+<   to the spreadsheet's vat, which queues it on arrival, and eventually
+---
+>   to the spreadsheet's vat, which queues it on arrival and eventually
+715c715
+< it sometime after the current turn, and turns for previously queued
+---
+> it sometime after the current turn and turns for previously queued
+886c886
+< \name{R} enables them to avoid relying on each other.
+---
+> \name{R} enables them to avoid relying on each other.  
+893,894d892
+< % \subsection{Defensive Consistency}
+< 
+943c941
+< been assuming that the account manager acts only as a publisher, and
+---
+> been assuming that the account manager acts only as a publisher and
+996c994
+< itself, and give the spreadsheet and the finance application access
+---
+> itself and give the spreadsheet and the finance application access
+1005c1003,1005
+< In general, we wish to provide
+---
+> As with concurrency control, the key to access control is to allow the
+> possibilities needed for cooperation, while limiting the possibilities
+> that would allow for plan interference. We wish to provide
+1007c1007
+< duties---publishers gotta publish---but no more. This is known as
+---
+> duties---publishers gotta publish---but little more. This is known as
+1019c1019
+< E's computational model straightforwardly extends across the network.
+---
+> E's computational model extends across the network.
+1027c1027
+< vats and machines, without loss of generality. An incorrect machine
+---
+> vats and machines without loss of generality. An incorrect machine
+1035c1035
+< properties between vats, and therefore between machines. Even if a
+---
+> properties between vats and therefore between machines. Even if a
+1065c1065
+< because the eventual send cannot have happened yet (i.e., it will
+---
+> because the eventual-send cannot have happened yet (i.e., it will
+1082c1082
+< be eventual-sent to it even \emph{before} it is resolved. Messages
+---
+> be eventually-sent to it even \emph{before} it is resolved. Messages
+1107c1107
+< serialized and streamed out to \vat{R} immediately, and the turn in
+---
+> serialized and streamed out to \vat{R} immediately and the turn in
+1128c1128
+< destination, and so ``move'' as close to the arrowhead as
+---
+> destination and so ``move'' as close to the arrowhead as
+1139c1139
+< to-do list, and may well be serviced before \vat{L} learns of
+---
+> to-do list and may well be serviced before \vat{L} learns of
+1179c1179
+< is queued, and a promise for its results is immediately assigned to
+---
+> is queued, and a promise for its result is immediately assigned to
+1225c1225
+< send catches any exception that terminates that turn, and
+---
+> send catches any exception that terminates that turn and
+1229c1229
+< reference's exception.  Specifically, an immediate call to a broken
+---
+> reference's exception.  Specifically, an immediate-call to a broken
+1240,1241c1240,1241
+< failures in distributed systems cause broken references, and E's
+< approach for handling them while preserving defensive consistency.
+---
+> failure in distributed systems cause broken references, and how E
+> handles them while preserving defensive consistency.
+1255c1255
+< correct, though degraded, service while other components are
+---
+> correct, though possibly degraded, service while other components are
+1265c1265
+< provide a brief comparison with group membership-like mechanisms in
+---
+> provide a brief comparison with mechanisms like group membership in
+1310c1310
+< never deliver any further messages, and it will eventually become
+---
+> never deliver any further messages and will eventually become
+1317,1318c1317,1318
+< example, \meth{statusChanged} notifications to broken listener
+< references (e.g., because the connection to it's subscriber vat was
+---
+> example, \meth{statusChanged} notifications sent to broken listener
+> references (e.g., broken because the connection to it's subscriber vat was
+1323c1323
+< To exlicitly manage failure of a reference, an object registers a
+---
+> To explicitly manage failure of a reference, an object registers a
+1362c1362
+< messages---they merely deliver them to their target. Objects by
+---
+> messages---they merely deliver them to their targets. Objects by
+1417c1417
+< partition, and how objects on either side can react if they wish. But
+---
+> partition and how objects on either side can react if they wish. But
+1439,1440c1439,1440
+< Both forms of offline capability are pass-by-copy, and can be passed
+< between vats even when the target vat is inaccessible. Offline
+---
+> Both forms of offline capability are pass-by-copy and can be passed
+> between vats even when the vat of the target object is inaccessible. Offline
+1444c1444
+< to connect to the target vat, and immediately returns a promise for
+---
+> to connect to the target vat and immediately returns a promise for
+1451,1455c1451,1455
+< vats. Instead, they should typically go back to the small number of
+< offline capabilities from which this complex structure was originally
+< spawned, and use these to spawn a new fresh structure. As part of this
+< respawning process, the two sides may need to explicitly reconcile in
+< order to reestablish distributed consistency.
+---
+> vats. Instead, they should typically spawn a new fresh structure from
+> the small number of offline capabilities from which this complex
+> structure was originally spawned. As part of this respawning process,
+> the two sides may need to explicitly reconcile in order to reestablish
+> distributed consistency.
+1458c1458
+< offline capabilities to listeners, and should not try to reconnect to
+---
+> offline capabilities to listeners and should not try to reconnect to
+1484c1484
+< can tell when it is no longer reachable, and can garbage-collect
+---
+> can tell when it is no longer reachable and can garbage-collect
+1520c1520
+< unexpired durable swiss-number associations, and state reached by
+---
+> unexpired durable swiss-number associations and state reached by
+1524c1524
+< reference, a broken reference is saved instead, and the reference is
+---
+> reference, a broken reference is saved instead and the reference is
+1651c1651
+< references are like E's near references, and Smalltalk's message
+---
+> references are like E's near references and Smalltalk's message
+1659c1659
+< assumes this issue away, and instead guarantees that all sent messages
+---
+> assumes this issue away and instead guarantees that all sent messages
+1771c1771
+< programmed in E, and how well they can compose with others.
+---
+> programmed in E and how well they can compose with others.

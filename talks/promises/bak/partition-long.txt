@@ -1,0 +1,237 @@
+Further, all referenes crossing
+in a given direction are broken simultaneously. To explain the
+precise semantics of this new state transition in concrete terms, we
+first explain the failure properties of our inter-vat network
+protocol, Pluribus.
+
+If there are any live references between these vats, then they are
+connected. Pluribus creates at most one TLS-like, secure,
+order-preserving, bidirectional data channel between any pair of
+vats. All live references between these two vats, and all messages
+sent over these references, are multiplexed over this one
+connetion. In addition, each vat sends periodic keep-alive messages to
+the other. If either side sees too much time elapse before seeing a
+keep-alive, it declares \emph{that} connection dead, atomically breaks
+all departing references, stops sending or accepting messages or
+keep-alives, and attempts to inform the other side of their joint
+death. By ensuring that a given pair of vats are connected by at most
+one connection, we also ensure that they may not successfully
+reconnect until both have recognized the death of their previous
+connection. The two vats will not interact again until after they
+both know of the previous failure.
+
+Of the messages in transit from \vat{L} to \vat{R}, during a partiion,
+\vat{L} can't know which will be delivered. But it knows that later
+messages sent on a connection will only be delivered if all earlier
+messages sent on that same connection were delivered. In each
+direction, the network protocol guarantees that once a connection
+fails to deliver a message, \emph{that} connection will never again
+deliver any messages in that direction, and will eventual fail to
+deliver messages in the opposite direction.
+
+Our references provide a pleasant object-level abstraction of these
+failure properties. Of successive messages sent on a reference, later
+messages will not be delivered until and unless all earlier messages
+sent on that same reference have been delivered. Once a reference
+fails to deliver a message, it will deliver no further message, and it
+will eventually break. Therefore, a sender doesn't need to wait until
+earlier messages are acknowledged before sending later dependent
+messages to the same object. If the earlier messages don't make it,
+neither will the later one.
+
+For example, if the network partitions while \code{a()} is in transit,
+then, during the partition, \name{L} can't know whether this message
+was lost or delivered. In this case, \name{L} will see \var{x} and
+\var(t1) break at the same time---become broken by the same partition
+exception. If \name{L} sees anything else, then \name{L} knows that
+\code{a()} was delivered. In our scenario, if \code{a()} was in
+transit, then so was \code{c(t2)}; and t3 will also break at the same
+time. If \name{L} had sent a further message, \code{a2()} on \var{x}
+after it had sent \code{a()}, \code{a2()} will also be
+in-transit. Although 
+
+
+We designed the E mechanisms to have the following properties.
+
+\begin{description}
+\item[Visibility of failure.] In order for an application to be able
+  to react to a partial failure, the occurrence of the failure must be
+  made visible rather than masked. We must extend our computational
+  model so that some abstraction of partial failure is made visible to
+  programs. 
+\item[Conservative abstraction of the possible.] We must extend our
+  computational model so that it's possible to implement it on actual
+  networks. For example, our model must not imply that common
+  knowledge can be achievabled[cite**]. Our abstraction of actual
+  problems must simplify their real-life complexities only in a
+  conservative direction. For example, we may use timeouts to abstract
+  long delays into partition.
+\item[Separate normal from contingency plans.] As with our other ways
+  of handling exceptional conditions, the contingency plans for
+  handling the unusual case should be reasonably separable from the
+  normal plans for the normal case.
+\item[Consistency preserving defaults.] When a program contains no
+  contingencies for partial failure but is otherwise correct, the
+  occurrence of partial failure should cause at most loss of progress,
+  not corruption. 
+\item[Simple things must be simple.] The simple common strategies for
+  coping with partial failure must be straightforward to express
+  directly. As an example of a simple strategy, web browsers report
+  loss of connection but remain operational.
+\item[Complex things should be possible.] It should be possible to
+  implement a range of more sophisticated strategies within our
+  framework.
+\end{description}
+
+At the present time, E's ability to support the last requirement is
+untested, and may indeed be too weak. The following simplified
+presentation of E's partial failure semantics is adequate to show how
+it addresses the other requirements above, but is inadequate to
+examine E's ability to support the last requirement.
+
+
+
+Let's say we are given a list of promises, and we wish to postpone a
+plan until either all of these promises are fulfilled (resolved to
+near or far) or any of them break. The following \var{allDone}
+function subscribes to all the references in its argument list. It
+immediately returns a promise that it will eventually resolve, either
+to this list, if it learns that all the contained promises were
+fulfilled, or to a broken reference, if it learns that any of them
+broke.
+%
+\begin{alltt}
+    def \dobj{allDone}(\dvar{promises}) \{
+        var \dvar{countDown} := promises.size()
+        if (countDown == 0) \{ return promises \}
+        def [\dvar{result}, \dvar{resolver}] := Ref.promise()
+        for \dvar{p} in promises \{
+            when (p) -> \{
+                if ((countDown -= 1) <= 0) \{ resolver.resolve(promises) \}
+            \} catch \dvar{problem} \{
+                resolver.smash(problem)
+            \}
+        \}
+        return result
+    \}
+\end{alltt}
+%
+If the list of promises is empty, then they're all resolved and we're
+done. Otherwise, \var{countDown} remembers how many
+resolution-notifications we still need to hear. For each promise in
+the list, the when-catch expression in the for-loop subscribe a
+listener to each of the promises in the list, so each listener will
+eventually be notified sometime after its promises resolves. The code
+of the listener object is represented in two parts---the code between
+``\code{->}'' and the catch-clause handles the normal case, and
+catch-clause handles the exception case. Once \var{p} resolves, one of
+these is eventually run depending on whether \var{p} was fulfilled or
+broken. (If the code in the first part throws an exception, this also
+causes the catch-clause to run.)
+
+
+\subsubsection{\sys{Spheres}.}
+
+\cite{scheideler:palatin}
+%
+\begin{enumerate}
+\item Use a purely object-oriented approach
+\item Do not use shared memory addessing
+\item Instead, connect objects by an explicit link structure
+\item Allow objects to find each other
+\item Distinguish between local and remote method invocations
+\item Only allow non-blocking method invocations
+\item Use strictly sequential execution inside objects
+\item Build on a well-accepted programming language
+\item Use as few constructs as possible
+\end{enumerate}
+
+
+
+MarcS abstract:
+
+Distributed systems are inherently more prone to lockups and data integrity
+failures than are single programs on single computers. These problems are
+magnified in the presence of limited trust. If one of the parties of a
+computation can cause favorable inconsistency, the system loses
+effectiveness.
+
+The E programming language solves these problems with two interwoven
+solutions. By eliminating ambient and guessable authorities that provide
+object access out-of-band from the object reference graph, E enables
+least-authority-based access control.  Within this secured framework, E then
+implements private "to-do" lists for concurrency control. As with their
+physical-world counterparts, private to-do lists enable loose coupling among
+cooperating yet suspicious parties. Together these technologies minimize
+risk of cross-party plan interference, eliminating deadlock risk while
+creating an environment conducive to eliminating inconsistency risk. These
+techniques can be adapted to some existing languages, as several projects
+are now attempting.
+
+
+My failed attempt at improving it:
+
+Programmers write programs, expressing plans for machines to
+execute. When separately written programs are composed to create
+complex systems, unanticipated problems arise: Some plans may disrupt
+the assumptions on which other plans depend, leading to loss of
+consistency (safety), loss of progress (liveness), or both. These
+hazards are pressing even under sequential and benign conditions.
+Concurrent and distributed systems are inherently more vulnerable to
+these hazards, as are systems composed of mutually suspicious
+components.
+
+For sequential benign programming, the object model of computation, 
+In the object model of computation, an object can affect its external
+world by sending messages on references it holds, carrying other
+references as arguments. Working within this model, the E programming
+language addresses these issues with two interwoven mechanisms. By
+denying objects any other means to cause effects, an object's
+authority is limited according to the references it can obtain. Within
+this framework, ...
+
+
+To understand these twin problems, of separating components and of
+composing them, we draw on Friedrich Hayek's examination of how
+markets address the twin problems of plan coordination: bringing about
+the cooperative alignment of separately conceived plans, while
+simultaneously avoiding disruptive plan interference
+\cite{Hayek:1945:UKS}. His explanation of the need for property rights
+parallels the rationale for encapsulation in object-oriented systems:
+to provide a domain (an object's encapsulation boundary) in which an
+agent (the object) can execute plans (the object's methods) that use
+resources (the object's private state), where the proper functioning
+of these plans depends on these resources not being used
+simultaneously by conflicting plans. By dividing up the resources of
+society (the state of a computational system) into separately owned
+chunks (private object states), we enable a massive number of plans to
+make use of a massive number of resources without needing to resolve a
+massive number of conflicting assumptions.
+
+
+Like non-signaling NaNs, broken promise contagion does not hinder
+pipelining. Both suppress only data dependent computation, but with a
+difference. A non-signaling NaN is contagious if used in any argument
+position. A broken promise is only necessarily contagious in receiver
+position. If instead \code{a()} returns a result and \code{b()} throws
+an exception, then \code{c(r2)} will still be delivered to the
+resolution of \var{r1}, carrying as argument a broken promise for the
+result of \code{b()}. If the \meth{c()} method of the receiving object
+declares that its parameter must be a near reference, that would
+prevent \code{c(r2)} from being delivered and break \var{r3}---in
+which case the effect is the same as with NaNs. In other cases, this
+difference can be useful, as it allows the \meth{c()} method to accept
+a promise argument that isn't yet known to be broken.
+
+\oops{MARK: I think that this para interrupts the flow. It may also be
+redundant with later discussion.
+%
+Given that the spreadsheet's plan assumes that notifications arrive in
+order, out of order arrivals are \emph{inconsistent} with its
+assumptions. Is the bug in the spreadsheet or elsewhere?  It depends
+on whether we decide that the spreadsheet may rely on this
+assumption. If it may not, then these out of order notifications are
+among the contingencies the spreadsheet must be prepared for. If the
+burden of these contingencies are too great, the \abst{statusHolder}
+fails to be a useful plan coordination abstraction.}
+

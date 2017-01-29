@@ -1,0 +1,852 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Introducing Data-E</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">data</a>&nbsp;/&nbsp;<a href="../index.html">serial</a>&nbsp;/&nbsp;<a href="index.html">jhu-paper</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="intro.html" title="Back to: Introduction - Safe Serialization"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Introduction - Safe Serialization" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="recog-n-build.html" title="On to: "Reversing" Evaluation"><img src="../../../images/next.gif" width="64" height="32" alt="On to: "Reversing" Evaluation" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><font size="5"><b>Deconstructing
+              Serialization Part 1</b><br>
+              </font> <b>Introducing Data-E</b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <h1><a name="lessons"></a>Lessons of <i>Deconstruction Serialization</i></h1>
+      <p>The body of each chapter is presented using running code examples, and
+        with detailed enough explanation that you should be able to follow this
+        code. For those that wish only to understand the general lessons and how
+        they may be applied to more conventional serialization systems, see the
+        &quot;Lessons of...&quot; and &quot;Corresponding Concepts in Convention
+        Serialization&quot; sections at the beginning and end of each chapter</p>
+      <p>The &quot;Deconstruction Serialization&quot; chapter defines our serialization
+        format, Data-E, by subsetting a programming language, <i><b><font color="#009000">E</font></b></i>.
+        This move is inessential, but it allows us to more easily understand what's
+        happening. </p>
+      <h1></h1>
+      <p>Many existing systems (Lisps, Smalltalk) often print an object as an
+        expression that, if evaluated, would reconstruct that object. We can understand
+        the data by reusing a subset of our code reading skills. When these printing
+        systems do so reliably, they are often grown into serialization systems,
+        in which the depiction actually is the program it appears to be. We can
+        then understand the semantics of the serialized form by reusing a subset
+        of our understanding of the semantics of the programming language. </p>
+      <p>(Serialization in Mozart creates the equivalent of a compiled module,
+        providing the semantic correspondence but not the visibility. Perhaps
+        these can be decompiled.)</p>
+      <p>In these terms, Java has three very different depiction systems. </p>
+      <ul>
+        <li>
+          <p>The printed form of a Java object is simply its response to <tt>toString()</tt>.
+            While these are often in the form of expressions that would reconstruct
+            the object, often they're not, and there's no general convention.
+          </p>
+        </li>
+        <li>
+          <p>Java Object Serialization Streams, or JOSS [ref JOSS], defines a
+            complex opaque binary format which few know how to parse, and which
+            is rarely made visible. JOSS is implemented using special powers (native
+            methods for violating encapsulation) not available to other objects,
+            making it too dangerous to use under mutual suspicion. However, JOSS
+            also has an extensive and well thought out set of hooks for customizing
+            serialization and unserialization. The logic of these hooks strikes
+            the balance we need between flexibility and security. The corresponding
+            hooks in Data-E are based on lessons learned from JOSS.</p>
+        </li>
+        <li>
+          <p>In apparent reaction to the maintenance problems created by opacity
+            and the private access, Java now has an additional serialization framework,
+            the XMLEncoder [ref XMLEncoder]. The XMLEncoder writes depictions
+            which are semantically identical to Java programs. This format combines
+            the semantics of Java with the readability of XML. Like Data-E, this
+            system serializes only by interacting with the public protocol of
+            the original objects, and unserializes by evaluating the depiction-as-program
+            which again only uses public protocols to perform the reconstruction.
+            Unfortunately, the XMLEncoder is designed around the <i>Java Beans</i>
+            conventions, which conflates access with initialization, rendering
+            it's design useless for our present purposes.</p>
+        </li>
+      </ul>
+      <p>To produce a depiction of an object graph, a serializer must somehow
+        obtain a representation of each object adequate for calculating an overall
+        depiction. In the printing frameworks, like Java's <tt>toString()</tt>,
+        the representation offered is a <i>depiction</i> -- it is already only
+        bits, and each object is responsible for traversing the portion of the
+        subgraph rooted in itself. This is maximally flexible -- it allows an
+        object to claim anything it likes. Used for serialization, this flexibility
+        has fatal security problems, as explained in the <a href="exit-security.html#veracity">next
+        chapter</a>.</p>
+      <p> In our approach, the serializer must obtain for each object a <i>portrayal</i>
+        -- a representation of that object in terms of live references to other
+        objects. The serializer's traversal proceeds as it obtains a portrayal
+        for each of these &quot;components&quot;, etc. A serializer can simply
+        ask an object to provide a portrayal of itself -- the object's <a name="self-portrait"><i>self
+        portrait</i></a> -- or, as we will see, it can derive or substitute its
+        own portrayal of the object as an expression of some other policy objective.
+        However it obtains these portrayals, the resulting depiction is a literal
+        picture only of the graph of these portrayals, rather than the actual
+        graph of objects being serialized.</p>
+      <h1><a name="concrete"></a>Concrete Embodiment in <i><b><font color="#009000">E</font></b></i></h1>
+      <p>Although the ideas in this paper should be applicable to any object-capability
+        language and many serialization formats, as previously mentioned, for
+        concreteness, we present the implementation of these ideas in <i><b><font color="#009000">E</font></b></i>
+        as applied to Data-E. When an example is shown as an <i><b><font color="#009000">E</font></b></i>
+        command line session, like</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+<span class="stdout">? </span><span class="stdin">2 + 3</span>
+<span class="stdout"># value: 5</span></pre>
+      </blockquote>
+      <p>then the example also doubles as an executable regression test. By <a href="../../../elang/tools/updoc.html">updocing</a>
+        the page containing the examples, you can see whether the system behaves
+        as shown by the example. If you installed <i><b><font color="#009000">E</font></b></i>
+        at, for example, &quot;<tt>c:/Program&nbsp;Files/erights.org</tt>&quot;
+        and placed &quot;<tt>c:/Program&nbsp;Files/erights.org/scripts</tt>&quot;
+        on your <tt>PATH</tt>, then in a directory containing the chapters of
+        this paper, at a shell prompt you can type:</p>
+      <blockquote>
+        <pre><span class="stdout">$ </span>updoc.e deconstructing.html
+<span class="stdout"><i>directory-path</i>/deconstructing.html:...............................</span></pre>
+      </blockquote>
+      <p> (Though please see &quot;<a href="../../../elang/tools/updoc.html#security">Security
+        Considerations</a>&quot; before running this or any other Updoc script.)</p>
+      <p>Each of the dots is a test case that successfully passed, like the above
+        &quot;<tt>2 + 3</tt>&quot;. As you read, if you are curious about how
+        a variation of an example would behave, make a copy of the page, edit
+        appropriately, and updoc it. Or try the examples interactively at a <tt>rune</tt>
+        command-line:</p>
+      <blockquote>
+        <pre><span class="stdout">$ </span>rune<span class="stdout">
+? </span><span class="stdin">2 + 3</span>
+<span class="stdout"># value: 5
+
+? </span></pre>
+      </blockquote>
+      <p>The <tt>rune</tt> program starts an <i><b><font color="#009000">E</font></b></i>
+        read-eval-print loop. The &quot;?&quot; is the <i><b><font color="#009000">E</font></b></i>
+        prompt. To exit <tt>rune</tt>, type the end-of-file character: Control-D
+        or Control-Z depending on your shell.</p>
+      <p>In order to have a common point of reference, this paper assumes a basic
+        prior knowledge of Java. JOSS (Java's Object Serialization Streams) [ref
+        JOSS] is occasionally used for comparison, so a prior knowledge of it
+        will help, but is not required. </p>
+      <p>We assume only that prior knowledge of <i><b><font color="#009000">E</font></b></i>
+        explained in the Ode (&quot;Capability-based Financial Instruments&quot;)
+        [ref Ode] and that explained in the next section on &quot;<i><b><font color="#009000">E</font></b></i>'s
+        URI Expressions&quot;. <i><b><font color="#009000">E</font></b></i> syntactically
+        resembles other C tradition object languages, such as Java, C++, C#, and
+        Python. When the meaning of <i><b><font color="#009000">E</font></b></i>
+        code isn't covered by the Ode or the next section, and isn't obvious by
+        analogy with Java, we will explain as we go. For more on <i><b><font color="#009000">E</font></b></i>,
+        please see [ref erights.org, Walnut].</p>
+      <h2><a name="uri-exprs"></a><i><b><font color="#009000">E</font></b></i>'s
+        URI Expressions</h2>
+      <p>An unfamiliar bit of <i><b><font color="#009000">E</font></b></i> syntax,
+        needed to understand the examples in this paper, is the <i>URI expression</i>,
+        written as a URI string between angle brackets. </p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">f</span> := &lt;file:<span class="litchars">/foo/bar</span>&gt;
+<span class="stdout"># value: &lt;file:c:/foo/bar&gt;</span></pre>
+      </blockquote>
+      <p>The protocol name to the left of the URI's colon (<tt>file</tt> here,
+        but any identifier) is transformed (mangled) into the name of the variable
+        (<tt>file__uriGetter</tt>) whose value is asked to retrieve the named
+        resource. The characters between the colon and the close angle bracket
+        (which must be <a href="../../../javadoc/org/quasiliteral/syntax/URIKit.html#isURIC(char)">legal
+        characters</a> for a URI body), becomes the literal resource name to be
+        looked up (<tt>&quot;<span class="litchars">/foo/bar</span>&quot;</tt>).
+        So the above session is a shorthand for the equivalent:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">f</span> := file__uriGetter.get(&quot;<span class="litchars">/foo/bar</span>&quot;)
+<span class="stdout"># value: &lt;file:c:/foo/bar&gt;</span></pre>
+      </blockquote>
+      <p>Besides accessing the kind of resources normally accessed by URLs, the
+        URI expression is also used as <i><b><font color="#009000">E</font></b></i>'s
+        module import mechanism. The typical form of import in <i><b><font color="#009000">E</font></b></i>
+        is </p>
+      <blockquote>
+        <pre><span class="keyword">def</span> <span class="defvar">name</span> := &lt;import:<i class="litchars">fully-qualified-name</i>&gt;</pre>
+      </blockquote>
+      <p> where <i>fully-qualified-name</i> is the full name, including package
+        prefix, of an <i><b><font color="#009000">E</font></b></i> module or a
+        <a href="../../../elib/legacy/taming.html">safe</a> Java class. (In order
+        to make the extensive Java libraries available in <i><b><font color="#009000">E</font></b></i>
+        without sacrificing capability security, we must <i>tame</i> them -- determine
+        what subset of their public interface is consistent with capability security
+        principles. As part of this taming process, we declare certain Java classes
+        to be &quot;safe&quot;, and therefore generally importable.) Because fully
+        qualified names can be long, they are often factored as follows:</p>
+      <blockquote>
+        <pre><span class="keyword">def</span> <span class="defvar">&lt;packgeName&gt;</span> := &lt;import:<span class="litchars"><i>package-prefix</i>.*</span>&gt;
+...
+<span class="keyword">def</span> <span class="defvar">name</span> := &lt;packageName:<i class="litchars">rest-of-path</i>&gt;</pre>
+      </blockquote>
+      <p>The package subtree rooted at <tt>&quot;<span class="litchars">org.erights.e.elib</span>&quot;</tt>
+        is provided as a built-in convenience, as if we had already executed</p>
+      <blockquote>
+        <pre><span class="keyword">def</span> <span class="defvar">&lt;elib&gt;</span> := &lt;import:<span class="litchars">org.erights.e.elib.*</span>&gt;</pre>
+      </blockquote>
+      <p>As a result,</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">deSubgraphKit</span> := &lt;elib:<span class="litchars">serial.deSubgraphKit</span>&gt;
+<span class="stdout"># value: &lt;deSubgraphKit&gt;</span></pre>
+      </blockquote>
+      <p>is equivalent to</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">deSubgraphKit</span> :=
+<span class="stdout">&gt; </span>  &lt;import:<span class="litchars">org.erights.e.elib.serial.deSubgraphKit</span>&gt;
+<span class="stdout"># value: &lt;deSubgraphKit&gt;</span></pre>
+      </blockquote>
+      <p>Such a package subtree root gives access only to that subtree of the
+        original package tree. Similarly, as will be explained in <a href="exit-security.html">Manipulating
+        Authority at the Exits</a>, a directory can be used as a uriGetter in
+        order to give access only to a subtree of the file system, as retrieved
+        by names relative to that directory. </p>
+      <h1><a name="previews"></a>Previews of Data-E Serialization</h1>
+      <p>In the Data-E System, we compose a serializer or unserializer from a
+        pair of <i>Data-E Kits</i>, such as the <tt>deSubgraphKit</tt> already
+        imported above. Each kit knows how to <i>recognize</i> and <i>build</i>
+        a given kind of Data-E representation. The <tt>deSubgraphKit</tt> is special,
+        in that the representation it traffics in is subgraphs of actual objects.
+        All the other representations are depictions of subgraphs expressed in
+        the Data-E &quot;language&quot;. For example, the <tt>deSrcKit</tt> traffics
+        in representations of Data-E as source strings, written in the Data-E
+        subset of the <i><b><font color="#009000">E</font></b></i> source language.
+        In this document, to make clear when we're looking at Data-E rather than
+        <i><b><font color="#009000">E</font></b></i> source, all Data-E source
+        strings are shown prefixed with <tt>&quot;<span class="litchars">de: </span>&quot;</tt>.
+      </p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">deSrcKit</span> := &lt;elib:<span class="litchars">serial.deSrcKit</span>&gt;
+<span class="stdout"># value: &lt;deSrcKit&gt;</span></pre>
+      </blockquote>
+      <p>To <i>serialize</i> is to recognize a subgraph and to build a depiction.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>&quot;<span class="litchars">de: </span>&quot; + deSubgraphKit.recognize([false, 3], deSrcKit.makeBuilder())
+<span class="stdout"># value: &quot;de: def t__0 := [false, def t__2 := 3]&quot;</span></pre>
+      </blockquote>
+      <p>Each <tt>recognize(..)</tt> method takes two arguments -- the input representation
+        to recognize (here, the subgraph to traverse), and a builder to call as
+        parts of the representation are recognized, in order to build the output
+        representation (here, a Data-E source string). Each kit provides a <tt>recognize(..)</tt>
+        method for accepting its form of representation as input, and a <tt>makeBuilder()</tt>
+        for making a builder to build its form of representation as output. The
+        <tt>recognize(..)</tt> method returns its argument builder's final output.</p>
+      <p>The <tt>deASTKit</tt> manages another depiction of Data-E programs: as
+        Abstract Syntax Trees, as explained in <a href="data-e-manual.html">Appendix
+        A: The Data-E Manual</a>. For present purposes, we care only about one
+        feature of this kit, that it simplifies the expression a bit during building;
+        for example, by removing unnecessary temporary variables. Interposing
+        it between between the <tt>deSubgraphKit</tt> and the <tt>deSrcKit</tt>,
+        we build our first expository serialize function, <tt>serialize_a</tt>.
+        (All functions so named are for expository purposes only. See Appendix
+        A for a guide to realistic usage.) </p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">deASTKit</span> := &lt;elib:<span class="litchars">serial.deASTKit</span>&gt;
+<span class="stdout"># value: &lt;deASTKit&gt;
+
+? </span><span class="keyword">def</span> <span class="defobj">serialize_a</span>(<span class="defvar">root</span>) :String {
+<span class="stdout">&gt; </span>    <span class="keyword">def</span> <span class="defvar">ast</span> := deSubgraphKit.recognize(root, deASTKit.makeBuilder())
+<span class="stdout">&gt; </span>    &quot;<span class="litchars">de: </span>&quot; + deASTKit.recognize(ast, deSrcKit.makeBuilder())
+<span class="stdout">&gt; </span>}
+<span class="stdout"># value: &lt;serialize_a&gt;
+
+? </span>serialize_a([false, 3])
+<span class="stdout"># value: &quot;de: [false, 3]&quot;</span></pre>
+      </blockquote>
+      <p>To <i>unserialize</i> is to recognize a depiction and to build a subgraph.
+        The matching expository unserialize function follows. Parameters in <i><b><font color="#009000">E</font></b></i>
+        are actually patterns, of which the most common is a simple variable name,
+        which defines the variable and binds it to the specimen (the argument
+        passed in). Here we see <a href="../../../elang/grammar/quasi-overview.html">a
+        pattern</a> for stripping off the additional prefix we added above. This
+        pattern matches a string beginning with <tt>&quot;<span class="litchars">de:
+        </span>&quot;</tt>. If the specimen is such a string, then it matches
+        the rest of the string against the pattern following the <tt>&quot;@&quot;</tt>
+        -- in this case a simple variable name which is bound to the remainder
+        of the string.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defobj">unserialize_a</span>(`<span class="litchars">de: </span>@<span class="defvar">src</span>`) :any {
+<span class="stdout">&gt; </span>    deSrcKit.recognize(src, deSubgraphKit.makeBuilder())
+<span class="stdout">&gt; </span>}
+<span class="stdout"># value: &lt;unserialize_a&gt;
+
+? </span>unserialize_a(&quot;<span class="litchars">de: [false, 3]</span>&quot;)
+<span class="stdout"># value: [false, 3]</span></pre>
+      </blockquote>
+      <p>The result of evaluating the depiction-as-expression is a reconstruction
+        of the original subgraph. The case shown above stays clear of all the
+        problematic cases for serialization: All the objects in the graph being
+        serialized here (a boolean, an integer, and a list) are <i>transparent</i>
+        -- they willingly divulge all their state to their clients through their
+        public protocol. All the objects participating in the above serialization
+        -- the serialize function and the objects being depicted -- seek only
+        literal accuracy; and likewise during the above unserialization. We call
+        this unproblematic starting case <i>literal realism for transparent subgraphs</i>.</p>
+      <h2><a name="propfail"></a>A Proper Failure</h2>
+      <p>Objects defined in <i><b><font color="#009000">E</font></b></i> are encapsulated
+        by default. If we make an encapsulated object and try to serialize it:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defobj">capsule</span> {}
+<span class="stdout"># value: &lt;capsule&gt;
+
+? </span>serialize_a(capsule)
+<span class="stderr"># problem: Can't uneval &lt;capsule&gt;</span></pre>
+      </blockquote>
+      <p>we find our simple serialize function fails, as it must. Usually this
+        failure will be the desired behavior. When it isn't, we have several alternatives.</p>
+      <h2><a name="getOptUncall"></a>Unconditional Transparency</h2>
+      <table cellpadding="12" align="right" bgcolor="#FFFFE8" width="30%" border="1">
+        <tr>
+          <td>In Java or Smalltalk, the methods on class <tt>Object</tt> define
+            the messages all objects are expected to respond to, and provide default
+            behaviors for those methods. The equivalent in <i><b><font color="#009000">E</font></b></i>
+            are the <a href="../../../elang/blocks/miranda.html">Miranda Methods</a>.
+            To avoid collision with programmer-chosen names, Miranda method names
+            begin with a double underscore.</td>
+        </tr>
+      </table>
+      <p>A serializer asks an object for its <a href="#self-portrait">self portrait</a>
+        with the <tt>__optUncall()</tt> message. The corresponding default (Miranda)
+        method returns <tt>null</tt>, indicating that no self portrait is offered.
+        An object which overrides this to return a triple is <i>unconditionally
+        transparent</i> -- it offers its self portrait to any client, just for
+        the asking. The triple describes a call to be performed during unserialization
+        to create the reconstruction of the original object. We start with a simple
+        example:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defobj">iAmFive</span> {
+<span class="stdout">&gt; </span>    <span class="keyword">to</span> <span class="defverb">__optUncall</span>() :__Portrayal {
+<span class="stdout">&gt; </span>        [2, &quot;<span class="litchars">add</span>&quot;, [3]]
+<span class="stdout">&gt; </span>    }
+<span class="stdout">&gt; </span>}
+<span class="stdout"># value: &lt;iAmFive&gt;
+
+? </span>serialize_a(iAmFive)
+<span class="stdout"># value: &quot;de: 2.add(3)&quot;</span></pre>
+      </blockquote>
+      <table cellpadding="12" align="right" bgcolor="#FFFFE8" width="30%" border="1">
+        <tr>
+          <td><p>The expression after the &quot;:&quot; on the __optUncall() method
+              declares what kinds of values it can return. __Portrayal is predefined
+              to be</p>
+            <pre>  Tuple[any, String, any[]]</pre>
+            which allows any three element list in which the second item is a
+            string and the third item is a list of anything.</td>
+        </tr>
+      </table>
+      <p>The expression &quot;<tt>2 + 3</tt>&quot; is just a syntactic shorthand
+        for &quot;<tt>2.add(3)</tt>&quot;.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>unserialize_a(&quot;<span class="litchars">de: 2.add(3)</span>&quot;)
+<span class="stdout"># value: 5
+
+? </span>unserialize_a(&quot;<span class="litchars">de: 2 + 3</span>&quot;)
+<span class="stdout"># value: 5</span></pre>
+      </blockquote>
+      <p>The object <tt>iAmFive</tt> is unconditionally transparent, but is not
+        literally, or even usefully, realistic. When we reconstruct an object
+        according to its self-portrait, the result can be quite different from
+        the original.</p>
+      <h2><a name="named-exits"></a>Named Exit Points</h2>
+      <p>Another approach to dealing with problematic objects is <i>serialization
+        avoidance</i> by making references to these into named exit points. The
+        traversal of a subgraph stops whenever it encounters such references,
+        writing out named exit points instead (the jigsaw plugs shown on <a href="intro.html#depiction-diagram">Figure
+        2: The Three Faces</a>). We define matching <tt>serialize</tt> and <tt>unserialize</tt>
+        functions customized to treat references to <tt>capsule</tt> as an exit
+        point.</p>
+      <p>To create a custom <tt>serialize</tt> function, we first create a custom
+        <i>unscope</i> -- a table mapping from exit references to names. This
+        is most conveniently done by modifying the default unscope table -- the
+        one used implicitly in the previous examples.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">unscope_b</span> := deSubgraphKit.getDefaultUnscope().diverge()
+<span class="stdout">? </span>unscope_b[capsule] := &quot;<span class="litchars">foo</span>&quot;<span class="stdout">
+# value: &quot;foo&quot;
+
+? </span><span class="keyword">def</span> <span class="defvar">recognizer_b</span> := deSubgraphKit.makeRecognizer(null, unscope_b)
+<span class="stdout"># value: &lt;unevaler&gt;
+
+</span><span class="stdout">? </span><span class="keyword">def</span> <span class="defobj">serialize_b</span>(<span class="defvar">root</span>) :String {
+<span class="stdout">&gt; </span>    <span class="keyword">def</span> <span class="defvar">ast</span> := recognizer_b.recognize(root, deASTKit.makeBuilder())
+<span class="stdout">&gt; </span>    &quot;<span class="litchars">de: </span>&quot; + deASTKit.recognize(ast, deSrcKit.makeBuilder())
+<span class="stdout">&gt; </span>}
+<span class="stdout"># value: &lt;serialize_b&gt;
+
+? </span>serialize_b([capsule, 3])
+<span class="stdout"># value: &quot;de: [foo, 3]&quot;</span></pre>
+      </blockquote>
+      <p>As we see, in the Data-E expression produced by serialization, a named
+        exit reference becomes a free variable reference. Data-E unserialization
+        <i>is</i> expression evaluation -- that subset of <i><b><font color="#009000">E</font></b></i>
+        expression evaluation applicable to the Data-E subset of <i><b><font color="#009000">E</font></b></i>.
+        The inverse of the unscope is therefore just the conventional notion of
+        a <i>scope</i> (or <i>environment</i>), a mapping from variable names
+        to values. On reconstruction, the named exit points will be reconnected
+        to these values.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">scope_b</span> := deSubgraphKit.getDefaultScope().diverge()
+<span class="stdout">? </span>scope_b[&quot;<span class="litchars">foo</span>&quot;] := <span class="keyword">def</span> <span class="defobj">newCapsule</span> {}
+<span class="stdout"># value: &lt;newCapsule&gt;
+
+</span><span class="stdout">? </span><span class="keyword">def</span> <span class="defobj">unserialize_b</span>(`<span class="litchars">de: </span>@<span class="defvar">src</span>`) :any {
+<span class="stdout">&gt; </span>    <span class="comment"># Just a way of saying eval(src, scope_b)</span>
+<span class="stdout">&gt; </span>    deSrcKit.recognize(src, deSubgraphKit.makeBuilder(scope_b))
+<span class="stdout">&gt; </span>}
+<span class="stdout"># value: &lt;unserialize_b&gt;</span><span class="stdout">
+
+? </span>unserialize_b(&quot;<span class="litchars">de: [foo, 3]</span>&quot;)
+<span class="stdout"># value: [&lt;newCapsule&gt;, 3]</span></pre>
+      </blockquote>
+      <p>Each set of exit names together with a mutual understanding about what
+        they may be bound to forms a unique <i>micro-standard data format</i>.
+        Serializers and unserializers must agree on such a micro-standard, and
+        so often come in matched pairs, as above. This agreement still leaves
+        room for separate customization on each side, as with our unserializer's
+        choice to bind a somewhat different object to the name <tt>&quot;<span class="litchars">foo</span>&quot;</tt>
+        in the scope, perhaps to adapt to a difference in the unserializer's context.</p>
+      <table cellpadding="12" align="right" bgcolor="#FFFFE8" border="1"  width="30%">
+        <tr>
+          <td> <p>We name this abstraction the <i>Gordian Surgeon</i> both because
+              it simply answers the question &quot;How do we cut this tangle of
+              references?&quot;, and also in honor of <a href="http://www.cyclesoft.com/">Gordie
+              Freeman</a>, the co-inventor, along with myself, of its main security
+              property, unforgeable unscope lookup, as explained in the <a href="exit-security.html#trueexits">next
+              chapter</a>.</p></td>
+        </tr>
+      </table>
+      <h2><a name="surgeon"></a>The Gordian Surgeon</h2>
+      <p>Since the serialize function, unserialize function, scope, unscope, and
+        (as we will see) uncallers list are often manipulated together, as above,
+        we introduce the <i>Gordian Surgeon</i> -- an object that knows how to
+        manipulate and wield these five tools in a coordinated fashion to, in
+        effect, cut a subgraph from a donor context, freeze it, thaw it, and transplant
+        it into a recipient graph. The following session is like that above, except
+        that the same <tt>capsule</tt> is used for serialization and unserialization
+        -- as this is the common pattern the surgeon makes convenient. The <tt>addExit(..)</tt>
+        below adds the value-name association to the unscope and adds the inverse
+        name-value association to the scope.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">makeSurgeon</span> := &lt;elib:serial.makeSurgeon&gt;
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">surgeon</span> := makeSurgeon.withSrcKit(&quot;<span class="litchars">de: </span>&quot;).diverge()
+
+<span class="stdout">? </span>surgeon.serialize([capsule, 3])
+<span class="stderr"># problem: Can't uneval &lt;capsule&gt;</span>
+
+<span class="stdout">? </span>surgeon.addExit(capsule, &quot;<span class="litchars">foo</span>&quot;)
+
+<span class="stdout">? </span>surgeon.serialize([capsule, 3])
+<span class="stdout"># value: &quot;de: [foo, 3]&quot;
+
+? </span>surgeon.unserialize(&quot;<span class="litchars">de: [foo, 3]</span>&quot;)
+<span class="stdout"># value: [&lt;capsule&gt;, 3]</span></pre>
+      </blockquote>
+      <h2><a name="genCounter"></a>Counting &quot;Generations&quot;</h2>
+      <p>Our first realistic example uses both self-portraits (with unconditional
+        transparency) and named exit points:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defobj">makeGenerationCounter</span>(<span class="defvar">count</span> :int) :any {
+<span class="stdout">&gt; </span>    <span class="keyword">def</span> <span class="defobj">generationCounter</span> {
+<span class="stdout">&gt; </span>
+<span class="stdout">&gt; </span>        <span class="comment">/**</span>
+<span class="stdout">&gt; </span>        <span class="comment"> * Make my successor with the next larger count</span>
+<span class="stdout">&gt; </span>        <span class="comment"> */</span>
+<span class="stdout">&gt; </span>        <span class="keyword">to</span> <span class="defverb">__optUncall</span>() :__Portrayal {
+<span class="stdout">&gt; </span>            [makeGenerationCounter, &quot;<span class="litchars">run</span>&quot;, [<u>count+1</u>]]
+<span class="stdout">&gt; </span>        }
+<span class="stdout">&gt; </span>
+<span class="stdout">&gt; </span>        <span class="comment">/** similar purpose as Java's .toString() */</span>
+<span class="stdout">&gt; </span>        <span class="keyword">to</span> <span class="defverb">__printOn</span>(<span class="defvar">out</span> :TextWriter) :void {
+<span class="stdout">&gt; </span>            out.print(`<span class="litchars">&lt;gen </span>$count<span class="litchars">&gt;</span>`)
+<span class="stdout">&gt; </span>        }
+<span class="stdout">&gt; </span>    }
+<span class="stdout">&gt; </span>}
+<span class="stdout"># value: &lt;makeGenerationCounter&gt;
+
+? </span><span class="keyword">def</span> <span class="defvar">genCounter</span> := makeGenerationCounter(0)
+<span class="stdout"># value: &lt;gen 0&gt;</span></pre>
+      </blockquote>
+      <p>A <tt>generationCounter</tt> is an object with a single instance variable,
+        <tt>count</tt>. The <tt>makeGenerationCounter</tt> function acts like
+        a constructor -- it makes new <tt>generationCounter</tt> instances. Above,
+        we make the <tt>genCounter</tt> instance with a count of zero. Each <tt>generationCounter</tt>
+        uses the underlined code above <tt></tt> to &quot;misrepresent&quot; itself
+        as something that would be made by calling <tt>makeGenerationCounter</tt>
+        with a <tt>count</tt> value one greater than its own. </p>
+      <p>However, this portrayal enables us to serialize a <tt>generationCounter</tt>
+        only if we can serialize <tt>makeGenerationCounter</tt>, which is just
+        as encapsulated as our earlier <tt>capsule</tt>. Since it is stateless,
+        it is plausible to &quot;serialize&quot; it by not serializing it -- by
+        making it into a named exit point.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span>surgeon.addExit(makeGenerationCounter, &quot;<span class="litchars">makeGenerationCounter</span>&quot;)
+
+<span class="stdout">? </span>surgeon.serialize(genCounter)
+<span class="stdout"># value: &quot;de: makeGenerationCounter(1)&quot;</span>
+
+<span class="stdout">? </span>surgeon.unserialize(&quot;<span class="litchars">de: makeGenerationCounter(1)</span>&quot;)
+<span class="stdout"># value: &lt;gen 1&gt;</span></pre>
+      </blockquote>
+      <p>A reconstructed <tt>generationCounter</tt> has a count one greater than
+        its original, thereby accumulating a count of the number of serialize
+        / unserialize cycles it has been through since it was born. Rather than
+        seeing the underlined &quot;misrepresentation&quot; as a problem to prohibit,
+        this example shows how this representational freedom is an opportunity.
+      </p>
+      <p></p>
+      <h1><a name="as-eval"></a>Unserialization as Evaluation</h1>
+      <p>(This is approximately an abridged presentation of the <a href="data-e-manual.html#as-eval">Unserialization
+        as Evaluation</a> section of Appendix A: The Data-E Manual.)</p>
+      <p>As shown above, unserialization can be thought of, or even implemented
+        as, expression evaluation [ref Rees, XMLEncoder]. A depiction is an expression
+        in some programming language, the unserializer is the eval function, the
+        exit references to be reconnected are free variable references, the values
+        to reconnect them to come from the scope (i.e., environment) provided
+        to eval, and the root of the reconstructed subgraph is the value the expression
+        evaluates to. Serialization is the logically inverse process, in which
+        an uneval function is applied to a root and an unscope, and writes out
+        an expression that, were it evaluated in the corresponding scope, would
+        reconstruct the subgraph. </p>
+      <p>Data-E is the subset of <i><b><font color="#009000">E</font></b></i>
+        used for depicting a subgraph as an expression. Ignoring precedence, it
+        consists of the following productions:</p>
+      <h2><a name="data-e-fund"></a>Fundamental Data-E Constructs</h2>
+      <div align="center">
+        <table cellpadding="6">
+          <tr valign="top">
+            <td> <div align="right"><tt><span class="defvar">expr</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left"><tt>literal | varName | tempName | <br>
+                call | defexpr</tt></div></td>
+          </tr>
+          <tr valign="top">
+            <td> <div align="right"><tt><span class="defvar">literal</span>&nbsp;::=</tt></div></td>
+            <td> <p align="left"><tt>LiteralInt | LiteralFloat64 | <br>
+                LiteralChar | LiteralString</tt></p>
+              <p align="left"><tt><span class="comment"># Each are written as
+                they are in Java.<br>
+                # Examples: </span>37, 42.3, '<span class="litchars">c</span>',
+                &quot;<span class="litchars">What me worry?</span>&quot;</tt></p></td>
+          </tr>
+          <tr valign="top">
+            <td> <div align="right"><tt><span class="defvar">varName</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left">
+                <p><tt>Identifier <span class="comment"># but not of the form
+                  &quot;t__&quot;Digit*</span></tt></p>
+                <p><tt><span class="comment"> # These variable names are only
+                  used freely.<br>
+                  # Example: </span>foo</tt></p>
+              </div></td>
+          </tr>
+          <tr valign="top">
+            <td> <div align="right"><tt><span class="defvar">tempName</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left">
+                <p><tt>&quot;<span class="litchars">t__</span>&quot;Digit* </tt></p>
+                <p><tt><span class="comment"># These variable names are never
+                  used freely.<br>
+                  # Example: </span>t__12</tt></p>
+              </div></td>
+          </tr>
+          <tr valign="top">
+            <td> <div align="right"><tt><span class="defvar">call</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left">
+                <p><tt>expr &quot;<span class="litchars">.</span>&quot; Identifier
+                  &quot;<span class="litchars">(</span>&quot; exprs &quot;<span class="litchars">)</span>&quot;</tt></p>
+                <p><tt><span class="comment"># Example: </span>__makeList.run(&quot;<span class="litchars">foo</span>&quot;,
+                  49)</tt></p>
+              </div></td>
+          </tr>
+          <tr valign="top">
+            <td> <div align="right"><tt><span class="defvar">defexpr</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left">
+                <p><tt>&quot;<span class="litchars">def</span>&quot; tempName
+                  &quot;<span class="litchars">:=</span>&quot; expr</tt></p>
+                <p><tt><span class="comment"># Where expr may refer to tempName<br>
+                  # Example: </span><span class="keyword">def</span> <span class="defvar">t__0</span>
+                  := __makeList.run(1, t__0, 3)</tt></p>
+              </div></td>
+          </tr>
+          <tr valign="top">
+            <td> <div align="right"><tt><span class="defvar">exprs</span>&nbsp;::=</tt></div></td>
+            <td> <div align="left"><tt>(expr (&quot;<span class="litchars">,</span>&quot;
+                expr)*)?</tt></div></td>
+          </tr>
+        </table>
+      </div>
+      <p>&nbsp;</p>
+      <h2><i><font color="#009000"><a name="data-e-shorthands"></a>E</font></i>
+        Syntactic Shorthands generated by <tt>deSrcKit</tt></h2>
+      <p> Since we use <tt>deSrcKit</tt> to build the depictions we present for
+        expository purposes, we need to know the shorthands it builds, which are
+        a subset of the shorthands recognized and expanded by <i><b><font color="#009000">E</font></b></i>.
+        Going the other way, all <i><b><font color="#009000">E</font></b></i>
+        syntactic shorthands, including those below, are recognized by <tt>deSrcKit</tt>,
+        since it uses the <i><b><font color="#009000">E</font></b></i> parser
+        to parse and expand its input. </p>
+      <p>Any valid <i><b><font color="#009000">E</font></b></i> expression that
+        expands only into the above Data-E primitives is a valid Data-E expression
+        with the same meaning. Likewise any valid Data-E expression is a valid
+        <i><b><font color="#009000">E</font></b></i> expression with the same
+        meaning. </p>
+      <div align="center">
+        <table cellpadding="6">
+          <tr valign="top"> 
+            <td> <p align="right"><tt>expr&nbsp;&quot;(&quot;&nbsp;exprs&nbsp;&quot;)&quot;</tt> 
+              </p></td>
+            <td> <p align="left"><i><span class="comment">is shorthand for</span><br>
+                </i><tt>expr &quot;.run(&quot; exprs &quot;)&quot;</tt></p>
+              <p align="left"><i><span class="comment">If the message name is 
+                left out, it defaults to &quot;<tt>run</tt>&quot;. For example,<br>
+                </span></i> <tt>__makeList(&quot;<span class="litchars">foo</span>&quot;, 
+                49)</tt> <i class="comment">is shorthand for<br>
+                </i><tt>__makeList.run(&quot;<span class="litchars">foo</span>&quot;, 
+                49)</tt>.</p></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <p align="right"><tt>&quot;[&quot;&nbsp;exprs&nbsp;&quot;]&quot;</tt></p></td>
+            <td> <p align="left"> <i><span class="comment">is shorthand for</span><br>
+                </i><tt>&quot;__makeList.run(&quot; exprs &quot;)&quot;</tt></p>
+              <p align="left"><i><span class="comment">Square brackets can be 
+                used to express lists. For example,<br>
+                </span></i> <tt>[&quot;<span class="litchars">foo</span>&quot;, 
+                49]</tt><i class="comment"> is shorthand for</i> <tt><br>
+                __makeList.run(&quot;<span class="litchars">foo</span>&quot;, 
+                49)</tt>.</p></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <p align="right"><tt>expr&nbsp;&quot;[&quot;&nbsp;exprs&nbsp;&quot;]&quot;</tt> 
+              </p></td>
+            <td> <p align="left"><i><span class="comment">is shorthand for</span><br>
+                </i><tt>expr &quot;.get(&quot; exprs &quot;)&quot;</tt></p>
+              <p align="left"><i><span class="comment"> For example,<br>
+                </span></i> <tt>vec[i]</tt> <i class="comment">is shorthand for<br>
+                </i><tt>vec.get(i)</tt>.</p></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <p align="right"><tt>&quot;&lt;&quot;Identifier&quot;&gt;&quot;</tt></p></td>
+            <td> <p align="left"> <i><span class="comment">is shorthand for</span><br>
+                </i><tt>Identifier&quot;__uriGetter&quot;</tt></p>
+              <p align="left"><i><span class="comment">For example,<br>
+                </span></i><tt>&lt;file&gt;</tt> <i><span class="comment">is shorthand 
+                for</span></i><br>
+                <tt>file__uriGetter</tt><span class="comment"><br>
+                </span></p></td>
+          </tr>
+          <tr valign="top"> 
+            <td> <p align="right"><tt>&quot;&lt;&quot;Identifier&quot;:&quot;URIC*&quot;&gt;&quot;</tt></p></td>
+            <td> <p align="left"> <i><span class="comment">is shorthand for</span><br>
+                </i><tt>Identifier&quot;__uriGetter.get(&quot; URIBody &quot;)&quot;</tt></p>
+              <p align="left"><i><span class="comment">Where the URIBody is a 
+                literal string whose value is the sequence of URI characters. 
+                As explained earlier in <a href="#uri-exprs"><b><font color="#009000">E</font></b>'s 
+                URI Expressions</a>,<br>
+                </span></i><tt>&lt;file:<span class="litchars">/foo/bar</span>&gt;</tt> 
+                <i><span class="comment">is shorthand for</span></i><br>
+                <tt>file__uriGetter.get(&quot;<span class="litchars">/foo/bar</span>&quot;)</tt><span class="comment"><br>
+                </span></p></td>
+          </tr>
+        </table>
+      </div>
+      <p>Using several cases together:</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">root</span> := [1, root, 1, &lt;import:java.lang.makeStringBuffer&gt;]
+<span class="stdout"># value: [1, &lt;***CYCLE***&gt;, 1, &lt;makeStringBuffer&gt;]
+
+? </span><span class="keyword">def</span> <span class="defvar">depiction</span> := surgeon.serialize(root)
+<span class="stdout"># value: &quot;de: def t__0 := [def t__2 := 1,
+#                          t__0,
+#                          t__2,
+#                          &lt;import:java.lang.makeStringBuffer&gt;]&quot;
+
+? </span>surgeon.unserialize(depiction)
+<span class="stdout"># value: [1, &lt;***CYCLE***&gt;, 1, &lt;makeStringBuffer&gt;]</span></pre>
+      </blockquote>
+      The depiction is shown in the middle following the &quot;de: &quot;. It
+      is written in Data-E and has the following meaning:
+      <ul>
+        <li>The value of the <i><b><font color="#009000">E</font></b></i> expression
+          <tt>&lt;import:java.lang.makeStringBuffer&gt;</tt>
+          serializes as the Data-E expression <tt>import__uriGetter.get(&quot;<span class="litchars">java.lang.makeStringBuffer</span>&quot;)</tt>,
+          as will be explained in the <a href="recog-n-build.html#uncalling">next
+          chapter</a>. The <tt>deSrcKit</tt> shows this expression using the URI
+          shorthand, which in this case looks like the original <i><b><font color="#009000">E</font></b></i>.</li>
+        <li> The <tt><span class="keyword">def</span>&nbsp;<span class="defvar">t__2</span>&nbsp;:=&nbsp;1</tt>
+          is non-cyclic instance of the <tt>defexpr</tt> production, since <tt>t__2</tt>
+          is not used on its right hand side, even though <tt>t__2</tt> is used
+          later in the serialization.</li>
+        <li>The <tt><span class="keyword">def</span>&nbsp;<span class="defvar">t__0</span>&nbsp;:=&nbsp;...</tt>
+          is a cyclic instance of the <tt>defexpr</tt> production, since t__0 is
+          used on its right hand side, expressing a cyclic data structure.</li>
+      </ul>
+      <p>For those familiar with Java, Data-E should be mostly familiar, but with
+        a few important differences:</p>
+      <ul>
+        <li>
+          <p>In <i><b><font color="#009000">E</font></b></i>, a variable definition
+            is an expression. Like assignment, the value of a definition expression
+            is the value of the right hand side.</p>
+        </li>
+        <li>
+          <p><tt>null</tt>, <tt>false</tt>, and <tt>true</tt> are not keywords
+            in <i><b><font color="#009000">E</font></b></i>, but rather are variable
+            names in <i><b><font color="#009000">E</font></b></i>'s universal
+            scope and in Data-E's default scope and unscope. This means an expression
+            can count on them having their normal values, so these don't need
+            to be literals. The &quot;<tt>false</tt>&quot; in the first example
+            of <a href="#previews">Previews of Data-E Serialization</a> above
+            was a variable reference, not a literal, just as it is in <i><b><font color="#009000">E</font></b></i>.</p>
+        </li>
+        <li>
+          <p>Using only the <tt>literal</tt>, <tt>varName</tt>, and <tt>call</tt>
+            productions, we can write Data-E expressions that will evaluate to
+            new tree structures whose leaves are reattached exit points.</p>
+        </li>
+        <li>
+          <p>In <i><b><font color="#009000">E</font></b></i>, a variable is in
+            scope starting from its defining occurrence, left-to-right, until
+            the close-curly that closes the <a href="../../../elang/blocks/ifExpr.html">scope
+            box</a> (lexical contour) in which it is defined, and not counting
+            regions of nested scope boxes where it is shadowed by a definition
+            of the same name. In Data-E, since there are no constructs that introduce
+            scope boxes (i.e., no constructs with curly brackets), every variable
+            is in scope from its defining occurrence until the end of the depiction
+            as a whole. </p>
+        </li>
+        <li>
+          <p>With the <tt>tempName</tt> and non-cyclic <tt>defexpr</tt> productions,
+            we can use Data-E to represent DAGs. For those values that are multiply
+            referenced, we can write out the sub-expression for calculating this
+            value at the first position it needs to appear, as the right hand
+            side of a <tt>define</tt>, capturing its value in a temp variable
+            (<tt><span class="keyword">def</span>&nbsp;<span class="defvar">t__2</span>&nbsp;:=&nbsp;1</tt>).
+            Everywhere else this value is needed, we use <tt>tempName</tt> to
+            reuse this captured value (<tt>t__2</tt>).</p>
+        </li>
+        <li>
+          <p>With a cyclic <tt>defexpr</tt>, we can use Data-E to represent graphs.
+            Unlike other block structured languages, even when the name being
+            defined on the left is used on the right, <i><b><font color="#009000">E</font></b></i>
+            still holds strictly to the left-to-right rule. This may seem strange,
+            since <tt>defexpr</tt> must execute right-to-left -- the expression
+            on the right must be evaluated to a value before the variable on the
+            right can be defined to hold this value. When this not yet defined
+            but in-scope variable name is used within the expression on the right,
+            what does it evaluate to before its actual value has been determined?
+            The answer is an <i>unresolved promise</i>, similar to a logic variable
+            or a future. An unresolved promise is an object reference whose designation
+            has not yet been determined. At the moment the above list is created
+            by evaluating the &quot;<tt>[..]</tt>&quot; expression on the right,
+            <tt>t__0</tt> is still an unresolved promise.</p>
+          <p> Once the expression on the right has evaluated to a value, then
+            the promise bound to the variable on the left is resolved to be this
+            value. Once a promise is resolved, it becomes like any normal reference
+            to the object it designates. This value is also the value of the <tt>defexpr</tt>
+            as a whole. By the time <tt><span class="keyword">def</span>&nbsp;<span class="defvar">t__0</span>&nbsp;:=&nbsp;...</tt>
+            finishes evaluating, the promise within the list becomes a direct
+            reference to the list itself.</p>
+        </li>
+      </ul>
+      <p>By using promises to reconstruct cycles, we safely avoid a host of hazards.
+        Most other serialization systems [ref JOSS, XMLEncoder, BOSS, ...] are
+        defined in systems without any kind of delayed references (promises, logic
+        variables, futures), but which still allow user-defined unserialize-time
+        behavior by the objects being unserialized. In any such system, when unserializing
+        a cycle, user-defined behavior may interact with graph neighbors that
+        are not yet fully initialized. Before an object is fully initialized,
+        it may be easily confused. In a conventional system this is only a minor
+        source of bugs. But in a graph of mutually suspicious objects this would
+        be a <a href="intro.html#cyclebug">major opportunity</a> for an adversary.
+        By referring to an object only with promises until its fully initialized,
+        we make such bugs safely fail-stop, enabling an adversary in the graph
+        only to mount a denial-of-unserialization attack, which it can trivially
+        do anyway, and which we make <a href="intro.html#denial">no effort or
+        claim to prevent</a>.</p>
+      <p>Data-E is a true subset of <i><b><font color="#009000">E</font></b></i>,
+        both syntactically and semantically. Since <i><b><font color="#009000">E</font></b></i>
+        is a secure object-capability language, the security issues surrounding
+        evaluation of <i><b><font color="#009000">E</font></b></i> programs are
+        already well understood. By using a subset of <i><b><font color="#009000">E</font></b></i>
+        in this way, we get to leverage this understanding.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">data</a>&nbsp;/&nbsp;<a href="../index.html">serial</a>&nbsp;/&nbsp;<a href="index.html">jhu-paper</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="intro.html" title="Back to: Introduction - Safe Serialization"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Introduction - Safe Serialization" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="recog-n-build.html" title="On to: "Reversing" Evaluation"><img src="../../../images/next.gif" width="64" height="32" alt="On to: "Reversing" Evaluation" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

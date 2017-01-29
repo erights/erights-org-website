@@ -1,0 +1,291 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Persistence and Upgrade</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">data</a>&nbsp;/&nbsp;<a href="../index.html">serial</a>&nbsp;/&nbsp;<a href="index.html">jhu-paper</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="entry-security.html" title="Back to: Manipulating Identity at the Entries"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Manipulating Identity at the Entries" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="related.html" title="On to: Related Work"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Related Work" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b>Persistence
+              and Upgrade</b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <h1><a name="lessons"></a>Lessons of <i>Persistence and Upgrade</i></h1>
+      <p><font color="#FF0000">(*** To be written)</font></p>
+      <h1>In Praise of Manual Persistence</h1>
+      <p>Computers crash too often. We wish our applications, data, and activities
+        to last much longer. To achieve this, traditionally, programmers had to
+        encode their application's representations twice -- once as a live runtime
+        data structure and once as schema: as a file or database format to be
+        saved to disk. This was the pain of <i>manual persistence</i>. Transparent
+        orthogonal persistence was first conceived as a way to avoid this error-prone
+        redundancy, essentially by masking the crash [KeyKOS, EROS, PJama]. A
+        process running in such a system proceeds essentially as if no crash had
+        happened. Such a process has an easy immortality, and the original persistence
+        problem is solved.</p>
+      <p >The <i>upgrade</i> problem occurs when we wish our application data
+        to survive a different kind of trauma -- the upgrade of the code the application
+        instantiates. When using manual persistence, the upgrade problem is properly
+        the <i>schema evolution</i> problem -- to design, along with a new release
+        of an application, means for converting its persistent schema from an
+        old representation to the new one. For example, later releases of an editor
+        typically know how to read documents written by earlier releases.</p>
+      <p >However, if one uses transparent orthogonal persistence <i>instead</i>
+        of manual persistence, then the entire runtime representation becomes
+        the schema that needs to evolve. This amplifies the difficulty of the
+        upgrade problem, often to a fatal extent. Manual persistence provides
+        a source of great leverage for upgrade, and one that's easy to miss: By
+        encoding their representation twice, programmers naturally bring to each
+        encoding those concerns specific to the purpose of that encoding, often
+        without thinking about this dichotomy explicitly.</p>
+      <p  align="center"><i>Do you, Programmer,<br>
+        take this Object to be part of the persistent state of your application,<br>
+        to have and to hold,<br>
+        through maintenance and iterations,<br>
+        for past and future versions,<br>
+        as long as the application shall live?</i></p>
+      <p  align="right">--Arturo Bejar [ref StateBundles]</p>
+      <p >Normally, we view the design of the runtime representation of our application
+        as the "real" one, and wish the persistent state to be derived from it.
+        But as this quote from Arturo suggests, the kind of commitment one needs
+        to invest in persistent state isn't appropriate for runtime data structures,
+        and shouldn't be. Runtime data structures are often delicate complex machines
+        in motion, with many complex distributed consistency assumptions between
+        the parts, designed to interact efficiently with an ongoing world of users
+        or devices, and encoding meaning in ways that are largely undocumented.
+        The complexity of this runtime world traditionally relies on the program
+        itself staying constant while the process is executing. </p>
+      <p >By contrast, when programmers design schema for manual persistence,
+        Arturo's question is properly uppermost on their mind. These schema are
+        stable representations designed with little redundancy, few opportunities
+        for distributed inconsistency, with little penalty for inefficient representations,
+        encoding only the essential application state that needs to survive across
+        time, and where this encoding is much more likely to be well documented.
+        Runtime representations emphasize the operational, whereas schema emphasize
+        the declarative.</p>
+      <p >Once the customers of an application accumulate their own privately
+        held persistent state from this application, such as their own private
+        documents, then Arturo's question becomes unavoidable. To release a new
+        version of an application without losing old customers, one must enable
+        those customers to revive their old state into an instantiation of the
+        new version of the application reliably -- with no per-instance programmer
+        intervention.</p>
+      <table cellpadding="12" align="right" bgcolor="#FFFFE8" border="1"  width="30%">
+        <tr>
+          <td>
+            <p>Smalltalk, with its easy support for live upgrade, is not a counter-example.
+              This support cannot be made reliable, and is instead designed for
+              programmers-as-customers who know how to recover from inconsistencies.</p>
+          </td>
+        </tr>
+      </table>
+      <p >If the programmers were using only transparent orthogonal persistence
+        to give the application's data long life, then this upgrade problem resembles
+        maintenance on an operational (though suspended) machine whose workings
+        may be largely mysterious. Worse, since upgrades must happen in an automated
+        way on customer data without programmers present, it more closely resembles
+        building an upgrade-robot that will reliably perform this maintenance
+        on any possible state such a machine may be in. With machines of great
+        complexity, the feasible changes will usually only be minor tweaks and
+        adjustments, not major design changes. The difficulty of upgrade will
+        place a severe limit on the speed with which a vendor will be able to
+        improve their program. This kind of persistence indeed provides a process
+        with easy immortality, but only as a living fossil.</p>
+      <p >If, on the other hand, the programmers were using manual persistence
+        (whether through foresight, habit, or lack of an alternative), then, when
+        they wish to release a new version, the total number of semantically significant
+        cases in the schema should usually be small enough that they can each
+        be thought about carefully, in order to see how to convert its meaning
+        into the closest appropriate meaning in the application's new version.
+        The upgrade-robot arrives with parameterized blueprints (the new version
+        of the program) for building a new running machine (instantiating a new
+        running process). The schema provides the arguments needed to complete
+        the blueprint. The old machine is scrapped and a new machine is freshly
+        built around these arguments. </p>
+      <p >As another analogy, if the runtime representation is the application
+        instance's phenotype, then the schema is the instance's genotype. Biological
+        evolution works partially because it operates only on the genotype, where
+        a genotype unfolds into the vastly more complex phenotype via the indirect
+        operational process of embryology. Like an ephemeral live process instantiating
+        an application (ie, a vat incarnation), each phenotype operates only from
+        a fixed snapshot of its genotype. Evolution only happens in the transition
+        between generations. While we needn't take these analogies too seriously,
+        they can significantly aid our intuitions.</p>
+      <p >Having made the greater initial investment in engineering two representations,
+        the programmers using manual-persistence will then be able to improve
+        their application much faster without losing their customers, perhaps
+        overtaking the head start of the harder-to-evolve but faster time-to-market
+        singly represented alternative.</p>
+      <p >The first step in dealing with the schema evolution problem is to mostly
+        avoid the problem by saving vastly smaller schema.</p>
+      <h2> Persistence and <i><b><font color="#009000">E</font></b></i></h2>
+      <p ><font color="#FF0000">*** Basic <i><b><font color="#009000">E</font></b></i>
+        orientation, including Vats, distributed objects, live refs and SturdyRefs,
+        and object-capability security.</font></p>
+      <p ><font color="#FF0000">*** Assumption of per-vat persistence by <i><b><font color="#009000">E</font></b></i>
+        computational model.</font></p>
+      <h2> Manual Revival as Zero-Delta Upgrade</h2>
+      <p >Note that none of the above discussion assumes that transparent orthogonal
+        persistence and largely manual persistence are exclusive options. A system
+        may well use both: transparent orthogonal persistence to mask crashes
+        efficiently [KeyKOS, EROS], and largely manual persistence only when upgrading.
+        A future <i><b><font color="#009000">E</font></b></i>-on-EROS may very
+        well operate in this mode. In this scenario, performance need not be a
+        goal of the largely manual system.</p>
+      <p >In the absence of support for high speed transparent orthogonal persistence,
+        a system may very well use largely manual persistence mechanism for both
+        purposes. Each post-crash revival is then a degenerate zero-delta upgrade:
+        Each revival runs through the upgrade-supporting logic each time, even
+        when no upgrade is actually occurring. The current <i><b><font color="#009000">E</font></b></i>,
+        running on Java running on stock OSes, operates in this mode. Performance
+        therefore should be a goal of <i><b><font color="#009000">E</font></b></i>'s
+        persistence mechanisms, but is not at this time.</p>
+      <h2> Mechanism / Policy Separation</h2>
+      <p >Of course, by definition, anything a program does is automated, so what
+        do we even mean by "manual" persistence? We are not arguing against automation,
+        abstraction, and reuse. Rather the issue is whether to build a primitively
+        provded inescapable comprehensive solution <i>vs.</i> a toolkit of reusable
+        tools from which one can roll one's own solution, or several co-existing
+        ones. When one can design a single solution adequate for the needed range
+        of uses, often one should, as the uniformity of a single comprehensive
+        solution can bring great benefits. When one size doesn't fit all, we should
+        instead turn to the tradition of <i>mechanism / policy</i> separation.
+        A toolkit can serve as the mechanisms out of which one may build a variety
+        of persistence systems embodying a (limited) range of policy choices.</p>
+      <p >What we mean by "manual" persistence is that the <i><b><font color="#009000">E</font></b></i>
+        kernel does not itself provide a primitive persistence system, but rather
+        provides primitive tools out of which persistence systems may be fashioned.
+        The <i><b><font color="#009000">E</font></b></i> system as a whole does
+        provide a default persistence system built "manually" from these tools,
+        but this has the status of library code rather than fundamental primitives.
+        Multiple such libraries can coexist, and the default one is in no sense
+        special.</p>
+      <p><font color="#FF0000">*** incoherent notes here to the end of this file.
+        Do Not Read ****</font> </p>
+      <p ></p>
+      <p >The tool most central to such a toolkit is a serialization / unserialization
+        system. <i><b><font color="#009000">E</font></b></i> currently uses Java's
+        serialization streams, which has a rather flexible and mature set of customization
+        hooks for building streams embodying a wide range of serialization policies.
+        Most of the goals of our toolkit are already achieved by Java's serialization
+        design, so this paper proceeds from there.</p>
+      <p>Here, we wish to support a range of compromises between the explicitness
+        and separation of concerns of manual persistence <i>vs.</i> the economy
+        of expression provided by automating aspects of persistence. Why a range
+        of compromises? Why not try to find one good compromise and just build
+        that? Because there are too many kinds of persistence policies that plausibly
+        need to be supported.</p>
+      <ul>
+        <li>What to save/restore <i>vs.</i> what to reconstruct <i>vs.</i> what
+          to reconnect. (More on this below.)</li>
+        <li>Where to save persistent state? Files? Databases?</li>
+        <li>When to revive saved state? On process (vat) revival, or faulting
+          on-demand?</li>
+        <li>Fail-stop vs. best efforts. When problems are hit, either saving or
+          restoring, should one give up or make due?</li>
+        <li>What is a consistent state, and how does one obtain access such a
+          state? Does such a state include messages in flight?</li>
+        <li>Transactions: When is a saved state a basis for commitment? How does
+          one abort and fall back to a previous state? As separate subsystems
+          asynchronously snapshot, how is consistency recovered when they revive
+          from different times?
+          <p >Faced with such a variety, we use the traditional answer: mechanism
+            / policy separation. We have built persistence support into <i><b><font color="#009000">E</font></b></i>
+            in two layers:</p>
+          A set of building blocks from which an application developer can (within
+          limits) build a persistence system embodying those policies that serve
+          their needs, including a fully manual system if desired. These mechanisms
+          must not allow an unprivileged persistence subsystem from violating
+          any of <i><b><font color="#009000">E</font></b></i>'s security properties,
+          while allowing for operation that's reasonable for a subsystem holding
+          a given set of authorities.</li>
+        <li>One example persistence system, built only from these building blocks,
+          embodying a set of policy choices that won't be suitable for all applications,
+          but is nevertheless designed to be widely reused.
+          <h2> 7.6. Persistence and Mutual Suspicion</h2>
+          <p>&nbsp;</p>
+        </li>
+      </ul>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">data</a>&nbsp;/&nbsp;<a href="../index.html">serial</a>&nbsp;/&nbsp;<a href="index.html">jhu-paper</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="entry-security.html" title="Back to: Manipulating Identity at the Entries"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Manipulating Identity at the Entries" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="related.html" title="On to: Related Work"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Related Work" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

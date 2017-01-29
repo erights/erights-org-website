@@ -1,0 +1,233 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>URI Expressions</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">io</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="text-file-io.html" title="On to: Text File I/O"><img src="../../images/next.gif" width="64" height="32" alt="On to: Text File I/O" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>URI
+              Expressions</b></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <h2>The URI Literal Expression</h2>
+      <p>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Example</th>
+          <th>Meaning</th>
+          <th>Value</th>
+        </tr>
+        <tr>
+          <td><tt>&lt;c:/jabbertest/jabberwocky.txt&gt;</tt></td>
+          <td>A file on the local file system</td>
+          <td>a java.io.File object</td>
+        </tr>
+        <tr>
+          <td><tt>&lt;<a href="http://www.erights.org">http://www.erights.org</a>&gt;</tt></td>
+          <td>A web page</td>
+          <td>a java.net.URL object</td>
+        </tr>
+        <tr>
+          <td><tt>&lt;import:java.util.Vector&gt;</tt></td>
+          <td>Load a Java class or an EMaker</td>
+          <td>the Class object for Vector</td>
+        </tr>
+        <tr>
+          <td><tt>&lt;cap:***actual persistent object&gt;</tt></td>
+          <td>Sturdy Reference</td>
+          <td>A remote E object</td>
+        </tr>
+      </table>
+      <p></p>
+      <p>The URLs familiar from web browsing -- such as <a href="http://www.erights.org"><tt>http://www.erights.org</tt></a>
+        -- are actually a special case of a syntax known as a URI. (Not that it
+        matters, but <i>URL</i> stands for <i>U</i>niform <i>R</i>esource <i>L</i>ocator,
+        while <i>URI</i> stands for <i>U</i>niform <i>R</i>esource <i>I</i>dentifier.)
+        <i><b><font color="#009000">E</font></b></i>'s grammar recognizes <a href="http://www.ics.uci.edu/pub/ietf/uri/rfc2396.txt">legal
+        URIs</a> (and therefore, legal URLs) enclosed in angle brackets as URI
+        literal expressions. A URI literal expression starts with a protocol-identifier,
+        such as &quot;http&quot; or &quot;file&quot;, is followed immediately
+        by a colon, which is immediately followed by the uri-body characters,
+        such as &quot;//www.erights.org&quot; or &quot;/jabberwocky.txt&quot;:</p>
+      <blockquote>
+        <pre>&lt;<i>protocol-identifier</i>:<i>uri-body</i>&gt;</pre>
+      </blockquote>
+      <p>The protocol-identifier is a simple identifier that names a URI-protocol
+        handler. It is up to the named handler to interpret the uri-body and return
+        the value of the URI expression. The value of a URI expression will usually
+        depend on which protocol handler is named. The URI body must begin with
+        one of these characters:</p>
+      <blockquote>
+        <pre>a-z, A-Z, 0-9, any of ;/?@&amp;+$-_.!~*'().%#\|</pre>
+      </blockquote>
+      <p>After the first character, the URI body consists of characters from this
+        set, plus &quot;=&quot; and &quot;:&quot;. </p>
+      <p>*** details: E doesn't quite recognize <i>all</i> legal URIs. The exceptions
+        are the exclusion of &quot;=&quot; and &quot;:&quot; from the first uri-body
+        character -- since it would cause confusion with &quot;:=&quot; (assignment)
+        and &quot;::&quot; (reserved for future use). ***</p>
+      <p>*** details: \ and | are not actually legal URI characters, but appear
+        in Netscape and/or Internet Explorer (clarify this) to mean / and : respectively.
+        Accordingly, E normalizes \ to / and | to : before passing these to the
+        protocol handler. ***</p>
+      <h2>The URI Unary Expression (left associative)</h2>
+      <p>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Example</th>
+          <th>Meaning</th>
+          <th>Value</th>
+        </tr>
+        <tr>
+          <td><tt>&lt;file: expr&gt;</tt></td>
+          <td>use a calculated value</td>
+          <td>the File whose name is the value of expr</td>
+        </tr>
+      </table>
+      <p></p>
+      <p>To look up a file or a web page using a calculated name, rather than
+        a name you know when you write the program, use the URI unary expression:</p>
+      <blockquote>
+        <pre>&lt;<i>protocol-name</i>: <i>expression</i>&gt;</pre>
+      </blockquote>
+      <p>So, for example, both</p>
+      <blockquote>
+        <pre>def name := &quot;c:/jabbertest/jabberwocky.txt&quot;
+&lt;file: name&gt;</pre>
+      </blockquote>
+      <p>and</p>
+      <blockquote>
+        <pre>&lt;file:c:/jabbertest/jabberwocky.txt&gt;</pre>
+      </blockquote>
+      <p>mean the same thing. You can also use the URI unary expression to look
+        up names that contain non-URI characters. For example, Windows machines
+        have a top level directory names &quot;Program Files&quot;. Since this
+        name contains a space, you can't use the URI literal expression. But</p>
+      <blockquote>
+        <pre>&lt;file: &quot;/Program Files&quot;&gt;</pre>
+      </blockquote>
+      <p>is just as good.</p>
+      <h2>The &quot;file:&quot; URI</h2>
+      <p>See <a href="text-file-io.html"><i>Text File I/O</i></a>.</p>
+      <p>***detail: to accomodate the way modern browsers operate on windows,
+        a one-letter protocol handler is assumed to be a drive letter and turned
+        into a file: uri whose body consists of the original uri. For example,</p>
+      <blockquote>
+        <pre>&lt;a:/jabberwocky.txt&gt;</pre>
+      </blockquote>
+      <p>is turned into</p>
+      <blockquote>
+        <pre>&lt;file:a:/jabberwocky.txt&gt;</pre>
+      </blockquote>
+      <p>which will fetch the file from your A drive (typically, a floppy). ***</p>
+      <h2>Standard URLs (http:, ftp:, gopher:, news:, and mailto:)</h2>
+      <p>These all evaluate to java.net.URL objects. See <a href="text-file-io.html#URLs"><i>URLs</i></a>.</p>
+      <h2>The &quot;import:&quot; URI</h2>
+      <p>After &quot;import:&quot; comes a Java fully qualified class name. If
+        there is a class by this name (or if one can be loaded), that class is
+        the value of this expression. This enables the equivalent of Java's import
+        statement. Whereas in Java we might write</p>
+      <blockquote>
+        <pre>import java.util.Vector;
+...
+    Vector vec = ...     <font class="comment">//used as a declaration
+</font>    ... new Vector() ... <font class="comment">//calling constructor or static method</font></pre>
+      </blockquote>
+      <p>we'd instead say in E</p>
+      <blockquote>
+        <pre>def makeVector := &lt;import:java.util.makeVector&gt;
+def Vector := makeVector.asType()
+...
+    def vec :Vector := ...     <font class="comment"># declarations are optional in E
+</font>    ... makeVector() ... <font class="comment"># calling constructor or static method</font></pre>
+      </blockquote>
+      <p>See <i>Interfacing with Java</i>.</p>
+      <h2>The &quot;cap:&quot; URI</h2>
+      <p>If the Vat containing the designated object is currently on-line and
+        can be found, and if the designated object is still exported by that Vat,
+        this evaluates to a remote (*** or network) pointer to that object. See
+        <i><a href="../concurrency/introducer.html">Introducing Remote Objects</a></i>.</p>
+      <P ALIGN="left"><font color="#ff0000">***show expansion to kernel language</font>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">io</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="text-file-io.html" title="On to: Text File I/O"><img src="../../images/next.gif" width="64" height="32" alt="On to: Text File I/O" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

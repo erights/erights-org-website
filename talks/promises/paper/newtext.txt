@@ -1,0 +1,55 @@
+\section{Discussion and Conclusions}
+
+Electric Communities open sourced E in 1998. Since then, a lively open
+source community has continued development of E at
+http://www.erights.org/. Seven companies and two universities have
+used E: to teach secure and distributed programming, to rapidly
+prototype distributed architectures, and to build several distributed
+systems, including CapDesk \cite{darpareport,miller:struct-auth}, a
+virus-safe distributed desktop whose security architecture has been
+publicly reviewed \cite{darpareview}.
+
+The current reference E implementation is an interpreter written in
+Java. Despite these successful trials, we do not yet consider it ready
+for production use.  Two compiler-based implementations are in
+progress: Kevin Reid is building an E on Common Lisp, and E. Dean
+Tribble is building an E on Squeak (an open-source Smalltalk). Several
+of E's libraries, currently implemented in Java, are being rewritten
+in E to help port E onto other language platforms. Separately, Fred
+Spiessens continues to make progress on formalizing the reasoning
+about \emph{authority} on which E's security is based \cite{tgc}.
+%
+\begin{quote}
+The essence of E's security is modularity done right.
+\begin{flushright}
+---Dan Ingalls
+\end{flushright}
+\end{quote}
+%
+Throughout, our engineering premise is that lambda abstraction and
+object programming, by their impressive plan coordination successes in
+the small, likely have the seeds for coordinating plans in the
+large. As Alan Kay has urged \cite{kay:ma}, our emphasis is less on
+the objects and more on the interstitial fabric which connects them:
+the dynamic reference graph carrying the messages by which effects are
+caused.
+
+By restricting causality to flow only by these messages---including
+changes to the graph's topology---we have capability-based access
+control able to support fine-grained \emph{least authority}. By
+restricting the ordering of these causal influences, we have
+deadlock-free concurrency control, able to maintain consistency in
+concurrent stateful systems.  E uses safe language techniques to
+enforce these restrictions within a process. E's cryptographic
+protocol extends the reference graph between mutually suspicious
+machines while enforcing these restrictions among them. Distributed
+programs also face large latencies and partial failure. \emph{Promise
+pipelining} moves messages towards their likely destination,
+compensating for latency. \emph{Broken references} safely abstract
+partition, and \emph{sturdy references} abstract the ability to
+reconnect.
+
+By changing only a few concepts of conventional sequential object
+programming, E enables programmers to coordinate disparate plans
+successfully in the face of all these simultaneous issues.
+

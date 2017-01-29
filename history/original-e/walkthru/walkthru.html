@@ -1,0 +1,238 @@
+<HTML><HEAD><TITLE>Die Rolling Example Walk-through</TITLE><FRAME NAME="walkthru"></HEAD>
+<BODY BGCOLOR="#000000" TEXT="#FFFFFF" LINK="#FF0000" VLINK="#FF0000">
+
+<H1>Die Rolling Example</H1>
+Click on any figure to view it full-size.<BR>
+Click on any step number to view the <A TARGET="src-win" HREF="source.html">source code</A> for this example.<P>
+
+In this example, two eobjects (of class <I>DieRoller</I>) work together to create a random number.  Either object could go first.  Both sides use this protocol:
+
+<OL>
+<LI>Select a random number <TT>X</TT>.
+<LI>Reveal the one way hash of <TT>X</TT>.
+<LI>After receiving the other's hash, reveal <TT>X</TT>.
+<LI>After receiving the other's <TT>X</TT>, combine the <TT>X</TT>s to produce the final result.
+<LI>Verify that there was no cheating.
+</OL>
+This example demonstrates the use of nested <TT> ewhen </TT> statements.
+
+<H2>Walkthrough -- Part One</H2>
+
+<TT>
+<UL>public static void main(String args[])<BR>
+  {<BR>
+ <UL>DieRoller rollerOne = new DieRoller();<BR>
+    DieRoller rollerTwo = new DieRoller();<P>
+
+    EInteger rollerOneHash, rollerOneX;<BR>
+    EInteger rollerTwoHash, rollerTwoX;<P>
+
+<P>
+
+    rollerTwo <- doDieRoll(&rollerTwoHash, &rollerTwoX,
+     rollerOneHash, rollerOneX);</UL>
+  }</UL>
+</TT><P>
+
+At each step in this walkthrough, the object being discussed and the source code being executed are <FONT COLOR="#FF6600">highlighted</FONT>.<HR><P>
+
+<OL>
+
+<A TARGET="src-win" HREF="source.html#step01" NAME="step01"></A><LI>
+<FONT COLOR="#FF6600"><TT>public static void main(String args[])</TT></FONT><P>
+<A TARGET="src-win" HREF="big.step01.gif"><IMG SRC="step01.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A> 
+<TT>main </TT> is called on<TT> DemoRoller</TT>.
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step02" NAME="step02"></a><LI>
+<FONT COLOR="#FF6600"><TT>DieRoller rollerOne = new DieRoller();</TT></FONT><P>
+<A TARGET="src-win" HREF="big.step02.gif"><IMG SRC="step02.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+<TT>main</TT> declares <TT> rollerOne</TT>,  of eclass <I>DieRoller</I>.  When <TT>rollerOne</TT> is created, only <TT>DemoRoller</TT> holds any references to it.
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step03" NAME="step03"></a><LI>
+<FONT COLOR="#FF6600"><TT>DieRoller rollerTwo = new DieRoller();</TT></FONT><P>
+<A TARGET="src-win" HREF="big.step03.gif"><IMG SRC="step03.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+<TT>main</TT> declares <TT>rollerTwo</TT>.  In this example,<TT> rollerOne </TT>and<TT> rollerTwo </TT>will both be running on the same machine, but the construction of eclass <I>DieRoller</I> allows<TT> rollerOne </TT>and<TT> rollerTwo </TT>to be on different machines connected by a network.
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step04" NAME="step04"></a><LI>
+<FONT COLOR="#FF6600"><TT>EInteger rollerOneHash, rollerOneX;</TT></FONT><P>
+<A TARGET="src-win" HREF="big.step04.gif"><IMG SRC="step04.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+<TT>main </TT>declares the EIntegers<TT> rollerOneX</TT>, which will contain <TT>rollerOne</TT>'s random number <TT>X</TT>, and <TT> rollerOneHash</TT>, which will contain the hash of<TT> rollerOneX</TT>.  These EIntegers act as channels (large triangles) for storage and forwarding of values "in transit".
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step05" NAME="step05"></a><LI>
+<FONT COLOR="#FF6600"><TT>EInteger rollerTwoHash, rollerTwoX;</TT></FONT><P>
+<A TARGET="src-win" HREF="big.step05.gif"><IMG SRC="step05.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+<TT>main </TT>declares the EIntegers<TT> rollerTwoHash </TT>and<TT> rollerTwoX</TT>.  
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step06" NAME="step06"></a><LI>
+<FONT COLOR="#FF6600"><TT>rollerOne <- doDieRoll(&rollerOneHash,
+     &rollerOneX, rollerTwoHash, rollerTwoX);</TT></FONT><P>
+<A TARGET="src-win" HREF="big.step06.gif"><IMG SRC="step06.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+<TT>DemoRoller </TT>sends the message<TT> doDieRoll </TT>to<TT> rollerOne</TT>. The two distributors<TT> &rollerOneX </TT>and<TT> &rollerOneHash
+</TT>are passed to <TT> rollerOne </TT>to enable it to reveal information to<TT> rollerTwo</TT>. The parameters<TT> rollerTwoHash </TT>and<TT> rollerTwoX </TT>will reveal to<TT> rollerOne </TT>information from<TT> rollerTwo</TT>. 
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step07" NAME="step07"></a><LI>
+<FONT COLOR="#FF6600"><TT>rollerTwo <- doDieRoll(&rollerTwoHash,
+     &rollerTwoX, rollerOneHash, rollerOneX);</TT></FONT><P>
+<A TARGET="src-win" HREF="big.step07.gif"><IMG SRC="step07.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+Similarly, <TT> DemoRoller </TT> sends the message<TT> doDieRoll </TT>to<TT> rollerTwo </TT>. The two distributors<TT> &rollerTwoX </TT>and<TT> &rollerTwoHash
+</TT>are passed to <TT> rollerTwo </TT>to enable it to reveal information to<TT> rollerOne</TT>. The parameters<TT> rollerOneHash </TT>and<TT> rollerOneX </TT>will reveal to<TT> rollerTwo </TT>information from<TT> rollerOne</TT>.<P>
+
+The order of the delivery of the two<TT> doDieRoll </TT>messages is not guaranteed --  either could get it first, or they could be delivered at the same time. The remainder of this walkthrough shows identical events happening to<TT> rollerOne </TT>and<TT> rollerTwo </TT>simulaneously, although the two <I>dieRoller</I>s could perform their actions in either order. 
+<BR CLEAR=RIGHT><P>
+</OL><HR>
+<H2>Walkthrough -- Part Two</H2>
+
+<TT>
+<UL>eclass DieRoller<BR>
+{
+  <UL>Random randomGenerator = new Random();<P>
+
+emethod doDieRoll(EDistributor myHash, EDistributor myX, EInteger hisHash, EInteger hisX) {<P>
+
+   <UL>long X = randomGenerator.nextLong();<P>
+
+          myHash <- forward(new EInteger(OneWayHash(X)));<P>
+
+          ewhen hisHash (long otherHash) {<P>
+             <UL>myX <- forward(new EInteger(X));<BR>
+                  ewhen hisX (long otherX) {<P>
+                       <UL>long finalResult = Combine(X, otherX);<P>
+
+	                    System.out.println("Roll result = " + finalResult);<P>
+
+                      if (OneWayHash(otherX) != otherHash) {
+	                       <UL>System.out.println("There was cheating.");</UL><BR>
+	        }</UL>
+	      }</UL>
+	    }</UL>
+	  }</UL>
+	}</UL>
+
+</TT><HR><P>
+
+<OL>
+<A TARGET="src-win" HREF="big.step08.gif"><IMG SRC="step08.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+<A TARGET="src-win" HREF="source.html#step08" NAME="step08"></A><LI VALUE=8>
+At this point,<TT> DemoRoller </TT>has done its job.  Now each of the <I>DieRoller</I>s executes the<TT> doDieRoll </TT>emethod.  We'll trace the path of execution in one, bearing in mind that identical events are happening in the other.
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step09" NAME="step09"></a><LI>
+<TT><FONT COLOR="#FF6600">emethod doDieRoll</FONT> (EDistributor myHash, EDistributor myX, EInteger hisHash, EInteger hisX) {</TT><P> 
+<A TARGET="src-win" HREF="big.step09.gif"><IMG SRC="step09.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+Each of the <I>DieRollers</I> receives the<TT> doDieRoll </TT>message, with parameters provided for them to communicate with each other.
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step10" NAME="step10"></a><LI>
+<TT>emethod doDieRoll (<FONT COLOR="#FF6600">EDistributor myHash, EDistributor myX, EInteger hisHash, EInteger hisX</FONT>) {</TT><P> 
+<A TARGET="src-win" HREF="big.step10.gif"><IMG SRC="step10.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+The message objects, having set up the conditions for each <I>DieRoller</I> to do its computation, can also be garbage-collected.  Each <I>DieRoller</I> now has the distributors it needs to reveal its own information to the other (<TT>myX, myHash</TT>) and the EIntegers that will deliver the corresponding data from the other (<TT>hisX, hisHash</TT>).
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step11" NAME="step11"></a><LI>
+<TT><FONT COLOR="#FF6600">long X = randomGenerator.nextLong();</FONT></TT><P> 
+<A TARGET="src-win" HREF="big.step11.gif"><IMG SRC="step11.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+Each <I>DieRoller</I> chooses a random number <TT>X</TT>.
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step12" NAME="step12"></a><LI>
+<TT><FONT COLOR="#FF6600">myHash <- forward(new EInteger(OneWayHash(X)));</FONT></TT><P>
+<A TARGET="src-win" HREF="big.step12.gif"><IMG SRC="step12.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+Each <I>DieRoller</I> reveals the hash of its <TT>X</TT> by forwarding it to <TT>myHash</TT> (highlighted triangle). This value is shown here "in transit".
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step1318" NAME="step13"></a><LI>
+<TT><FONT COLOR="#FF6600">ewhen</FONT> hisHash (long otherHash) {</TT><P>
+<A TARGET="src-win" HREF="big.step13.gif"><IMG SRC="step13.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+Having executed all code outside of its<TT> ewhen </TT>block, each <I>DieRoller</I> then executes its outer <TT> ewhen </TT>statement.  Basically, it says, "When<TT> hisHash </TT>gets a value, assign its value to<TT> otherHash </TT>and execute the following code block." The highlighted rectangle shown represents the lexical scope of the outer<TT> ewhen </TT>code block.
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step1318" NAME="step14"></a><LI>
+<TT><FONT COLOR="#FF6600">ewhen hisHash (long otherHash)</FONT> {</TT><P>
+<A TARGET="src-win" HREF="big.step14.gif"><IMG SRC="step14.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+If any communications latency is involved (if, for example, the two <I>DieRoller</I>s are on different machines), <I>DieRoller</I> waits at this point. All execution that does not depend on the <TT>hisHash</TT> value has proceeded.  The highlighted arrow represents the pending<TT> ewhen</TT>, with a reference to the lexical closure containing the data it will act on.
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step1318" NAME="step15"></a><LI>
+<TT><FONT COLOR="#FF6600">ewhen hisHash (long otherHash)</FONT> {</TT><P>
+<A TARGET="src-win" HREF="big.step15.gif"><IMG SRC="step15.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+When <TT>hisHash</TT> reveals a value, the<TT> ewhen </TT>block is reactivated.  <I>DieRoller</I> has completed execution of<TT> doDieRoll</TT>; it terminates and is garbage-collected. The<TT> ewhen </TT>proceeds.
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step1318" NAME="step16"></a><LI>
+<TT><FONT COLOR="#FF6600">ewhen hisHash (long otherHash)</FONT> {</TT><P>
+<A TARGET="src-win" HREF="big.step16.gif"><IMG SRC="step16.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+The channel created for<TT> myHash </TT>has fulfilled its reason for existing; no other messages will be sent on it now that <I>DieRoller</I> has been garbage-collected, so it can go away as well. The code block's lexical scope is within that of the original DieRoller, so <TT>X</TT> is known within this closure as well (highlighted box).
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step1318" NAME="step17"></a><LI>
+<TT><FONT COLOR="#FF6600">ewhen hisHash (long otherHash)</FONT> {</TT><P>
+<A TARGET="src-win" HREF="big.step17.gif"><IMG SRC="step17.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+The activation of the block inside the<TT> ewhen </TT>means the<TT> ewhen </TT>can go away; an<TT> ewhen </TT>executes only once.  (An<TT> ewhenever </TT>processes multiple events.)
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step1318" NAME="step18"></a><LI>
+<TT><FONT COLOR="#FF6600">ewhen hisHash (long otherHash)</FONT> {</TT><P>
+<A TARGET="src-win" HREF="big.step18.gif"><IMG SRC="step18.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+The revealed value of<TT> hisHash </TT>is assigned to<TT> otherHash </TT>(highlighted square) and the outer<TT> ewhen </TT>code block proceeds as follows:
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step19" NAME="step19"></a><LI>
+<TT><FONT COLOR="#FF6600">myX <- forward(new EInteger(X));</FONT></TT><P>
+<A TARGET="src-win" HREF="big.step19.gif"><IMG SRC="step19.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+The random integer <TT>X</TT> (highlighted square), which has been secret until now, is wrapped in an <I>EInteger</I> object and forwarded to <TT>myX</TT> (highlighted triangle).  It is "in transit," and will be received as<TT> hisX</TT>.
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step2024" NAME="step20"></a><LI>
+<TT><FONT COLOR="#FF6600">ewhen </FONT> hisX (long otherX) {</TT><P>
+<A TARGET="src-win" HREF="big.step20.gif"><IMG SRC="step20.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+As earlier with the outer<TT> ewhen </TT>statement, a new lexical closure is created with the data to be processed in the inner<TT> ewhen </TT>block, pending the revelation of<TT> hisX</TT>. The inner<TT> ewhen </TT>statement says "When<TT> hisX </TT>is revealed, execute the following block of code."
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step2024" NAME="step21"></a><LI>
+<TT><FONT COLOR="#FF6600">ewhen hisX (long otherX) { </FONT></TT><P>
+<A TARGET="src-win" HREF="big.step21.gif"><IMG SRC="step21.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+The highlighted arrow represents the inner<TT> ewhen </TT>statement, with a reference to its associated lexical closure.  It activates when<TT> hisX </TT>is revealed (highlighted circle).
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step2024" NAME="step22"></a><LI>
+<TT><FONT COLOR="#FF6600">ewhen hisX (long otherX) { </FONT></TT><P>
+<A TARGET="src-win" HREF="big.step22.gif"><IMG SRC="step22.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+The code block associated with the outer<TT> ewhen </TT>has fulfilled its function and can be garbage-collected. 
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step2024" NAME="step23"></a><LI>
+<TT><FONT COLOR="#FF6600">ewhen hisX (long otherX) { </FONT></TT><P>
+<A TARGET="src-win" HREF="big.step23.gif"><IMG SRC="step23.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+The inner<TT> ewhen </TT>proceeds. The channel transmitting the value of<TT> hisX </TT>can go away, since nothing else can be sent on it. 
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step2024" NAME="step24"></a><LI>
+<TT><FONT COLOR="#FF6600">ewhen hisX (long otherX) { </FONT></TT><P>
+<A TARGET="src-win" HREF="big.step24.gif"><IMG SRC="step24.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+The code block is activated, with<TT> otherX </TT>taking the value revealed as<TT> hisX</TT>.
+<BR CLEAR=RIGHT><HR><P>
+
+<A TARGET="src-win" HREF="source.html#step25" NAME="step25"></a><LI>
+<TT><FONT COLOR="#FF6600">{<BR>
+    <UL>long finalResult = Combine(X, otherX);<P>
+
+	        System.out.println("Roll result = " + finalResult);<P>
+
+	        if (OneWayHash(otherX) != otherHash) {<BR>
+	           <UL>System.out.println("There was cheating.");</UL>
+	        }</UL>
+	      }</FONT></TT><P>
+<A TARGET="src-win" HREF="big.step25.gif"><IMG SRC="step25.gif" ALT="" WIDTH=214 ALIGN=RIGHT></A>
+The final result is calculated and printed, unless someone cheated, in which case that is reported.
+<BR CLEAR=RIGHT><HR><P></OL>
+The protocol has been completed. 
+
+
+</BODY>
+</HTML>

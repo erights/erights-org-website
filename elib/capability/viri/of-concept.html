@@ -1,0 +1,190 @@
+ 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>PROOF OF CONCEPT</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="Prev"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" -->x<!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --> 
+                  <img src="../../../images/next-gray.gif" width="64" height="32" alt="Next"><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b><FONT SIZE="7">PROOF 
+              OF CONCEPT<br>
+              <font size="5">by Simson Garfinkel</font></FONT></b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <p><i>From Technology Review, May 2003. Posted without permission, but will 
+        remove if requested by the author or copyright holder.</i>
+      <hr>
+      <h2>PROOF OF CONCEPT </h2>
+      <p> In the military, most new weapons systems go through an evaluation, 
+        or proof-of-concept, phase. These are not full-power tests, but baby steps 
+        to show that key technology should work as advertised. 
+      <p> 
+      <p>This sort of testing takes place not only with missiles and bombs but 
+        also with the cybernetic implements of information warfare. Indeed, any 
+        group that is developing tools to disrupt an adversary's information systems 
+        would be downright irresponsible if it did not conduct proof-of-concept 
+        demonstrations as part of its R&#38;D process. These tests would not cause 
+        great harm: instead, they would be designed to whet the appetite of officials 
+        higher up the command chain. </p>
+      <p>And what would a proof-of-concept demonstration for an information warfare 
+        weapon look like? Possibly a lot like the computer virus attacks the Internet 
+        has experienced in recent years. I suspect that some of these electronic 
+        attacks were actually the results of deliberate tests for a future attack 
+        that could have truly dire consequences. </p>
+      <p> 
+      <p>To understand my alarm, you need to understand the anatomy of computer 
+        viruses and their cousins, worms. Most of these hostile programs have 
+        three parts. The first, the "exploit," is the technique the virus or worm 
+        uses to break into systems. Most exploits take advantage of a known security 
+        flaw--for example, the classic "buffer overflow," in which an excess of 
+        incoming data corrupts the information already stored in memory. The second 
+        part, the "propagation engine," is the code that targets computers for 
+        attack. And the third, the "payload," does the actual damage. </p>
+      <p> Viewed through this morphology, the major worms that have disabled computers 
+        on the Internet--Code Red, Nimda, Klez, and, most recently, Slammer--share 
+        a disturbing similarity. Each one employed a novel--and extremely effective--propagation 
+        engine. But for exploits, all these worms have used security vulnerabilities 
+        that had been previously identified. And as for the payload: all were 
+        duds. Even though each gained so-called administrative privileges to alter 
+        the systems they infected, none used its privileges to cause mayhem. 
+      <p> Sure, they did some harm. But in nearly every case, the damage was caused 
+        by the propagation itself--as if a burglar systematically were to break 
+        windows, enter every house on the block, and steal nothing. An actual 
+        payload could scramble financial data, erase operating systems, and ruin 
+        motherboards by wiping out the contents of their programmable chips. 
+      <p> This pattern has been repeated so many times that I believe at least 
+        some of these worms are in fact elaborate proof-of-concept tests, created 
+        by a clandestine information-warfare lab. This is more plausible than 
+        you might first think. Many of the computer viruses written over the past 
+        20 years have been the work of a small group of teenagers and young adults 
+        engaged in competition with their friends and various antivirus companies. 
+        The virus creators quickly learned that any bozo could write a program 
+        that could erase other people's hard drives. By the mid-1990s the rogue 
+        programmers had elevated the game: scoring points among fellow hackers 
+        required clever propagation techniques and tricks for outrunning the antivirus 
+        shops. Law enforcement agencies know that hackers from the 1990s are now 
+        selling their services to organized crime and terrorists; why not the 
+        virus writers? 
+      <p> Remember: not a single worm or virus that we have seen in the wild--not 
+        one--has employed a novel exploit. That's not surprising. Unknown exploits 
+        are far too valuable to reveal in public proof-of-concept testing. Likewise, 
+        no worm has deployed a payload that caused significant damage. Why set 
+        the death ray to kill, when all you are trying to do is prove that the 
+        thing shoots? 
+      <table cellpadding="12" width="30%" align="right">
+        <tr> 
+          <td><b>No computer virus or worm that has been released on the Internet 
+            has deployed a truly damaging payload: why set the death ray to kill, 
+            when all you are trying </b><b>to do is prove that the thing shoots? 
+            </b></td>
+        </tr>
+      </table>
+      <p>Fred Cohen, a computer security researcher who has been studying malicious 
+        programs for two decades (and who is credited with coining the term virus), 
+        doubts that the worms we have seen are the work of government-run information-warfare 
+        labs. But he concedes that smaller labs or solo operators--possibly renegade 
+        operations in China or independent outfits looking to sell their services--might 
+        have released weakened versions of their worms into the wild as tests. 
+        The U.S. military set a sort of precedent in the 1960s when it tested 
+        "simulant" germ-warfare agents in the New York City subway and off the 
+        coast of San Francisco. And it is widely believed that the original Microsoft 
+        Word macro virus, auspiciously named Concept, was written as a proof-of-concept 
+        test by a programmer at Microsoft and was inadvertently released on discs 
+        at a developers' conference. 
+      <p> Speculation about the origin of these worms has taken on more relevance 
+        since last summer, when President Bush reportedly signed an order directing 
+        the U.S. government to develop guidelines for launching a cyberattack 
+        against enemy computer networks. Before that order, my friends in the 
+        military were saying that the United States would never consider conducting 
+        an offensive information-warfare campaign: as the nation with the most 
+        computers, we have the most to lose. But now our government is in the 
+        process of legitimizing cybernetic warfare. 
+      <p> I'm worried. Today's lame computer worms, even with well-known exploits 
+        and dummy payloads, have shut down corporate and government networks. 
+        A determined enemy would target a new exploit with a really nasty payload. 
+        The proof that time could be a hundred billion dollars in damage. 
+      <P ALIGN="left">&nbsp;
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="Prev"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" -->x<!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --> <img src="../../../images/next-gray.gif" width="64" height="32" alt="Next"><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

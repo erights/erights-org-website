@@ -1,0 +1,755 @@
+# E Configuration File (or E Configuration Template File)
+
+# Copyright 2002 Combex, Inc. under the terms of the MIT X license
+# found at http://www.opensource.org/licenses/mit-license.html ................
+
+# If you are looking at eprops-template.txt, then you are looking at a
+# template to be used to construct eprops.txt.  In this case, for
+# several property definitions, you should instead see text of the
+# form, for example,
+#
+#     e.version=$<<e.version>>
+#
+# but with curly brackets instead of angle brackets.
+#
+# In the comment preceding that line, you should see an example of a
+# possible value of this property, such as "0.8.9".  Were this
+# property to have this value in the eprops.txt file, it would appear
+# as
+#
+#     e.version=0.8.9
+#
+# The eprops.txt file is written in a restricted form of Java's
+# Properties file save/load syntax.  If you are looking at an
+# eprops.txt file, all property definitions should already have the
+# above form.  You may create an eprops.txt file manually by copying
+# the eprops-template.txt file and replacing the
+# dollar-double-curly-bracket form with the Java property definition.
+#
+# NEW (as of 0.8.14b): To ease manual installation, some of the
+# entries in the eprops-template.txt file list the default value as
+# their value rather than a dollar-double-curly form.  After copying
+# eprops-template.txt to eprops.txt, you don't need to edit these, but
+# you may.
+#
+# Notice that there are no quotes around the value.  This is correct
+# even if the property value contains spaces, since the Java property
+# syntax reads all text from the "=" till the end of the line.
+#
+# When a property value is a file or directory path name, it should be
+# absolute and use forward slashes ("/"), regardless of the local
+# platform's convention.  If it's a non-top-level directory, a
+# terminal slash is optional.  Note: On MSWindows, you must specify
+# drives the MSWindows/Java way ("c:...") rather than the Cygwin way
+# ("//c/...").
+#
+# When a property value is a pathlist (a list of paths, sometimes also
+# confusingly refered to as a "path", as in the PATH or CLASSPATH
+# variables), then the entries should be separated by a semicolon
+# (";"), independent of platform.  (As opposed to the Java convention,
+# which is either ";" or ":" depending on platform.)
+#
+# All these property definitions get loaded into an E process'
+# System.properties, so long as they don't override an already present
+# property.  This is so command-line property settings (using
+# arguments of the form "-D<name>=<value>) will take precedence over
+# property settings in eprops.txt.
+#
+# The eprops.txt file should serve as a record of everywhere (outside
+# of the install directory itself) that installation placed files and
+# registry entries, so that a future uninstaller will know (fingers
+# crossed) what files and registry entries to remove.
+#
+# @author Mark S. Miller
+
+
+
+# What version of E is this?
+#
+# For example, "0.8.9".
+
+e.version=0.8.25n
+
+# What subdirectory name is used for files specific to this OS?
+#
+# One of "win32", "linux-motif", "linux-gtk", "mac", "freebsd", "aix-motif",
+#        "hpux-motif", "solaris-motif", "qnx", or, for any other OS, "posix".
+
+e.osdir=win32
+
+
+# What subdirectory name is used for files specific to this hardware
+# architecture (instruction set)?
+#
+# One of "x86", "ppc", "sparc", "hp9000", "arm", or, for any other hardware
+#        platform, "unknown".
+
+e.machdir=x86
+
+
+# Where is E installed?  If this file is eprops.txt (as opposed to
+# eprops-template.txt) then this eprops.txt file should be in this
+# directory.
+#
+# For example, "c:/Program Files/erights.org/"
+
+e.home=c:/Program Files/erights.org
+
+
+# What is the absolute path of the Java executable command?  This must
+# be a Java compatible with Sun's JDK >= 1.3.  On MSWindows, if you
+# wish to suppress the MSDOS console window, use a javaw.exe command
+# rather than a java.exe command.
+#
+# For example, "d:/jdk1.3/bin/java.exe"
+
+e.javacmd=c:/j2sdk1.4.1_03/bin/java.exe
+
+
+# When E shortcuts are launched from the desktop, where should their
+# current directory be?  Under *nix currently, this option does
+# nothing.  On MSWindows, this option affects only newly generated
+# shortcuts.  After changing this option, rerun the setup.e-awt
+# command to generate new shortcuts.
+#
+# For example: "c:/WINDOWS/Desktop" or "".
+
+e.launch.dir=c:/Documents and Settings/MILLERM1/Desktop
+
+
+# Where does trace data go?  This directory will accumulate
+# debugging information provided by running E programs in order to
+# facilitate a post-mortem analysis of problems.  The trace system
+# treats the directory as a large circular buffer giving a finite
+# window into the past in exchange for a finite memory burden.
+#
+# For example: "c:/WINDOWS/temp/etrace" or "".
+
+TraceLog_dir=c:/Documents and Settings/MILLERM1/Local Settings/Temp/etrace
+
+# Other trace switches
+
+# TraceLog_causality=debug
+
+
+# If this property is set, JDK1.3's EventDispatchThread's
+# handleException(Throwable) will delegate exception reporting
+# to a newly made instance of this class name.
+
+sun.awt.exception.handler=org.erights.e.elib.vat.AWTProblemHandler
+
+
+# Where are copies of the "rune" bash script placed?  Since E scripts (*.e and
+# *.e-* files) normally begin with the line "#!/usr/bin/env rune", an E script
+# won't be considered an executable file unless /usr/bin/env can find the
+# bash script "rune" on the PATH.  On MSWindows, this option is only
+# relevant to Cygwin users.  The "rune" bash script should be placed
+# somewhere on the PATH visible from a shell.  (On MSWindows, this
+# means the Cygwin shell, not the MSDOS shell).
+#
+# For example: "c:/WINDOWS/;/home/markm/bin"
+
+e.put.bash.pathlist=c:/WINDOWS
+
+
+# Where are copies of the shortcuts placed?
+#
+# For example: "c:/WINDOWS/Desktop;c:/WINDOWS/Start Menu/Programs/erights.org".
+
+e.put.shortcut.pathlist=c:/Documents and Settings/MILLERM1/Desktop;c:/Documents and Settings/MILLERM1/Start Menu/Programs/erights.org
+
+
+# Which of .e, .e-awt, .e-swt, .emaker, .caplet, .updoc, .vat,
+# and .cap should be associated with icons, registry types, mime types,
+# launching programs, and other right button menu commands?  Currently, this
+# definition does nothing, and setup.e-awt simply grabs whatever
+# extensions it likes (which are these 9).
+
+e.extensionslist=.e;.e-awt;.e-swt;.emaker;.caplet;.updoc;.vat;.cap
+
+
+# Name of vendor providing this E implementation
+
+e.vendor=ERights.org
+
+
+# URL of vendor's website
+
+e.vendor.url=http://www.erights.org/
+
+
+
+################## Other Switches #####################
+
+
+# One of "report", "prompt", or "gui" (the default). <p>
+#
+# When E fails to launch, or when the top level E script (the *.e or *.e-*
+# file) throws a problem, how should the E interpreter report the problem
+# before exiting with a non-zero error code?
+#
+# When this property is set to "report" (or when the property is
+# absent), then E prints a problem report on stderr and exits
+# immediately. <p>
+#
+# When set to "prompt", E still prints the problem report on stderr,
+# but it then also prompts for a character to be typed in before the
+# process is dismissed, and then blocks waiting for that
+# character. <p>
+#
+# When set to "gui", E will pop up a window at least reporting the
+# error and waiting to be dismissed.  Later versions of E may provide
+# support for diagnostics and debugging starting from this window.
+# Note: "gui" is not yet implemented.  If used, it will prompt
+# instead.
+
+e.onErrorExit=gui
+
+
+# Was the program as a whole launched from the gui, in which case
+# there's not necessarily a console -- a visible place where stdout
+# and stderr go, nor is there necessarily a way to receive keystrokes
+# via stdin. Further, if there is a console, it probably doesn't last
+# beyond successful program termination.
+#
+# This defaults to false, but shortcuts for each window system should
+# provide an argument of the form "-De.gui-launch=true".
+
+e.gui-launch=false
+
+
+# How should the process exit on success, when e.gui-launch is true?
+# The fault is "ignore", meaning exit silently and immediately. But
+# command-line-only programs, like updoc, may want to set it instead
+# to "prompt". As with e.onErrorExit, this will prompt for a character
+# to be typed in, and then blocks waiting for that character.
+
+e.onOkGuiExit=ignore
+
+
+# One of "platform" (the default), "none", or a look and feel class
+# name. <p>
+#
+# When set to "platform" (or when the property is absent), the look
+# and feel is set to the default for the platform according to
+# "UIManager getSystemLookAndFeelClassName()".  <p>
+#
+# When set to "none", this advises code that there may not be an
+# available graphical display device, and that they should try, if
+# possible, to avoid any operations which would fail in a pure
+# character/teletype environment, such as a telnet session. <p>
+#
+# When set to a look and feel class name, it sets this to be the
+# initial look and feel for this E process.
+
+e.swingLnF=platform
+
+
+# Currently does nothing.
+#
+# A placeholder for the new safej API taming.  For classes for which
+# there are no corresponding taming files, this switch says how they
+# should be made available to E.  If "true", then these classes will
+# be importable as "<unsafe:...>".  If "false", then untamed classes
+# will not be available at all.  Defaults to "false".
+
+e.safej.allow-untamed-classes=false
+
+
+# When true, the E parser outputs volunimous debugging info.  Defaults
+# to false.
+
+e.interp.parseSpam=false
+
+
+# In an interactive interpreter, when this is set to true, the
+# expansion to Kernel-E of the entered expression is echoed along with
+# the value it evaluates to.  Defaults to false.
+
+e.interp.expand=false
+
+
+# In an interactive interpreter, when this is set to true, the
+# further expansion to an internal form is echoed. This is for
+# debugging the transformation to an implementation-dependent optimized
+# internal form (Transformed-E), and probably serves no function for normal
+# use. The output is implementation dependent. Defaults to false.
+
+e.interp.show-transformed=false
+
+
+# Says whether E should print, as a diagnostic on stderr, the total
+# post-initialization time to interpret the E program.  Defaults to
+# false.
+
+e.interp.print-timing=false
+
+
+################# Configuring a Vat's network presence #################
+
+
+# e.VLSPath is an optional semicolon-separated list of TCP/IP
+# addresses of VLSs this vat should register with.  Defaults to "" --
+# the null list.  Doesn't actually mean anything until the VLS is
+# revived.
+
+# e.VLSPath=
+
+
+# e.SearchPath is an optional semicolon-separated list of TCP/IP
+# addresses for others to look for me.  Defaults to the VLSPath.  Once
+# a vat knows its own ListenAddressPath, this should be added to the front
+# of the search path.
+
+# e.SearchPath=
+
+
+# e.ListenAddressPath is the optional TCP/IP addresses at which this
+# vat should create the sockets it listens to.  For each element, if
+# an IP address isn't given, the socket defaults to listening on all
+# IP addresses of this host.  If an IP address is given, it must be
+# one of the IP addresses of this host.  If the TCP port isn't given,
+# it defaults to 0.  A TCP port of 0 instructs the OS to pick any free
+# TCP port.
+
+# e.ListenAddressPath=
+
+
+################# In-Pocket E Shorthands & Features #################
+
+# To ease the transition to the new restricted syntax, you can set
+# some of the switches below to "warn" or "true".  Note that all the features
+# below are not part of the official E language as of this release.
+# These are likely to be removed in the future, unless otherwise
+# stated for a particular feature.
+
+# Another reason they are left in the implementation is to allow
+# experimentation.  All these features were added for reasons that
+# seemed good at the time.  If you feel a particular feature's revival
+# (making it again part of official E) is a good idea, please try it
+# out and if you still think it would be a good idea, please speak up
+# and explain why.  If a feature is listed below, then, as of this
+# release, it is considered to be "in-pocket" and is therefore still
+# partly or fully implemented.  Features that are still in-pocket
+# would, therefore, be particularly painless to revive it if we decide
+# to do so.
+
+
+# If e.enable.anon-lambda is set to "true", E accepts the
+# " '_' '('params...')' retGuard? '{' eExpr '}' and " '_'{eExpr}" lambda
+# shorthands. To turn a program using this feature into a proper
+# modern E program, the first form should be prefixed by "def" and the
+# method body should be explicitly declared with "method" rather than
+# "to", since an anon-lambda doesn't bind "__return".  In the
+# second form, the "_" should be replaced with "thunk" which also
+# doesn't bind "__return".
+
+e.enable.anon-lambda=allow
+
+
+# Accept "eExpr.name" shorthand.  "eExpr.name" as an expression
+# should instead be "eExpr.getName()".  "eExpr1.name := eExpr2" should
+# instead be approximately "eExpr1.setName(eExpr2)", except that the
+# value of the expression should be the value expr2 evaluates to.
+
+e.enable.dot-props=allow
+
+
+# Accept the experimental "meta.getState()" expression, which reifies
+# the current lexical environment into a ConstMap.  The semantics of
+# this construct only has the scope within an object include those
+# variables defined outside the object that are used freely within the
+# object -- the instance variables.  This is currently a kernel
+# construct, but will likely get redefined as syntactic shorthand that
+# expands to a collection-definition expression.
+#
+# Also controls other experimental meta constructs in the same
+# category, which, until 0.8.25e, included "meta.context()".
+# ("meta.context()" is now an official part of the language, since it is used
+# by the expansion of "interface".
+
+e.enable.meta-scope=allow
+
+
+# Accept the " 'def' name.verb(params...) {...}" definition
+# shorthand.  Instead, the explicit object definition syntax should be
+# used, where this method is an explicit method.
+
+e.enable.one-method-object=allow
+
+
+# Accept the experimental
+# " 'def' name 'match' pattern '{' eExpr '}' "
+# kernel construct.  This is not a shorthand, so if you need it
+# there's nothing to do instead.  Rather, it is an exprimental kernel
+# feature mainly awaiting the precise pinning down of what its
+# semantics should be.  If you find you need this construct, please
+# let us know since the particulars of your use may help us figure out
+# what its semantics should be.
+
+e.enable.plumbing=allow
+
+
+# Accept the transposed multi-vow when/catch syntax.  The standard
+# syntax lists all the vow-expressions of the left and all the
+# corresponding params on the right.  In this experimental variation,
+# each vow-expression / pattern pair is listed in turn.
+
+e.enable.when-clauses=allow
+
+
+# Once upon a time, there was general agreement that a tab character
+# in a plain text file took you to the next tab stop, which was every
+# 8 characters.  The Microsoft blight has not only screwed up the
+# newline conventions and the filepath separator conventions (of which
+# the Mac is equally guilty), but also screwed up the meaning of the
+# tab key.  The best path to sanity is to simply avoid the presence of
+# tab characters in text files, with the one unfortunate exception of
+# "Makefile"s and "*.mk" files.
+#
+# Unfortunately, because so many text editors put tabs into files in a
+# way that's hard to turn off, E must, by default, accept tabs as a
+# valid whitespace character.  However, to help you prevent yourself
+# from including tabs, we provide the "notabs" switch, which defaults
+# to "false".  If you set it to true, the tab character will not be
+# considered valid whitespace.
+
+e.enable.notabs=allow
+
+
+# Enables syntax such as 'require (cond) thunk{str}' to be accepted
+# and be equivalent of 'require (cond, thunk{str})'.
+# Not currently working.
+
+e.enable.lambda-args=allow
+
+
+# Enable the deprecated "delegate" syntax, which has been superceded by
+# "extends".
+
+e.enable.delegate-clause=allow
+
+
+################ New as of 0.8.18 #######################
+
+
+# Accept the syntax "bob foo(carol)" (without a dot) as an immediate
+# call on 'bob' with message name "foo" and argument 'carol'.
+# Although this is set to true for now to support the transition, the
+# no-dot syntax is deprecated, will be downgraded to 'allow', and will
+# eventually be retired.  The alternate syntax, "bob.foo(carol)" is
+# now an official part of the syntax of E.
+
+e.enable.no-dot-call=warn
+
+
+################ New as of 0.8.20 #######################
+
+
+# Allows the expression syntax '[..., => foo, ...]' as shorthand for
+# '[..., "foo" => foo, ...]'
+
+e.enable.exporter=allow
+
+
+# Allows the pattern syntax '[..., => foo, ...]' as shorthand for
+# '[..., "foo" => foo, ...]'
+
+e.enable.importer=allow
+
+
+# In the context of a map-pattern, whether the explicit one or the one
+# using the above importer syntax, e.enable.pattern-default enables a
+# value-pattern position to also include an optional default value, so
+# that
+# <pre>    map =~ [..., "foo" else (expr) => foo, ...]</pre>
+# or
+# <pre>    map =~ [..., else (expr) => foo, ...]</pre>
+# will succeed even if <tt>map</tt> contains no mapping for
+# <tt>"foo"</tt>, in which case <tt>foo</tt> will be bound to the
+# value of the expr.
+#
+# Note: the above proposed syntax sucks, but the semantics seems
+# good. What would be a better syntax?
+
+e.enable.pattern-default=allow
+
+
+# In reaction to the bug "<a href=
+# "http://bugs.sieve.net/bugs/?func=detailbug&bug_id=125519&amp;group_id=16380"
+# >need type guard on data from renderer</a>", these three switches
+# exist so an individual module may elect to enable them for itself,
+# forcing itself to be more explicit.  Such per-module enabling can be
+# done with, for example, a
+# <tt>pragma.enable("explicit-final-guard")<tt>.
+# <p>
+# When off ("false" or "allow"), the corresponding guard declarations
+# may be ommitted, in which case a default guard is provided.  When on
+# ("true"), those guard declarations must always be explicitly
+# provided.  The official E language allows all these kinds of guards
+# to be ommitted, and therefore these switches must not be 'true' by
+# default.
+# <p>
+# Note that the definition of an object name in an object definition
+# expression does not allow a guard, so none of these switches will
+# cause one to be required there.
+# <p>
+# As with all pragmas, these pragma swicthes are not part of the
+# official E language.  In fact, we expect to retire these swicthes
+# and migrate the ability to ask for this extra check into an advisory
+# static checker.
+#
+# e.enable.explicit-slot-guard added as of 0.8.23g
+
+e.enable.explicit-final-guard=allow
+e.enable.explicit-var-guard=allow
+e.enable.explicit-slot-guard=allow
+e.enable.explicit-result-guard=warn
+
+
+# Is a Java public instance or static variable named 'foo' bound to E
+# methods foo/0 and (if not final) foo/1, for the getter and setter
+# respectively? This binding is hereby deprecated, and we expect to
+# set this property to false by default in a future release.
+# This is a per-jvm scoped setting.
+
+e.safej.bind-var-to-varName=true
+
+
+# Is a Java public instance or static variable named 'foo' bound to E
+# methods getFoo/0 and (if not final) setFoo/1, for the getter and setter
+# respectively? This binding is new as of 0.8.20, but is expected to
+# become the new standard way for E to operate.
+# This is a per-jvm scoped setting.
+
+e.safej.bind-var-to-propName=true
+
+
+# When true, problem reports by default show the Java stack trace.
+# (Once E is compiled, there will only be one stack trace
+# to report, the Java stack trace, which will be reported if either
+# this or e.interp.show-e-stack is set.)  Defaults to false.
+
+e.interp.show-j-stack=false
+
+
+# When true, problem reports by default show the E stack
+# trace. Defaults to true.
+
+e.interp.show-e-stack=true
+
+
+# Allows the new "accumulator" syntax that has most of the advantages
+# of list comprehension (from Haskell and Python), but is more
+# E-like.  For example, with this property enabled, one can write:
+# <pre>
+#     [] for i in 1..5 { + i**2 }
+# </pre>
+# to accumulate the list [ 1, 4, 9, 16, 25 ]. This expands into
+# <pre>
+# {
+#     var accum_n := []
+#     for i in 1..5 {
+#         accum_n += { i**2 }
+#     }
+#     accum_n
+# }
+# </pre>
+# Note that this is more flexible but more verbose than a list
+# comprehension, and less flexible and comparably verbose to a
+# Smalltalk injection.
+
+e.enable.accumulator=allow
+
+
+# Turns on the unary prefix "*" operator.
+# <pre>
+#     *x</pre>
+# expands to<pre>
+#     x.getValue()</pre>
+# so, by the normal assignment rules,<pre>
+#     *x := y</pre>
+# expands approximately to<pre>
+#     x.setValue(y)</pre>
+# except that the expansion also arranges for the value of the
+# expression to be the value of y.
+
+e.enable.unary-star=allow
+
+
+# Enables one of two candidate expansions of a unary prefix "&"
+# applied to a non-noun lValue expression.
+# <p>
+# XXX to be explained.
+
+e.enable.synthetic-slot=allow
+
+
+# Enables the other candidate expansion of a unary prefix "&"
+# applied to a non-noun lValue expression.
+# <p>
+# XXX to be explained.
+# <p>
+# This option is not yet implemented.
+
+e.enable.access-slot=allow
+
+
+################ New as of 0.8.21i #######################
+
+
+# Enables an argument list to end with a sequence of map associations
+# without needing to surround them with square brackets. Likewise, it
+# enables a parameter list to end with a sequence of map association
+# patterns. This makes name-based parameters seem first class.
+
+e.enable.map-tail=allow
+
+
+################ New as of 0.8.21i #######################
+
+
+# We are in the process of switching the default persistence mechanism
+# from JOSS to Data-E. Data-E Serialization works, but Data-E-based
+# persistence (via the default timeMachine) is only now starting to
+# work.
+#
+# If left out, this switch defaults to false.
+
+e.persist.useJOSS=false
+
+################ New as of 0.8.23g #######################
+
+# e.enable.explicit-slot-guard added as of 0.8.23g, but it appears
+# above because it's part of a group.
+
+# Has two related effects. It makes a left out method result guard
+# default to the equivalent of :any (internally represented with a
+# null), and it changes the expansion of "to" methods into primitive
+# methods so that an explicit return is required to return a non-null
+# value.
+# <pre>
+# to foo() { ... } ===> method foo() :void { escape __return { ... } }</pre>
+# to <pre>
+# to foo() { ... } ===> method foo() { escape __return { ...; null } }</pre>
+
+e.enable.easy-return=allow
+
+################ New as of 0.8.24a #######################
+
+# XXX kludge: This shouldn't be an eprops switch, but just a command-line
+# option to updoc.e
+
+updoc.verbose=false
+
+################ New as of 0.8.24c #######################
+
+# Allows the "escape" expression, and the loop expressions which build
+# on it -- "while", "for" -- to be optionally followed by an
+# escape-handler. As of the 0.8.24c release, the optional
+# escape-handler is written with the same syntax as the catch-clause
+# of a try-catch block: "catch" pattern "{" expression "}".
+#
+# An escape expression with an escape-handler is therefore written as<pre>
+#     escape ejector-pattern {
+#         body-expression
+#     } catch handler-pattern {
+#         handler-expression
+#     }
+# </pre>
+# If such an escape expression, if the ejector is invoked during the
+# execution of body-expression, body-expression is terminated, the
+# handler-pattern is matched against the argument to the ejector, and
+# the handler-expression is evaluated in the resulting scope.
+#
+# In a while-loop or for-loop with a escape-handler, if the break
+# ejector is called, the loop is exited and the argument to break is
+# passed to the handler.
+
+e.enable.escape-handler=allow
+
+################ New as of 0.8.25h #######################
+
+# Allows the syntax (ignoring precedence)
+# <pre>    expr ::= specimen-expr ':' guard-expr</pre>
+# which expands to
+# <pre>
+#     ValueGuard.coerce(guard-expr, null).coerce(specimen-expr, null)
+# </pre>
+
+e.enable.cast=allow
+
+
+################ Discontinued Switches ####################
+
+
+# The e.enable.bind switch has been retired, since "bind" is now
+# considered an official part of the language.
+
+# The e.enable.meta-object switch has been retired, since "meta(name)"
+# is no longer supported, even as an experimetal feature.
+
+# The e.enable.sub-object switch has been retired, since the "extends"
+# syntax is now considered an official part of the language.
+
+# The e.enable.define switch has been retired, since we are now
+# committed to spelling this keyword only as "def".
+
+# The e.enable.no-paren-call switch has been retired, since no-parens
+# following a dot are now an object-property access, and no-dot-calls
+# are now deprecated.
+
+# The e.enable.no-paren-method switch has been retired, since it makes
+# little sense without the availability of e.enable.no-paren-call.
+
+# in 0.8.18 and 0.8.19, the e.enable.explicit-*-guard switches were
+# instead named e.enable.implicit-*-guard, and had the opposite
+# sense. This was switched to preserve the property that the official
+# language as of any release is defined by the behavior when all
+# e.enable.* switches are off.
+
+#### Discontinued as of 0.8.20 ####
+
+# e.enable.typedef, as the interface shorthand for creating a
+# rubber-stamping auditor/guard is now an official part of the
+# language/
+
+# e.enable.auditors, as the "implements" syntax for requiring auditor
+# approval is now an official part of E and Kernel-E. (thanks Ping!)
+
+# e.interp.interactive, since it shouldn't be determined by a property
+# and no longer is.
+
+# e.interp.verbose has been renamed e.interp.show-j-stack in order
+# to have the Java-written repls correspond more closely to the
+# E-written repls.
+
+# e.ListenAddress is no longer supported.  Use e.ListenAddressPath (as
+# explained above) instead.
+
+# e.enable.new-constructor is now retired. Its documentation used to
+# say:
+#
+# Constructors in E are now mapped to the "run" method name.  They
+# used to be mapped to the "new" method name instead.  When this flag
+# is turned on, constructors are mapped to the "new" method name in
+# addition to the "run" mapping.  This applies in two contexts:
+# 1) To the expansion of the E language "class" expression.  This is
+# done on a per-emaker basis controllable by the usual
+# 'pragma enable(..)' and 'pragma disable(..)', and is only relevent
+# in contexts where e.enable.class-expr is also true.
+# 2) To the binding of a Java class constructor to an E method name.
+# This done only on a per-JVM basis.  Per-vat or per-emaker settings
+# of these flags have no further effect.
+
+#### Discontinued as of 0.8.23j ####
+
+# Enable the deprecated "class" syntax, which has been superceded by
+# "extends".
+#
+# e.enable.class-expr=allow
+
+#### Discontinued as of 0.8.24d ####
+
+# e.vendor.url.bug is now retired because the email address it named receives
+# too much spam to be useful.

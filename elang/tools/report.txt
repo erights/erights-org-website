@@ -1,0 +1,4 @@
+
+c:/e/doc/elang/tools/index.html:
+c:/e/doc/elang/tools/report.txt:
+c:/e/doc/elang/tools/updoc.html:.............

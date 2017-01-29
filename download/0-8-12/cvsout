@@ -1,0 +1,6 @@
+? e.jar
+Checking in index.html;
+/cvs/e/doc/download/0-8-10/index.html,v  <--  index.html
+new revision: 1.3; previous revision: 1.2
+done
+Mailing the commit message to   e-cvs@eros-os.org: mail -s "cvs commit: e/doc/download/0-8-10 index.html"   e-cvs@eros-os.org

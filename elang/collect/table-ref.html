@@ -1,0 +1,322 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Table Reference</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">collect</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="tables.html" title="Back to: Using Tables"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Using Tables" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="EList.html" title="On to: EList Reference"><img src="../../images/next.gif" width="64" height="32" alt="On to: EList Reference" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Table<br>
+              Reference</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p>Given</p>
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+? def colors := [&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;]
+# value: [&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;]
+ 
+? def hw := &quot;hello world&quot;
+# value: &quot;hello world&quot;
+ 
+? def vice := [&quot;bush&quot; =&gt; &quot;quayle&quot;, &quot;clinton&quot; =&gt; &quot;gore&quot;]
+# value: [&quot;bush&quot; =&gt; &quot;quayle&quot;, &quot;clinton&quot; =&gt; &quot;gore&quot;]</pre>
+      </blockquote>
+      <h1>Messages Shared with all Tables</h1>
+      <p>Since these messages are shared between Const and Flex tables, they must
+        be query only. As applied to a Flex table, they operate of the state of
+        the table at that instant.</p>
+      <p>Since they are shared between lists and maps, they must be have a common
+        meaning, whether an index is used with a list, or a key is used with a
+        map.</p>
+      <h3><a name="get"></a>Indexing</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Example</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+          <th>Value</th>
+        </tr>
+        <tr>
+          <td>
+            <pre>colors[2]</pre>
+          </td>
+          <td rowspan="2">Indexing. Retrieves element #2 (the third element)</td>
+          <td>
+            <pre>colors.<a href="../../javadoc/org/erights/e/elib/tables/EList.html#get(int)">get</a>(2)</pre>
+          </td>
+          <td>
+            <pre>&quot;blue&quot;</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre>hw[2]</pre>
+          </td>
+          <td>
+            <pre>hw.<a href="../../javadoc/org/erights/e/elib/tables/Twine.html#get(int)">get</a>(2)</pre>
+          </td>
+          <td>
+            <pre>'l'</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre>vice[&quot;bush&quot;]</pre>
+          </td>
+          <td>Lookup. This key maps to what value?</td>
+          <td>
+            <pre>vice.<a href="../../javadoc/org/erights/e/elib/tables/EMap.html#get(java.lang.Object)">get</a>(&quot;bush&quot;)</pre>
+          </td>
+          <td>
+            <pre>&quot;quayle&quot;</pre>
+          </td>
+        </tr>
+      </table>
+      <p>&nbsp;</p>
+      <h3><a name="contains"></a>Containment</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Example</th>
+          <th>Meaning</th>
+          <th>Value</th>
+        </tr>
+        <tr>
+          <td>
+            <pre>colors.<a href="../../javadoc/org/erights/e/elib/tables/EList.html#contains(java.lang.Object)">contains</a>(&quot;green&quot;)
+colors.contains(&quot;orange&quot;)</pre>
+          </td>
+          <td rowspan="2">Is this an element of the list?</td>
+          <td>
+            <pre>true
+false</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre>hw.contains('w')
+hw.contains('z')</pre>
+          </td>
+          <td>
+            <pre>true
+false</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre>vice.<a href="../../javadoc/org/erights/e/elib/tables/EMap.html#contains(java.lang.Object)">contains</a>(&quot;quayle&quot;)
+vice.contains(&quot;clinton&quot;)</pre>
+          </td>
+          <td>Is this a value of the list?</td>
+          <td>
+            <pre>true
+false</pre>
+          </td>
+        </tr>
+      </table>
+      <p>Since &quot;vice&quot; maps presidents to their vice presidents, &quot;clinton&quot;
+        is a key of the list (since he was a president), but is not present as
+        a value (since he was never a vice president).</p>
+      <h3><a name="size"></a>Size</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Example</th>
+          <th>Meaning</th>
+          <th>Value</th>
+        </tr>
+        <tr>
+          <td>
+            <pre>colors.<a href="../../javadoc/org/erights/e/elib/tables/EList.html#size()">size</a>()</pre>
+          </td>
+          <td rowspan="2">How many elements are in the list?</td>
+          <td>
+            <pre>3</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre>hw.size()</pre>
+          </td>
+          <td>
+            <pre>11</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre>vice.<a href="../../javadoc/org/erights/e/elib/tables/EMap.html#size()">size</a>()</pre>
+          </td>
+          <td>How many keys are in the list?</td>
+          <td>
+            <pre>2</pre>
+          </td>
+        </tr>
+      </table>
+      <p>&nbsp;</p>
+      <h3><a name="iterate"></a>Iteration</h3>
+      <p><font color="#ff0000">xxx Crap below this point</font></p>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>Example</th>
+          <th>Meaning</th>
+          <th>Expansion</th>
+          <th>Value</th>
+        </tr>
+        <tr>
+          <td>
+            <pre>list[2]</pre>
+          </td>
+          <td>Indexing. Retrieves element #2 (the third element)</td>
+          <td>
+            <pre>list.get(2)</pre>
+          </td>
+          <td>
+            <pre>42</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre>[3] == []</pre>
+          </td>
+          <td>Are they the same?</td>
+          <td> <pre>__equalizer.sameEver([3], [])</pre>
+          </td>
+          <td>
+            <pre>false</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre>[3] != []</pre>
+          </td>
+          <td>Are they different?</td>
+          <td> <pre>__equalizer.sameEver([3], []).not()</pre>
+          </td>
+          <td>
+            <pre>true</pre>
+          </td>
+        </tr>
+      </table>
+      <p>&nbsp;</p>
+      <h3><a name="snapshot"></a>Dealing with Change</h3>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr> 
+          <th>Example</th>
+          <th>Value</th>
+        </tr>
+        <tr> 
+          <td> <pre>colors.snapshot()
+hw.snapshot()
+vice.snapshot()</pre></td>
+          <td>A Const* with a snapshot of the state at this time</td>
+        </tr>
+      </table>
+      <p>&nbsp;</p>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr> 
+          <th>Example</th>
+          <th>Value</th>
+        </tr>
+        <tr> 
+          <td> <pre>colors.readOnly()
+hw.readOnly()
+vice.readOnly()</pre></td>
+          <td>A read-only facet for querying the current state</td>
+        </tr>
+      </table>
+      <p>&nbsp;</p>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr> 
+          <th>Example</th>
+          <th>Value</th>
+        </tr>
+        <tr> 
+          <td> <pre>colors.diverge()
+hw.diverge()
+vice.diverge()</pre></td>
+          <td>A Flex* whose initial state is a snapshot of the state at this time 
+          </td>
+        </tr>
+      </table>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">collect</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="tables.html" title="Back to: Using Tables"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Using Tables" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="EList.html" title="On to: EList Reference"><img src="../../images/next.gif" width="64" height="32" alt="On to: EList Reference" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

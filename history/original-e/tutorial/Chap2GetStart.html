@@ -1,0 +1,194 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+   <TITLE>Getting Started</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.0Gold (Win95; I) [Netscape]">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+
+<PRE><IMG SRC="midi_e.gif" ALT="Electric Communities: E Programming Language" HEIGHT=30 WIDTH=30>  <A HREF="index.html">Contents</A>  <A HREF="../index.html">Home Page</A>
+</PRE>
+
+<P>
+<HR></P>
+
+<H1>Getting Started</H1>
+
+<BLOCKQUOTE>
+<P>This chapter discusses the following topics:</P>
+
+<P><A HREF="#INSTALL">How to install and set up E<BR>
+</A><A HREF="#SYNTAX">E syntax and terminology<BR>
+</A><A HREF="#PRINCIPLES">General principles for programming E applications</A>
+</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H2><A NAME="INSTALL"></A>How to install and set up E</H2>
+
+<BLOCKQUOTE>
+<P>You can download the E extensions from the Electric Communities website,
+<TT>http://www.communities.com</TT>. For installation and configuration
+instructions, see the online <TT>README.TXT</TT> file. For information
+on last minute updates to E, see the online RELEASE.TXT file. All the documentation
+for the E extensions (including this tutorial) is also available online,
+both in HTML and postscript format. </P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H2><A NAME="SYNTAX"></A>E syntax and terminology</H2>
+
+<BLOCKQUOTE>
+<P>This section describes basic E syntax and terminology, including the
+following concepts:</P>
+
+<UL>
+<LI>Channel<BR>
+</LI>
+
+<LI>Distributor<BR>
+</LI>
+
+<LI>E-class<BR>
+</LI>
+
+<LI>E-method<BR>
+</LI>
+
+<LI>einterface<BR>
+</LI>
+
+<LI>E-send<BR>
+</LI>
+
+<LI>eif<BR>
+</LI>
+
+<LI>ewhen<BR>
+</LI>
+</UL>
+
+<P>For more detailed information on these concepts, see the <A HREF="http://www.communities.com/e/glossary.html">Glossary</A>,
+and also the <I>E Programmer's Manual.</I></P>
+
+<P>In E, objects send<I> </I>messages to other objects, either on the same
+or on a remote machine. As you would send a message to a friend across
+town or across the country, and have a reasonable expectation that your
+friend would be the person to receive it (instead of their entire neighborhood),
+so E-objects send specific messages to each other. An E-object can be any
+of three things:</P>
+
+<UL>
+<LI><B>A <I>Channel. </I></B>This is conduit object that channels a message
+from one object to another, without ever understanding or handling the
+message. A channel serves as a placeholder for any values that the recipient
+object may furnish.You can only send messages <I>through</I> channels,
+not <I>to</I> them. A channel is directed to a specific destination using
+its associated distributor.</LI>
+
+<P>When the message contains a request for some value to be supplied by
+the receiving object, a channel back to the sending object is included
+as one of the message parameters. This is like the concept of a self addressed
+stamped envelope.</P>
+
+<LI>A <B><I>Distributor. </I></B>This is an object that points the message
+to the intended receiving object or objects. It's like a one way nozzle
+on the end of a channel; you can spray the messages out, but you can't
+reverse the flow. <A NAME="447128"></A>A distributor is associated only
+with a channel. You send a <TT>forward</TT> message to the distributor
+that tells it where to direct the channel (that is, what object is going
+to receive the message). You can forward messages to one or many destinations
+at once (known as a <I>multicast) </I>which lets you send a single message
+to several objects simultaneously. When a multicast is specified, there
+is still only one channel and one distributor.</LI>
+
+<P><A NAME="447485"></A>If you want to send a message to a distributor
+(for example, in order to send it a <TT>forward</TT> message) you use the
+distributor operator, which is the ampersand (<TT>&amp;</TT>). This operator
+lets you interact with the distributor as an E-class.</P>
+
+<LI>A<I> <B>value</B>. </I>An E-object can have either its own or another
+object's value. </LI>
+</UL>
+
+<P><A NAME="447075"></A>E-classes receive a given message by using <I>E-methods</I>.
+An E-method is a block of code invoked when the E-object receives a message
+of the given E-method name. E-methods never return values because of the
+nature of E. The only ways to receive a requested value is through channels
+and distributors, and through deferring statements such as e<TT>when</TT>
+and <TT>eif</TT> ( mentioned in the following paragraphs). </P>
+
+<P><A NAME="447285"></A>You define an E-method using the keyword <TT>emethod</TT>.
+Unlike a Java method, an E-method creates a private void method, and is
+not directly accessible with normal Java programming techniques. </P>
+
+<P><A NAME="447076"></A>To send a message, you use the <TT>send</TT> operator,
+which is the left arrow symbol (<TT>&lt;-</TT>). In Java, you call a method
+and wait until a message arrives. In E, you send your message and forget
+about it, assuming that the message will arrive and be acted upon. </P>
+
+<P><A NAME="445912"></A>The <TT>ewhen</TT> and <TT>eif</TT> statements
+defer execution of their associated code block until a value has been furnished
+for an expression. You use <TT>ewhen</TT> and <TT>eif</TT> to enforce security,
+to obtain values from other E-objects, and to bind Java and E. As you go
+through the tutorials, you'll see how this is done. </P>
+
+<UL>
+<LI><TT>ewhen</TT> is an unconditional statement: &quot;When I have x,
+unconditionally do y.&quot; </LI>
+
+<LI><TT>eif</TT> is a conditional statement: &quot;When I have x, If x
+is true, do this, if x is false, do that.&quot; </LI>
+</UL>
+
+<P>If you want to send a message to a distributor (for example, in order
+to send it a forward message) you use the distributor operator, which is
+the ampersand (<TT>&amp;</TT>). This operator lets you interact with the
+distributor as an E-class.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H2><A NAME="PRINCIPLES"></A>General principles for programming E applications</H2>
+
+<BLOCKQUOTE>
+<P>You'll find these guidelines repeated in more detail in the <I>E Programmer's
+Manual,</I>, but they are important concepts to remember when programming
+in E and are worth reviewing here. If you are already comfortable with
+the concept of writing code with optimistic computation in mind, you can
+skip this section. </P>
+
+<OL>
+<LI>Write your code as if you already have the answers. This means writing
+your code as if you already have all the values you need for computation.</LI>
+
+<LI>Create message protocols that deliver the values you need. Set up channels
+(usually unforwarded at this stage) and distributors to move this information
+when it becomes available. This code goes at the beginning.</LI>
+
+<LI>Write <TT>ewhen</TT> and <TT>eif</TT> statements for each value that
+you assumed you had in step 1. These statements follow the protocols and
+encompasses the body of code you wrote in step 1. They enforce security
+by insuring that the code which uses a value you assumed does not get executed
+until after it actually gets that value.</LI>
+
+<LI>For each value for which you initially provided an unforwarded channel,
+write a forward statement that will deliver the value at the time you specify.</LI>
+</OL>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<ADDRESS>Copyright (c) 1996 Electric Communities. All rights reserved worldwide.<BR>
+Most recent update: 6/24/96<BR>
+</ADDRESS>
+
+</BODY>
+</HTML>

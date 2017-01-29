@@ -1,0 +1,18 @@
+
+ignoring c:/e/doc/download/0-8-10/E-nix-0.8.10.tar.gz
+ignoring c:/e/doc/download/0-8-10/E-src-0.8.10.tar.gz
+ignoring c:/e/doc/download/0-8-10/E-src-0.8.10.zip
+ignoring c:/e/doc/download/0-8-10/E-win32-0.8.10.zip
+ignoring c:/e/doc/download/0-8-10/e.jar
+skipping c:/e/doc/download/0-8-10/e.txt
+skipping C:/e/doc/download/0-8-10/e.txt~
+skipping c:/e/doc/download/0-8-10/eprops.txt
+ignoring C:/e/doc/download/0-8-10/eprops.txt~
+skipping c:/e/doc/download/0-8-10/index.html
+skipping c:/e/doc/download/0-8-10/README.html
+skipping c:/e/doc/download/0-8-10/release-notes.html
+skipping c:/e/doc/download/0-8-10/report.txt
+c:/e/doc/download/0-8-10/unix-bin.html:..
+skipping c:/e/doc/download/0-8-10/unix-src.html
+skipping c:/e/doc/download/0-8-10/windows-bin.html
+skipping c:/e/doc/download/0-8-10/windows-src.html

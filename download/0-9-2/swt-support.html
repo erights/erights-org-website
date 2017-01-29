@@ -1,0 +1,223 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>SWT Support</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">download</a>&nbsp;/&nbsp;<a href="index.html">0-9-2</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="src-building.html" title="On to: E 0.9.2a: Building on Unixoids"><img src="../../images/next.gif" width="64" height="32" alt="On to: E 0.9.2a: Building on Unixoids" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>SWT
+              Support</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+
+      <p></p>
+      <h2>Introduction</h2>
+      <p><font color="#009000"><i><b>E</b></i></font> started out adapting AWT
+        and Swing for use as its GUI Toolkit library. In order to allow locally
+        untrusted code, such as caplets, to have a user interface, we would have
+        to <i>tame</i> these libraries to follow capability discipline. As part
+        of the DarpaBrowser exercise, we attempted a first draft taming of AWT/Swing.
+        The section &quot;<a href="http://www.combex.com/papers/darpa-review/security-review.html#taming">Taming
+        the Java Interface</a>&quot; of the Darpa Security Review explains taming
+        as well as many of the problems we ran into. Although we have fixed essentially
+        all of the particular problems this document enumerates, the sheer size
+        of the AWT/Swing APIs presents a huge hurdle for the taming process, and
+        makes it implausible we will ever have confidence in the result.</p>
+      <p>We examined several alternatives, but nothing seemed very attractive
+        until we came across the <a href="http://www.eclipse.org/articles/main.html">Standard
+        Widget Toolkit</a>, or SWT, of IBM's <a href="http://www.eclipse.org">Eclipse</a>
+        project. As of 0.8.20 we now have support for SWT integrated into <font color="#009000"><i><b>E</b></i></font>.
+        SWT is already largely tamed, and we already have an experimental rewrite
+        of eBrowser (our code editor for <font color="#009000"><i><b>E</b></i></font>)
+        using SWT rather than AWT/Swing.</p>
+      <p>Besides uniquely meeting our requirements, SWT gives us several other
+        advantages:</p>
+      <ul>
+        <li>
+          <p>It's platform look-and-feel conforms to the platforms much more closely
+            than do AWT/Swing. It also simply looks and feels better.</p>
+        </li>
+        <li>
+          <p>It <a href="http://www-106.ibm.com/developerworks/java/library/j-nativegui/">works
+            with GCJ</a>, giving us hope that ENative will be able to have the
+            same GUI API as E-on-Java. (Indeed, if GCJ comes to meet <font color="#009000"><i><b>E</b></i></font>'s
+            requirements, then ENative and E-on-Java may be different compilations
+            of essentially the same source.)</p>
+        </li>
+        <li>Being smaller and simpler doesn't just make it more tameable, but
+          also easier to learn and use.</li>
+      </ul>
+      <p>See MarcS' message <a href="http://www.eros-os.org/pipermail/e-lang/2002-July/007421.html">E
+        and SWT</a> for further pros and cons of Swing <i>vs</i> SWT for use by
+        <font color="#009000"><i><b>E</b></i></font>. </p>
+      <p>Integrating support for SWT into <font color="#009000"><i><b>E</b></i></font>
+        presented several interesting issues...</p>
+      <h2>New <font color="#009000"><i><b>E</b></i></font> Command Line</h2>
+      <p>You can get help on command line of the 'e' driver script (a bash script)
+        by typing</p>
+      <blockquote>
+        <pre>$ e --help</pre>
+      </blockquote>
+      <p>As of 0.8.20, the resulting help text is now:</p>
+      <blockquote>
+        <pre>e [-<i>options</i>] [<i>script</i> [<i>args</i>...]]
+where <i>options</i> are:
+  -cpa &lt;<i>afterpath</i>&gt;     Adds to end of classpath.
+  -cpb &lt;<i>beforepath</i>&gt;    Adds to beginning of classpath.
+  -D&lt;<i>name</i>&gt;=&lt;<i>value</i>&gt;     Defines Property.  Passed to java.
+  -J&lt;<i>java-option</i>&gt;      java-option passed to java.
+    For example, &quot;e -J-version&quot; shows the Java version.
+  --help               Prints this out and exits.
+  --show               Shows the java command line, rather
+                       than executing it.
+<b>--start=&lt;<i>runnerKind</i>&gt;</b>   Determines the initial runner's kind.
+       Where &lt;<i>runnerKind</i>&gt; is one of
+           awt         Initial vat runs in the AWT event
+                       loop and thread
+           swt         Initial vat runs in the SWT event
+                       loop and thread
+           headless    Initial vat runs in its own event
+                       loop and thread
+and <i>script</i> is one of
+  &lt;<i>filename</i>&gt;.<b>&lt;<i>ext</i>&gt;</b>     The <i><b><font color="#009000">E</font></b></i> script file to execute.
+               If --start=&lt;...&gt; is not provided, &lt;<i>ext</i>&gt;
+               determines the runnerKind, and must be one of
+               'e', 'e-awt', 'e-swt', or 'e-headless'.
+               ('e' is deprecated and currently defaults to
+                'e-awt'. It will default to 'e-swt', at
+                which point it will be undeprecated.)
+  -            Use stdin as script file.
+               runnerKind is determined as if &lt;<i>ext</i>&gt; is 'e'.
+  --interact   An interactive command line.
+               runnerKind is determined as if &lt;<i>ext</i>&gt; is 'e'.
+no script &amp; args is equivalent to &quot;--interact&quot;</pre>
+      </blockquote>
+      <p>The important changes are shown in bold above -- the two ways of specifying
+        what kind of Runner is used to run the initial vat, and therefore the
+        <font color="#009000"><i><b>E</b></i></font> script being specified.
+        These two ways are via the new &quot;<tt>--start=...</tt>&quot; option,
+        and via newly recognized extensions: &quot;<tt>.e-awt</tt>&quot;, &quot;<tt>.e-swt</tt>&quot;,
+        and &quot;<tt>.e-headless</tt>&quot;. On platforms where <font color="#009000"><i><b>E</b></i></font>'s
+        installation causes extensions to be recognized for launching (currently
+        only MSWindows platforms), 0.8.20 causes these new extensions to be recognized
+        as well.</p>
+      <p>To get the effect of the old &quot;<tt>--headless</tt>&quot; option,
+        no longer supported as of 0.8.20, use &quot;<tt>--start=headless</tt>&quot;
+        instead. Except for this change, the new e driver command line is upwards
+        compatible from the old.</p>
+      <h3>Rationale</h3>
+      <p>A Runner is an event-loop together with the thread servicing the event-loop.
+        AWT and SWT each have their own event-loop mechanism, and in order for
+        <font color="#009000"><i><b>E</b></i></font> objects (whether written
+        in ELib or the <font color="#009000"><i><b>E</b></i></font> language)
+        to access and be accessed from AWT or SWT widgets respectively, their
+        vats need to run within the Runners built to run within these event loops.
+        The third kind of Runner, headless, is an event-loop and thread built
+        just for running <font color="#009000"><i><b>E</b></i></font> objects.
+      </p>
+      <p>Because we must choose a kind of Runner before we can execute <font color="#009000"><i><b>E</b></i></font>
+        code within that Runner, it would have been awkward to place the runner-kind
+        directive within the startup <font color="#009000"><i><b>E</b></i></font>
+        script, such as with a pragma statement. We would have liked to add the
+        above &quot;<tt>--start=...</tt>&quot; command-line option to the <tt>e</tt>
+        driver invocation on the &quot;<tt>#!</tt>&quot; line, such as</p>
+      <blockquote>
+        <pre><font color="#FF0000">#!/usr/bin/env rune --start=swt</font>   <font class="comment"># broken, since #! only allows one option</font></pre>
+      </blockquote>
+      <p>but the &quot;<tt>#!</tt>&quot; mechanism, for some stupifying reason,
+        only supports one option, and we've already used up that budget by using
+        the <tt>/usr/bin/env</tt> program to avoid pinning the location of the
+        <tt>e</tt> driver. We could have decided to create wrapping shell scripts,
+        <tt>e-awt</tt>, <tt>e-swt</tt>, and <tt>e-headless</tt> to be used after
+        /usr/bin/env, where these would pass all their arguments to the e driver
+        in addition to a &quot;<tt>--start=...</tt>&quot; argument. But on platforms
+        like MSWindows, that do extension-based launching and ignore the <tt>#!</tt>
+        line, we'd also have to enhance the <font color="#009000"><i><b>E</b></i></font>
+        interpreter to read and process the <tt>#!</tt> line. What a mess. In
+        the end it seemed simpler to encode the choice in the extension. (Both
+        these choices seem ugly. If you know of a better alternative, please let
+        us know.)</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">download</a>&nbsp;/&nbsp;<a href="index.html">0-9-2</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="src-building.html" title="On to: E 0.9.2a: Building on Unixoids"><img src="../../images/next.gif" width="64" height="32" alt="On to: E 0.9.2a: Building on Unixoids" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

@@ -1,0 +1,1 @@
+def makePrettyServer(prefix) :any {    def server {        to print(arg) :any { `$prefix : $arg` }        to factorial(n) :any {            var res := 1            for i in 2..n {                res := res * i            }            return res        }    }}

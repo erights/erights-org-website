@@ -1,0 +1,500 @@
+ 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>Common Syntactic Element</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<P> 
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> 
+      <P> 
+      <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> 
+            <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="index.html">data</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="overview.html" title="Back to: Overview: Handling Symbolic Data"><img src="../images/prev.gif" width="64" height="32" alt="Back to: Overview: Handling Symbolic Data" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="irrelevance.html" title="On to: The Power of Irrelevance"><img src="../images/next.gif" width="64" height="32" alt="On to: The Power of Irrelevance" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table>
+          </TD>
+          <TD ALIGN="RIGHT"> 
+            <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><B>Common 
+              Syntactic Element<br>
+              <font size="5">For some of the <i><b><font color="#009000">E</font></b></i> 
+              family of languages</font></B><!-- #EndEditable --></FONT> </TD>
+        </TR>
+      </TABLE>
+      <hr>
+      <!-- #BeginEditable "LongBody" --> 
+      <h1 ALIGN="left">Obligated Parties</h1>
+      <blockquote> 
+        <p align="left">The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, 
+          &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;, &quot;SHOULD&quot;, 
+          &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;MAY&quot;, and 
+          &quot;OPTIONAL&quot; in this document are to be interpreted as described 
+          in <a href="http://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+      </blockquote>
+      <p ALIGN="left">A language spec places requirements on the (authors of) 
+        source text written in that language, and on the actions of the canonical 
+        kind of &quot;language processor&quot;, such as a compiler or interpreter, 
+        that is to interpret source text written in that language. (A syntax highlighter 
+        is an example of a non-canonical kind of language processor.) When we 
+        state that the source text MUST (or MUST NOT, SHALL, SHALL NOT, REQUIRED), 
+        unless stated otherwise, there is a corresponding requirement on the canonical 
+        kinds of language processor for that language to reject programs that 
+        violate that obligation.</p>
+      <p ALIGN="left">When we state that the source text SHOULD (or SHOULD NOT, 
+        RECOMMENDED, NOT RECOMMENDED), unless stated otherwise, we make a corresponding 
+        recommendation that lint-like tools SHOULD be built and employed during 
+        code reviews, so that code reviewers are aware of all violations of these 
+        recommendations, or of other surprises that may cause them to misread 
+        what they are looking at.</p>
+      <blockquote> 
+        <h2 ALIGN="left">Rationale</h2>
+        <p ALIGN="left">The <i><font color="#009000"><b>E</b></font></i> family 
+          is intended to support <a href="../elib/capability/index.html">secure 
+          programming</a> and <a href="irrelevance.html">adversarial code reviews</a>. 
+          The author of the source text, the reviewers reading it to understand 
+          what it might do, and the owner of the language processor on which it 
+          runs may all be mutually suspicious parties with somewhat divergent 
+          interests. The rules below on what source text MUST and MUST NOT do 
+          are designed to enable these parties to safely cooperate by use of these 
+          source texts. If source-author Alice has a reasonable expectation that 
+          a rule violation by Alice might not be caught by code reviewer Bob or 
+          language processor owner Carol, then Alice may violate that rule, independent 
+          of the wording in standards documents such as this. To avoid confusion, 
+          we only say &quot;MUST&quot;, etc, when the rule can be enforced by 
+          the canonical language processor.</p>
+        <p ALIGN="left">The reverse is not the case: If Carol operates her language 
+          processor in ways that violate these rules, <a href="../elib/capability/ode/ode-protocol.html#subj-aggregate">no 
+          one is necessarily in a position to catch her</a>. Therefore, the obligations 
+          on her language processor are primarily for her own protection.</p>
+      </blockquote>
+      <h1 ALIGN="left">Dependencies and Versions</h1>
+      <table align="right" cellpadding="12">
+        <tr> 
+          <th colspan="2">Version Dependencies</th>
+        </tr>
+        <tr> 
+          <td><p><a href="../elang/grammar/index.html">the <i><font color="#009000"><b>E</b></font></i> 
+              language</a><br>
+              <a href="../elang/kernel/index.html">Kernel-E</a><br>
+              <a href="terml/terml-spec.html">TermL</a></p></td>
+          <td>0.9 / alpha</td>
+        </tr>
+        <tr> 
+          <td>Java</td>
+          <td><a href="http://java.sun.com/j2se/1.3/docs/">1.3.1</a></td>
+        </tr>
+        <tr> 
+          <td>Unicode</td>
+          <td><a href="http://www.unicode.org/reports/tr15/">4.0 (NFC)</a></td>
+        </tr>
+        <tr> 
+          <td>W3C</td>
+          <td><a href="http://www.w3.org/TR/charmod-norm/">CharMod 1.0</a></td>
+        </tr>
+        <tr> 
+          <td>IETF</td>
+          <td><p><a href="http://ftp.ics.uci.edu/pub/ietf/uri/rfc2396.txt">rfc2396</a><br>
+              <a href="http://www.ietf.org/rfc/rfc2119.txt">rfc2119</a> </p></td>
+        </tr>
+      </table>
+      <p ALIGN="left">Some of the <i><font color="#009000"><b>E</b></font></i> 
+        family of languages -- the <i><font color="#009000"><b>E</b></font></i> 
+        language, Kernel-E, and TermL -- delegate aspects of their specifications 
+        to other specifications, such as this page. This page in turn delegates 
+        to yet other specifications, such as Java, Unicode, and various IETF and 
+        W3C standards. This page currently intends to support the specifications 
+        of the <i><font color="#009000"><b>E</b></font></i> family as of the upcoming 
+        <i><font color="#009000"><b>E</b></font></i> 0.9 release (also to be known 
+        as <i><font color="#009000"><b>E</b></font></i> alpha). For each <i><font color="#009000"><b>E</b></font></i> 
+        release, the Version Dependencies table to the right specifies the minimal 
+        version of these other standards it depends on. An <i><font color="#009000"><b>E</b></font></i> 
+        program written to run on a given version of <i><font color="#009000"><b>E</b></font></i> 
+        SHOULD be compatible with the spec of that version as interpreted in terms 
+        of the minimal versions of the dependent versions of the other standards 
+        <i>or later</i>. For example, the <i><font color="#009000"><b>E</b></font></i> 
+        language 0.9 spec depend on Java 1.3.1 or later. Therefore, an <i><font color="#009000"><b>E</b></font></i> 
+        0.9 program SHOULD be compatible with, for example, the <i><font color="#009000"><b>E</b></font></i> 
+        0.9 spec interpreted in light of the Java 1.4 spec. Below, we generally 
+        leave out the version number of dependent specifications, and try to link 
+        to the latest of version of each one. Please consult this Version Dependencies 
+        table for the actual correspondences.</p>
+      <p ALIGN="left">Besides covering <i><font color="#009000"><b>E</b></font></i> 
+        0.9, we will also explain how we hope to evolve in upcoming <i><font color="#009000"><b>E</b></font></i> 
+        releases, and discuss the potential compatibility implications.</p>
+      <h1 ALIGN="left"><a name="wysiwyg"></a>Bytes to Raw Characters</h1>
+      <p ALIGN="left">Source text consists of a &quot;raw sequence&quot; of the 
+        subset of Unicode characters whose code points fit within 16 bits, which 
+        we will here call &quot;Unicode16&quot;. When source text is obtained 
+        from a source of octets (such as a file), then these octets are to be 
+        interpreted according to UTF-8 in order to create the raw sequence of 
+        Unicode16 characters. </p>
+      <blockquote> 
+        <h2 ALIGN="left">Rationale &amp; Future Directions</h2>
+        <p ALIGN="left">Because we do not yet have any personal experience with 
+          non-Ascii Unicode characters at the time of this writing, we considered 
+          specifying that raw source text for 0.9 be restricted to Ascii, and 
+          therefore that all non-Ascii source characters may only be expressed 
+          using Backslash-u Decoding (see below). However, this seems like too 
+          great a burden to place on non-English-based programmers wishing to 
+          use <i><font color="#009000"><b>E</b></font></i>. </p>
+        <p ALIGN="left">In the other direction, unless we hear otherwise from 
+          Unicode users, we expect we will wish to eventually support the full 
+          Unicode character set, rather than just Unicode16. However, at the time 
+          of this writing, a Java <tt>char</tt> is only 16 bits, so larger characters 
+          cannot yet be supported with reasonable effort. We could allow raw characters 
+          to represent UTF-16 elements, and for sequences of such to represent 
+          Unicode characters according to the UTF-16 encoding, <a href="http://www.eros-os.org/pipermail/e-lang/2004-April/009734.html">but 
+          this destroys much of the point of making chars larger than octets in 
+          the first place</a>. This issue shows up in the semantics of the <i><font color="#009000"><b>E</b></font></i> 
+          languages as well -- their Strings and chars are defined for now to 
+          be Unicode16 characters, but we hope to eventually allow any Unicode 
+          character.</p>
+        <p ALIGN="left">Note that <a href="http://jcp.org/aboutJava/communityprocess/review/jsr204/index.html">Java 
+          is considering the UTF-16 direction</a>. If they do, we expect that 
+          <i><font color="#009000"><b>E</b></font></i> will not follow it there.</p>
+      </blockquote>
+      <h1 ALIGN="left"><a name="cooking"></a>Raw to Normalized Characters</h1>
+      <p ALIGN="left">Once we have a raw sequence of Unicode16 characters (whether 
+        from UTF-8 decoding or otherwise), the following transformations are then 
+        applied, logically in order, to the raw characters prior to lexical analysis:</p>
+      <ol>
+        <li> 
+          <p><b>Newline Canonicalization.</b> The three common encodings of newline 
+            -- <tt>&quot;\r\n&quot;</tt>, <tt>&quot;\r&quot;</tt>, and <tt>&quot;\n&quot;</tt> 
+            -- are all canonicalized to <tt>&quot;\n&quot;</tt>.</p>
+        </li>
+        <li> 
+          <p><b>Trailing Whitespace Truncation.</b> Sequences of non-newline <a href="#whitespace">whitespace</a> 
+            characters immediately preceding a newline are removed, leaving just 
+            the newline. Similarly, trailing newlines at the end of a compilation 
+            unit are replaced with a single newline.</p>
+        </li>
+        <li> 
+          <p><b>Non-Whitespace Control Character Rejection.</b> If the source 
+            text contains control characters other than the whitespace characters 
+            ' ' (space), '\t' (tab), and '\n', then it must be statically rejected.</p>
+        </li>
+        <li> 
+          <p>(Not yet implemented) <b>Non-Canonical Unicode Rejection.</b> If 
+            the source text is not in <a href="http://www.unicode.org/reports/tr15/">Unicode 
+            Normalized Form C (NFC)</a> (See also <a href="http://www.w3.org/TR/charmod-norm/">this 
+            W3C recommendation</a>), then it must be statically rejected.</p>
+        </li>
+        <li> 
+          <p><b>Backslash-u Decoding.</b> A <tt>'\\'</tt> (backslash) followed 
+            by <tt>'u'</tt> and 4 <a href="#digit16">digit16</a>s (hex digits) 
+            is decoded into the Unicode16 character with that code point. Likewise, 
+            a <tt>&quot;\\u{&quot;</tt> followed by some number of <a href="#digit16">digit16</a>s 
+            and a <tt>&quot;}&quot;</tt> is decoded into a Unicode16 character 
+            with that code point. As with the corresponding Java spec, such interpretation 
+            is suppressed if this sequence is preceded by an odd number of backslashses. 
+            If this results in any code points that don't represent Unicode16 
+            characters, then it must be statically rejected.</p>
+        </li>
+      </ol>
+      <p ALIGN="left">By &quot;logically in order&quot;, we mean the result must 
+        be equivalent to what it would be if each stage were applied to the output 
+        of the previous stage, not including itself. For example, a <tt>&quot;\r\t 
+        \r\n&quot;</tt> sequence must be transformed into <tt>&quot;\n\n&quot;</tt> 
+        rather than <tt>&quot;\n&quot;</tt>.</p>
+      <p ALIGN="left">Source positions are in terms of line and column after Newline 
+        Canonicalization and Trailing Whitespace Rejection, but before Backslash-u 
+        Decoding. The first line in a source unit is 1. The first column is 0.</p>
+      <p ALIGN="left">The <i><font color="#009000"><b>E</b></font></i> family 
+        of languages uses matched brackets to indicate nesting structure to a 
+        language processor, and SHOULD use indentation to signal this nesting 
+        structure to the human eye. Further, source text SHOULD avoid including 
+        any tab characters at all. Code reviewers SHOULD be alerted to violations 
+        of these recommendations.</p>
+      <blockquote> 
+        <h2 ALIGN="left">Rationale</h2>
+        <p ALIGN="left">Line and column positions are robust in the face of Newline 
+          Canonicalization and Trailing Whitespace Rejection. If such positions 
+          are interpreted (e.g., by an IDE) on the source text after UTF-8 Decoding 
+          but prior to these steps, the results will still be sensible.</p>
+        <p ALIGN="left">Since Ascii (meaning standard 7-bit Ascii) is a subset 
+          of UTF-8, Backslash-u Decoding allows Ascii source text to represent 
+          any sequence of Unicode16 characters.</p>
+        <p ALIGN="left">We introduce the curly-bracketed backslash-u form to prepare 
+          for eventually allowing longer Unicode characters.</p>
+        <h3 ALIGN="left">Making Sources Wysiwyg </h3>
+        <p ALIGN="left">We wish to make sources as wysiwyg as possible, in order 
+          to support <a href="irrelevance.html">adversarial code reviews</a>.</p>
+        <p ALIGN="left">Trailing Whitespace Truncation can only be significant 
+          within quoted literal character sequences, and helps ensure that these 
+          character sequences are wysiwyg -- that their visual depiction is an 
+          accurate portrayal of their contents.</p>
+        <p ALIGN="left">We reject non-NFC-canonical Unicode sequences, rather 
+          than perform NFC canonicalization, to avoid the danger of silently changing 
+          the intended meaning of the source text. When such normalization is 
+          desired, it's easy enough to apply a separate tool to perform such normalization 
+          as an edit to the source text.</p>
+        <p ALIGN="left">Backslash-u Decoding occurs after Non-Canonical Unicode 
+          Rejection so that a normalized source character sequence may be essentially 
+          any sequence of Unicode16 characters, but non-canonical sequences can 
+          only be expressed by the visible use of the backslash-u. </p>
+        <p ALIGN="left">These rules by themselves are not sufficient to make sources 
+          wysiwyg. </p>
+        <ul>
+          <li> 
+            <p>The NFC canonicalization rules may leave two different strings 
+              that appear to be the same to the untrained eye, or depending on 
+              the choice of font. As such ambiguities are noticed, we recommend 
+              building lint-like tools to spot these and alerting reviewers. For 
+              example, we recommend that source text, prior to Backslash-u Decoding, 
+              SHOULD be in the narrower Unicode Normalized Form KC (NFKC), and 
+              that reviewers should check whether this is the case prior to conducting 
+              a review. (However, we only enforce the less strict NFC normalization, 
+              because NFKC is too severe for case sensitive languages.)</p>
+          </li>
+          <li> 
+            <p>The remaining whitespace difference between ' ' (space) and '\t' 
+              (tab) is not visible. Rather than reject sources that contain harmless 
+              tabs, we defer this issue to the tokenization rules. The tokenization 
+              rules MUST reject tabs where they can be semantically significant, 
+              such as within literal character sequences (i.e., between quote 
+              marks or within DocComments).</p>
+          </li>
+        </ul>
+      </blockquote>
+      <h1 ALIGN="left"><a name="charclasses"></a>Character Classes </h1>
+      <table bgcolor='#f5dcb3' cellpadding="12" bordercolor="#FFFFFF">
+        <tr valign='top'> 
+          <th align='left' colspan="2">Name</th>
+          <th align='center'>&nbsp;</th>
+          <th align='left'>Definition</th>
+          <th align='left'>Ascii subset</th>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='whitespace'></a></pre></td>
+          <td align='right'> <pre>hspace</pre></td>
+          <td align='center'> <pre>::=</pre></td>
+          <td align='left'> <pre>!'\n' <a href="http://java.sun.com/j2se/1.3/docs/api/java/lang/Character.html#isWhitespace(char)">isWhitespace</a></pre></td>
+          <td align='left'> <pre>' ' | '\t'</pre></td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='whitespace'></a></pre></td>
+          <td align='right'> <pre>whitespace</pre></td>
+          <td align='center'> <pre>::=</pre></td>
+          <td align='left'> <pre><a href="http://java.sun.com/j2se/1.3/docs/api/java/lang/Character.html#isWhitespace(char)">isWhitespace</a></pre></td>
+          <td align='left'> <pre>' ' | '\t' | '\n'</pre></td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='digit10'></a></pre></td>
+          <td align='right'> <pre><font>digit10</font></pre></td>
+          <td align='center'> <pre><font>::=</font></pre></td>
+          <td align='left'> <pre><a href="http://java.sun.com/j2se/1.3/docs/api/java/lang/Character.html#isDigit(char)">isDigit</a></pre></td>
+          <td align='left'> <pre><font>'0'..'9'</font></pre></td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='digit8'></a></pre></td>
+          <td align='right'> <pre><font>digit8</font></pre></td>
+          <td align='center'> <pre><font>::=</font></pre></td>
+          <td align='left'>&nbsp;</td>
+          <td align='left'> <pre><font>'0'..'7'</font></pre></td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='digit16'></a></pre></td>
+          <td align='right'> <pre><font>digit16</font></pre></td>
+          <td align='center'> <pre><font>::=</font></pre></td>
+          <td align='left'>&nbsp;</td>
+          <td align='left'> <pre><font>'0'..'9' | 'a'..'f' | 'A'..'F'</font></pre></td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='uric'></a></pre></td>
+          <td align='right'> <pre><font>uric</font></pre></td>
+          <td align='center'> <pre><font>::=</font></pre></td>
+          <td align='left'> <pre>  <a href="http://www.ics.uci.edu/pub/ietf/uri/rfc2396.txt">IETF-URICs</a>
+| '\\' | '|' | '#'</pre></td>
+          <td align='left'> 
+            <pre>  'a'..'z' | 'A'..'Z' | '0'..'9'
+| anyof(&quot;_$.-;/?:@&amp;=+,!~*'()%\\|#&quot;)</pre></td>
+        </tr>
+      </table>
+      <p><i>The non-ascii cases are not yet tested in the current implementations.</i></p>
+      <p>In the <a href="#uric">uric</a> production, each '\\' (backslash) character 
+        is converted to '/', and each '|' (vertical bar) character is converted 
+        to ':'. Therefore, the possible semantic values associated with this production 
+        do not include the backslash or vertical bar characters.</p>
+      <h1><a name="tokentypes"></a>Token Types</h1>
+      <p>In the following table, the bold names with initial capitals are the 
+        token types. The others are supporting productions.</p>
+      <table border='0' bgcolor='#f5dcb3' cellpadding="12">
+        <tr valign='top'> 
+          <th align='left' colspan="2">Name</th>
+          <th align='center'>&nbsp;</th>
+          <th align='left'>Definition</th>
+          <th align='left'>Denotes</th>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'><a name="digit10s"></a></td>
+          <td align='right'><pre>digit10s</pre></td>
+          <td align='center'> <pre><font> ::= </font></pre></td>
+          <td align='left'><pre><a href="#digit10">digit10</a> ('_'? <a href="#digit10">digit10</a>)*</pre></td>
+          <td align='left'>&nbsp;</td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='Integer'></a></pre></td>
+          <td align='right'> <pre><font><b>Integer</b></font></pre></td>
+          <td align='center'> <pre><font> ::= </font></pre></td>
+          <td align='left'> <pre>  '-'? '0' 'x' <a href="#digit16">digit16</a> ('_'? <a href="#digit16">digit16</a>)*
+| '-'? '0' ('_'? <a href="#digit8">digit8</a>)*  <font class="comment"># not yet implemented</font>
+/ '-'? <a href="#digit10s">digit10s</a></pre></td>
+          <td align='left'> <p>Precision-unlimited integer.</p></td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='wholePart'></a></pre></td>
+          <td align='right'> <pre>wholePart</pre></td>
+          <td align='center'> <pre>::=</pre></td>
+          <td align='left'> <pre>'-'? <a href="#digit10s">digit10s</a></pre></td>
+          <td align='left'>&nbsp;</td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='fraction'></a></pre></td>
+          <td align='right'> <pre>fraction</pre></td>
+          <td align='center'> <pre>::=</pre></td>
+          <td align='left'> <pre>'.' <a href="#digit10s">digit10s</a></pre></td>
+          <td align='left'>&nbsp;</td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='exponent'></a></pre></td>
+          <td align='right'> <pre><font>exponent</font></pre></td>
+          <td align='center'> <pre><font> ::= </font></pre></td>
+          <td align='left'> <pre><font>('e' | 'E') '-'? <a href="#digit10s">digit10s</a></font></pre></td>
+          <td align='left'>&nbsp;</td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='Real64' id="Real64"></a></pre></td>
+          <td align='right'> <pre><b>Real64</b></pre></td>
+          <td align='center'> <pre>::=</pre></td>
+          <td align='left'> <pre>  <a href="#wholePart">wholePart</a> <a href="#fraction">fraction</a> <a href="#exponent">exponent</a>?
+| <a href="#wholePart">wholePart</a> <a href="#fraction">fraction</a>? <a href="#exponent">exponent</a></pre></td>
+          <td align='left'> <p>A real number representable in IEEE double precision.</p></td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='charConst'></a></pre></td>
+          <td align='right'> <pre>charConst</pre></td>
+          <td align='center'> <pre>::=</pre></td>
+          <td align='left' colspan="2"> <pre>  '\\' anyof(&quot;btnfr\&quot;'\\&quot;)
+| '\\' 'x' <a href="#digit16">digit16</a>*2 <font class="comment"># not yet implemented</font>
+| !'\'' !'&quot;' .</pre></td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='Char'></a></pre></td>
+          <td align='right'> <pre><font><b>Char</b></font></pre></td>
+          <td align='center'> <pre><font> ::= </font></pre></td>
+          <td align='left'> <pre><font>'\'' (<a href="#charConst">charConst</a> | '&quot;') '\''</font></pre></td>
+          <td align='left'> <p>A Unicode character.</p></td>
+        </tr>
+        <tr valign='top'> 
+          <td align='right'> <pre><a name='String'></a></pre></td>
+          <td align='right'> <pre><b>String</b></pre></td>
+          <td align='center'> <pre>::=</pre></td>
+          <td align='left'> <pre><font>'&quot;' (<a href="#charConst">charConst</a>
+     | '\'' 
+     | '\\' '\n'
+    )* '&quot;'</font></pre></td>
+          <td align='left'> <p>A string of Unicode characters.</p></td>
+        </tr>
+      </table>
+      <p>In a literal string, a backslash followed by a newline is ignored -- 
+        the backslash eats the newline.</p>
+      <p>Note that Real64 includes both 0.0 and -0.0. These are distinct, even 
+        though they represent the same real number.</p>
+      <blockquote>
+        <h2>Rationale</h2>
+        <p>We allow '_' (underbar) characters within digit sequences so that long 
+          digit sequences can be broken up for readability. For example, the number 
+          of cents in 1.3 million dollars can be written as &quot;1_300_000_00&quot;. 
+          (Is it PERL that also allows this?)</p>
+        <p>For convenience, we allow but do not require single quotes to be escaped 
+          in double quoted literals, and vice versa.</p>
+        <p>For convenience, we allow multi-line string literals without per-line 
+          delimeters, even though reviewers can become confused about what they're 
+          looking at. Syntax highlighting SHOULD be used to make literals visibly 
+          distinct from non-literal source text during reviews.</p>
+      </blockquote>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%">&nbsp;</TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> 
+      <hr>
+      <div align="center"> 
+        <table cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> 
+              <div align="left"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a></div>
+            </td>
+            <td> 
+              <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> 
+                    <div align="center"><font size="-1"><a href="../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../related.html">Related</a> 
+                      </font></div>
+                  </td>
+                </tr>
+                <tr> 
+                  <td> 
+                    <div align="center"><font size="-1"><a href="../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../donate.html">Donate</a></font></div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <table width="100%" border="0" cellspacing="0" cellpadding="4">
+        <tr> 
+          <td><i>email webmaster-at-erights.org</i> <br>
+            or <a href="http://bugs.sieve.net/bugs/?func=addbug&amp;group_id=16380"><i>report 
+            bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+            html</a>)</td>
+          <td> 
+            <div align="right"> 
+              <p><a href="http://www.epic.org/crypto/"><img src="../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a> <a href="http://www.stoppoliceware.org/"><img src="../images/stoppoliceware_gray_88x32.gif" width="88" height="32" border="0" alt="Stop Policeware Campaign"></a> 
+            </div>
+          </td>
+        </tr>
+      </table>
+    </TD>
+    <TD WIDTH="10%" valign="bottom">&nbsp;</TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

@@ -1,0 +1,21 @@
+
+updoc: started
+
+skipping c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/acks-n-refs.html
+skipping c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/conclusions.html
+c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/data-e-manual.html:..................
+c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/deconstructing.html:...........................................
+skipping c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/entry-security.html
+c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/exit-security.html:...............................................
+ignoring c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/images/depiction.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/images/depiction.sdr
+ignoring c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/images/lit-real.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/images/lit-real.sdr
+skipping c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/index.html
+skipping c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/intro.html
+skipping c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/outtakes.html
+c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/recog-n-build.html:.......
+skipping c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/record.txt
+c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/related.html:.....
+c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/subgraph-security.html:.....................
+skipping c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/upgrade.html

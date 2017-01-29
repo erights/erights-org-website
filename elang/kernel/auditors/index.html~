@@ -1,0 +1,1023 @@
+ 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML>
+<!-- #BeginTemplate "/Templates/pink.dwt" --> 
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>Auditors</TITLE>
+<!-- #EndEditable --> 
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made href="mailto:markm@caplet.com" title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<P> 
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> 
+      <P> 
+      <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> 
+            <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" valign="center" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elang</a>&nbsp;/&nbsp;<a href="../index.html">kernel</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="../Auditors.html"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Auditors" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="../EMethod.html"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Method Node" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table>
+          </TD>
+          <TD ALIGN="RIGHT"> 
+            <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Auditors</B></FONT><!-- #EndEditable --></FONT> 
+          </TD>
+        </TR>
+      </TABLE>
+      <hr>
+      <!-- #BeginEditable "LongBody" --> 
+      <h1 align=CENTER ><b>Auditors: An Extensible, Dynamic<br>
+        Code Verification Mechanism</b></h1>
+      <p align=CENTER style=" line-height: 0.46cm"><font  style="font-size: 11pt"><b>Ka-Ping 
+        Yee</b></font><br>
+        <font  style="font-size: 11pt">Computer Science Department</font><br>
+        <font  style="font-size: 11pt">University of California, Berkeley</font><br>
+        <font  style="font-size: 11pt">ping@zesty.ca</font></p>
+      <p align=CENTER style=" line-height: 0.46cm"><font  style="font-size: 11pt"><b>Mark 
+        S. Miller</b></font><br>
+        <font  style="font-size: 11pt">Chief Technical Officer</font><br>
+        <font  style="font-size: 11pt">Combex, Inc.</font><br>
+        <font  style="font-size: 11pt">markm@combex.com</font></p>
+      <div id="Section2"> 
+        <h1>Abstract</h1>
+        <p>We introduce <i>auditors</i>, a program annotation and verification 
+          scheme similar to type declarations, but more general in some ways: 
+          auditors can be dynamically generated and applied at run-time, and can 
+          inspect the source code of the annotated object. Auditors allow objects 
+          to make mandatory commitments about their behaviour (such as immutability, 
+          determinism, or lack of side effects), as contrasted with types, which 
+          constrain data but are only discretionary with respect to behaviour. 
+          The inspection facility is arbitrarily extensible since auditors can 
+          themselves be part of the program. In particular, we describe an implementation 
+          of auditors for <i><b><font color="#009000">E</font></b></i>, a language 
+          platform for capability-secure distributed programming, and apply auditors 
+          to make <i><b><font color="#009000">E</font></b></i> the first language 
+          capable of supporting secure <i>confinement</i> at the object level.</p>
+        <p><b><font  style="font-size: 11pt" >KEYWORDS<br>
+          </font></b>program verification, capability-based security, confinement, 
+          information flow, code signing, programming by contract</p>
+        <h1 >Background</h1>
+        <p><i><b><font color="#009000">E</font></b></i> [<a href="#E">E</a>] is 
+          a language designed from the ground up for secure distributed programming. 
+          In this regard, it is quite unique; although a few other languages have 
+          been designed with similar goals, <i><b><font color="#009000">E</font></b></i> 
+          is the only known language under active development that is specifically 
+          aimed at enabling safe co-operation between mutually untrusting parties, 
+          whether these parties co-exist within one address space or are hosted 
+          by mutually untrusted machines.</p>
+        <p>The <i><b><font color="#009000">E</font></b></i> model of computation 
+          combines lambda abstraction and message dispatch to yield a world of 
+          communicating objects. To this, <i><b><font color="#009000">E</font></b></i> adds a &quot;proxy comm&quot; mechanism 
+          allowing objects on remote machines to be transparently represented 
+          by local proxies. Cryptography is built into this communication infrastructure, 
+          making ordinary message-passing a means for secure computation among 
+          co-operating objects distributed across networked machines.</p>
+        <p>To support concurrency, <i><b><font color="#009000">E</font></b></i> allows messages to be sent either synchronously 
+          or asynchronously. Asynchronous messages immediately produce a &quot;promise&quot; 
+          for the returned value, which later resolves to an actual value when 
+          the result is ready. Promises can be transparently used both as arguments 
+          in further messages and as the recipients of messages. This ability 
+          to send non-blocking messages, together with a concurrency model based 
+          on event loops, makes it vastly easier to write concurrent <i><b><font color="#009000">E</font></b></i> programs 
+          without fear of deadlock. In addition, promises cause messages destined 
+          for a remote machine to be automatically pipelined, which dramatically 
+          reduces latency by cutting down on network round-trips.</p>
+        <p>Actor semantics [Agha87] forms the foundation for the <i><b><font color="#009000">E</font></b></i> security model, 
+          which is based entirely on messages and object references, and is also 
+          better known as &quot;capability-based security&quot; in the systems 
+          community. The capability model is simpler to reason about and more 
+          logically sound than many of the more common access control models; 
+          it is also the best-known model for upholding the <i>principle of least 
+          authority</i>, which is essential for good security [KeyLogic89]. Capability-based 
+          security will be described in more detail below, as it motivates the 
+          verification mechanism presented in this paper.</p>
+        <p>The current <i><b><font color="#009000">E</font></b></i> implementation is written in Java. Source code, tutorials, 
+          and extensive documentation are available at http://erights.org/. There 
+          is ongoing work to provide additional features in <i><b><font color="#009000">E</font></b></i> to make secure and 
+          reliable programs easier to write, as well as development of real-world 
+          applications that are both more secure and easier to use than their 
+          popular commercially available counterparts.</p>
+        <h1 >Capability-based Security</h1>
+        <p>In a capability system, authority is conveyed by unforgeable object 
+          references, and transmitted only in messages from object to object. 
+          Authority is not conveyed in any other way (such as in lists of permissions 
+          that reside in the environment, for example). <i><b><font color="#009000">E</font></b></i> enforces this discipline 
+          by adhering to strict lexical scoping rules and forbidding global state 
+          (such as C++ or Java's &quot;static&quot; variables).</p>
+        <p>The fundamental restriction in a capability system is that there are 
+          only three ways that an object B can obtain an authority to access another 
+          object C:</p>
+        <ol>
+          <li> 
+            <p>The creator of B endows B with authority to access C when B is 
+              created; or</p>
+          <li> 
+            <p>B creates C, and thereby has authority to access C; or</p>
+          <li> 
+            <p>another object A, which possesses authority to both B and C, chooses 
+              to transmit to B the authority to access C.</p>
+        </ol>
+        <p> The following figure illustrates the last of these three cases. This 
+          is the basic authority-transfer operation in a capability system, and 
+          it is the only way that a new authority relationship can come about 
+          between two extant objects [Miller00].</p>
+        <p align=CENTER><font ><b><img src="../../../images/capsecure-ring.gif" vspace=5></b></font></p>
+        <p align=CENTER><font ><b>Figure 1. </b>A transmits C to B. (We call this 
+          a &quot;Granovetter diagram&quot;, after [Granovetter73].)</font></p>
+        <p>Translated into the terms of an <i><b><font color="#009000">E</font></b></i> program, we can say that object B 
+          can obtain a reference to C only if:</p>
+        <ol>
+          <li> 
+            <p>C is visible in the scope of the expression that creates B; or</p>
+          <li> 
+            <p>B contains the expression that creates C; or</p>
+          <li> 
+            <p>A calls a method on B with C as an argument, or returns C in response 
+              to a call from B.</p>
+        </ol>
+        <p>These simple rules make it straightforward to reason about the security 
+          properties of a capability system. It is easy to show that only connectivity 
+          begets connectivity. This makes it feasible to run untrusted code and 
+          to transmit limited authorities to untrusted objects, as long as we 
+          can initially be assured of bounded connectivity. An object that has 
+          no ability to transmit or receive authority to other objects is said 
+          to be <i>confined</i> [Lampson73]. Achieving proper confinement, and 
+          being able to rely on it, is a major step forward, as confinement enables 
+          entirely new kinds of safe co-operation. To our knowledge, no other 
+          language system currently supports object-level confinement.</p>
+        <p>Note that there is an important difference between confining information 
+          and confining authority. It is virtually impossible in practice to prevent 
+          a malicious program from covertly transmitting information to the outside 
+          world by altering measurable characteristics of the hardware such as 
+          processor load or disk activity (this is informally known as &quot;wall-banging&quot;). 
+          However, it is possible to prevent it from transmitting authority outward, 
+          by ensuring that it cannot act under the command of any external entity. 
+          This is achieved by instantiating the object in a context that is isolated 
+          from information from external sources; if we know that no path connects 
+          an external input to the object, then no such path can ever come into 
+          existence.</p>
+        <div align="center"> 
+          <table width=288 border=1 bordercolor="#000000" cellpadding=7 cellspacing=0 frame=VOID rules=GROUPS>
+            <colgroup> <col width=77> </colgroup> <colgroup> <col width=90> <col width=79> 
+            </colgroup> <tbody> 
+            <tr valign=TOP> 
+              <td width=77>&nbsp; </td>
+              <td width=90> 
+                <p align=CENTER>information</p>
+              </td>
+              <td width=79> 
+                <p align=CENTER>authority</p>
+              </td>
+            </tr>
+            </tbody> <tbody> 
+            <tr valign=TOP> 
+              <td width=77> 
+                <p align=CENTER>prevent from<br>
+                  leaking in</p>
+              </td>
+              <td width=90> 
+                <p align=CENTER>possible</p>
+              </td>
+              <td width=79> 
+                <p align=CENTER>possible</p>
+              </td>
+            </tr>
+            <tr valign=TOP> 
+              <td width=77> 
+                <p align=CENTER>prevent from<br>
+                  leaking out</p>
+              </td>
+              <td width=90> 
+                <p align=CENTER>practically impossible</p>
+              </td>
+              <td width=79> 
+                <p align=CENTER>possible</p>
+              </td>
+            </tr>
+            </tbody> 
+          </table>
+        </div>
+        <p align=CENTER><font ><b>Figure 2. </b>Feasibility of types of confinement.</font></p>
+        <p>Let's now switch tracks for a moment to describe the mechanism by which 
+          we will ensure proper confinement.</p>
+        <h1 >Motivation</h1>
+        <p>E's consistent scoping and syntax rules make it straightforward to 
+          determine whether an object is confined by inspecting its source code. 
+          Confinement is perhaps the application that provides the strongest motivation 
+          for auditors, but in general we can verify many kinds of useful properties 
+          by inspecting code. We can make programs more secure, more reliable, 
+          and in some cases more efficient by being able to ensure that objects 
+          meet desired constraints on their behaviour. Rather than limiting this 
+          ability to a few predefined kinds of constraints, we want to allow the 
+          programmer complete flexibility to define new kinds of behaviour. Hence, 
+          our auditing scheme allows auditors to be themselves implemented in 
+          E, and when an object needs to be audited, we hand over the syntax tree 
+          for the auditor to inspect as it likes.</p>
+        <p>Type declarations are one example of a behavioural constraint where 
+          the semantics are usually up to the programmer and implied merely by 
+          the programmer's choice to declare a particular object to be of a particular 
+          type. A type declaration can be considered a special case of an auditor 
+          where the auditor does not inspect the code, trusting that the programmer 
+          has correctly written the object to fulfill the type's contract and 
+          has applied the declaration appropriately.</p>
+        <p>We can get other kinds of constraints when the auditor does inspect 
+          the code. Here are some examples of interesting semantic properties:</p>
+        <ul>
+          <li> 
+            <p><b>confined</b>: the object does not overtly transmit outward any 
+              information or authority it receives in messages (it can only transmit 
+              information or authority with which it was endowed upon creation)</p>
+          <li> 
+            <p><b>deterministic</b>: the object cannot obtain any information 
+              or authority except through messages sent directly to it (that is, 
+              a log of the received messages is sufficient to replay its entire 
+              behaviour)</p>
+          <li> 
+            <p><b>functional</b>: every method on the object has no side effects 
+              and produces an immutable result depending solely on its arguments</p>
+          <li> 
+            <p><b>frozen</b>: the object does not ever mutate any local bindings 
+              (or in other words, it is indistinguishable from a duplicate that 
+              contains copies of the bindings for the free variables accessed 
+              by the object's methods)</p>
+          <li> 
+            <p><b>deep frozen</b>: the object cannot ever cause the mutation of 
+              anything</p>
+          <li> 
+            <p><b>open source</b>: the object provides access to all of its source 
+              code through a standard interface</p>
+          <li> 
+            <p><b>open state</b>: the object provides access to all of its internal 
+              state through a standard interface</p>
+          <li> 
+            <p><b>transparent</b>: the object is both <b>open source</b> and <b>open 
+              state</b></p>
+          <li> 
+            <p><b>pass-by-copy</b>: the object is safe to transmit to another 
+              party by sending a copy of the object's source code and state</p>
+        </ul>
+        <p>Although determining that a program will <i>actually</i> behave in 
+          a particular way is undecidable in general, for all but the last of 
+          these properties we can define a straightforward check that admits a 
+          reasonable subset of the space of acceptable programs in practice. For 
+          example, we can check that an object is immutable and thereby know that 
+          it is safe to consider it frozen.</p>
+        <p>The last property, pass-by-copy, is unlike the others in that it is 
+          discretionary. To be able to be passed by copying, an object needs only 
+          to be frozen, but not all frozen objects have to be pass-by-copy. The 
+          decision to declare an object pass-by-copy is left up to the programmer 
+          since it has both a security implication and a visible operational effect. 
+          The transmission of a pass-by-copy object entails exposure of the object's 
+          source code and state to the remote system. The operational effect is 
+          that when the object is transmitted to a remote system, the receiver 
+          will get a local object that responds immediately to messages, instead 
+          of a proxy for a remote object. As a design decision, we require that 
+          objects can be declared pass-by-copy only if they are <i>transparent</i> 
+          (both open source and open state). The purpose of this requirement is 
+          to prevent any possibility of the illusion that a pass-by-copy object 
+          could keep these things secret.</p>
+        <p>Through careful use of auditors, we can control the information flow 
+          among various objects and enforce many kinds of useful security constraints. 
+          We can also use auditors to optimize program execution and data transfer. 
+          For example, if we know that an object is functional, we can cache its 
+          output, reorder calls, or skip repeated calls. If we know that an object 
+          is pass-by-copy, we can transmit it to a remote party by sending a copy 
+          of its state instead of constructing a proxy on the remote system.</p>
+        <p>The following figure illustrates the implication relationships between 
+          the various properties described above.</p>
+        <p align=CENTER><img src="images/prop-tree.gif" width="539" height="312"></p>
+        <p align=CENTER><font ><b>Figure 3. </b>Relationships between properties.<br>
+          A -&gt; B means that property A implies property B.</font></p>
+        <h1 >Name Bindings</h1>
+        <p>In E, names are bound using either <font face="Courier New, monospace" >def</font> 
+          or <font face="Courier New, monospace" >var</font>. The <font face="Courier New, monospace">def</font> 
+          keyword declares a final value: the binding of the name to the value 
+          cannot be changed (though the value might itself be mutable). For example, 
+          a constant can be declared this way:</p>
+      </div>
+      <blockquote> 
+        <div id="Section2"> 
+          <pre lang="" align=LEFT style="  ">def <i>answer</i> := 42</pre>
+        </div>
+      </blockquote>
+      <div id="Section2"> 
+        <p>An object with behaviour is defined by an <i>object expression</i> 
+          containing a list of method definitions, such as this one:</p>
+      </div>
+      <blockquote> 
+        <div id="Section2"> 
+          <pre lang="" align=LEFT style="  ">def <b><i>object</i></b> {
+    to <b>greet</b>() {
+        println(&quot;Hello!&quot;)
+    }
+}</pre>
+        </div>
+      </blockquote>
+      <div id="Section2"> 
+        <p>A function declaration is shorthand for creating an object with a single 
+          method.</p>
+      </div>
+      <blockquote> 
+        <div id="Section2"> 
+          <pre lang="" align=LEFT style="  ">def <b><i>twice</i></b>(f) { f(); f() }</pre>
+        </div>
+      </blockquote>
+      <div id="Section2"> 
+        <p>E permits us to specify a <i>value guard</i> for a constant value, 
+          a formal parameter to a method, or the return value of a method. The 
+          guard must provide a <font face="Courier New, monospace">coerce</font> 
+          method that either figures out how to make an object conform or throws 
+          an exception. In the following example, <font face="Courier New, monospace">int</font> 
+          is bound to a guard whose <font face="Courier New, monospace">coerce</font> 
+          method checks that the argument is an integer.</p>
+      </div>
+      <blockquote> 
+        <div id="Section2"> 
+          <pre lang="" align=LEFT style="  ">def <i>step</i> :int := 2
+     
+def <b><i>adder</i></b> {
+    to <b>incr</b>(<i>x</i> :int) :int {
+        x + step
+    }
+}
+ 
+addr.incr(3)  	<font face="Times New Roman, Times, serif"># this will give 4</font>
+addr.incr('a') <font face="Times New Roman, Times, serif">	# this will fail</font></pre>
+        </div>
+      </blockquote>
+      <div id="Section2"> 
+        <p>The <font face="Courier New, monospace" >var</font> keyword binds a 
+          name to a slot, a mutable storage location that can accept new bindings:</p>
+      </div>
+      <blockquote> 
+        <div id="Section2"> 
+          <pre lang="" align=LEFT style="  ">var <i>i</i> := 1
+     
+i := 2
+i += 1</pre>
+        </div>
+      </blockquote>
+      <div id="Section2"> 
+        <p>In a <font face="Courier New, monospace" >var</font> declaration, we 
+          can specify a <i>slot guard</i> to customize the behaviour of the slot; 
+          the slot guard can check the initial value, and can supply anything 
+          it likes as the slot. The <font face="Courier New, monospace" >makeSlot</font> 
+          method on the slot guard is called to create the slot. The slot is expected 
+          to have a <font face="Courier New, monospace" >getValue</font> method 
+          and a <font face="Courier New, monospace" >setValue</font> method; a 
+          typical custom slot might have the argument to its <font face="Courier New, monospace" >setValue</font> 
+          method guarded by a corresponding value guard.</p>
+      </div>
+      <blockquote> 
+        <div id="Section2"> 
+          <pre>var <i>i</i> :int := 1
+     
+i := 3    <font face="Times New Roman, Times, serif"># this will succeed</font>
+i := 'a'  <font face="Times New Roman, Times, serif"># this will fail</font></pre>
+        </div>
+      </blockquote>
+      <div id="Section2"> 
+        <p>The <font face="Courier New, monospace" >int</font> object, which we 
+          have used in these examples, to serve as both a value guard and a slot 
+          guard, might be implemented in terms of a native <font face="Courier New, monospace" >isInteger</font> 
+          function as follows:</p>
+      </div>
+      <blockquote> 
+        <div id="Section2"> 
+          <pre lang="" align=LEFT style="  ">def <i><b>int</b></i> {
+    to <b>coerce</b>(<i>x, optEjector</i>) :any {
+        if (isInteger(x)) {
+            x
+        } else {
+            throw.eject(optEjector, &quot;Must be an integer&quot;)
+        }
+    }
+    to <b>makeSlot</b>(<i>x</i> :int) :any {
+        var <i>v</i> := x
+        def <i><b>slot</b></i> {
+            to <b>getValue</b>() :any {
+                v
+            }
+            to <b>setValue</b>(<i>x</i> :int) {
+                v := x
+            }
+        }
+    }
+}</pre>
+        </div>
+      </blockquote>
+      <div id="Section2"> 
+        <p>In this example, we have used the <font face="Courier New, monospace" >any</font> 
+          guard in a few places, which allows any object to pass. Any method that 
+          wants to return a value must explicitly declare a guard because the 
+          default guard on all returned values in <i><b><font color="#009000">E</font></b></i> is <font face="Courier New, monospace" >void</font>, 
+          which coerces anything to <font face="Courier New, monospace" >null</font>. 
+          This default was chosen in order to be conservative about the leakage 
+          of authority or information, in accord with the least-privilege design 
+          philosophy.</p>
+        <h1 >Auditors</h1>
+        <p>With the addition of the auditor feature to E, we can now declare that 
+          an object expression should be checked by a list of auditors. Each auditor 
+          gets to examine the source code of the object expression and make a 
+          pass-fail judgement. The semantics of auditing are defined as if the 
+          check happens just before each time the object is instantiated (though 
+          for efficiency reasons we employ some optimizations in order to avoid 
+          actually running the auditor for every new object instance). Execution 
+          of the object expression proceeds only if all the audits succeed. For 
+          example, the following function constructs and returns a new object 
+          that is audited by the <font face="Courier New, monospace" >confined</font> 
+          auditor:</p>
+      </div>
+      <blockquote> 
+        <div id="Section2"> 
+          <pre lang="" align=LEFT style="  ">def <i><b>makePoint</b></i>(<i>x</i> :int, <i>y</i> :int) :any {
+    def <i><b>point</b></i> implements confined {
+        to <b>getX</b>() :int { x }
+        to <b>getY</b>() :int { y }
+    }
+ }</pre>
+        </div>
+      </blockquote>
+      <div id="Section2"> 
+        <p>The auditor names are resolved in the same namespace as all other bindings, 
+          so we assume that <font face="Courier New, monospace" >confined</font> 
+          has been brought into the current namespace by an earlier import or 
+          definition. The <font face="Courier New, monospace" >confined</font> 
+          auditor can determine by inspecting the code that the object expression 
+          for <font face="Courier New, monospace" >self</font> sends no messages 
+          and returns only values it was endowed with upon creation, so it passes.</p>
+        <p>At a later point when the object instance is bound to another name 
+          or passed as an argument to a method, it can be checked by a guard to 
+          verify that the instance indeed originates from an object expression 
+          that passed an audit:</p>
+      </div>
+      <blockquote> 
+        <div id="Section2"> 
+          <pre lang="" align=LEFT style="  ">def <b><i>secret_stuff</i></b>(<i>x</i> :confined) {
+    <font face="Times New Roman, Times, serif"># safe to send secrets to x</font>
+}</pre>
+        </div>
+      </blockquote>
+      <div id="Section2"> 
+        <p>Notice that in this case we have used a single object, <font face="Courier New, monospace" >confined</font>, 
+          as both the auditor and the guard. This will not always be the case; 
+          in some situations, it is necessary to separate the ability to audit 
+          from the ability to guard. To identify the different use cases for auditors 
+          we have to make two important distinctions.</p>
+        <h1 >Use Cases for Auditors</h1>
+        <p>First, we distinguish between non-discriminating and discriminating 
+          auditors. A non-discriminating or &quot;rubber-stamping&quot; auditor 
+          will allow anything to pass; its significance therefore lies in the 
+          fact that the programmer has chosen to declare the auditor on an object. 
+          A discriminating auditor inspects the abstract syntax tree to ascertain 
+          a particular semantic property, and is trusted to do so correctly. The 
+          auditor should be discriminating when we are interested in an intrinsic 
+          property of the object being audited, i.e. <i>what</i> the object is.</p>
+        <p>Second, we distinguish between auditors that are closely held and those 
+          that are not closely held. Recall that an auditor is an authority-carrying 
+          object like any other, and must be brought into scope before it can 
+          be used. When an auditor is closely held, we are careful to ensure that 
+          it is only available to a specific set of parties. When it is not closely 
+          held, it is freely provided to anyone who wants to use it. In most cases, 
+          the guard is usually freely available. Therefore, if the auditor is 
+          closely held, it is typically a separate object from the guard; if not, 
+          the auditor and the guard can both be the same object. The auditor should 
+          be closely held when we are interested in the origins of the object 
+          being audited, i.e. <i>who</i> created the object.</p>
+        <p>Different combinations of these two properties are appropriate for 
+          different use cases. </p>
+        <div align="center"> 
+          <table width=302 border=1 bordercolor="#000000" cellpadding=7 cellspacing=0 frame=VOID rules=GROUPS>
+            <colgroup> <col width=78> </colgroup> <colgroup> <col width=91> <col width=91> 
+            </colgroup> <tbody> 
+            <tr valign=TOP> 
+              <td width=78>&nbsp; </td>
+              <td width=91> 
+                <p lang="" align=CENTER>non-discriminating</p>
+              </td>
+              <td width=91> 
+                <p lang="" align=CENTER>discriminating</p>
+              </td>
+            </tr>
+            </tbody> <tbody> 
+            <tr valign=TOP> 
+              <td width=78> 
+                <p lang="" align=CENTER>not closely held</p>
+              </td>
+              <td width=91> 
+                <p lang="" align=CENTER>type declarations</p>
+              </td>
+              <td width=91> 
+                <p lang="" align=CENTER>semantic verification</p>
+              </td>
+            </tr>
+            <tr valign=TOP> 
+              <td width=78> 
+                <p lang="" align=CENTER>closely held</p>
+              </td>
+              <td width=91> 
+                <p lang="" align=CENTER>code signatures</p>
+              </td>
+              <td width=91>&nbsp; </td>
+            </tr>
+            </tbody> 
+          </table>
+        </div>
+        <p align=CENTER><font ><b>Figure 4. </b>Uses for different kinds of auditors.</font></p>
+        <p>A non-discriminating, not closely held auditor can be used like a type 
+          declaration. The auditor can be applied by anyone to any object to declare 
+          its type, and the guard then plays the role of a runtime type-check 
+          (or type coercion).</p>
+        <p>A non-discriminating, closely held auditor can be used to implement 
+          code signatures. The auditor and guard are analogous to the private 
+          key and public key in conventional code signing; when a guard verifies 
+          an object instance, we can be sure it was created by an entity that 
+          holds the auditor.</p>
+        <p>Finally, a discriminating, not closely held auditor can be used to 
+          ensure behavioural properties of an object such as the ones identified 
+          in Figure 3. Because the auditor is discriminating, it is safe to allow 
+          anyone to try to use it.</p>
+        <h1 >Example</h1>
+        <p>Our earlier example with the Point object shows how we would use a 
+          discriminating auditor to determine confinement. Here is an example 
+          to illustrate how we can also use non-discriminating auditors to help 
+          achieve desirable security properties.</p>
+        <p>Suppose we would like to implement, in E, a special service called 
+          a <i>sealer</i>. A sealer takes an object and seals it up in an envelope, 
+          such that the envelope can be passed among untrusted parties, and the 
+          contents can be extracted only by a party in possession of the matching 
+          <i>unsealer</i>. (Sealers and unsealers provide <i>rights amplification</i>, 
+          a capability security primitive.) We will need independent pairs of 
+          sealers and unsealers to convey secrets to different parties, so we 
+          would like a &quot;brand&quot; service that can generate these pairs 
+          on demand.</p>
+        <p>Here is a naive implementation of a brand.</p>
+      </div>
+      <blockquote> 
+        <div id="Section2"> 
+          <pre lang="" align=LEFT style="  ">def <b><i>makeBrand</i></b>() :any {
+    def <b><i>key</i></b> { }
+     
+    def <b><i>sealer</i></b> {
+        to <b>seal</b>(<i>contents</i>) :any {
+            def <b><i>envelope</i></b> {
+                to <b>open</b>(<i>k</i>) :any {
+                    if (k == key) {
+                        contents
+                    }
+                }
+            }
+        }
+    }
+     
+    def <b><i>unsealer</i></b> {
+        to <b>unseal</b>(<i>env</i>) :any {
+            env.open(key)
+        }
+    }
+     
+    [sealer, unsealer]
+}</pre>
+        </div>
+      </blockquote>
+      <div id="Section2"> 
+        <p>The basic idea behind this implementation is that we create a unique 
+          <font face="Courier New, monospace">key</font> object to go with each 
+          pair, and our sealer makes an <font face="Courier New, monospace">Envelope</font> 
+          that only reveals its contents when presented with the correct key (the 
+          <font face="Courier New, monospace" >==</font> above signifies identity 
+          equality). Since the <font face="Courier New, monospace">key</font> 
+          variable is declared within the scope of <font face="Courier New, monospace">Brand</font>, 
+          it is visible only to the sealer, the unsealer, and any envelopes of 
+          a particular instance of <font face="Courier New, monospace">Brand</font>.</p>
+        <p>Unfortunately, this simple implementation suffers from a serious flaw. 
+          Notice that the unsealer passes the key in an <font face="Courier New, monospace" >open</font> 
+          message to an envelope that is received in an outside call to the sealer. 
+          Suppose that a malicious intermediary causes an envelope such as this 
+          to arrive at the unsealer:</p>
+      </div>
+      <blockquote> 
+        <div id="Section2"> 
+          <pre lang="" align=LEFT style="  ">var <i>key</i> := null
+     
+def <b><i>nasty_envelope</i></b> {
+    to <b>open</b>(<i>k</i>) {
+        key := k
+    }
+}</pre>
+        </div>
+      </blockquote>
+      <div id="Section2"> 
+        <p>This envelope would cause the key to leak out to a variable visible 
+          to the malicious party, who could then grab the key and use it to unseal 
+          any other envelope of the same brand!</p>
+        <p>One way to solve our problem is to use an auditor to authenticate the 
+          party to whom we send the key. Suppose that <font face="Courier New, monospace" >Stamp()</font> 
+          makes a new rubber-stamping auditor. We can use this auditor as a closely 
+          held code signer to make sure that the key never escapes:</p>
+      </div>
+      <blockquote> 
+        <div id="Section2"> 
+          <pre lang="" align=LEFT style="  ">def <b><i>makeBrand</i></b>() :any {
+    def <b><i>key</i></b> { }
+    <u>def <i>s</i> := Stamp()</u>
+    def <b><i>sealer</i></b> {
+        to <b>seal</b>(<i>contents</i>) :any {
+            def <b><i>envelope</i></b> <u>implements s</u> {
+                to <b>open</b>(<i>k</i>) :any {
+                    if (k == key) {
+                        contents
+                    }
+                }
+            }
+        }
+    }
+     
+    def <i><b>unsealer</b></i> {
+        to <b>unseal</b>(<i>env</i> <u>:s</u>) :any {
+            env.open(key)
+        }
+    }
+     
+    [sealer, unsealer]
+}</pre>
+        </div>
+      </blockquote>
+      <div id="Section2"> 
+        <p>The call to <font face="Courier New, monospace" >Stamp()</font> creates 
+          a new rubber stamp for each new sealer-unsealer pair. Since it is lexically 
+          scoped within the <font face="Courier New, monospace" >Brand</font>, 
+          we can see that only this particular <font face="Courier New, monospace" >Envelope</font> 
+          constructor can use it to stamp envelopes. By guarding the argument 
+          to <font face="Courier New, monospace" >unseal</font> with our stamp, 
+          we ensure that the <font face="Courier New, monospace" >unseal</font> 
+          method only accepts envelopes created by the corresponding sealer. It 
+          follows that the <font face="Courier New, monospace">key</font> can 
+          no longer leak out.</p>
+        <p>Although this looks similar to a type declaration, it is more dynamic 
+          in nature, since we create a different stamp for each new instance. 
+          The ability to dynamically generate and use auditors and guards gives 
+          this mechanism a great deal of extra flexibility.</p>
+        <h1 >Auditing Protocol</h1>
+        <p>The interface that we provide for implementing auditors is as follows.</p>
+        <p>Auditors must provide an <font face="Courier New, monospace" >audit</font> 
+          method that takes an abstract syntax tree as an argument and returns 
+          a Boolean value. The argument is the abstract syntax tree of an object 
+          expression, called its <i>script</i>, and consists of a list of methods 
+          and their implementations. The script alone is not enough, because many 
+          auditors need to examine variable declarations that occur outside the 
+          object expression. Therefore, the script provides a method <font face="Courier New, monospace" >synEnv()</font> 
+          that can be called to obtain its <i>syntactic environment</i>. For each 
+          free variable accessed in the script, the syntactic environment maps 
+          the name of the variable to the abstract syntax tree for the pattern 
+          where the variable was declared. The auditor can look at this pattern 
+          to see if the variable was guarded for a property it requires, and can 
+          recursively ask the pattern for its syntactic environment if necessary.</p>
+        <p>For instance, suppose that <font face="Courier New, monospace" >script</font> 
+          is the script for the example <font face="Courier New, monospace" >Point</font> 
+          class shown earlier. Here is what you would see if you asked the script 
+          for its <font face="Courier New, monospace" >synEnv()</font>:</p>
+      </div>
+      <blockquote> 
+        <div id="Section2"> 
+          <pre>? script
+# value: escript`{
+#                    to getX() :int { x }
+#                    to getY() :int { y }
+#                }`
+     
+? script synEnv()
+# value: [&quot;x&quot; =&gt; epatt`x :int`,
+#         &quot;y&quot; =&gt; epatt`y :int`,
+#         &quot;int&quot; =&gt; null]
+     
+? script.synEnv()[&quot;x&quot;]
+# value: epatt`x :int`
+     
+? script.synEnv()[&quot;x&quot;].synEnv()
+# value: [&quot;int&quot; =&gt; null]</pre>
+        </div>
+      </blockquote>
+      <div id="Section2"> 
+        <p>To verify in an <i><b><font color="#009000">E</font></b></i> program whether an object instance has been audited 
+          by a particular auditor, we call the <font face="Courier New, monospace" >audited</font> 
+          function, which is available in the universal scope. This function accepts 
+          two arguments, the auditor and the object, and returns a Boolean value.</p>
+        <p>The behaviour of a guard is defined in its <font face="Courier New, monospace" >coerce</font> 
+          method, so to implement a guard corresponding to an auditor, we simply 
+          put a check in the <font face="Courier New, monospace" >coerce</font> 
+          method. </p>
+      </div>
+      <blockquote> 
+        <div id="Section2"> 
+          <pre lang="" align=LEFT style="  ">def <b><i>auditor</i></b> {
+    to <b>audit</b>(<i>script</i>) :boolean {
+        ...
+    }
+}
+     
+def <b><i>guard</i></b> {
+    to <b>coerce</b>(<i>x</i>) :any {
+        def <i>y</i> := x.conform(guard)
+        if (audited(auditor, y)) {
+            y
+        } else if (...) {
+            <font face="Times New Roman, Times, serif"># convert y to something acceptable</font>
+        } else {
+            throw(&quot;coercion failure&quot;)
+        }
+    }
+}</pre>
+        </div>
+      </blockquote>
+      <div id="Section2"> 
+        <p>This protocol is designed so that the guard has the option of choosing 
+          whether or not to involve the object in the process; it can ask the 
+          object to provide a conforming representative for itself by calling 
+          the object's <font face="Courier New, monospace" >conform</font> method, 
+          as above, or it can skip this step.</p>
+        <p>The ability to verify an audit without involving the object is a significant 
+          design point of this protocol. A previous design for the auditing protocol 
+          relied on sealers closely held by the objects themselves. In the old 
+          protocol, verification of an audit always involved asking the object 
+          to provide proof of an audit. Although an object could not successfully 
+          make a false claim to have passed an audit, it could change its behaviour 
+          based on its knowledge that audit verification was requested. The new 
+          design allows us the option of preventing this information leak.</p>
+        <h1 >Implementing the Protocol</h1>
+        <p>The <i><b><font color="#009000">E</font></b></i> virtual machine executes abstract syntax trees, not bytecode. 
+          After source code is parsed into an AST, it passes through a few phases 
+          of transformations, which translate higher-level constructs into primitive 
+          constructs and perform some optimizations, and then a final phase in 
+          which names throughout the tree are replaced with pointers to their 
+          bound values. The final phase is possible because the scope of all names 
+          can be statically determined; when the final tree is executed, it contains 
+          only direct pointers to values and slots, and no name lookups are necessary.</p>
+        <p>To get the information we need about the syntactic environment from 
+          the AST, we introduce one extra phase just before this last binding 
+          phase. In this new pattern-binding phase, we walk the tree of the expression 
+          to be evaluated, gathering the name-to-pattern bindings in a <font face="Courier New, monospace" >PatternMap</font> 
+          structure as we enter and exit scope blocks. The <font face="Courier New, monospace" >PatternMap</font> 
+          is a tree: the root contains a table of the outermost bindings, and 
+          each tree node stores an inner binding with a link to the node for its 
+          parent scope. As the <font face="Courier New, monospace" >PatternMap</font> 
+          tree is built, pointers to tree nodes are saved in the AST for later 
+          reference.</p>
+        <p>When the syntactic environment is requested for an AST node, we first 
+          compute the list of all free names accessed in that node's subtree. 
+          Then we look up each of these names in the <font face="Courier New, monospace" >PatternMap</font> 
+          as viewed from that node, and cache the resulting table in the AST node 
+          as its syntactic environment.</p>
+        <p>There are two significant optimizations in the current implementation. 
+          First, we can avoid repeating the whole auditing process every time 
+          we instantiate an object if we know that the auditor is functional. 
+          Therefore, the <font face="Courier New, monospace" >functional</font> 
+          auditor is implemented natively in the interpreter, made available in 
+          the universal scope, and used by the auditing machinery. A programmer 
+          writing an auditor in <i><b><font color="#009000">E</font></b></i> will usually want to write the auditor so it 
+          passes the <font face="Courier New, monospace" >functional</font> auditor, 
+          and declare it <font face="Courier New, monospace" >functional</font>. 
+          Each object expression remembers the functional auditors that have successfully 
+          audited it, so it can safely skip repeated audits.</p>
+        <p>Second, if we can determine that an object expression is always audited 
+          by the same auditor, we can make a single entry in the audit registry 
+          for the object expression instead of a separate entry for every instance. 
+          Each instance has a pointer to a vtable containing its method definitions, 
+          so we register the auditor with the vtable. Then when we look up an 
+          audit in the registry, we get the instance's vtable and check for the 
+          presence of an (auditor, vtable) entry as well as an (auditor, instance) 
+          entry.</p>
+        <h1 >Implementing Specific Auditors</h1>
+        <p>We are now in a position to describe how to implement each of the kinds 
+          of auditors shown in Figure 3.</p>
+        <ul>
+          <li> 
+            <p><font face="Courier New, monospace" >confined</font>: Check that:</p>
+            <ul>
+              <li> 
+                <p>the object only sends messages to objects whose declarations 
+                  are guarded by <font face="Courier New, monospace" >deepfrozen</font>; 
+                  and</p>
+              <li> 
+                <p>all of the object's methods have return values guarded by <font face="Courier New, monospace" >deepfrozen</font>.</p>
+            </ul>
+          <li> 
+            <p><font face="Courier New, monospace" >deterministic</font>: Check 
+              that each name accessed in the object expression is either:</p>
+            <ul>
+              <li> 
+                <p>declared final with <font face="Courier New, monospace" >def</font> 
+                  and guarded by the <font face="Courier New, monospace" >deepfrozen</font> 
+                  auditor; or</p>
+              <li> 
+                <p>visible only to this object expression and declared guarded 
+                  by <font face="Courier New, monospace" >deterministic</font>.</p>
+            </ul>
+          <li> 
+            <p><font face="Courier New, monospace" >functional</font>: Check that 
+              the object passes the <font face="Courier New, monospace" >deepfrozen</font> 
+              auditor and that the return value for each method is guarded by 
+              <font face="Courier New, monospace" >deepfrozen</font>.</p>
+          <li> 
+            <p><font face="Courier New, monospace" >frozen</font>: Check that 
+              all names accessed in the object expression are method arguments 
+              (which are always final), or are declared final with <font face="Courier New, monospace" >def</font>.</p>
+          <li> 
+            <p><font face="Courier New, monospace" >deepfrozen</font>: Check that 
+              all names accessed in the object expression are method arguments 
+              or declared final with <font   face="Courier New, monospace">def</font>, 
+              and guarded by the <font face="Courier New, monospace" >deepfrozen</font> 
+              guard or by the guard for a primitive immutable type (such as <font face="Courier New, monospace" >int</font> 
+              or <font face="Courier New, monospace" >char</font>).</p>
+          <li> 
+            <p><font face="Courier New, monospace" >opensource</font>: Ensure 
+              the existence of a standard method whose implementation invokes 
+              a special language keyword for returning the abstract syntax tree 
+              of the object expression.</p>
+          <li> 
+            <p><font face="Courier New, monospace" >openstate</font>: Ensure the 
+              existence of a standard method that generates and returns a mapping 
+              containing the names and values of all the variables accessed in 
+              the object expression.</p>
+          <li> 
+            <p><font face="Courier New, monospace" >transparent</font>: Check 
+              that the object passes both the <font face="Courier New, monospace" >opensource</font><b> 
+              </b>auditor and the <font face="Courier New, monospace" >openstate</font> 
+              auditor.</p>
+          <li> 
+            <p><font face="Courier New, monospace" >passbycopy</font>: Check that 
+              the object passes both the <font face="Courier New, monospace" >frozen</font> 
+              auditor and the <font face="Courier New, monospace" >transparent</font> 
+              auditor.</p>
+        </ul>
+        <h1 >Related Work</h1>
+        <p>A wide variety of work has been done on mechanisms for ensuring the 
+          security of mobile code, including safe interpreters, signed code, static 
+          verification, and proof-carrying code, surveyed in [Kato96] and [Moore98].</p>
+        <p>Many systems have been developed to aid in code inspection for detecting 
+          potential security problems. [Bokowski99] introduces a restriction he 
+          calls &quot;confined types&quot; and a technique for finding potential 
+          violations, although he does not use the standard definition of the 
+          confinement property (following [Lampson73]) that we use here. [Iosif00] 
+          introduces property specifications into Java source code to permit formal 
+          verification. This kind of static analysis generally requires annotation 
+          of and access to the complete source code of a program, whereas we wish 
+          to address the situation where some program modules are untrusted.</p>
+        <p>The auditor system we present allows <i><b><font color="#009000">E</font></b></i> to dynamically load additional 
+          code modules during execution, while performing modular verification. 
+          In earlier work, [Fong98] presents a scheme that permits modular verification 
+          in the presence of dynamic linking, but only applied to standard type 
+          checking, with an eye towards eventually addressing other security properties 
+          like confidentiality and integrity. [Volpano98] devises a type system 
+          for verifying confinement properties by applying typing rules analogous 
+          to the Simple Security property and the Bell-LaPadula *-property. However, 
+          the type analysis is limited to a fixed set of security levels that 
+          must be known in advance and declared in the annotations on variables. 
+          This contrasts with our approach, in which confinement (or other security 
+          properties) can be determined dynamically on a per-object basis.</p>
+        <p>Much of the work on code verification for language-based security systems 
+          has focused on inspection at the bytecode level. All the attention to 
+          bytecode is somewhat surprising, as the information lost during compilation 
+          makes bytecode much more difficult to verify and optimize than a syntax 
+          tree. The Juice technology is a notable exception [Franz97], in which 
+          compressed syntax trees enable highly efficient transmission and verification 
+          of Oberon programs. This work follows their lead, taking an approach 
+          to code verification that operates on abstract syntax trees rather than 
+          stack-based or register-based virtual machine instructions. The expressiveness 
+          of syntax trees makes it feasible to implement verifiers in small amounts 
+          of <i><b><font color="#009000">E</font></b></i> code, and so we take things a step further by allowing extensibility 
+          in the form of pluggable verifiers.</p>
+        <h1 >Conclusions</h1>
+        <p>We have presented, to our knowledge, the first language system providing 
+          a mechanism for code verification that can be extended in the language 
+          itself. We also believe this to be novel in that it allows a programmer 
+          to declare confinement at the granularity of individual objects, and 
+          to make confinement and other security properties part of the interface 
+          specification.</p>
+        <p>A logical next step is the extension of the auditor system with composition 
+          operators analogous to the standard composition of types. Although it 
+          is already possible to express an auditor in terms of other auditors 
+          (for example, to write an auditor that audits for &quot;function taking 
+          a <font face="Courier New, monospace" >deepfrozen</font> argument and 
+          returning a <font face="Courier New, monospace" >passbycopy</font> value&quot;) 
+          it is tedious to have to do this manually for each derived type.</p>
+        <p>Likewise, it would be helpful to be able to express the implication 
+          relationships among auditors, such as those shown in Figure 3, by arranging 
+          auditors in a hierarchy just like types and subtypes. Again, the customizable 
+          nature of the design make it possible to implement this by hand, by 
+          adding appropriate checks to a guard, but it would be nice to have more 
+          standardized support from the language.</p>
+        <h1 >References</h1>
+        <p><a name="Agha87"></a>[Agha87] G. Agha and C. Hewitt. Concurrent programming 
+          using actors. In <i>Object-Oriented Concurrent Programming</i>, p. 37-53. 
+          MIT Press, 1987.</p>
+        <p><a name="Bokowski99"></a>[Bokowski99] B. Bokowski, J. Vitek. Confined 
+          Types. In <i>Proceedings of ACM OOPSLA 1999</i>, p. 82-96, ACM Press, 
+          1999.</p>
+        <p lang=""><a name="E"></a>[E] <a href="http://www.erights.org/">http://www.erights.org/</a>.</p>
+        <p><a name="Granovetter73"></a>[Granovetter73] M. Granovetter. The Strength 
+          of Weak Ties. In <i>American Journal of Sociology</i> (1973), vol. 78, 
+          p. 1360-1380.</p>
+        <p><a name="Iosif00"></a>[Iosif00] On the Specification and Semantics 
+          of Source Level Properties in Java. In <i>Proceedings of 1st International 
+          Workshop on Automated Program Analysis, Testing, and Verification</i> 
+          (June 2000), p. 83-88.</p>
+        <p lang=""><a name="Kato96"></a>[Kato96] Safe and Secure Execution Mechanisms 
+          for Mobile Objects. Mobile Object Systems 1996, p. 201-212.</p>
+        <p lang=""><a name="KeyLogic89"></a>[KeyLogic89] S. Rajunas. The KeyKOS/KeySAFE 
+          System Design. Technical Report SEC009-01, Key Logic, Inc., March 1989. 
+          (Available online at <a href="http://www.cis.upenn.edu/%7EKeyKOS/">http://www.cis.upenn.edu/~KeyKOS/</a>.)</p>
+        <p><a name="Lampson73"></a>[Lampson73] B. Lampson. A Note on the Confinement 
+          Problem. In <i>Communications of the ACM</i>, 16:10 (October 1973), 
+          p. 613-615.</p>
+        <p><a name="Miller00"></a>[Miller00] M. Miller, C. Morningstar, and B. 
+          Frantz. Capability-based Financial Instruments. In <i>Proceedings of 
+          Financial Cryptography 2000,<br>
+          </i> p. 349-378. (Available online at <a href="http://www.erights.org/elib/capability/ode/">http://www.erights.org/elib/capability/ode/</a>.)</p>
+        <p lang=""><a name="Moore98"></a>[Moore98] J. T. Moore. Mobile Code Security 
+          Techniques. Technical Report MS-CIS-98-28, Departement of Computer and 
+          Information Science, University of Pennsylvania, May 1998.</p>
+        <p><a name="Volpano98"></a>[Volpano98] D. Volpano and G. Smith. Confinement 
+          Properties for Programming Languages. In <i>ACM SIGACT News</i>, 29:3 
+          (1998), p. 33-42</p>
+      </div>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%">&nbsp;</TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> 
+      <hr>
+      <div align="center"> 
+        <table cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> 
+              <div align="left"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" valign="center" alt="ERights Home"></a></div>
+            </td>
+            <td> 
+              <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> 
+                    <div align="center"><font size="-1"><a href="../../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../index.html">E 
+                      Language</a> &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div>
+                  </td>
+                </tr>
+                <tr> 
+                  <td> 
+                    <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> 
+                      &nbsp;&nbsp; <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+        <table width="100%" border="0" cellspacing="0" cellpadding="4">
+          <tr> 
+            <td><i><a href="mailto:webmaster@erights.org">webmaster@erights.org</a></i> 
+              <br>
+              or <a href="http://bugs.sieve.net/bugs/?func=addbug&group_id=16380"><i>report 
+              bug</i></a><br>
+              or <a href="http://www.blindpay.com/crit-me-now.cgi"><img src="../../../images/cmn.gif" width="98" height="21" border="0" align="middle" alt="Annotate this page"></a> 
+            </td>
+            <td> 
+              <div align="right"> 
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a> <a href="http://www.stoppoliceware.org/"><img src="../../../images/stoppoliceware_gray_88x32.gif" width="88" height="32" border="0"></a> 
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </TD>
+    <TD WIDTH="10%" valign="bottom">&nbsp;</TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate -->
+</HTML>

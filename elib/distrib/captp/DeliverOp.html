@@ -1,0 +1,344 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>DeliverOp</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">distrib</a>&nbsp;/&nbsp;<a href="index.html">captp</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="DeliverOnlyOp.html" title="Back to: DeliverOnlyOp"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: DeliverOnlyOp" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="GCExportOp.html" title="On to: GCExportOp"><img src="../../../images/next.gif" width="64" height="32" alt="On to: GCExportOp" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B><font size="6">CapTP
+              Ops:</font><font size="5"><br>
+              <font size="7">DeliverOp</font></font></B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <table cellpadding="12">
+        <tr> 
+          <td> <pre>DeliverOp(<i>answerPos</i>  :AnswerPos,
+          rdr        :OneArgFunc,
+
+          recipPos   :IncomingPos,
+          verb       :MsgName,
+          args       :any[])</pre> </td>
+          <td> <p>Queue a delivery of verb(args..) to recip, binding answer/rdr 
+              to the outcome.</p>
+            <pre>answer := recip &lt;- verb(args..)
+answer &lt;- whenMoreResolved(rdr)
+</pre> </td>
+        </tr>
+      </table>
+      <P ALIGN="left">An inter-vat eventual send which returns a promise for the 
+        outcome of the send. 
+      <P ALIGN="left">Like <a href="DeliverOnlyOp.html">DeliverOnlyOp</a>, but 
+        also makes the result available at answerPos, and simulates the receiving 
+        of an immediately following 
+      <blockquote> 
+        <pre>DeliverOnlyOp(answerPos,
+              &quot;whenMoreResolved&quot;,
+              [redirector]) </pre>
+      </blockquote>
+      <p>The following explanation assumes you've already read the <a href="DeliverOnlyOp.html">DeliverOnlyOp</a> 
+        page. </p>
+      <p>The imported far reference is expected to designate the redirector for 
+        resolving the question at the sending side's (Alice's) answerPos.</p>
+      <p align="left">This corresponds to a remote message send in which the sender 
+        needs a promise for the outcome. In ELib this is expressed by using <tt>E.send(..)</tt> 
+        rather than <tt>E.sendOnly(..</tt>). Unlike <tt>E.sendOnly(..)</tt>, <tt>E.send(..)</tt> 
+        is declared as returning a Ref. 
+      <p align="left"> 
+      <blockquote> 
+        <pre>Ref xVow = E.send(bob, &quot;foo&quot;, carol);</pre>
+      </blockquote>
+      <p align="left">In the E language, this is indirectly expressed by using 
+        a &quot;<tt>&lt;-</tt>&quot; (eventual send) expression in a context where 
+        it is statically apparent that its value may be needed. (<font color="#FF0000">***</font> 
+        need to say this more precisely.) For example, the following send 
+      <p align="left"> 
+      <blockquote> 
+        <pre>def xVow := bob &lt;- foo(carol)</pre>
+      </blockquote>
+      <p align="left">clearly should be implemented as a <tt>send</tt>, since 
+        its result is needed. 
+      <p align="left">For concreteness, we'll step through an example in which 
+        Carol is a <tt>PassByProxy</tt> object residing in the same vat as Alice, 
+        and in which the Bob's result in response to the &quot;<tt>foo</tt>&quot; 
+        message is the number &quot;<tt>3</tt>&quot;, a <tt>PassByCopy</tt> object. 
+      <h1 align="left">Example Scenario</h1>
+      <p align="left"><a href="#step1">Click here</a> to position the first frame 
+        of the animation sequence. Then click on each diagram to proceed to the 
+        next diagram.</p>
+      <table width="100%" cellspacing="6" cellpadding="12">
+        <tr>
+          <td><a name="step1" href="#step2"><img
+        src="images/deliver_1.gif" width="558" height="794" border="1"
+        alt="Deliver Step 1" align="right"></a> 
+      <p align="left">The bottom of this diagram is much like the <a href="DeliverOnlyOp.html#step1">corresponding 
+        diagram</a> in DeliverOnlyOp. But where the other diagram has a <img src="images/bar_sinister.gif" width="22" height="23" align="middle" alt="Bar Sinister"> 
+        indicating no place to report an outcome, this diagram has the Resolver 
+        facet of a promise-pair (arrowhead with halo). The promise facet of this 
+        pair (the arrowtail) is returned by the send operation to Alice's activation 
+        frame, and in this example, held in local variable xVow. The Resolver 
+        is the right to determine what object the arrowhead is pointed at, and 
+        therefore what object xVow will come to designate.</p>
+      <p align="left">As far as DeliverOp is concerned, the remote reference to 
+        Bob may be a Far reference or a RemotePromise, and (if it's a RemotePromise) 
+        it may be an import or a question. For concreteness, this example shows 
+        Bob as an imported Far reference.</p>
+      <p align="left">On receiving the message, the Far reference serializes the 
+        arguments for transmission to the other side. Any PassByCopy arguments 
+        are simply serialized so that identical copies will be unserialized. However, 
+        Carol, we are supposing, is a PassByProxy object, so Alice's vat registers 
+        her in the Exports table for this connection, thereby allocating her an 
+        export/import position.</p>
+            <p align="left">The outcome Resolver is not an argument to be serialized. 
+              (We could have treated it that way, but if we had, we'd lose the 
+              <a href="../pipeline.html">pipelining effect</a>.) Instead, Alice's 
+              vat creates a new Question (a RemotePromise in VatA's Questions 
+              table) for Bob's to answer. The redirector facet of this question 
+              will be used to resolve it. This facet is itself an exported PassByProxy 
+              object entered into VatA's Exports table.</p>
+</td>
+        </tr>
+        <tr>
+          <td><a name="step2" href="#step3"><img src="images/deliver_2.gif" width="730" height="794" border="1" alt="Deliver Step 2" align="right"></a>
+      <p align="left">The message is no longer represented out of in-address-space 
+        programming language material, but rather as encoded bits on the wire, 
+        in-flight to Bob's vat. The encoding is the integer that represents DeliverOp, 
+        followed by Bob's position in the Exports table, followed by the encoding 
+        of Carol.</p>
+            <p align="left">To represent the optimistic return result, two arguments 
+              are needed. <tt>xPos</tt> creates the arrow going from VatA to VatB, 
+              which directly represents the unresolved reference to the return 
+              result. Until this reference is resolved, messages sent on this 
+              reference will travel, as expected, from VatA to VatB. (Message 
+              sent on a reference travel towards the arrowhead in anticipation 
+              of eventually being delivered.) In addition, <tt>NewFarDesc(xRdrPos,xRdrSwiss)</tt> 
+              creates an arrow going from VatB to the redirector of this unresolved 
+              x reference. This is used by VatB to report the resolution of VatB's 
+              side of the x reference to VatA, in order for VatA to resolve its 
+              x' reference.</p>
+</td>
+        </tr>
+        <tr>
+          <td><a name="step3" href="#step4"><img src="images/deliver_3.gif" width="730" height="794" border="1" alt="Deliver Step 3" align="right"></a>
+      <p align="left">This concludes the explanation of DeliverOp per se. We now 
+        continue with the scenario, so that we see an example of how DeliverOp 
+        set things up for other operations to proceed in its wake.</p>
+      <h2 align="left">Resolving the Promise for an Answer</h2>
+            <p align="left">This network message is decoded into an in-address-space 
+              message made out of proganmming language material and eventually-sent 
+              to Bob. In other words, it is queued as if by &quot;<tt>&lt;-</tt>&quot; 
+              for delivery to Bob. The argument of the decoded message is the 
+              Far reference to Carol that resulted from decoding the encoding 
+              of the NewFarDesc. The message is a <tt>send</tt> kind of message 
+              (rather than a <tt>sendOnly</tt>), in that it will report the outcome 
+              of the turn in which it is executed.</p>
+</td>
+        </tr>
+        <tr>
+          <td><a name="step4" href="#step5"><img src="images/deliver_4.gif" width="695" height="794" border="1" alt="Deliver Step 4" align="right"></a>
+      <p align="left">For concreteness, let's say the outcome is the integer &quot;3&quot;. 
+        In E, integers are PassByCopy objects. In fact the outcome could be anything, 
+        but since we already used Carol as an example of passing a PassByProxy 
+        object, this seems opportune.</p>
+      <p align="left">3, being a normal (methodical) object, responds to the <a href="../../../elang/blocks/miranda.html#whenMoreResolved">whenMoreResolved</a> 
+        message by sending itself to the argument.</p>
+      <p align="left">For notational simplicity, the following diagram leaves 
+        out those elements no longer relevant.</p></td>
+        </tr>
+        <tr>
+          <td><a name="step5" href="#step6"><img src="images/deliver_5.gif" width="579" height="794" border="1" alt="Deliver Step 5" align="right"></a>
+            <p align="left">This &quot;<tt>run(3)</tt>&quot; message is sent back 
+              over the network to the redirector facet of xVow. Since a copy of 
+              &quot;<tt>3</tt>&quot; is sent, rather than a reference to the original 
+              &quot;<tt>3</tt>&quot;, this copy is shown as traveling with the 
+              message. (In the textual representation of the network message, 
+              the <tt>3</tt> is shown as &quot;<tt>BigInteger(3)</tt>&quot; to 
+              represent the encoding that results from serializing the Java representation 
+              of <tt>3</tt> as an object.)</p>
+</td>
+        </tr>
+        <tr>
+          <td><a name="step6" href="#step7"><img src="images/deliver_6.gif" width="675" height="793" border="1" alt="Deliver Step 6" align="right"></a>
+            <p align="left">This &quot;run(3)&quot; message in unserialized, and 
+              a corresponding intra-vat message is eventually-sent to the redirector 
+              facet of xVow.</p>
+</td>
+        </tr>
+        <tr>
+          <td><a name="step7" href="#step8"><img src="images/deliver_7.gif" width="627" height="794" border="1" alt="Deliver Step 7" align="right"></a>
+      <p align="left">The redirector reacts to this <tt>run(3)</tt> message by 
+        arranging for its xVow become a resolved reference to <tt>3</tt>. In other 
+        words, all references to xVow are now references to <tt>3</tt>, and xVow 
+        itself no longer exists as a separately designatible entity.</p>
+            <p align="left">In order to maintain <i><b><font color="#009000">E</font></b></i>'s 
+              partial ordering guarantees in the face of a possible race condition, 
+              the redirector will not generally be able to arrange for this in 
+              one step, as will be explained on <a href="resolving.html">Resolving 
+              RemotePromises</a>. For simplicity here, we assume that no messages 
+              have been sent through xVow between it creation and its attempted 
+              redirection, so that it can know not to worry about the race condition. 
+              This special case allows the redirector to safely immediately redirect 
+              on reception of the run(3) message, as shown below.</p>
+</td>
+        </tr>
+        <tr>
+          <td><a name="step8" href="#step9"><img src="images/deliver_8.gif" width="487" height="793" border="1" alt="Deliver Step 8" align="right"></a>
+</td>
+        </tr>
+        <tr>
+          <td>            <a name="step9" href="#step10"><img src="images/deliver_9.gif" width="487" height="793" border="1" alt="Deliver Step 9" align="right"></a>
+<h2 align="left">Distributed Acyclic Garbage Collection (<a href="dagc.html">DAGC</a>)</h2>
+            <p align="left">When the redirector redirects xVow, the position, 
+              xPos, occupied by xVow in VatA's Questions table and in VatB's Answers 
+              table can be deallocated as well. The entry in VatA's Questions 
+              table is immediately deallocated, and VatA sends a &quot;<tt><a href="GCAnswerOp.html">GCAnswerOp</a>(xPos)</tt>&quot; 
+              to VatB. </p>
+            <p align="left">For a while now, in this scenario, VatB's far reference 
+              to the x redirector, shown as a half circle labeled rdr', has not 
+              been pointed at by anything else in VatB. As a result, VatB's local 
+              garbage collector will eventually notice that it is garbage and 
+              should be collected, and notify the local Imports table. (This requires 
+              a local garbage collector with finalization, which Java &gt;= 1.2 
+              fortunately provides well.) When the Imports table receives this 
+              notification, it does <i>not</i> deallocate its entry, for reasons 
+              explained below, but does send a &quot;<tt><a href="GCExportOp.html">GCExportOp</a>(xRdrPos, 
+              wireCount)</tt>&quot; to the other side with its current wireCount, 
+              and then zeros its own wireCount. The wireCounts exists to solve 
+              a race condition problem that will be explained at <a href="GCExportOp.html">GCExportOp</a>, 
+              but in this scenrio it suffices to say that the sent wireCount will 
+              be &quot;<tt>1</tt>&quot;. </p>
+            <p align="left">When VatA's Answers table receives the &quot;<tt>GCAnswerOp(xPos)</tt>&quot;, 
+              it immediately deallocates its corresponding entry. The GCAnswerOp 
+              case is simple, because the same side -- the Questions table -- 
+              both allocates a position, decides to reuse it, and obtains the 
+              information that it is no longer locally needed, so the Answers 
+              table can simply follow the Questions table's instructions.</p>
+            <p align="left">Unfortunately, VatB's Import table's reaction to the 
+              local finalization notification cannot be as simple, and neither 
+              can VatA's Exports table's reaction to the resulting GCExportOp. 
+              The Exports table is where alocation and reuse decisions happen, 
+              so it also needs to be where deallocation decisions happen, or we 
+              get a difficult race condition. But we also create a race condition 
+              by having the Exports side make deallocation decisions in reactions 
+              to GC-finalization notifications received at the Imports table. 
+              Fortunately, this latter race condition is easily solved by the 
+              extra <tt>wireCount</tt> argument, as will be explained on <a href="GCExportOp.html">GCExportOp</a>.</p>
+            <p align="left">In the current scenario, the race does not occur, 
+              so VatA's Exports table, on receiving the &quot;<tt>GCExportOp(xRdrPos, 
+              1)</tt>&quot;, determines that the &quot;1&quot; is adequate, and 
+              deallocates the corresponding Exports table entry. Note that the 
+              Imports table does <i>not</i> deallocate the Imports table entry, 
+              since it doesn't know the Exports table's decision. However, should 
+              the Exports table reallocate that position, it will send a new <a href="NewFarDesc.html">NewFarDesc</a> 
+              or <a href="NewRemotePromiseDesc.html">NewRemotePromiseDesc</a> 
+              to the Imports table reusing the same position, at which time the 
+              Imports table will overwrite its entry.</p>
+            <p align="left">Once all these steps have taken place, we are left 
+              in the state shown in the next diagram, which is stable but for 
+              the gray diamond redirector will be garbage collected by the local 
+              garbage collector.</p>
+      </td>
+        </tr>
+        <tr>
+          <td><a name="step10" href="#step1"><img
+        src="images/deliver_10.gif" width="487" height="794"
+        border="1" alt="Deliver Step 10" align="right"></a>
+            <p align="left">Each of the big diagrams is linked to the next in 
+              a loop. Now that you are at the end, click on the diagram, to see 
+              the first positioned properly, and then keep clicking to see the 
+              process &quot;animate&quot;. On Windows98, this animation effect 
+              works better in Internet Explorer 5 than in Netscape Navigator 4.6</p>
+</td>
+        </tr>
+      </table>
+      <p align="left">&nbsp;</p>
+      <h1 align="left"></h1>
+      <p align="left"></p>
+      <p align="left"></p>
+      <p align="left"></p>
+      <p align="left"></p>
+      <p align="left"></p>
+      <p align="left"></p>
+      <h2 align="left">&nbsp;</h2>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">distrib</a>&nbsp;/&nbsp;<a href="index.html">captp</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="DeliverOnlyOp.html" title="Back to: DeliverOnlyOp"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: DeliverOnlyOp" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="GCExportOp.html" title="On to: GCExportOp"><img src="../../../images/next.gif" width="64" height="32" alt="On to: GCExportOp" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>The ENative Project</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="../elang/index.html" title="Back to: The E Language"><img src="../images/prev.gif" width="64" height="32" alt="Back to: The E Language" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><a href="ground-rules.html" title="1st child: ENative: Ground Rules"><img src="../images/first.gif" width="32" height="64" alt="1st child: ENative: Ground Rules" border="0"></a><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="../data/index.html" title="On to: Handling Symbolic Data"><img src="../images/next.gif" width="64" height="32" alt="On to: Handling Symbolic Data" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>The
+              <i>ENative<br>
+              </i>Project</b></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <P ALIGN="left">The purpose of the ENative project is to explore the performance
+        possible for a <i>simple</i> implementation of <a href="../elang/kernel/index.html">Kernel-E</a>
+        in C++, or looked at the other way, the simplicity, compactness, and readability
+        possible for a Python-scale-efficient implementation of Kernel-E in C++.
+        The inspiration for this project is the widespread satisfaction with <a href="http://www.python.org/">Python</a>'s
+        simple C-based implementation. The current ENative sources (download <a href="enative.zip">enative.zip</a>)
+        are quite incomplete, but implements much functionality quite simply in
+        938 lines of code and comments.
+      <p ALIGN="left">What we learn should aid efficient compilation of E to JVM
+        bytecodes. We start with C++ however, because C++ costs are clear, whereas
+        much experimentation would be needed to evaluate the performance of alternative
+        bytecode sequences, and the results may be distressingly ideosyncratic
+        to a particular JVM. Given a Java implementation that provides good linking
+        and fast intercallability of C++ and Java code, ENative may be more than
+        academic. </p>
+      <hr>
+      <h1><a name="volunteer"></a>Other Benefits &amp; Request for Volunteers</h1>
+      <p>Given that we must consider the E compiler as part of our TCB (unless
+        we are prepared to audit the compiler's output), ENative is our best hope
+        for a very small but practical TCB for <i><b><font color="#009000">E</font></b></i>. If you wish to use E to gain
+        strong assurance of security, you're not going to succeed with Java in
+        your TCB. Similarly, if you want to use E on platforms to which Java hasn't
+        been ported yet, like <a href="http://www.eros-os.org/">EROS</a>, or on
+        platforms way too small for Java, like the Pilot, then ENative may be
+        your best hope.</p>
+      <p>If you find the ENative project interesting, please contribute to it.
+        If you find it very interesting, please volunteer to become its open-source
+        coordinator. I (Mark Miller, markm-at-erights.org) frankly don't have
+        time for any further work on it, though not even enough is there yet to
+        run any interesting benchmarks. For now, I need to stay focussed on the
+        Java-based E, so I've put these sources and web pages up in the hope of
+        enticing someone else to pick up ENative where I've left off. Should you
+        volunteer, I will of course do what I can to help. Thanks.</p>
+      <hr>
+      <h1 ALIGN="left"><a name="GroundRules"></a>Ground Rules</h1>
+      <P ALIGN="left">The <a href="ground-rules.html">ground rules</a> for this
+        exercise (at least at this point) are
+      <P ALIGN="left">
+      <ul>
+        <li><a href="ground-rules.html#noTypes">No static type analysis of E source code</a></li>
+        <li><a href="ground-rules.html#simpleScoping">Only simple scope analysis</a></li>
+        <li><a href="ground-rules.html#noVirtual">No use of C++'s &quot;virtual&quot;</a></li>
+        <li><a href="ground-rules.html#noTemplates">No use of C++'s template feature</a></li>
+        <li><a href="ground-rules.html#fewRefs">No unnecessary use of C++'s references</a></li>
+        <li><a href="ground-rules.html#absorbStack">Absorb, rather than reify, <i><b><font color="#009000">E</font></b></i>'s stack discipline</a></li>
+        <li><a href="ground-rules.html#noStackDebug">No portable virtual machine support for stack
+          debugging</a></li>
+        <li><a href="ground-rules.html#otherDebugging">Portable meta-level access to board-state</a></li>
+        <li><a href="ground-rules.html#assumeGC">Assume a garbage collector</a></li>
+        <li><a href="ground-rules.html#realCosts">Impose all costs that a complete implementation
+          would impose</a></li>
+        <li><a href="ground-rules.html#classObsolete">Impose costs of upgrade-for-prototyping</a></li>
+        <li><a href="ground-rules.html#compile">Compile rather than interpret</a></li>
+        <li><a href="ground-rules.html#callSite">Call-site cacheing</a></li>
+      </ul>
+      <hr>
+      <h1><a name="Guide"></a>A Guide to the Implementation</h1>
+      <p>The source files (download <a href="enative.zip">enative.zip</a>) currently
+        only provide a portion of the run-time library, especially the polymorphic
+        call mechanism, but excluding most of the primitive data types or operations.</p>
+      <p><a href="fatpointers.html">Fat Pointers</a> are the heart of this implementation.</p>
+      <p>We have not yet implemented a compiler from Kernel E to C++, but we here
+        sketch how we would expect to do so. In the meantime, you can perform
+        adequately reliable benchmarks for <i>small</i> pieces of E code by hand
+        compiling according to the following sketch, and not using any more judgement
+        than you believe a simple compiler would.
+      <ul>
+        <li> Compiling <a href="varcases.html">Variables</a>. Variable defining
+          patterns, variable access, variable assignment, and slot access.</li>
+        <li> Compiling <a href="objectcases.html">Objects</a>. Object expression,
+          Meta facets, Method and Matcher definition.</li>
+        <li> Compiling <a href="exprcases.html">Other Expressions</a>. All expressions
+          other than variable manipulation of object/plumbing definition.</li>
+        <li> Compiling <a href="pattcases.html">Patterns</a>. All patterns other
+          than the variable definition pattern.</li>
+      </ul>
+      <p></p>
+      <hr>
+      <h1><a name="Thanks"></a>Acknowledgements</h1>
+      <p><a href="http://www.lfw.org/ping/">Ka-Ping Yee</a> for provoking me into
+        doing this, as well as for helpful suggestions.</p>
+      <p>The implementation techniques used by ENative, in particular the use
+        of &quot;<a href="fatpointers.html">Fat Pointers</a>&quot;, is based directly
+        on an earlier implementation of <a href="../history/joule/index.html">Joule</a>
+        at <a href="http://www.agorics.com/">Agorics</a>. The Fat Pointers of
+        Joule were in turn partially inspired by the Fat Pointers of the <a href="http://www.sun.com/research/techrep/1994/annualreport94/clarity.html">Clarity</a>
+        language developed by Ted Goldstein, Mick Jordan, and many others while
+        at Sun Labs. </p>
+      <p>Dean Tribble &amp; <a href="../history/joule/index.html">Joule</a> for
+        having done most of this earlier, in a context that E could learn from.
+        Further thanks to Dean for many helpful suggestions.</p>
+      <p></p>
+      <p>Of perpertual inspiration is the brilliant history of Lisps and Smalltalks,
+        especially the contributions and insights of Peter Deutsch and Alan Schiffman.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="../elang/index.html" title="Back to: The E Language"><img src="../images/prev.gif" width="64" height="32" alt="Back to: The E Language" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><a href="ground-rules.html" title="1st child: ENative: Ground Rules"><img src="../images/first.gif" width="32" height="64" alt="1st child: ENative: Ground Rules" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="../data/index.html" title="On to: Handling Symbolic Data"><img src="../images/next.gif" width="64" height="32" alt="On to: Handling Symbolic Data" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

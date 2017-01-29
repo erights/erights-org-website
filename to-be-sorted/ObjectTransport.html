@@ -1,0 +1,221 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (WinNT; I) [Netscape]">
+   <TITLE>Object Transport</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffeedd" TEXT="#000000" LINK="#0000FF" VLINK="#800080">
+
+<H1>
+Object Transport</H1>
+<B>Last updated:</B><I> [98/05/29 Bob]</I> 
+<H2>
+Introduction</H2>
+In order to build a distributed system and to provide persistent storage,
+Neocosm will need an underlying serialization methodology. It is expected
+that Java serialization will provide all the necessary infrastructure.
+<H4>
+Related Documents</H4>
+&nbsp;
+<H2>
+Requirements</H2>
+
+<OL>
+<LI>
+Object Transport should be as insensitive to version changes in both our
+code base and the JVM as possible</LI>
+
+<LI>
+It should support proxy object semantics (as opposed to make them difficult
+-- this shouldn't be a problem, since the decision for an object to be
+a proxy should be a simple one)</LI>
+
+<LI>
+If possible, it should be transparent to 'application programmers' -- some
+simple choice (e.g. inherit from Proxyable and *poof* you're proxied) should
+be available with appropriate generic behavior. Only a very few (two? --
+sturdyrefs undergoing cryptohashing and objects with private fields that
+never go over the wire?) should require special handling code.</LI>
+</OL>
+
+<H2>
+Architecture</H2>
+There are three kinds of serialization that we know of at this time:
+<UL>
+<LI>
+To save an object's state (writing out the vat, saving instantiations in
+catalogs)</LI>
+
+<LI>
+To send an object across the wire (arguments to a message, even instantiating
+an avatar is arguments to a create message)</LI>
+
+<LI>
+To write the immutable parts of an object out (to a byte array or a stream)
+to generate a cryptohash (sturdyrefs)</LI>
+</UL>
+There are are also three occasions where una get serialized (hand waving
+based on the current DObject model and various hallway discussions about
+future una directions):
+<UL>
+<LI>
+In response to a request for the unum to replicate itself</LI>
+
+<LI>
+In response to a request for the unum to persist itself</LI>
+
+<LI>
+As a side-effect of being included in an E.Send that ended up going through
+the comm system</LI>
+</UL>
+<P>(XXX UnumTransport.gif not found)
+<P>In each case, the desired result is known, regardless of the stream. The only
+  case where there are platform requirements on the contents of the result of
+  the serialization is the third case, where we expect a "proxy" to be generated.
+  The only requirement on the serialization results of the other requests is that
+  an unum of the same class can use the stream to (re)instantiate itself.<B></B>
+<P><B>Note Bene:</B> upon further discussion, the third case may very well
+be 'never do this.' If an unum is always explicitly asked to serialize
+itself, then it's an invalid for it to be dumped on a random stream at
+the low-level. This means that vat saves need to explicitly ask each unum
+to persist itself, rather than 'merely' serialize a collection.
+
+<P>There have been problems in the past with 'hints vectors' and serialization,
+but with an appropriate rethinking of how hints are handled I believe we
+can sidestep all of the known issues (adding a 'getHintsVector' to parallel
+the 'getCerts' call in the repository/resource manager would be one way).
+<H4>
+Current Architecture Overview</H4>
+A strawman proposal for an E object comm system based as closely as possible on 
+the current architecture, as explained in an e-mail from Bill Frantz: 
+<P>The basic E message consists of: &lt;target> &lt;verb> &lt;args[]> &lt;opt-resolver>.
+  This may also be described as &lt;target> &lt;envelope> or even &lt;instance
+  of ERun>.&nbsp; (See <a href="../javadoc/org/erights/e/elib/prim/E.html">org.erights.e.elib.prim.E</a>)
+<P>For the comm system we should plan on creating a subclass of java.io.ObjectOutputStream,
+call it CommObjectOutputStream.&nbsp; To send an E message to another machine
+we then call the local proxy for the remote object to receive the message
+with an &lt;envelope> - proxy.send(envelope).
+
+<P>The proxy has as part of its state, an ObjectConnection which leads
+to the remote object.&nbsp; The proxy performs:
+
+<P>myObjectConnection.send(myRemoteObjectID, envelope).
+
+<P>The ObjectConnection has as part of its state the VatTPConnection which
+leads to the remote object.&nbsp; (It also implements a message handler
+for incoming envelopes.)&nbsp; The ObjectConnection does:
+
+<P><TT>myByteArrayOutputStream.reset();</TT>
+<BR><TT>CommObjectOutputStream coos</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = new CommObjectOutputStream(myByteArrayOutputStream);</TT>
+<BR><TT>coos.write...(remoteObjectID);</TT>
+<BR><TT>coos.writeObject(envelope);</TT>
+<BR><TT>myVatTPConnection.sendMsg(myByteArrayOutputStream.toByteArray());</TT>
+
+<P>* We may be able to move the allocation of new CommObjectOutputStream
+out
+<BR>of the per message loop.
+
+<P>On the receiving end, the message handler for incoming envelopes does<TT>:</TT>
+
+<P><TT>ByteArrayInputStream bais = new ByteArrayInputStream(message);</TT>
+<BR><TT>bais.read();&nbsp; // Skip message type code</TT>
+<BR><TT>CommObjectInputStream cois = new CommObjectInputStrean(bais);</TT>
+<BR><TT>...hands waving wildly here get the local object via the proxy
+mechanism.</TT>
+<BR><TT>Envelope e = (Envelope)bais.readObject();</TT>
+<BR><TT>ERun.deliver(targetObject, e);</TT>
+<BR>&nbsp;
+
+<P>I think that's "all" there is to it.&nbsp; (There is the issue of stopping
+serialization at the leaves, and special line behavior which will be handled
+by implementing writeObject and readObject methods which test for instance
+of CommObjectOutputStream in the affected classes.)
+
+<P>The CommObjectBlahStream objects can easily implement our form of compression.
+<H4>
+Proposed Architecture Overview</H4>
+The proposal is to use native Java serialization as of the JDKv1.1 (<I>i.e.</I>
+we're not going to rely on any 1.2 features). For proxy objects, we will
+implement a default behavior that the application programmers can use easily
+(merely by inheriting from Proxyable, for example). The few specific objects
+that need special handling will be dealt with on a case by case basis,
+other than proxies, the only definitively known special case is that of
+sturdyrefs -- we don't want to include the hints vector in the byte array
+that is used to generate the cryptohash.
+
+<P>For the purposes of simplification, we could assume a superclass that
+contains only the immutable data, and then before the cryptohash operation
+the superclass is instantiated (using the copy constructor?) and serialize
+out the superclass and hash that. This appears (to me, at least) to be
+less work than writing a custom writeobject that will only be used in a
+special case (rather than constructing a CryptoHashStream, for example,
+and checking for that in the custom writeobject for SturdyRefs).
+<BR>&nbsp;
+<BR>&nbsp;
+<H4>
+Off the shelf alternatives</H4>
+Standard Java serialization is available, and should be general enough
+to support our needs.
+<H4>
+Other Design Objectives, Constraints and Assumptions</H4>
+<I>Lists any special objectives and assumptions of the code e.g. reusability,
+thread safety, security, performance, use of resources, compatibility with
+existing code etc. This section gives important context for reviewers</I>
+<H2>
+Current implementation</H2>
+<I>This section should give details of the major classes and interfaces.</I>
+<H4>
+Is it JavaDoc'ed?</H4>
+<I>In many cases, this section can link to JavaDoc output from actual Java classes
+and interfaces. This saves writing documentation twice (the designers will have
+to JavaDoc their interfaces anyway). The JavaDoc should be linked into the design
+document. Chip's JavaDoc style guidelines (XXX file not found) explain how to
+use JavaDoc effectively.</I>
+<H4> Examples</H4>
+<I>Are there examples?</I>
+<H4>
+Testing and Debugging</H4>
+<I>(Optional) Lists any tests and debugging utilities which are to be developed
+to help test the design (e.g. test classes, trace categories, etc)</I>
+<H2>
+Design Issues</H2>
+
+<H4>
+Resolved Issues</H4>
+<I>History of issues raised and resolved during initial design, or during
+design inspections. Can also include alternative designs, with the reasons
+why they were rejected</I>
+<H4>
+Open Issues</H4>
+
+<OL>
+<LI>
+Is Java serialization powerful enough for us to use? Do we currently implement
+some arcane feature that isn't supported in Java?</LI>
+
+<LI>
+How much of the default behavior can we use? Breaking the serialization
+tree may require us to specify the member variables that get serialized,
+which will require considerable care with respect to planning for future
+upgrade strategies. Hopefully Java's upgrade story will work for us too.</LI>
+
+<LI>
+Are there any more special cases in our current code that we're not aware
+of, that won't fit into a strategy that uses Java serialization?</LI>
+
+<LI>
+It appears from reading the 1.2 source that simply subclassing ObjectBlahStream
+will allow us to use compressed representations of int, long, short, float,
+String etc. The only thing we have to be carefull about with this technique
+is to use super.writeByte to write our data. The conversion from RtEncoderDataOutputStream
+will be easy.</LI>
+
+<LI>
+The E runtime requires that strings that are used as method selectors
+be interned. This logic will have to be included somewhere between the
+byte array, and placing the envelope on the E run queue.</LI>
+</OL>
+
+</BODY>
+</HTML>

@@ -1,0 +1,77 @@
+Safari Version 5.0.1 (5533.17.8)
+
+ES5 Tester
+
+We will be refactoring these into Sputnik and test262 tests. But the results below are immediately useful and seem correct, so here they are for now in an unpolished form. These tests assume a browser that's on its way to being ES5 compliant, as it uses some ES5 APIs to drive the tests.
+
+It should work at least starting with Chrome 9, Safari 5, FireFox 3.6, IE 9, and Opera 11. I haven't tried it on earlier or other browsers.
+
+Future Reserved Words 7.6.1.2 Failed to fail: "use strict"; var implements = 1;
+Future Reserved Words 7.6.1.2 Failed to fail: "use strict"; var interface = 1;
+Future Reserved Words 7.6.1.2 Failed to fail: "use strict"; var let = 1;
+Future Reserved Words 7.6.1.2 Failed to fail: "use strict"; var package = 1;
+Future Reserved Words 7.6.1.2 Failed to fail: "use strict"; var private = 1;
+Future Reserved Words 7.6.1.2 Failed to fail: "use strict"; var protected = 1;
+Future Reserved Words 7.6.1.2 Failed to fail: "use strict"; var public = 1;
+Future Reserved Words 7.6.1.2 Failed to fail: "use strict"; var static = 1;
+Future Reserved Words 7.6.1.2 Failed to fail: "use strict"; var yield = 1;
+this 15.1 .EvalError enumerable?: should be false but was true
+this 15.1 .JSON configurable?: should be true but was false
+this 15.1 .Math configurable?: should be true but was false
+this 15.1 .RangeError enumerable?: should be false but was true
+this 15.1 .ReferenceError enumerable?: should be false but was true
+this 15.1 .SyntaxError enumerable?: should be false but was true
+this 15.1 .TypeError enumerable?: should be false but was true
+this 15.1 .URIError enumerable?: should be false but was true
+Object 15.2 .freeze absent
+Object 15.2 .isExtensible absent
+Object 15.2 .isFrozen absent
+Object 15.2 .isSealed absent
+Object 15.2 .preventExtensions absent
+Object 15.2 .seal absent
+Object.seal 15.2.3.8 doesn't exist
+Object.freeze 15.2.3.9 doesn't exist
+Object.preventExtensions 15.2.3.10 doesn't exist
+Object.isSealed 15.2.3.11 doesn't exist
+Object.isFrozen 15.2.3.12 doesn't exist
+Object.isExtensible 15.2.3.13 doesn't exist
+Function.prototype 15.3.4 .bind absent
+Function.prototype.bind 15.3.4.5 doesn't exist
+Math 15.8 .LOG10E doesn't have expected value: should be 0.4342944819032518 but was 0.43429448190325176
+Date.prototype.toJSON (?) .length doesn't have expected value: should be 1 but was 0
+RegExp.prototype 15.10.6 [[Class]]: should be [object RegExp] but was [object RegExpPrototype]
+RegExp.prototype.exec 15.10.6.2 .length doesn't have expected value: should be 1 but was 0
+RegExp.prototype.test 15.10.6.3 .length doesn't have expected value: should be 1 but was 0
+Error.prototype 15.11.4 .message enumerable?: should be true but was false
+Error.prototype 15.11.4 .message doesn't have expected value: should be but was Unknown error
+Error.prototype 15.11.4 .name enumerable?: should be true but was false
+RangeError.prototype 15.11.7.7 [[Class]]: should be [object Error] but was [object Object]
+RangeError.prototype 15.11.7.7 .message enumerable?: should be false but was true
+RangeError.prototype 15.11.7.7 .message doesn't have expected value: should be but was RangeError
+RangeError.prototype 15.11.7.7 .name enumerable?: should be false but was true
+TypeError.prototype 15.11.7.7 [[Class]]: should be [object Error] but was [object Object]
+TypeError.prototype 15.11.7.7 .message enumerable?: should be false but was true
+TypeError.prototype 15.11.7.7 .message doesn't have expected value: should be but was TypeError
+TypeError.prototype 15.11.7.7 .name enumerable?: should be false but was true
+EvalError.prototype 15.11.7.7 [[Class]]: should be [object Error] but was [object Object]
+EvalError.prototype 15.11.7.7 .message enumerable?: should be false but was true
+EvalError.prototype 15.11.7.7 .message doesn't have expected value: should be but was EvalError
+EvalError.prototype 15.11.7.7 .name enumerable?: should be false but was true
+URIError.prototype 15.11.7.7 [[Class]]: should be [object Error] but was [object Object]
+URIError.prototype 15.11.7.7 .message enumerable?: should be false but was true
+URIError.prototype 15.11.7.7 .message doesn't have expected value: should be but was URIError
+URIError.prototype 15.11.7.7 .name enumerable?: should be false but was true
+ReferenceError.prototype 15.11.7.7 [[Class]]: should be [object Error] but was [object Object]
+ReferenceError.prototype 15.11.7.7 .message enumerable?: should be false but was true
+ReferenceError.prototype 15.11.7.7 .message doesn't have expected value: should be but was ReferenceError
+ReferenceError.prototype 15.11.7.7 .name enumerable?: should be false but was true
+SyntaxError.prototype 15.11.7.7 [[Class]]: should be [object Error] but was [object Object]
+SyntaxError.prototype 15.11.7.7 .message enumerable?: should be false but was true
+SyntaxError.prototype 15.11.7.7 .message doesn't have expected value: should be but was SyntaxError
+SyntaxError.prototype 15.11.7.7 .name enumerable?: should be false but was true
+JSON.parse 15.12.2 .length doesn't have expected value: should be 2 but was 1
+JSON.stringify 15.12.3 .length doesn't have expected value: should be 3 but was 1
+passed: 3704
+failed: 65
+errors: 0
+skipped: 0

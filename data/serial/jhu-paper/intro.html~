@@ -1,0 +1,424 @@
+ 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML>
+<!-- #BeginTemplate "/Templates/pink.dwt" --> 
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>Introduction - Safe Serialization</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made href="mailto:markm@caplet.com" title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<P> 
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> 
+      <P> 
+      <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> 
+            <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">data</a>&nbsp;/&nbsp;<a href="../index.html">serial</a>&nbsp;/&nbsp;<a href="index.html">jhu-paper</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="modeling.html" title="On to: Modeling Conventional Serialization"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Modeling Conventional Serialization" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table>
+          </TD>
+          <TD ALIGN="RIGHT"> 
+            <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><font size="5"><B>Safe 
+              Serialization Under Mutual Suspicion</B></font><FONT SIZE="7"><B><br>
+              Introduction</B></FONT><!-- #EndEditable --></FONT> 
+          </TD>
+        </TR>
+      </TABLE>
+      <hr>
+      <!-- #BeginEditable "LongBody" --> In the object programming paradigm, a 
+      computational system consists of a dynamic graph of objects, where <i>objects</i> 
+      are encapsulated combinations of state and behavior. Because of this encapsulation, 
+      the objects within the system are not normally in a position to perceive 
+      or operate on the graph they are embedded in -- they have access only to 
+      the behavior (in response to messages) of their immediate graph-neighbors 
+      -- but not to their representation. This limited access is adequate for 
+      many purposes, but not all. For example, a garbage collector needs to operate 
+      directly on the graph. So long as the subsystems that do need to access 
+      the graph itself -- like the garbage collector -- are made privileged parts 
+      of the object system's implementation, and so long as these subsystems do 
+      not make their special powers available to objects within the system, we 
+      are still programming within the simple object model. 
+      <p>Serialization is a clear example of a service that objects within an 
+        object system could use for many purposes, but which seems to require 
+        violating the encapsulation of the simple object model. Serialization 
+        seems to need access to representation normally hidden by encapsulation. 
+        Indeed, many object systems designers provide serialization by introducing 
+        new primitives that violate encapsulation [ref JOSS], thereby taking us 
+        outside the simple object model. Given the conventional rationale for 
+        the object model -- in which encapsulation aids only modularity -- one 
+        could argue that accommodating serialization by introducing these new 
+        primitives is simply prudent engineering. The addition of a generally 
+        accessible modularity-violating primitive only impose a modularity loss 
+        on those programs that use it, enabling programmers to make their own 
+        local tradeoffs between modularity and other benefits.</p>
+      <h2>Serialization <i>vs.</i> Object-Capabilities?</h2>
+      <p>The <i>object-capability</i> model of secure computation [ref Dennis, 
+        Hewitt, Demolished] is essentially the same as the simple object model 
+        of computation, but for one important difference. Whereas the <i>functionality</i> 
+        of an object program depends only on the abilities provided by its underlying 
+        system, the <i>security</i> of an object-capability program depends on 
+        underlying inabilities as well. In a graph of mutually suspicious objects, 
+        one object's correctness depends not only on what the rules of the game 
+        say it can do, but also on what the rules say its potential adversaries 
+        cannot do. If the designers of such a system add a widely-accessible security-violating 
+        primitive, they compromise the security available to all objects coexisting 
+        on that platform, since none can know that its adversaries will not use 
+        this primitive. To get from objects to object-capabilities, we merely 
+        need to prohibit certain primitive abilities which are not part of the 
+        object model anyway -- like forged pointers or direct access to another's 
+        private state -- but which the object paradigm itself doesn't require 
+        be prohibited [ref Ode]. </p>
+      <p>By imposing these prohibitions, we give the object model new power and 
+        meaning. Such object computation is no longer just the manipulation of 
+        information, but also of authority and secure identity. The object graph 
+        can now be a framework for arranging patterns of <i>safe cooperation</i> 
+        among mutually suspicious objects. This paper presents serialization abstractions 
+        for use in object-capability systems, which </p>
+      <ul>
+        <li>Live within object-capability constraints, and so maintain the <i>safety</i> 
+          of object-capability security.</li>
+        <li>Apply the power of serialization to the manipulation of authority 
+          and identity in addition to information, facilitating yet more patterns 
+          of <i>cooperation</i> to be engaged in safely.</li>
+      </ul>
+      <h1>Concrete Embodiment in <i><b><font color="#009000">E</font></b></i></h1>
+      <p>The abstractions proposed by this paper are implemented and seem to be 
+        working as of the <i><b><font color="#009000">E</font></b></i> as of the 
+        0.8.22e release; and <i><b><font color="#009000">E</font></b></i> already 
+        makes use of them for many of the purposes enumerated below. This paper 
+        is about these abstractions, not about their implementation in <i><b><font color="#009000">E</font></b></i>. 
+        From the explanations here, it should be clear how to apply these ideas 
+        to most capability languages, even without prior knowledge of <i><b><font color="#009000">E</font></b></i>. 
+        However, for concreteness, <i><b><font color="#009000">E</font></b></i> 
+        and its implementation are used throughout for examples. When these examples 
+        are shown as embedded command line sessions like</p>
+      <blockquote> 
+        <pre>? 2 + 3
+# value: 5</pre>
+      </blockquote>
+      <p>then these also double as executable regression tests. By <a href="../../../elang/tools/updoc.html">updocing</a> 
+        the page containing the examples, you can determine whether the system 
+        behaves as shown by the example. As you read, if you are curious about 
+        how a variation of an example would behave, make a copy of the page, edit 
+        appropriately, and updoc it. Or try the examples interactively at a <tt>rune</tt> 
+        command-line. </p>
+      <p>In order to have a common point of reference, this paper does assume 
+        a prior knowledge of Java, and a basic knowledge of Java's Object Serialization 
+        Streams (JOSS) [ref JOSS]. <i><b><font color="#009000">E</font></b></i> 
+        itself is currently implemented in Java, and <i><b><font color="#009000">E</font></b></i>'s 
+        serialization mechanisms are currently implemented using JOSS. (We expect 
+        at some point to switch to WOS [ref WOS], but this should not effect the 
+        issues explained in this paper.)</p>
+      <p>Complicating the picture is that <i><b><font color="#009000">E</font></b></i>'s 
+        serialization cannot yet be applied to objects written in <i><b><font color="#009000">E</font></b></i>, 
+        but only to objects written in Java. However, since Java isn't capability 
+        secure, the rationale for the present architecture cannot yet fully come 
+        into play until objects written in <i><b><font color="#009000">E</font></b></i> 
+        can be serialized. The serialization system presented here is designed 
+        primarily for use with objects written in <i><b><font color="#009000">E</font></b></i>, 
+        and we analyze it mostly on that basis. Therefore, the presentation here 
+        is somewhat ahead of the actual implementation.</p>
+      <p>We will be using <i><b><font color="#009000">E</font></b></i> notation 
+        throughout, even to present parts of the design actually implemented in 
+        Java, but we assume no prior knowledge of <i><b><font color="#009000">E</font></b></i>. 
+        At the expression level, <i><b><font color="#009000">E</font></b></i> 
+        syntactically resembles Java. When the meaning of the <i><b><font color="#009000">E</font></b></i> 
+        code isn't obvious by analogy, we will explain it as we go. For more on 
+        <i><b><font color="#009000">E</font></b></i>, please see [ref Ode, erights.org, 
+        Walnut].</p>
+      <h1><img src="images/depiction.gif" width="330" height="768" align="right">What 
+        is Serialization?</h1>
+      <p>The diagram on the right represents the common elements of serialization 
+        and unserialization. A <i>Serializer</i> (shown as the <tt>serialize</tt> 
+        function) takes as input a graph of live original objects, where this 
+        graph is a subgraph of an overall object graph, delimited somehow. It 
+        renders a depiction (shown in the picture frame) of this subgraph in a 
+        format it expects a compatible <i>Unserializer</i> to understand. The 
+        depiction contains no objects; only data depicting objects.</p>
+      <p>An <i>Unserializer</i> takes this depiction as input, and uses it to 
+        build a new graph of live objects that can, in some sense, be said to 
+        be a reconstruction of the original. Unserialization happens in a context 
+        that can be quite distant -- in time, space, versions -- from that containing 
+        the original subgraph. The reconstructed graph is connected, somehow, 
+        into the overall graph at this new context, becoming a subgraph of it.</p>
+      <p>The next section of the paper, <a href="modeling.html">Modeling Conventional 
+        Serialization</a> presents an idealization of JOSS, as a starting point 
+        for the building and analyzing the security mechanisms presented in the 
+        next sections. This idealization uses <i><b><font color="#009000">E</font></b></i>'s 
+        &quot;promises&quot; to fix a bug in JOSS that might have been fatal for 
+        our other goals. </p>
+      <h2>Disclaimer: Schema Evolution</h2>
+      <p>This paper deals with several security issues of serialization, but mostly 
+        avoids those of <i>schema evolution</i> -- code version change on unserialization. 
+        In this paper we mostly just use JOSS's impressive support for schema 
+        evolution as a black box, and assume it is adequate. Before a system based 
+        on this paper is thought to be secure, this issue will need to be examined 
+        in some detail.</p>
+      <h1>The Three Sides of Serialization</h1>
+      <p>The issues raised by picking the original subgraph out of an overall 
+        graph, or by connecting the reconstructed graph into an overall graph, 
+        can be classified naturally according to the three sides of the picture. 
+      </p>
+      <h2>The Interior Subgraph</h2>
+      <p>The interior of the picture represents the subgraph itself. To reconstruct 
+        the subgraph is to replicate information from the original, determining 
+        what the reconstructed objects can initially <i>know</i>. </p>
+      <p>The section <a href="subgraph-security.html">Security within the Subgraph</a> 
+        repairs our idealized model of serialization to operate within capability 
+        discipline with no special privileges. Within these constraints, the Serializer 
+        is only able to obtain knowledge of the original subgraph to the extent 
+        that the objects within that graph are willing to divulge that knowledge. 
+        This section shows a rights-amplification pattern by which a set of objects 
+        may have a prearranged relationship with a Serializer, enabling them to 
+        divulge more to the Serializer than they would to their normal clients.</p>
+      <h2>The Exit Points</h2>
+      <p> The right edge represents <i>outgoing</i> references -- references from 
+        objects within the subgraph to objects outside it. Of these, the ones 
+        shown as crossing the frame as jigsaw puzzle plugs are <i>exits</i>, which 
+        the Unserializer is expected to reconnect to something appropriate. </p>
+      <p>In an object-capability system, an object's only source of authority 
+        to effect the world outside of itself is according to the references it 
+        holds. The only authority held by objects in the original subgraph to 
+        effect the world outside that subgraph is according to these outgoing 
+        references. To reconnect the exits to corresponding sources of authority 
+        is to determine what objects within the subgraph can initially <i>do</i>. 
+        To the extent the new authorities resemble the original, we can say that 
+        the objects holding these reconnected exit references are heir to these 
+        authorities from their original.</p>
+      <p>The section <a href="exit-security.html">Security at the Exits</a> presents 
+        the <i>Gordian Scalpel</i> as the solution framework for the security 
+        issues of reconnecting the exits.</p>
+      <h2>The Entry Points</h2>
+      <p>The left edge of the picture represents the <i>incoming</i> references 
+        -- references into the subgraph from objects outside the subgraph. Of 
+        these, the ones shown as cut off by the frame are the <i>entries</i>, 
+        those incoming connection the Unserializer is expected to reconnect to 
+        something appropriate.</p>
+      <p>In any object system, identity is according to references. To <i>be</i> 
+        a particular identity is to be designated by a particular reference, and 
+        thereby to be able to receive those messages (invocations) sent on that 
+        reference. </p>
+      <p>In the typical use of serialization, this issue is trivial: Of the incoming 
+        references, there's only one entry -- the reference to the rootObj given 
+        as argument to the Serializer. The Unserializer returns to its caller 
+        a new reference to the reconstructed rootObj, thereby giving it a new 
+        identity. The new rootObj may be a replica and heir to the original, but 
+        it does not have the identity of the original. Messages sent on references 
+        to the original will not somehow be redirected to the reconstructed rootObj. 
+        For most purposes, this is the desired behavior.</p>
+      <p>The need to reconnect original entries occurs in the context of a distributed 
+        object system, when serialization is used for persistence. Following a 
+        crash that destroys the original objects, the reconstructed objects must 
+        reclaim the identity of the originals. Distant object holding remote references 
+        to these original objects must be able to continue to send messages on 
+        them, and these messages must be received by the reconstructed objects. 
+        To reconnect these entries is to determine who objects within the subgraph 
+        can <i>be</i>. When an old reference is reconnected to designate a new 
+        entry object, we say the new object is a reincarnation of the identity 
+        of the original.</p>
+      <p>The section <a href="entry-security.html">Security at the Entries</a> 
+        first explains the cryptographic implementation of distributed identity 
+        in <i><b><font color="#009000">E</font></b></i>'s distributed object protocol, 
+        CapTP. We then show a simple use of cryptographic hashing that securely 
+        allows a new object to become the object designated by outstanding references 
+        to the original. With a further elaboration on the hashing theme, we then 
+        enable unprivileged fault handlers to delay the unserializing and reincarnating 
+        of saved depictions until needed to handle incoming requests.</p>
+      <h1>An Example of Serialization in <i><b><font color="#009000">E</font></b></i></h1>
+      <blockquote> 
+        <pre>? def ser__uriGetter := &lt;import:org.erights.e.elib.serial.*&gt;<br># value: &lt;import:org.erights.e.elib.serial.*&gt;</pre>
+        <p>? def SerializerMaker := &lt;ser:Serializer&gt;<br>
+          # value: &lt;import:org.erights.e.elib.serial.Serializer&gt;</p>
+        <p>? def replacer(obj) :any {<br>
+          &gt; if (obj =~ i :int) {<br>
+          &gt; i + 1<br>
+          &gt; } else {<br>
+          &gt; obj<br>
+          &gt; }<br>
+          &gt; }<br>
+          # value: &lt;replacer&gt;</p>
+        <p>? def sillySerializer := SerializerMaker(replacer)<br>
+          # value: &lt;Serializer&gt;</p>
+        <p>? def desc := sillySerializer.record([1, 2, 'c', &quot;foo&quot;]); 
+          desc.size()<br>
+          # value: 515</p>
+        <p>? def Unserializer := &lt;ser:Unserializer&gt;(def identity(obj) :any 
+          { obj })<br>
+          # value: &lt;Unserializer&gt;</p>
+        <p>? def recon := Unserializer.play(desc)<br>
+          # value: [2, 3, 'c', &quot;foo&quot;]</p>
+        <p>? </p>
+      </blockquote>
+      <h1>Uses for Serialization</h1>
+      <p>The secure serialization abstractions presented in this paper are surprisingly 
+        similar to conventional serialization, but are not identical. We are not 
+        somehow taking serialization and adding security while leaving everything 
+        else alone. The changes we have made no doubt break some of the uses made 
+        of conventional serialization. Have we thrown the baby out with the bath 
+        water? To evaluate this, it helps to keep in mind a range of purposes 
+        serialization is used for. We believe the abstractions proposed in this 
+        paper are adequate for the following purposes:</p>
+      <h1></h1>
+      <h2>Transcending Space: Distributed Object Protocols</h2>
+      <p>The notion of &quot;object&quot; provided by conventional language implementations 
+        is spatially local. Not only does a particular object live only in the 
+        address space of a single process, but so do all references to it.</p>
+      <p>In any distributed object system, there are certain kinds of data-like 
+        argument that are &quot;passed-by-copy&quot; between address spaces when 
+        used as arguments or return results of remote messages. (In Corba, instances 
+        of non-interface types. In RMI, all instances of Serializable. In <i><b><font color="#009000">E</font></b></i>, 
+        everything declared PassByCopy.) In <i><b><font color="#009000">E</font></b></i>, 
+        it is valid to consider all copies of a given pass-by-copy object to all 
+        be implementations of the same one object. All copies of the object representing 
+        the number 3 all represent the same number 3.</p>
+      <p>Remote messages themselves are actually sent to local proxies that represent 
+        remote (inter-address-space) references. These get created when &quot;pass-by-proxy&quot; 
+        objects are used as arguments or return results. (In Corba, instances 
+        of interface types. In RMI, RemoteObject. In <i><b><font color="#009000">E</font></b></i>, 
+        PassByProxy.) A pass-by-proxy object only lives in one address space at 
+        a time, but objects in other address spaces can hold references to it.</p>
+      <p>When an argument is passed, the initial pass-by-copy subgraph of the 
+        argument is serialized as the interior of the picture. Embedded local 
+        or remote references to pass-by-proxy objects are exits crossing the right 
+        edge of the picture, to be encoded specially, and hooked back up specially 
+        when unserialized, in order to preserve the connectivity of the inter-address-space 
+        distributed reference graph. [ref CapTP]</p>
+      <h2>Transcending Time: Persistence</h2>
+      <p>A conventional object is also temporally local: An object only exists 
+        so long as the process that created it is still running. Since processes 
+        on stock operating systems have high mortality, so do our objects. One 
+        way out is shown by KeyKOS and EROS, which cure the high mortality rate 
+        of processes, which save state to that processes survive the crash of 
+        their hosting machine. In the absence of OS support, we can instead use 
+        serialization to save object state so that objects can survive the crash 
+        of their hosting process.</p>
+      <p>Remote (inter-address-space) references + persistence raise the issue 
+        of reconnecting entries. How does a reconstructed object claim the distributed 
+        identity associated with the original? How do those who hold references 
+        to the original object (now destroyed by a crash), come to find themselves 
+        pointing at its reconstruction instead? </p>
+      <p>Like Rip van Winkle, a reconstructed subgraph may find itself in a world 
+        much different than the original's context. In particular, individual 
+        original objects held access to various resources of their hosting platform, 
+        like a particular file. What criteria should come to play to determine 
+        what resource on the new platform to connect the reconstructed object 
+        to? These are issues about reconnecting exits.</p>
+      <h2>Transcending Change: Upgrade</h2>
+      <p class=cute-quote align="right"><i>The art of persistence is to preserve 
+        state amid change <br>
+        and to enable change amid state.<br>
+        </i>--with apologies to Alfred North Whitehead</p>
+      <p></p>
+      <p>An object is a bundle of state and behavior. Conventionally, an object's 
+        state may be mutable, but not its code. Like a dog that can't learn new 
+        tricks, a conventional object has the same behavior for the duration of 
+        its lifetime. Once persistence extends this lifetime to much longer than 
+        the release cycle of the programs run by these objects, this inability 
+        can become a fatal problem. To repair this, we must at least deal with 
+        the <i>schema evolution </i>problem, which the above disclaimer explains 
+        is mostly ignored in this paper. However, to succeed at upgrade, a system 
+        should be designed to avoid schema evolution where possible, so that the 
+        programmers can afford to invest the attention needed to get it right 
+        in the remaining places where it's necessary.</p>
+      <p>The section <a href="upgrade.html">Persistence and Upgrade</a> explains 
+        how these mechanism have been employed to create user-level persistence 
+        in <i><b><font color="#009000">E</font></b></i>, and how these mechanism 
+        support for persistence-with-upgrade by <i>schema-evolution-avoidance</i> 
+        in addition to schema evolution. </p>
+      <h2>Transcending Origin: State Separation, Communication, Integration</h2>
+      <p><font color="#FF0000">*** Just the obvious stuff.</font></p>
+      <h2>Transcending Shortsightedness: Unanticipated Tools</h2>
+      <p><font color="#FF0000">*** Story of discovery of data corruption bug and 
+        release of fixing tool. More... </font></p>
+      <h1>Other Approaches</h1>
+      <p>The section <a href="related.html">Related Work</a> surveys other work 
+        on serialization and security: <font color="#FF0000">Mozart. JOSS. ***What 
+        else? The origins of the Gordian Scalpel at Kalieda and NeXT. Abstraction 
+        in ToonTalk. Rights amplification for accessing representation: The KeyKOS 
+        / EROS Brand. PJama and XOF.Cardelli, Vijay.</font></p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%">&nbsp;</TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> 
+      <hr>
+      <div align="center"> 
+        <table cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> 
+              <div align="left"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a></div>
+            </td>
+            <td> 
+              <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> 
+                    <div align="center"><font size="-1"><a href="../../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E 
+                      Language</a> &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div>
+                  </td>
+                </tr>
+                <tr> 
+                  <td> 
+                    <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> 
+                      &nbsp;&nbsp; <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <table width="100%" border="0" cellspacing="0" cellpadding="4">
+        <tr> 
+          <td><i><a href="mailto:webmaster@erights.org">webmaster@erights.org</a></i> 
+            <br>
+            or <a href="http://bugs.sieve.net/bugs/?func=addbug&amp;group_id=16380"><i>report 
+            bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+            html</a>)<br>
+            or <a href="http://www.blindpay.com/crit-me-now.cgi"><img src="../../../images/cmn.gif" width="98" height="21" border="0" align="middle" alt="Annotate this page"></a> 
+          </td>
+          <td> 
+            <div align="right"> 
+              <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a> <a href="http://www.stoppoliceware.org/"><img src="../../../images/stoppoliceware_gray_88x32.gif" width="88" height="32" border="0" alt="Stop Policeware Campaign"></a> 
+            </div>
+          </td>
+        </tr>
+      </table>
+    </TD>
+    <TD WIDTH="10%" valign="bottom">&nbsp;</TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate -->
+</HTML>

@@ -1,0 +1,67 @@
+<HTML>
+<HEAD>
+
+<TITLE>Proxy Comm Meeting Notes</TITLE>
+
+<META NAME="generator" CONTENT="BBEdit 4.5">
+
+</HEAD>
+<BODY BGCOLOR="#ffeedd" TEXT="#000000" LINK="#0000FF" VLINK="#800080">
+6/17/98, 11 am<BR>
+Bill Frantz, Arturo Bejar, Rob Jellinghaus, Bob Schumaker<BR>
+
+<H4>A proxy is born</H4>
+<I>Dramatis personae</I><BR>
+<TABLE>
+<TR>
+	<TD><TT>xs</TT></TD>
+	<TD>A local Vow for the object X</TD>
+</TR>
+<TR>
+	<TD><TT>ref</TT></TD>
+	<TD>A sturdy reference object, contains a &lt;registrar id&gt; and a &lt;swiss number&gt;</TD>
+</TR>
+<TR>
+	<TD><TT>gsnt</TT></TD>
+	<TD>The 'Global Swiss Number Table', the list of all objects exported by this vat</TD>
+</TR>
+</TABLE>
+
+
+<TT>xs = ref.followRef()</TT><BR>
+This invokes the following pseudo-code to generate a Vow for object X.
+<PRE>
+Vow followRef() {
+<BLOCKQUOTE>
+if (myRegistrarID == TheLocalRegistrar)
+<BLOCKQUOTE>
+return gsnt.lookup(mySwissNumber);
+</BLOCKQUOTE>
+else {
+<BLOCKQUOTE>
+Connection c = ec.net.openconnection(myRegistrarID);
+return c.import(mySwissNumber);
+</BLOCKQUOTE>
+}
+</BLOCKQUOTE>
+}
+</PRE>
+<P>The <TT>gsnt.lookup()</TT> operation returns a Vow on the object that has the requested swiss number. One presumes that you won't have a SturdyRef to something that isn't exported.
+<P> The low level <TT>openconnection</TT> call returns an object that manages a connection to the remote process (identified by its registrar ID). It may already be open, in which case a reference to the already existing connection object is returned. There is only one point-to-point network connection per registrar ID pair.
+<P>The <TT>import</TT> method on the connection object performs the necessary low level protocol exchange necessary to allow a local proxy object to refer to a remote object. The data comm layer creates a proxy object (which knows about the registrar id and swiss number for the desired remote object), creates an entry in its locally managed import table, and asks the remote data comm layer to put a reference to the remote object with the specified swiss number into the same 'slot' (this is a performance improvement at the data comm layer so that objects may be referred to by small integers in the protocol -- conceptually, all messages are routed by swiss number). This results in a pair of table entries something like this:<BR>
+<IMG SRC="ProxyDiagram.gif" ALT="Proxy Creation Diagram with tables" WIDTH="525" HEIGHT="475" HSPACE="0" VSPACE="0">
+<H4>Things to remember</H4>
+<OL>
+<LI>small number optimization &shy; conceptually all messages are routed using their published swiss numbers. For performance reasons, being able to use small integers is a big win &shy; so let's use tables. For capability semantics and handoff, we may want to restrict publishing of swiss numbers to a limited set of processes.</LI>
+<LI>use weak references in the global swiss number table &shy; distributed garbage collection needs to happen for swiss numbers. The entity that caused a swiss number to be exported from the process is responsible for cleaning up after itself as necessary.<LI>
+<LI>wire counting for ensuring you don't discard proxies that have messages on the wire &shy; <I>i.e.</I> only discard table entries where the <TT># messages received on this end == # messages sent</TT></LI>
+<LI>two tables on each side for the one way proxy path.
+<OL>
+<LI>One table for proxies that I exported from me to him</LI>
+<LI>One table for proxies that he asked me to export to him</LI>
+</OL>
+There is a duplicate pair for my proxies for his objects.</LI>
+<LI>Proxies that I export must be able to hold the objects they refer to (<I>i.e.</I> they have to be in my export table with a strong reference to the object), proxies are strong references and can hold object X in memory.</LI>
+</OL>
+</BODY>
+</HTML>

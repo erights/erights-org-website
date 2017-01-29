@@ -1,0 +1,783 @@
+ 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML>
+<!-- #BeginTemplate "/Templates/pink.dwt" --> 
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html;CHARSET=iso-8859-1">
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>SmallML: XML Encoded in Term Trees</TITLE>
+<!-- #EndEditable --> 
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made href="mailto:markm@caplet.com" title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<P> 
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> 
+      <P> 
+      <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> 
+            <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" valign="center" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elang</a>&nbsp;/&nbsp;<a href="../index.html">quasi</a>&nbsp;/&nbsp;<a href="index.html">xml</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../../images/prev-gray.gif" width="64" height="32"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><img src="../../../images/next-gray.gif" width="64" height="32"><!-- #EndEditable --></td>
+              </tr>
+            </table>
+          </TD>
+          <TD ALIGN="RIGHT"> 
+            <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><B>SmallML:<br>
+              <font size="5">XML Encoded in Term Trees</font> </B><!-- #EndEditable --></FONT> 
+          </TD>
+        </TR>
+      </TABLE>
+      <hr>
+      <!-- #BeginEditable "LongBody" --> 
+      <P ALIGN="left">This document and design is directly an shamelessly derived 
+        from <a href="http://okmij.org/ftp/Scheme/SXML.html">SXML</a> revision 
+        2.1 by Oleg Kiselyov. SmallML is to Term Trees and <i><b><font color="#009000">E</font></b></i> 
+        as SXML is to S-expressions and Scheme. SmallML itself is by Mark Miller
+      <hr>
+      <div>
+        <p>&nbsp;</p>
+        <p>This page specifies <strong>revision 2.1</strong> of SmallML. (We hope 
+          to track further revisions of SXML, but retain the right to diverge.) 
+          SmallML is an abstract syntax tree of an XML document. SmallML is also 
+          a concrete representation of the XML Infoset in the form of Term Trees. 
+          The generic tree structure of SmallML lends itself to a compact library 
+          of combinators for querying and transforming SmallML.</p>
+      </div>
+      <div> 
+        <ol>
+          <li><a href="#Introduction">Introduction</a> 
+          <li><a href="#Notation">Notation</a> 
+          <li><a href="#Grammar">Grammar</a> 
+          <li><a href="#SXML Tree">SmallML Tree</a> 
+          <li><a href="#Namespaces">Namespaces</a> 
+          <li><a href="#Normalized SXML">Normalized SmallML</a> 
+          <li><a href="#Examples">Examples</a> 
+          <li><a href="#Acknowledgment">Acknowledgment</a> 
+          <li><a href="#References">References</a> 
+        </ol>
+      </div>
+      <a name="Introduction">&nbsp;</a> 
+      <h2>Introduction</h2>
+      <p>An XML document is essentially a tree structure. The start and the end 
+        tags of the root element enclose the whole content of the document, which 
+        may include other elements or arbitrary character data. Text with familiar 
+        angular brackets is an external representation of an XML document. Applications 
+        ought to deal with its internalized form: XML information set, or its 
+        specializations. This form lets an application locate specific data or 
+        transform an XML tree into another tree, which can then be written out 
+        as an XML, HTML, PDF, etc. document.</p>
+      <p>XML information set (Infoset) [<a href="#XML Infoset">XML Infoset</a>] 
+        is an abstract data set that describes information available in a well-formed 
+        XML document. Infoset is made of &quot;information items&quot;, which 
+        denote elements, attributes, character data, processing instructions, 
+        and other components of the document. Each information item has a number 
+        of associated properties, e.g., name, namespace URI. Some properties -- 
+        for example, 'children' and 'attributes' -- are (ordered) collections 
+        of other information items. Infoset describes only the information in 
+        an XML document that is relevant to applications. The default value of 
+        attributes declared in the DTD, parameter entities, the order of attributes 
+        within a start-tag, and other data used merely for parsing or validation 
+        are not included. Although technically Infoset is specified for XML it 
+        largely applies to HTML as well.</p>
+      <p>The hierarchy of containers comprised of text strings and other containers 
+        greatly lends itself to be described by Term Trees. Term Trees are easy 
+        to parse into an internal representation suitable for traversal. They 
+        have a simple external notation (albeit with many a parentheses), which 
+        is relatively easy to compose even by hand.</p>
+      <p>SmallML is a concrete instance of the XML Infoset. Infoset's goal is 
+        to present in some form all relevant pieces of data and their <em>abstract</em>, 
+        container-slot relationships to each other. SmallML gives the nest of 
+        containers a concrete implementation as Term Trees, and provides means 
+        of accessing items and their properties. SmallML is a &quot;relative&quot; 
+        of XPath [<a href="#XPath">XPath</a>] and DOM [<a href="#DOM">DOM</a>], 
+        whose data models are two other instances of the XML Infoset. SmallML 
+        is particularly suitable for <i><b><font color="#009000">E</font></b></i>-based 
+        XML/HTML authoring, XPath-like queries, and tree transformations. In John 
+        Hughes' terminology, SmallML is a term implementation of evaluation of 
+        the XML document.</p>
+      &nbsp;<a name="Notation">&nbsp;</a> 
+      <h2>Notation</h2>
+      <p>We will use an Extended BNF Notation (EBNF) employed in the XML Recommendation 
+        [<a href="#XML">XML</a>]. The following table summarizes the notation.</p>
+      <dl> 
+        <dt><code>thing?</code> </dt>
+        <dd>An optional <em>thing</em> </dd>
+        <dt><code>thing*</code> </dt>
+        <dd>Zero or more <em>thing</em>s</dd>
+        <dt><code>thing+</code> </dt>
+        <dd>One or more <em>thing</em>s</dd>
+        <dt><code>thing1 | thing2 | thing3</code> </dt>
+        <dd>Choice of <em>thing</em>s</dd>
+        <dt><code>thing1, thing2, thing3</code> </dt>
+        <dd>Sequence of <em>thing</em>s</dd>
+        <dt><code>&lt;thing&gt;</code> </dt>
+        <dd>A non-terminal of a grammar</dd>
+        <dt><code>thing</code> </dt>
+        <dd>A terminal of the grammar that is a tag</dd>
+        <dt><code>"thing"</code> </dt>
+        <dd>A terminal of the grammar that is a <i><b></b></i>string</dd>
+        <dt><code><em>thing</em></code> </dt>
+        <dd>A literal tag</dd>
+        <dt><code>&lt;A&gt; <strong>(</strong> &lt;B&gt;* <strong>)</strong></code> 
+        </dt>
+        <dd>A Term Tree whose functor is <code>&lt;A&gt;</code> and whose arguments 
+          are zero or more <code>&lt;B&gt;</code>s</dd>
+        <dt><code><strong><em>MAKE-SYMBOL</em>(</strong>&lt;A&gt;:&lt;B&gt;<strong>)</strong></code> 
+        </dt>
+        <dd>A symbol whose string representation consists of all characters that 
+          spell <code>&lt;A&gt;</code> followed by the colon character and by 
+          the characters that spell <code>&lt;B&gt;</code> . The <code><strong><em>MAKE-SYMBOL</em>(</strong><strong>)</strong></code> 
+          notation can be regarded a meta-function that creates symbols.</dd>
+      </dl>
+      &nbsp;<a name="Grammar">&nbsp;</a> 
+      <h2>Grammar</h2>
+      <table border=0 bgcolor="#f5dcb3">
+        <tr valign=top> 
+          <td align=right><a name="prod-1">[1]</a>&nbsp;</td>
+          <td align=right><code>&lt;TOP&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code><em>%TOP%</em> <strong>(</strong> <em></em>&lt;namespaces&gt;?, 
+            &lt;PI&gt;*, &lt;comment&gt;*, &lt;Element&gt; <strong>)</strong></code> 
+          </td>
+        </tr>
+      </table>
+      <p>This Term Tree stands for the root of the SmallML tree, a document information 
+        item of the Infoset. It contains the root element of the XML document 
+        as its only child element.</p>
+      <table border=0 bgcolor="#f5dcb3">
+        <tr valign=top> 
+          <td align=right><a name="prod-2">[2]</a>&nbsp;</td>
+          <td align=right><code>&lt;Element&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code>&lt;name&gt; <strong>(</strong> &lt;attributes-list&gt;?, 
+            &lt;namespaces&gt;?, &lt;child-of-element&gt;* <strong>)</strong></code> 
+          </td>
+        </tr>
+        <tr valign=top> 
+          <td align=right><a name="prod-3">[3]</a>&nbsp;</td>
+          <td align=right><code>&lt;attributes-list&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code><em>%bag%</em> <strong>(</strong> <em></em>&lt;attribute&gt;* 
+            <strong>)</strong></code> </td>
+        </tr>
+        <tr valign=top> 
+          <td align=right><a name="prod-4">[4]</a>&nbsp;</td>
+          <td align=right><code>&lt;attribute&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code>&lt;name&gt; <strong>(</strong> "value"? <strong>)</strong></code> 
+          </td>
+        </tr>
+        <tr valign=top> 
+          <td align=right><a name="prod-5">[5]</a>&nbsp;</td>
+          <td align=right><code>&lt;child-of-element&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code>&lt;Element&gt; | "character data" | &lt;PI&gt; 
+            | &lt;comment&gt; | &lt;entity&gt;</code> </td>
+        </tr>
+      </table>
+      <p>These are the basic constructs of SmallML.</p>
+      <p>The syntactic shorthands provided by Term Tree notation allows several 
+        of these to be expressed in a more compact fashion:</p>
+      <table border=0 bgcolor="#f5dcb3">
+        <tr valign=top> 
+          <td align=right>[2']</td>
+          <td align=right><code>&lt;name&gt;</code></td>
+          <td align=center>&nbsp;expands to&nbsp;</td>
+          <td align=left><code>&lt;name&gt;<strong>()</strong></code></td>
+        </tr>
+        <tr valign=top> 
+          <td align=right>[2'']</td>
+          <td align=right><code>&lt;name&gt;<strong> {</strong> <em></em>&lt;attribute&gt;* 
+            <strong>}</strong></code></td>
+          <td align=center> &nbsp;&nbsp;expands to&nbsp;&nbsp;</td>
+          <td align=left><code>&lt;name&gt;<strong> ({</strong> <em></em>&lt;attribute&gt;* 
+            <strong>})</strong></code> </td>
+        </tr>
+        <tr valign=top> 
+          <td align=right>[2''']</td>
+          <td align=right colspan="2">which expands to&nbsp;&nbsp;</td>
+          <td align=left><code>&lt;name&gt;<strong> ( </strong><em>%bag%</em> 
+            <strong>(</strong> <em></em>&lt;attribute&gt;* <strong>)</strong></code><code><strong>)</strong></code> 
+          </td>
+        </tr>
+        <tr valign=top> 
+          <td align=right>[3']</td>
+          <td align=right><code><strong>{</strong> <em></em>&lt;attribute&gt;* 
+            <strong>}</strong></code></td>
+          <td align=center> &nbsp;&nbsp;expands to&nbsp;&nbsp;</td>
+          <td align=left><code><em>%bag%</em> <strong>(</strong> <em></em>&lt;attribute&gt;* 
+            <strong>)</strong></code> </td>
+        </tr>
+        <tr valign=top> 
+          <td align=right>[4']</td>
+          <td align=right><code>&lt;name&gt; <strong>=</strong> "value"</code></td>
+          <td align=center> &nbsp;&nbsp;expands to&nbsp;&nbsp;</td>
+          <td align=left><code>&lt;name&gt; <strong>(</strong> "value" <strong>)</strong></code></td>
+        </tr>
+      </table>
+      <p>We will use these shorthands freely in the rest of the document. </p>
+      <table border=0 bgcolor="#f5dcb3">
+        <tr valign=top> 
+          <td align=right><a name="prod-6">[6]</a>&nbsp;</td>
+          <td align=right><code>&lt;PI&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code><em>%PI%</em> <strong>(</strong> <em></em>pi-target, 
+            "processing instruction content string" <strong>)</strong></code> 
+          </td>
+        </tr>
+      </table>
+      <p>The XML Recommendation specifies that processing instructions (PI) are 
+        distinct from elements and character data; processing instructions must 
+        be passed through to applications. In SmallML, PIs are therefore represented 
+        by nodes of a dedicated type <code>%PI%</code> . DOM Level 2 treats processing 
+        instructions in a similar way.</p>
+      <table border=0 bgcolor="#f5dcb3">
+        <tr valign=top> 
+          <td align=right><a name="prod-7">[7]</a>&nbsp;</td>
+          <td align=right><code>&lt;comment&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code><em>%COMMENT%</em> <strong>(</strong> <em></em>"comment 
+            string" <strong>)</strong></code> </td>
+        </tr>
+        <tr valign=top> 
+          <td align=right><a name="prod-8">[8]</a>&nbsp;</td>
+          <td align=right><code>&lt;entity&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code><em>%ENTITY%</em> <strong>(</strong> <em></em>"public-id", 
+            "system-id" <strong>)</strong></code> </td>
+        </tr>
+      </table>
+      <p>Comments are mentioned for completeness only. A SAX-like XML parser [<a href="#SSAX">SSAX</a>], 
+        among others, should transparently skip the comments. The XML Recommendation 
+        permits the parser to pass the comments to an application or to completely 
+        disregard them. The present SmallML grammar admits comment nodes but does 
+        not mandate them by any means.</p>
+      <p>An <code>&lt;entity&gt;</code> node represents a reference to an unexpanded 
+        external entity. This node corresponds to an unexpanded entity reference 
+        information item, defined in Section 2.5 of [<a href="#XML Infoset">XML 
+        Infoset</a>]. Internal parsed entities are always expanded by the XML 
+        processor at the point of their reference in the body of the document.</p>
+      <table border=0 bgcolor="#f5dcb3">
+        <tr valign=top> 
+          <td align=right><a name="prod-9">[9]</a>&nbsp;</td>
+          <td align=right><code>&lt;name&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code>&lt;LocalName&gt; | &lt;ExpName&gt;</code> </td>
+        </tr>
+        <tr valign=top> 
+          <td align=right><a name="prod-10">[10]</a>&nbsp;</td>
+          <td align=right><code>&lt;LocalName&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code>NCName</code> </td>
+        </tr>
+        <tr valign=top> 
+          <td align=right><a name="prod-11">[11]</a>&nbsp;</td>
+          <td align=right><code>&lt;ExpName&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code><strong><em>MAKE-SYMBOL</em>(</strong>&lt;namespace-id&gt;:&lt;LocalName&gt;<strong>)</strong></code> 
+          </td>
+        </tr>
+        <tr valign=top> 
+          <td align=right><a name="prod-12">[12]</a>&nbsp;</td>
+          <td align=right><code>&lt;namespace-id&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code>URI | user-ns-shortcut</code> </td>
+        </tr>
+        <tr valign=top> 
+          <td align=right><a name="prod-13">[13]</a>&nbsp;</td>
+          <td align=right><code>&lt;namespaces&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code><em>%NAMESPACES%</em> <strong>(</strong> <em></em>&lt;namespace-assoc&gt;* 
+            <strong>)</strong></code> </td>
+        </tr>
+        <tr valign=top> 
+          <td align=right><a name="prod-14">[14]</a>&nbsp;</td>
+          <td align=right><code>&lt;namespace-assoc&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code>&lt;namespace-id&gt; <strong>=</strong> "URI"</code></td>
+        </tr>
+      </table>
+      <p>An SmallML <code>&lt;name&gt;</code> is a single symbol. It is generally 
+        an expanded name [<a href="#XML Namespaces">XML Namespaces</a>], which 
+        conceptually consists of a local name and a namespace URI. The latter 
+        part may be empty, in which case <code>&lt;name&gt;</code> is a <code>NCName</code>: 
+        a tag whose spelling conforms to production [4] of the XML Namespaces 
+        Recommendation [<a href="#XML Namespaces">XML Namespaces</a>]. <code>&lt;ExpName&gt;</code> 
+        is also a <i><b></b></i>tag, whose string representation contains an embedded 
+        colon that joins a local and a namespace parts of the name. A <code>URI</code> 
+        is a Namespace URI string converted to a tag. A <code>user-ns-shortcut</code> 
+        is an NCName chosen by the user to represent a namespace URI in the application 
+        program. The SAX-like parser should offer a user to define (short and 
+        mnemonic) unique shortcuts for Namespace URIs, which are are often long 
+        and unwieldy strings.</p>
+      <table border=0 bgcolor="#f5dcb3">
+        <tr valign=top> 
+          <td align=right><a name="prod-2e">[2e]</a>&nbsp;</td>
+          <td align=right><code>&lt;Element&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code>&lt;name&gt; <strong>(</strong> &lt;attributes-list&gt;?, 
+            &lt;aux&gt;?, &lt;child-of-element&gt;* <strong>)</strong></code> 
+          </td>
+        </tr>
+        <tr valign=top> 
+          <td align=right><a name="prod-4e">[4e]</a>&nbsp;</td>
+          <td align=right><code>&lt;attribute&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code>&lt;name&gt; <strong>(</strong> "value"?, &lt;aux&gt;? 
+            <strong>)</strong></code> </td>
+        </tr>
+        <tr valign=top> 
+          <td align=right><a name="prod-15e">[15e]</a>&nbsp;</td>
+          <td align=right><code>&lt;aux&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code><em>%aux%</em> <strong>(</strong> <em></em>&lt;namespaces&gt;?, 
+            &lt;aux-node&gt;* <strong>)</strong></code> </td>
+        </tr>
+        <tr valign=top> 
+          <td align=right><a name="prod-16e">[16e]</a>&nbsp;</td>
+          <td align=right><code>&lt;aux-node&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code>&nbsp;</code> <em>To be defined in the future</em> 
+          </td>
+        </tr>
+      </table>
+      <p>The XML Recommendation and related standards are not firmly fixed, as 
+        the long list of errata and the proposed version 1.1 of XML clearly show. 
+        Therefore, SmallML has to be able to accommodate future changes while 
+        guaranteeing backwards compatibility. SmallML also ought to permit applications 
+        to store various processing information (e.g., cached resolved IDREFs) 
+        in an SmallML tree. To allow such extensibility, we introduce two new 
+        node types, <code>&lt;aux&gt;</code> and <code>&lt;aux-node&gt;</code> 
+        . The semantics of the latter is to be established in future versions 
+        of SmallML. Other candidates for <code>&lt;aux-node&gt;</code> are the 
+        unique id of an element or the reference to element's parent. The structure 
+        and the semantics of the <code>&lt;aux&gt;</code> node is similar to those 
+        of the attribute list. Applications that do not specifically look for 
+        auxiliary nodes can transparently ignore any present and future extensions.</p>
+      &nbsp;<a name="SXML Tree">&nbsp;</a> 
+      <h2>SmallML Tree</h2>
+      <p>Infoset's information item is a sum of its properties. This makes a Term 
+        a particularly suitable data structure to represent an item. The functor 
+        of the list, a tag <em>names</em> the item. For many items this is their 
+        (expanded) name. For an information item that denotes an XML element, 
+        the corresponding Term's functor is the element's expanded name, and the 
+        arguments optionally begin with collections of attributes and effective 
+        namespaces. The rest of the arguments is an ordered sequence of element's 
+        children -- character data, processing instructions, and other elements. 
+        Every child is unique; items never share their children even if the latter 
+        have the identical content.</p>
+      <p>Just as XPath does and the Infoset specification explicitly allows, we 
+        group character information items into maximal text strings. The value 
+        of an attribute is normally a string; it may be omitted (in case of HTML) 
+        for a boolean attribute, e.g., <code>&lt;option checked&gt;</code> .</p>
+      <p>We consider a collection of attributes an information item in its own 
+        right, tagged with a special name <code>%bag%</code> . The tag '%bag%' 
+        may not occur in a valid XML name; therefore an <code>&lt;attributes-list&gt;</code> 
+        cannot be mistaken for a list that represents an element. An XML document 
+        renders attributes, processing instructions, namespace specifications 
+        and other meta-data differently from the element markup. In contrast, 
+        SmallML represents element content and meta-data uniformly -- as tagged 
+        lists. SmallML takes advantage of the fact that every XML name is also 
+        a valid tag, but not every tag is a valid XML name. This observation lets 
+        us introduce administrative names such as <code>%bag%</code> , <code>%PI%</code> 
+        , <code>%NAMESPACES%</code> without worrying about potential name clashes. 
+        The observation also makes the relationship between XML and SmallML well-defined. 
+        An XML document converted to SmallML can be reconstructed into an equivalent 
+        (in terms of the Infoset) XML document. Moreover, due to the implementation 
+        freedom given by the Infoset specification, SmallML itself is an instance 
+        of the Infoset.</p>
+      <p>Since an SmallML document is essentially a tree structure, the SmallML 
+        grammar of Section 3 can be presented in the following, more uniform form:</p>
+      <table border=0 bgcolor="#f5dcb3">
+        <tr valign=top> 
+          <td align=right><a name="prod-N">[N]</a>&nbsp;</td>
+          <td align=right><code>&lt;Node&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code>&lt;Element&gt; | &lt;attributes-list&gt; | &lt;attribute&gt; 
+            | "character data" | &lt;namespaces&gt; | &lt;TOP&gt; | &lt;PI&gt; 
+            | &lt;comment&gt; | &lt;entity&gt; | &lt;aux&gt;</code> </td>
+        </tr>
+      </table>
+      <p>or as a set of two mutually-recursive datatypes, <code>Node</code> and 
+        <code>Nodeset</code>, where the latter is an ordered set of <code>Node</code>s: 
+      </p>
+      <table border=0 bgcolor="#f5dcb3">
+        <tr valign=top> 
+          <td align=right><a name="prod-N1">[N1]</a>&nbsp;</td>
+          <td align=right><code>&lt;Node&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code>&lt;name&gt;<strong> (</strong> &lt;Nodeset&gt; 
+            <strong>)</strong> | "text string"</code> </td>
+        </tr>
+        <tr valign=top> 
+          <td align=right><a name="prod-N2">[N2]</a>&nbsp;</td>
+          <td align=right><code>&lt;Nodeset&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code><strong>(</strong> &lt;Node&gt;* <strong>)</strong></code></td>
+        </tr>
+        <tr valign=top> 
+          <td align=right><a name="prod-N3">[N3]</a>&nbsp;</td>
+          <td align=right><code>&lt;name&gt;</code></td>
+          <td align=center><code> ::= </code></td>
+          <td align=left><code>&lt;LocalName&gt; | &lt;ExpName&gt; | <em>%bag%</em> 
+            | <em>%TOP%</em> | <em>%PI%</em> | <em>%COMMENT%</em> | <em>%ENTITY%</em> 
+            | <em>%NAMESPACES%</em> | <em>%aux%</em></code> </td>
+        </tr>
+      </table>
+      <p>The uniformity of the SmallML representation for elements, attributes, 
+        and processing instructions simplifies queries and transformations. In 
+        our formulation, attributes and processing instructions look like regular 
+        elements with a distinguished name. Therefore, query and transformation 
+        functions dedicated to attributes become redundant.</p>
+      <p>The <code>xml__quasiParser</code> can convert an XML document or a well-formed 
+        part of it into the corresponding SmallML form. The parser supports namespaces, 
+        character and parsed entities, attribute value normalization, processing 
+        instructions and CDATA sections.</p>
+      &nbsp;<a name="Namespaces">&nbsp;</a> 
+      <h2>Namespaces</h2>
+      <p>The motivation for XML Namespaces is explained in an excellent article 
+        by James Clark [<a href="#Clark1999">Clark1999</a>]. He says in part: 
+      </p>
+      <blockquote>The XML Namespaces Recommendation tries to improve this situation 
+        by extending the data model to allow element type names and attribute 
+        names to be qualified with a URI. Thus a document that describes parts 
+        of cars can use <code>part</code> qualified by one URI; and a document 
+        that describes parts of books can use <code>part</code> qualified by another 
+        URI. I'll call the combination of a local name and a qualifying URI a 
+        universal name. The role of the URI in a universal name is purely to allow 
+        applications to recognize the name. There are no guarantees about the 
+        resource identified by the URI. The XML Namespaces Recommendation does 
+        not require element type names and attribute names to be universal names; 
+        they are also allowed to be local names.<br>
+        ...<br>
+        The XML Namespaces Recommendation expresses universal names in an indirect 
+        way that is compatible with XML 1.0. In effect the XML Namespaces Recommendation 
+        defines a mapping from an XML 1.0 tree where element type names and attribute 
+        names are local names into a tree where element type names and attribute 
+        names can be universal names. The mapping is based on the idea of a prefix. 
+        If an element type name or attribute name contains a colon, then the mapping 
+        treats the part of the name before the colon as a prefix, and the part 
+        of the name after the colon as the local name. A prefix <code>foo</code> 
+        refers to the URI specified in the value of the <code>xmlns:foo</code> 
+        attribute. So, for example 
+        <pre>     &lt;cars:part xmlns:cars='http://www.cars.com/xml'/&gt;
+</pre>
+        maps to 
+        <pre>     &lt;{http://www.cars.com/xml}part/&gt;
+</pre>
+        Note that the <code>xmlns:cars</code> attribute has been removed by the 
+        mapping.</blockquote>
+      <div>Using James Clark's terminology, SmallML as defined by [N1] is precisely 
+        that tree where element type names and attribute names can be universal 
+        names. According to productions [N3] and [9-12], a universal name, <code>&lt;name&gt;</code> 
+        , is either a local name or an expanded name. Both kinds of names are 
+        tags. A local name has no colon characters in its spelling. An expanded 
+        name is spelled with at least one colon, which may make the identifier 
+        look rather odd. In SmallML, James Clark's example will appear as follows: 
+        <pre>     &lt;http://www.cars.com/xml&gt;:part</pre>
+        or, somewhat redundantly, 
+        <pre>     &lt;http://www.cars.com/xml&gt;:part(%bag%,
+                                    %NAMESPACES%(cars=&quot;http://www.cars.com/xml&quot;))</pre>
+      </div>
+      <p>Such a representation also agrees with the Namespaces Recommendation 
+        [<a href="#XML Namespaces">XML Namespaces</a>], which says: &quot;Note 
+        that the prefix functions only as a placeholder for a namespace name. 
+        Applications should use the namespace name, not the prefix, in constructing 
+        names whose scope extends beyond the containing document.&quot;</p>
+      <div>It is clearly unwieldy to deal with tags such as <code>&lt;http://www.cars.com/xml&gt;:part</code> 
+        . Therefore, an application that invokes a SAX-like parser may tell the 
+        parser to map the URI <code>http://www.cars.com/xml</code> to an application-specific 
+        namespace shortcut <code>user-ns-shortcut</code> , e.g., <code>c</code> 
+        . The parser will then produce 
+        <pre>     c:part(%NAMESPACES%(c=&quot;http://www.cars.com/xml&quot;))</pre>
+        To be more precise, the parser will return just 
+        <pre>     c:part</pre>
+        If an application told the parser how to map <code>http://www.cars.com/xml</code> 
+        , the application can keep this mapping in its mind and will not need 
+        additional reminders. 
+        <p>We must note there is a 1-to-1 correspondence between <code>user-ns-shortcut</code> 
+          s and the corresponding namespace URIs. This is generally not true for 
+          XML namespace prefixes and namespace URIs. A <code>user-ns-shortcut</code> 
+          uniquely represents the corresponding namespace URI within the document, 
+          but an XML namespace prefix does not. For example, different XML prefixes 
+          may specify the same namespace URI; XML namespace prefixes may be redefined 
+          in children elements. The other difference between <code>user-ns-shortcut</code> 
+          s and XML namespace prefixes is that the latter are at the whims of 
+          the author of the document whereas the namespace shortcuts are defined 
+          by an XML processing application.</p>
+      </div>
+      <a name="Normalized SXML">&nbsp;</a> 
+      <h2>Normalized SmallML</h2>
+      <p>Normalized SmallML is a proper subset of SmallML that permits efficient 
+        processing. An SmallML document in the normalized form must satisfy a 
+        number of additional restrictions. The first restriction makes <code>&lt;attributes-list&gt;</code> 
+        mandatory (cf. Section 3, production [2]). If an element has no attributes, 
+        <code>&lt;attributes-list&gt;</code> shall be specified as <code>%bag%</code>. 
+        In normalized SmallML, <code>&lt;comment&gt;</code> and <code>&lt;entity&gt;</code> 
+        nodes must be absent. Parsed entities should be expanded, even if they 
+        are external. A node <code>&lt;namespaces&gt;</code> may appear only in 
+        a <code>%TOP%</code> element.</p>
+      <div>SGML provides two equal forms for boolean attributes: minimized, e.g., 
+        <code>&lt;OPTION checked&gt;</code> and full, <code>&lt;OPTION checked=&quot;checked&quot;&gt;</code> 
+        . XML mandates the full form only, whereas HTML allows both, preferring 
+        the former. SmallML supports the minimized form along with the full one: 
+        <code>OPTION{checked}</code> and <code>OPTION{checked=&quot;checked&quot;}</code> 
+        . Normalized SmallML however accepts only the full form.</div>
+      &nbsp;<a name="Examples">&nbsp;</a> 
+      <h2>Examples</h2>
+      <div>Simple examples: 
+        <pre>     some-name           # An empty element without attributes
+     some-name(%bag%)    # The same but in the normalized form
+</pre>
+      </div>
+      <p>The figure below shows progressively more complex examples.</p>
+      <table border="1">
+        <tr> 
+          <th>XML</th>
+          <th>SmallML</th>
+        </tr>
+        <tr> 
+          <td align="left"> 
+            <pre>     &lt;WEIGHT unit=&quot;pound&quot;&gt;
+       &lt;NET certified=&quot;certified&quot;&gt;67&lt;/NET&gt;
+       &lt;GROSS&gt;95&lt;/GROSS&gt;
+     &lt;/WEIGHT&gt;
+</pre>
+          </td>
+          <td align="left"> 
+            <pre>     WEIGHT({unit=&quot;pound&quot;},
+            NET({certified=&quot;certified&quot;}, 67),
+            GROSS(95))</pre>
+          </td>
+        </tr>
+        <tr> 
+          <td align="left"> 
+            <pre>      &lt;BR/&gt;
+</pre>
+          </td>
+          <td align="left"> 
+            <pre>     BR</pre>
+          </td>
+        </tr>
+        <tr> 
+          <td align="left"> 
+            <pre>      &lt;BR&gt;&lt;/BR&gt;
+</pre>
+          </td>
+          <td align="left"> 
+            <pre>     BR</pre>
+          </td>
+        </tr>
+        <tr> 
+          <td align="left"> 
+            <pre>      &lt;P&gt;
+     &lt;![CDATA[&lt;BR&gt;\r\n
+     &lt;![CDATA[&lt;BR&gt;]]]]&gt;&amp;gt; &lt;/P&gt;
+</pre>
+          </td>
+          <td align="left"> 
+            <pre>     %TOP%(P(&quot;&lt;BR&gt;\n&lt;![CDATA[&lt;BR&gt;]]&gt; &quot;))
+</pre>
+          </td>
+        </tr>
+        <tr> 
+          <td colspan="2" align="center"><br>
+            &nbsp;An example from the XML Namespaces Recommendation</td>
+        </tr>
+        <tr> 
+          <td align="left"> 
+            <pre>     &lt;!-- initially, the default
+          namespace is 'books' --&gt;
+     &lt;book xmlns='urn:loc.gov:books'
+       xmlns:isbn='urn:ISBN:0-395-36341-6'&gt;
+       &lt;title&gt;Cheaper by the Dozen&lt;/title&gt;
+       &lt;isbn:number&gt;1568491379&lt;/isbn:number&gt;
+       &lt;notes&gt;
+       &lt;!-- make HTML the default namespace 
+            for some commentary --&gt;
+          &lt;p xmlns='urn:w3-org-ns:HTML'&gt;
+            This is a &lt;i&gt;funny&lt;/i&gt; book!
+          &lt;/p&gt;
+       &lt;/notes&gt;
+     &lt;/book&gt;
+</pre>
+          </td>
+          <td align="left"> 
+            <pre>     %TOP%(
+       &lt;urn:loc.gov:books&gt;:book(
+         &lt;urn:loc.gov:books&gt;:title(
+           &quot;Cheaper by the Dozen&quot;),
+         &lt;urn:ISBN:0-395-36341-6&gt;:number(
+           &quot;1568491379&quot;),
+         &lt;urn:loc.gov:books&gt;:notes(
+           &lt;urn:w3-org-ns:HTML&gt;:p(
+             &quot;This is a &quot;,
+             &lt;urn:w3-org-ns:HTML:&gt;i(&quot;funny&quot;),
+             &quot;book!&quot;))))
+</pre>
+          </td>
+        </tr>
+        <tr> 
+          <td colspan="2" align="center"><br>
+            &nbsp;Another example from the XML Namespaces Recommendation</td>
+        </tr>
+        <tr> 
+          <td align="left"> 
+            <pre>     &lt;RESERVATION 
+       xmlns:HTML=
+        'http://www.w3.org/TR/REC-html40'&gt;
+     &lt;NAME HTML:CLASS=&quot;largeSansSerif&quot;&gt;
+         Layman, A&lt;/NAME&gt;
+     &lt;SEAT CLASS='Y' 
+       HTML:CLASS=&quot;largeMonotype&quot;&gt;33B&lt;/SEAT&gt;
+     &lt;HTML:A HREF='/cgi-bin/ResStatus'&gt;
+         Check Status&lt;/HTML:A&gt;
+     &lt;DEPARTURE&gt;1997-05-24T07:55:00+1
+     &lt;/DEPARTURE&gt;&lt;/RESERVATION&gt;
+</pre>
+          </td>
+          <td align="left"> 
+            <pre>     %TOP%(
+       %NAMESPACES%(
+         HTML=&quot;http://www.w3.org/TR/REC-html40&quot;),
+       RESERVATION(
+         NAME({HTML:CLASS=&quot;largeSansSerif&quot;},
+              &quot;Layman, A&quot;),
+         SEAT({HTML:CLASS=&quot;largeMonotype&quot;,
+               CLASS=&quot;Y&quot;},
+              &quot;33B&quot;),
+         HTML:A({HREF=&quot;/cgi-bin/ResStatus&quot;},
+                &quot;Check Status&quot;),
+         DEPARTURE(&quot;1997-05-24T07:55:00+1&quot;)))</pre>
+          </td>
+        </tr>
+      </table>
+      <br>
+      &nbsp;<a name="Acknowledgment">&nbsp;</a> 
+      <h2>Acknowledgment</h2>
+      <p>Many of the ideas in SmallML are due to E. Dean Tribble and Tyler Close.</p>
+      <p>This document and design is directly an shamelessly derived from <a href="http://okmij.org/ftp/Scheme/SXML.html">SXML</a> 
+        revision 2.1 by Oleg Kiselyov. The following are his acknowledgements 
+        on the original:</p>
+      <p>Discussions with Kirill Lisovsky of MISA University are gratefully acknowledged. 
+        He shares the credit for this page. The errors are all mine.</p>
+      <br>
+      &nbsp;<a name="References">&nbsp;</a> 
+      <h2>References</h2>
+      <p><a name="McCarthy">[McCarthy]</a> John McCarthy. Recursive Functions 
+        of Symbolic Expressions and Their Computation by Machine, Part I. Comm. 
+        ACM, 3(4):184-195, April 1960.<br>
+        &lt;<a href="http://www-formal.stanford.edu/jmc/recursive/recursive.html">http://www-formal.stanford.edu/jmc/recursive/recursive.html</a>&gt; 
+      <p><a name="Clark1999">[Clark1999]</a> Jim Clark. XML Namespaces. February 
+        4, 1999.<br>
+        &lt;<a href="http://www.jclark.com/xml/xmlns.htm">http://www.jclark.com/xml/xmlns.htm</a>&gt; 
+      <p><a name="R5RS">[R5RS]</a> R. Kelsey, W. Clinger, J. Rees (eds.), Revised5 
+        Report on the Algorithmic Language Scheme. Higher-Order and Symbolic Computation, 
+        Vol. 11, No. 1, September, 1998 and ACM SIGPLAN Notices, Vol. 33, No. 
+        9, October, 1998.<br>
+        &lt;<a href="http://www.schemers.org/Documents/Standards/R5RS/">http://www.schemers.org/Documents/Standards/R5RS/</a>&gt; 
+      <p><a name="SSAX">[SSAX]</a> Oleg Kiselyov. Functional XML parsing framework: 
+        SAX/DOM and SXML parsers with support for XML Namespaces and validation. 
+        September 5, 2001.<br>
+        &lt;<a href="http://pobox.com/~oleg/ftp/Scheme/SSAX.scm">http://pobox.com/~oleg/ftp/Scheme/SSAX.scm</a>&gt; 
+      <p><a name="SXML-short-paper">[SXML-short-paper]</a> Oleg Kiselyov. XML 
+        and Scheme. An introduction to SXML and SXPath; illustration of SXPath 
+        expressiveness and comparison with XPath. September 17, 2000.<br>
+        &lt;<a href="http://pobox.com/~oleg/ftp/Scheme/SXML-short-paper.html">http://pobox.com/~oleg/ftp/Scheme/SXML-short-paper.html</a>&gt; 
+      <p><a name="Scheme-case-sensitivity">[Lisovsky]</a> Kirill Lisovsky. Case 
+        sensitivity of Scheme systems.<br>
+        &lt;<a href="http://pair.com/lisovsky/scheme/case-sensitivity.html">http://pair.com/lisovsky/scheme/case-sensitivity.html</a>&gt; 
+      <p><a name="DOM">[DOM]</a> World Wide Web Consortium. Document Object Model 
+        (DOM) Level 1 Specification. W3C Recommendation.<br>
+        &lt;<a href="http://www.w3.org/TR/REC-DOM-Level-1">http://www.w3.org/TR/REC-DOM-Level-1</a>&gt; 
+      <p><a name="XML">[XML]</a> World Wide Web Consortium. Extensible Markup 
+        Language (XML) 1.0 (Second Edition). W3C Recommendation. October 6, 2000.<br>
+        &lt;<a href="http://www.w3.org/TR/REC-xml">http://www.w3.org/TR/REC-xml</a>&gt; 
+      <p><a name="XML Infoset">[XML Infoset]</a> World Wide Web Consortium. XML 
+        Information Set. W3C Recommendation. 24 October 2001.<br>
+        &lt;<a href="http://www.w3.org/TR/xml-infoset">http://www.w3.org/TR/xml-infoset</a>&gt; 
+      <p><a name="XML Namespaces">[XML Namespaces]</a> World Wide Web Consortium. 
+        Namespaces in XML. W3C Recommendation. January 14, 1999.<br>
+        &lt;<a href="http://www.w3.org/TR/REC-xml-names/">http://www.w3.org/TR/REC-xml-names/</a>&gt; 
+      <p><a name="XPath">[XPath]</a> World Wide Web Consortium. XML Path Language 
+        (XPath). Version 1.0. W3C Recommendation. November 16, 1999.<br>
+        &lt;<a href="http://www.w3.org/TR/xpath">http://www.w3.org/TR/xpath</a>&gt; 
+      <p>&nbsp;</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%">&nbsp;</TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> 
+      <hr>
+      <div align="center"> 
+        <table cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> 
+              <div align="left"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" valign="center" alt="ERights Home"></a></div>
+            </td>
+            <td> 
+              <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> 
+                    <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> &nbsp;&nbsp; 
+                      <a href="../../smart-contracts/index.html">Smart Contracts</a> 
+                      &nbsp;&nbsp; <a href="../../related.html">Related</a> </font></div>
+                  </td>
+                </tr>
+                <tr> 
+                  <td> 
+                    <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> 
+                      &nbsp;&nbsp; <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+        <table width="100%" border="0" cellspacing="0" cellpadding="4">
+          <tr> 
+            <td><i><a href="mailto:webmaster@erights.org">webmaster@erights.org</a></i> 
+              <br>
+              or <a href="https://bugs.sieve.net/bugs/?func=addbug&group_id=16380"><i>report 
+              bug</i></a><br>
+              or <a href="http://www.blindpay.com/crit-me-now.cgi"><img src="../../images/cmn.gif" width="98" height="21" border="0" align="middle" alt="Annotate this page"></a> 
+            </td>
+            <td> 
+              <div align="right"> 
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a> <a href="http://www.stoppoliceware.org/"><img src="../../images/stoppoliceware_gray_88x32.gif" width="88" height="32" border="0"></a> 
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </TD>
+    <TD WIDTH="10%" valign="bottom">&nbsp;</TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --> 
+</HTML>

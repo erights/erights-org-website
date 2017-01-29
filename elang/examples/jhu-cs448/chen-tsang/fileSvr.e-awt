@@ -1,0 +1,731 @@
+# Project
+# Name: Yu Chen, Ming Tsang
+# Class 448
+# MSE Student
+
+pragma .disable("explicit-result-guard")
+
+def myName
+def myHashVal
+def myRootDir
+def selfRef
+
+# shortcuts to fileserver
+def scSvrs := [].asMap().diverge()
+# hash value of the shortcuts in scSvrs
+def scSvrHVals := [].asMap().diverge()
+
+def getFileSvrCap(svrName) :any {
+  return <file: `file-svr-$svrName.cap`>
+}
+
+def objFromFile(file) :any {
+  if (file.exists()) {
+    return introducer.sturdyFromURI(file.getText()).getRcvr()
+  } else {
+    return null
+  }
+}
+
+def objIntoFile(obj, file) :void {
+  file.setText(introducer.sturdyToURI(makeSturdyRef.temp(obj)))
+}
+
+def msgPane
+
+def showmsg(msg: String) :any {
+	msgPane.append(msg + "\n")
+}
+
+def FileSvr() :any {
+  var predRef := null
+  var predHashVal := null
+  var succRef := null
+  var succHashVal := null
+  var contact := null
+  def sr  # Self Reference
+
+  def outputMessage(message, context) : any {
+    def msg := message.trim()
+    def ct := context.trim() 
+    if (ct.size() > 0) {
+      showmsg(`[$ct] $msg`)
+    } else {
+      showmsg(`$msg`)
+    }
+  }
+
+  # Remove shortcut
+  def removeSC_local(key) : any {
+    scSvrs.removeKey(key)
+    scSvrHVals.removeKey(key)
+  }
+
+  # Remove all shortcuts
+  def removeAllSC_local() : any {    
+    scSvrs.removeAll()
+    scSvrHVals.removeAll()
+    outputMessage("Removes all shortcuts", "")
+  }
+
+  def list_local(pathname, hVal, callbackRef) : any {
+    if (succHashVal != hVal) {
+      succRef <- list_remote(pathname, hVal, callbackRef)
+    }
+    def dir := <file: `$myRootDir$pathname`>
+    if (dir.exists()) {
+      def info := [].diverge()
+      if (dir.isDirectory()) {
+        def ls := dir.listFiles()
+        for file in ls {
+          info.push(file.getName())
+          if (file.canRead() && file.canWrite()) {
+            info.push("rw")
+          } else if (file.canRead()) {
+            info.push("r")
+          } else if (file.canWrite()) {
+            info.push("w")
+          } else  {
+            info.push("")
+          }
+          if (file.isFile()) {
+            # f stands for file
+            info.push("f")
+            info.push(file.length())
+          } else {
+            info.push("d")
+            info.push(0)
+          }
+          info.push(file.lastModified())
+        }
+      } else if (dir.isFile()) {
+        info.push(dir.getName())
+        if (dir.canRead() && dir.canWrite()) {
+          info.push("rw")
+        } else if (dir.canRead()) {
+          info.push("r")
+        } else if (dir.canWrite()) {
+          info.push("w")
+        } else  {
+          info.push("")
+        }
+        info.push("f")
+        info.push(dir.length())
+        info.push(dir.lastModified())
+      }
+      callbackRef <- list_callback(pathname, info.snapshot())
+    }    
+  }
+
+  # Removes file and shortcuts only
+  def remove_local(pathname, hVal, svrHVal, callbackRef) : any {
+    if (succHashVal != hVal) {
+      succRef <- remove_remote(pathname, hVal, svrHVal, callbackRef)
+    }
+    if (myHashVal != svrHVal) {
+      outputMessage(`Removes shortcut $pathname`, "remove")
+      removeSC_local(pathname)
+    }
+    def file := <file: `$myRootDir$pathname`>
+    if (file.exists() && file.isFile()) {
+      file.delete(null)
+      outputMessage(`File $pathname is deleted!`, "remove")
+    }    
+  }
+
+  def createDir_local(pathname, callbackRef) : any {
+    def dir := <file: `$myRootDir$pathname`>
+    if (!dir.exists() || !dir.isDirectory()) {
+      dir.mkdirs(null)
+      outputMessage(`Directory $pathname is created!`, "createDir")
+      callbackRef <- printMsg(`[createDir] Directory $myRootDir$pathname is created!`)
+    }
+  }
+
+  def upload_local(filename, destPath, sourcePath, svrHVal, svrRef, callbackRef) : any {
+    def hashVal := filename.getBareCryptoHash() / (1<<160)
+    outputMessage(`The hash value of $filename is $hashVal`, "upload")
+    if (((predHashVal >= myHashVal && (predHashVal <= hashVal || hashVal <= myHashVal)) || \
+         (predHashVal <= hashVal && hashVal <= myHashVal)) || 
+        (predHashVal == myHashVal && succHashVal == myHashVal)) {
+      # Removes shortcuts
+      outputMessage(`Removes shortcut $destPath/$filename`, "upload")
+      removeSC_local(`$destPath/$filename`)
+  		when (callbackRef <- upload_callback(sourcePath)) -> doneUpLoad(contents) : any {
+        def dir := <file: `$myRootDir$destPath`>
+        # Creates directory if necessary
+        if (!dir.exists() || !dir.isDirectory()) {
+          dir.mkdirs(null)
+          outputMessage(`Directory $destPath is created!`, "upload")
+        }
+        def file := <file: `$myRootDir$destPath/$filename`>
+        # Creates file if necessary
+        if (!file.exists() || !file.isFile()) {
+          file.createNewFile(null)
+          outputMessage(`File $destPath/$filename is created!`, "upload")
+        }
+        file.setBytes(contents)
+        outputMessage(`File $destPath/$filename is uploaded!`, "upload")
+        callbackRef <- printMsg(`[upload] File $destPath/$filename is uploaded!`)
+        if (predHashVal != myHashVal || succHashVal != myHashVal) {
+          # More than one file server in the file system
+          svrRef <- setShortcut(`$destPath/$filename`, myHashVal, sr)
+          # Removes other copies in other file servers
+          succRef <- remove_remote(`$destPath/$filename`, myHashVal, svrHVal, callbackRef)
+        }
+      } catch excuse {
+        outputMessage(`Oops $excuse`, "upload")
+			}
+    } else {
+      succRef <- upload_remote(filename, destPath, sourcePath, svrHVal, svrRef, callbackRef)
+    }
+  }
+
+  def download_local(filename, destPath, sourcePath, svrRef, callbackRef) : any {
+    def hashVal := filename.getBareCryptoHash() / (1<<160)
+    outputMessage(`The hash value of $filename is $hashVal`, "download")
+    if (predHashVal == myHashVal && succHashVal == myHashVal) {
+      # Only one file server in the file system
+      def file := <file: `$myRootDir$sourcePath`>
+      if (file.exists() && file.isFile()) {
+        outputMessage(`Downloading the file, $sourcePath.`, "download")
+        callbackRef <- download_callback(filename, destPath, file.getBytes())
+      } else {
+        outputMessage(`$sourcePath does not exist or $sourcePath is not a file`, "download")
+        callbackRef <- printMsg(`[download] $sourcePath does not exist or $sourcePath is not a file`)
+      }      
+    } else if ((predHashVal >= myHashVal && (predHashVal <= hashVal || hashVal <= myHashVal)) || \
+               (predHashVal <= hashVal && hashVal <= myHashVal)) {
+      # More than one file server in the file system
+      def file := <file: `$myRootDir$sourcePath`>
+      if (file.exists() && file.isFile()) {
+        outputMessage(`Downloading the file, $sourcePath.`, "download")
+        callbackRef <- download_callback(filename, destPath, file.getBytes())
+        svrRef <- setShortcut(sourcePath, myHashVal, sr)
+      } else {
+        # Finds the fileserver that contains the file
+        succRef <- download_ex_remote(filename, destPath, sourcePath, myHashVal, svrRef, callbackRef)
+      }      
+    } else {
+      succRef <- download_remote(filename, destPath, sourcePath, svrRef, callbackRef)
+    }
+  }
+
+  def download_ex_local(filename, destPath, sourcePath, hVal, svrRef, callbackRef) : any {
+    def file := <file: `$myRootDir$sourcePath`>
+    if (file.exists() && file.isFile()) {
+      outputMessage(`Downloading the file, $sourcePath.`, "download")
+      callbackRef <- download_callback(filename, destPath, file.getBytes())
+      svrRef <- setShortcut(sourcePath, myHashVal, sr)
+    } else if (succHashVal != hVal) {
+      succRef <- download_ex_remote(filename, destPath, sourcePath, hVal, svrRef, callbackRef)
+    } else  {
+      outputMessage(`$sourcePath does not exist or $sourcePath is not a file`, "download")
+      callbackRef <- printMsg(`[download] $sourcePath does not exist or $sourcePath is not a file`)
+    }
+  }
+
+  # destPath must not include the file name
+  # sourcePath must include the file name
+  def move_local(destFilename, sourceFilename, destPath, sourcePath, svrHVal, svrRef, callbackRef) : any {
+    def sourcehVal := sourceFilename.getBareCryptoHash() / (1<<160)
+    outputMessage(`The hash value of $sourceFilename is $sourcehVal`, "move")
+    if (((predHashVal >= myHashVal && (predHashVal <= sourcehVal || sourcehVal <= myHashVal)) || \
+         (predHashVal <= sourcehVal && sourcehVal <= myHashVal)) || \
+        (predHashVal == myHashVal && succHashVal == myHashVal)) {
+      # Removes shortcuts
+      outputMessage(`Removes shortcut $destPath/$destFilename`, "move")
+      removeSC_local(`$destPath/$destFilename`)
+      outputMessage(`Removes shortcut $sourcePath`, "move")
+      removeSC_local(sourcePath)
+      def sourcefile := <file: `$myRootDir$sourcePath`>
+      if (sourcefile.exists() && sourcefile.isFile()) {
+        def destdir := <file: `$myRootDir$destPath`>
+        if (!destdir.exists()) {
+          # Creates directory if necessary
+          destdir.mkdirs(null)
+        } else if (!destdir.isDirectory()) {
+          outputMessage(`$destPath exists and is not a directory`, "move")
+          callbackRef <- printMsg(`[move] $destPath exists and is not a directory`)
+          return
+        }
+        def destfile := <file: `$myRootDir$destPath/$destFilename`>
+        if (!destfile.exists()) {
+          # Creates file if necessary
+          destfile.createNewFile(null) 
+        } else if (!destfile.isFile()) {
+          outputMessage(`$destPath/$destFilename exists and is not a file`, "move")
+          callbackRef <- printMsg(`[move] $destPath/$destFilename exists and is not a file`)
+          return
+        }
+        destfile.setBytes(sourcefile.getBytes())
+        sourcefile.delete(null)
+        if (predHashVal != myHashVal || succHashVal != myHashVal) {
+          # More than one file server in the file system
+          svrRef <- setShortcut(`$destPath/$destFilename`, myHashVal, sr)
+          # Removes other copies in other file servers
+          succRef <- remove_remote(`$destPath/$destFilename`, myHashVal, svrHVal, callbackRef)
+          succRef <- remove_remote(sourcePath, myHashVal, svrHVal, callbackRef)
+        }
+        outputMessage(`$sourcePath is moved to $destPath/$destFilename`, "move")
+        callbackRef <- printMsg(`[move] $sourcePath is moved to $destPath/$destFilename`)
+      } else if (predHashVal == myHashVal && succHashVal == myHashVal) {
+        # Only one file server in the file system
+        outputMessage(`$sourcePath does not exist or $sourcePath is not a file`, "move")
+        callbackRef <- printMsg(`[move] $sourcePath does not exist or $sourcePath is not a file`)        
+      } else {
+        # Finds the fileserver that contains the file
+        succRef <- move_ex_remote(destFilename, sourceFilename, destPath, sourcePath, myHashVal, svrHVal, svrRef, callbackRef)
+      }
+    } else {
+      succRef <- move_remote(destFilename, sourceFilename, destPath, sourcePath, svrHVal, svrRef, callbackRef)
+    }
+  }
+
+  # destPath must not include the file name
+  # sourcePath must include the file name
+  def move_ex_local(destFilename, sourceFilename, destPath, sourcePath, hVal, svrHVal, svrRef, callbackRef) : any {
+    outputMessage(`Removes shortcut $destPath/$destFilename`, "move")
+    removeSC_local(`$destPath/$destFilename`)
+    outputMessage(`Removes shortcut $sourcePath`, "move")
+    removeSC_local(sourcePath)
+    def sourcefile := <file: `$myRootDir$sourcePath`>
+    if (sourcefile.exists() && sourcefile.isFile()) {
+      # The source file is found
+      def destdir := <file: `$myRootDir$destPath`>
+      if (!destdir.exists()) {
+        # Creates directory if necessary
+        destdir.mkdirs(null)
+      } else if (!destdir.isDirectory()) {
+        outputMessage(`$destPath exists and is not a directory`, "move")
+        callbackRef <- printMsg(`[move] $destPath exists and is not a directory`)
+        return
+      }
+      def destfile := <file: `$myRootDir$destPath/$destFilename`>
+      if (!destfile.exists()) {
+        # Creates file if necessary
+        destfile.createNewFile(null) 
+      } else if (!destfile.isFile()) {
+        outputMessage(`$destPath/$destFilename exists and is not a file`, "move")
+        callbackRef <- printMsg(`[move] $destPath/$destFilename exists and is not a file`)
+        return
+      }
+      destfile.setBytes(sourcefile.getBytes())
+      sourcefile.delete(null)
+      if (predHashVal != myHashVal || succHashVal != myHashVal) {
+        # More than one file server in the file system
+        svrRef <- setShortcut(`$destPath/$destFilename`, myHashVal, sr)
+      }
+      outputMessage(`$sourcePath is moved to $destPath/$destFilename`, "move")
+      callbackRef <- printMsg(`[move] $sourcePath is moved to $destPath/$destFilename`)
+      if (succHashVal != hVal) {
+        # Removes other copies in other file servers
+        succRef <- remove_remote(`$destPath/$destFilename`, hVal, svrHVal, callbackRef)
+        succRef <- remove_remote(sourcePath, hVal, svrHVal, callbackRef)
+      }
+    } else if (myHashVal != hVal) {
+      succRef <- move_ex_remote(destFilename, sourceFilename, destPath, sourcePath, hVal, svrHVal, svrRef, callbackRef)
+    } else {
+      outputMessage(`$sourcePath does not exist or $sourcePath is not a file`, "move")
+      callbackRef <- printMsg(`[move] $sourcePath does not exist or $sourcePath is not a file`)
+    }    
+  }
+
+  def removeDir_helper_local(dir, hVal, callbackRef) : any {
+    def files := dir.listFiles()
+    for each in files {
+      if (each.isDirectory()) {
+        removeDir_helper_local(each, hVal, callbackRef)
+      } else {
+        # each is a file
+        def eachPath := each.getPath()
+        each.delete(null)
+        outputMessage(`File $eachPath is deleted!`, "removeDir")
+        callbackRef <- printMsg(`[removeDir] File $eachPath is deleted!`)        
+      }
+    }
+    def path := dir.getPath()
+    dir.delete(null)
+    outputMessage(`Directory $path is deleted!`, "removeDir")
+    callbackRef <- printMsg(`[removeDir] Directory $path is deleted!`)        
+  }
+
+  # Removes all the files and sub-directories within specific directory
+  def removeDir_local(pathname, hVal, callbackRef) : any {
+    if (succHashVal != hVal) {
+      succRef <- removeDir_remote(pathname, hVal, callbackRef)
+    }
+    def keys := scSvrs.getKeys()
+    for each in keys {      
+      if (each.startsWith(pathname)) {
+        # Removes shortcuts
+        removeSC_local(each)
+      }
+    }
+    def dir := <file: `$myRootDir$pathname`>
+    if (dir.exists() && dir.isDirectory()) {
+      removeDir_helper_local(dir, hVal, callbackRef)
+    }
+  }
+
+  def setup_local(pRef, pHVal, sRef, sHVal) :any {
+    predRef := pRef
+    predHashVal := pHVal
+    succRef := sRef
+    succHashVal := sHVal
+    outputMessage(`$myName has joined the file system!`, "")
+    outputMessage(`The region of $myName is [$predHashVal -- $myHashVal -- $succHashVal].`, "")
+  }
+
+  def join_local(s) :any {
+    if (predRef != null || succRef != null) {
+      outputMessage(`$myName cannot join. $myName has already joined the file system.`, "")
+    } else if (s != null) {
+      outputMessage(`$myName is joining the file system!`, "")
+      contact := objFromFile(getFileSvrCap(s))
+      contact <- join_remote(myHashVal, sr)
+    } else {
+      # I am the first file server.
+      setup_local(sr, myHashVal, sr, myHashVal)
+    }    
+  }
+
+  def leave_local() :any {
+    if (predRef == null) {
+      outputMessage(`$myName cannot leave. $myName did not join the file system.`, "")
+    } else {
+      outputMessage(`$myName is leaving the file system!`, "")
+      if (predHashVal == myHashVal && predHashVal == succHashVal) {
+         outputMessage(`$myName is the last file server leaving the file system.`, "")
+         outputMessage("The file system no longer exists!", "")
+      } else{
+        predRef <- setSucc(succRef, succHashVal)
+        succRef <- setPred(predRef, predHashVal)
+      }
+      # Removes all shortcuts
+      removeAllSC_local()
+      if (predHashVal != myHashVal || succHashVal != myHashVal) {
+        # I am not the last file server
+        succRef <- removeSC_remote(succHashVal, myHashVal)
+      }
+      succHashVal := 0
+      succRef := null
+      predHashVal := null
+      predRef := null
+      contact := null
+    }
+  }
+
+  def RemoteSelfRef {
+
+    to removeAllSC_remote(hVal) : any {
+      # I intend to use myHashVal instead to succHashVal
+      if (myHashVal != hVal) {
+        succRef <- removeAllSC_remote(hVal)
+      }
+      removeAllSC_local()
+    }
+
+    to removeSC_remote(hVal, svrHVal) : any {
+      if (succHashVal != hVal) {
+        succRef <- removeSC_remote(hVal, svrHVal)
+      }
+      def keys := scSvrHVals.getKeys()
+      for each in keys {
+        if (scSvrHVals[each] == svrHVal) {
+          outputMessage(`Removes shortcut $each`, "")
+          removeSC_local(each)
+        }
+      }  
+    }
+
+    to join(s) :any {
+      join_local(s)
+    }
+    
+    to join_remote(joinerHval, joinerRef) :any {
+      if (predHashVal == myHashVal && succHashVal == myHashVal) {
+        # Only one file server in the file system
+        joinerRef <- setup(sr, myHashVal, sr, myHashVal)
+        predRef := joinerRef
+        predHashVal := joinerHval
+        succRef := joinerRef
+        succHashVal := joinerHval
+        outputMessage(`The region of $myName is [$predHashVal -- $myHashVal -- $succHashVal].`, "")
+      } else if ((predHashVal >= myHashVal && (predHashVal <= joinerHval || joinerHval <= myHashVal)) || \
+                 (predHashVal <= joinerHval && joinerHval <= myHashVal)) {
+        # I am the successor of the new file server
+        joinerRef <- setup(predRef, predHashVal, sr, myHashVal)
+        # Removes all shortcuts
+        joinerRef <- removeAllSC_remote(predHashVal)
+        # Tells my predecessor that his successor is the new joiner
+        predRef <- setSucc(joinerRef, joinerHval)
+        predRef := joinerRef
+        predHashVal := joinerHval
+        outputMessage(`The region of $myName is [$predHashVal -- $myHashVal -- $succHashVal].`, "")
+      } else {
+        # Routes around wheel to my successor
+        succRef <- join_remote(joinerHval, joinerRef)
+      }
+    }
+
+    to leave() :any {
+      leave_local()
+    }
+
+    to setup(pRef, pHval, sRef, sHval) :any {
+      setup_local(pRef, pHval, sRef, sHval)
+    }
+    
+    to setSucc(wRef, wHval) :any {
+      succRef := wRef
+      succHashVal := wHval
+      outputMessage(`The region of $myName is [$predHashVal -- $myHashVal -- $succHashVal].`, "")
+    }
+    
+    to setPred(wRef, wHval) :any {
+      predRef := wRef
+      predHashVal := wHval
+      outputMessage(`The region of $myName is [$predHashVal -- $myHashVal -- $succHashVal].`, "")
+    }
+    
+    to getHashVal() :any {
+      return myHashVal
+    }
+
+    to setShortcut(destPath, svrHVal, svr) : any {
+      scSvrs[destPath] := svr
+      scSvrHVals[destPath] := svrHVal
+      outputMessage(`Add a shortcut to $destPath and its hash value is $svrHVal`, "")
+    }
+
+    to list(pathname, callbackRef) : any {
+      list_local(pathname, myHashVal, callbackRef)
+    }
+
+    to list_remote(pathname, hVal, callbackRef) : any {
+      list_local(pathname, hVal, callbackRef)
+    }
+
+    # destPath must not include the file name
+    # sourcePath must include the file name
+    to upload(filename, destPath, sourcePath, callbackRef) : any {
+      var dest := destPath
+      if (dest == "/") {
+        # dest is blank when it is the root directory
+        dest := ""
+      }      
+      # Removes shortcuts
+      outputMessage(`Removes shortcut $dest/$filename`, "upload")
+      removeSC_local(`$dest/$filename`)
+      upload_local(filename, dest, sourcePath, myHashVal, sr, callbackRef)        
+    }
+
+    to upload_remote(filename, destPath, sourcePath, svrHVal, svrRef, callbackRef) : any {
+      upload_local(filename, destPath, sourcePath, svrHVal, svrRef, callbackRef)
+    }
+
+    # destPath must not include the file name
+    # sourcePath must include the file name
+    to download(destPath, sourcePath, callbackRef) : any {
+      var dest := destPath
+      if (dest == "./") {
+        # dest is blank when it is the root directory
+        dest := "."
+      }      
+      def tokens := sourcePath.split("/")
+      def filename := tokens[tokens.size()-1]
+      if (scSvrs.maps(sourcePath)) {
+        # Uses existing shortcut
+        def svr := scSvrs[sourcePath]
+        def svrHVals := scSvrHVals[sourcePath]
+        outputMessage(`Uses existing shortcut $sourcePath`, "download")
+        svr <- download_ex_remote(filename, dest, sourcePath, svrHVals, sr, callbackRef)
+      } else {
+        outputMessage("No shortcut to use", "download")
+        download_local(filename, dest, sourcePath, sr, callbackRef)
+      }
+    }
+
+    to download_remote(filename, destPath, sourcePath, svrRef, callbackRef) : any {
+      download_local(filename, destPath, sourcePath, svrRef, callbackRef)
+    }
+    
+    to download_ex_remote(filename, destPath, sourcePath, hVal, svrRef, callbackRef) : any {
+      download_ex_local(filename, destPath, sourcePath, hVal, svrRef, callbackRef)
+    }
+
+    # destPath must include the file name
+    # sourcePath must include the file name
+    to move(destPath, sourcePath, callbackRef) : any {
+      # Do nothing if the destPath and the sourcePath are the same
+      if (destPath == sourcePath) {
+        return 
+      }
+      def destTokens := destPath.split("/")
+      def destFilename := destTokens[destTokens.size()-1]
+      var myDestPath := ""
+      for i in 0..!(destTokens.size()-1) {
+        myDestPath := myDestPath + "/" + destTokens[i]
+      }
+      if (myDestPath == "/") {
+        myDestPath := ""
+      }
+      def sourceTokens := sourcePath.split("/")
+      def sourceFilename := sourceTokens[sourceTokens.size()-1]
+      if (scSvrs.maps(sourcePath)) {
+        # Uses existing shortcut
+        def svr := scSvrs[sourcePath]
+        def svrHVal := scSvrHVals[sourcePath]
+        outputMessage(`Uses existing shortcut $sourcePath`, "move")
+        # Removes shortcuts
+        outputMessage(`Removes shortcut $destPath`, "move")
+        removeSC_local(destPath)
+        outputMessage(`Removes shortcut $sourcePath`, "move")
+        removeSC_local(sourcePath)
+        svr <- move_ex_remote(destFilename, sourceFilename, myDestPath, sourcePath, svrHVal, myHashVal, sr, callbackRef)
+      } else {
+        # Removes shortcuts
+        outputMessage(`Removes shortcut $destPath`, "move")
+        removeSC_local(destPath)
+        outputMessage("No shortcut to use", "move")
+        move_local(destFilename, sourceFilename, myDestPath, sourcePath, myHashVal, sr, callbackRef)
+      }
+    }
+
+    to move_remote(destFilename, sourceFilename, destPath, sourcePath, svrHVal, svrRef, callbackRef) : any {
+      move_local(destFilename, sourceFilename, destPath, sourcePath, svrHVal, svrRef, callbackRef)
+    }
+
+    to move_ex_remote(destFilename, sourceFilename, destPath, sourcePath, hVal, svrHVal, svrRef, callbackRef) : any {
+      move_ex_local(destFilename, sourceFilename, destPath, sourcePath, hVal, svrHVal, svrRef, callbackRef)
+    }
+
+    # Removes file only
+    to remove(pathname, callbackRef) : any {
+      remove_local(pathname, myHashVal, 1, callbackRef)
+    }
+
+    # Removes file and shortcuts only
+    to remove_remote(pathname, hVal, svrHVal, callbackRef) : any {
+      remove_local(pathname, hVal, svrHVal, callbackRef)
+    }
+
+    # Removes all the files and sub-directories within specific directory
+    to removeDir(pathname, callbackRef) : any {
+      # Cannot remove root directory
+      if (pathname == "/") {
+        return
+      }
+      removeDir_local(pathname, myHashVal, callbackRef)
+    }
+
+    to removeDir_remote(pathname, hVal, callbackRef) : any {
+      removeDir_local(pathname, hVal, callbackRef)
+    }
+
+    to createDir(pathname, callbackRef) : any {
+      createDir_local(pathname, callbackRef)
+    }
+
+  }
+
+  objIntoFile(RemoteSelfRef, getFileSvrCap(myName))
+  bind sr := RemoteSelfRef
+  return RemoteSelfRef
+}
+
+def processcmd(cmd: String) :any {
+	def argv := [].diverge()
+	var argc := 0
+
+	if (cmd.size() == 0) {
+		return
+	}
+	
+	for arg in cmd.split(" ") {
+		if (argc == 0) {
+			argv[0] := arg.toLowerCase()
+		} else {
+			argv[argc] := arg
+		}
+		argc := argc + 1
+	}
+
+	showmsg("> " + cmd)
+
+	if (argv[0] == "join") {
+		if (argc == 1) {
+			selfRef <- join(null)
+		} else {
+			selfRef <- join(argv[1])
+		}			
+	} else if (argv[0] == "leave") {
+		selfRef <- leave()
+	} else if (argv[0] == "help") {
+		showmsg("help                   displays this help message")
+		showmsg("join [Contact Point]   joins the file system via contact point")
+		showmsg("leave                  leaves the file system")
+	} else {
+		showmsg("Oops...I don't understand the command")
+	}
+}
+
+def makeUI(serverName: String) :any {
+    	def frame := <swing:JFrame>(`File Server [$serverName]`)
+
+    	def cmdPane := <swing:JTextField>(" ")
+	def cmdListener {
+		to actionPerformed(cmdevent) {
+			def cmd := cmdPane.getText().trim()
+
+			for line in cmd.split("\n") {
+				processcmd(line)
+			}
+			cmdPane.setText("")
+		}
+	}
+	cmdPane.addActionListener(cmdListener)	
+
+    	bind msgPane := <swing:JTextArea>("")
+
+	msgPane.setRows(15)
+	msgPane.setColumns(80)
+	msgPane.setEditable(false)
+	msgPane.setLineWrap(true)
+
+	def scrollPane := <swing:JScrollPane>(msgPane)
+    	def realPane := JPanel`$scrollPane.Y
+             	       	       $cmdPane`
+
+	frame.getContentPane().add(realPane)
+    	def windowListener {
+        	to windowClosing(winevent) {
+            		interp.continueAtTop()
+        	}
+        	match [verb,args] {}
+    	}
+    	frame.addWindowListener(windowListener)
+    	frame.pack()
+    	frame.show()
+}
+
+if (interp.getArgs() =~ [name]) {
+  bind myName := name 
+  bind myRootDir := `./$myName`
+  bind myHashVal := myName.getBareCryptoHash() / (1<<160)
+
+  makeUI(name)
+  showmsg("Distributed File Server v1.0")
+  showmsg("Author: Yu Chen, Ming Tsang\n")
+
+  introducer.onTheAir()
+  showmsg(`Initializing $myName file server with $myHashVal hash value`)
+  bind selfRef := FileSvr()
+  def rootdir := <file: `$myRootDir`>
+  rootdir.mkdirs(null)
+  interp.blockAtTop()
+} else {
+  showmsg("Usage: fileSvr.e name")
+}
+

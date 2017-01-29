@@ -1,0 +1,224 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Promise Pipelining</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">distrib</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="partial-failure.html" title="Back to: Handling Partial Failure"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Handling Partial Failure" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="obj-passing.html" title="On to: Types of Object Passing"><img src="../../images/next.gif" width="64" height="32" alt="On to: Types of Object Passing" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Promise
+              Pipelining </B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <h1>Massive Latency Compensation</h1>
+      <p>Example suggested by Darius Bacon. Thanks!</p>
+      <div align="center">
+        <table cellpadding="6">
+          <tr>
+            <th>Conventional RPC</th>
+            <th rowspan="4" bgcolor="#FFFFFF">&nbsp;&nbsp;</th>
+            <th>&quot;Dataflow&quot; with Promises</th>
+          </tr>
+          <tr align="left">
+            <td> <pre>t3 := (x.a()).c(y.b())</pre></td>
+            <td> <pre>t3 := (x &lt;- a()) &lt;- c(y &lt;- b())</pre></td>
+          </tr>
+          <tr align="left">
+            <td>Expands to...</td>
+            <td>Expands to...</td>
+          </tr>
+          <tr align="left">
+            <td> <pre>t1 := x.a()
+t2 := y.b()
+t3 := t1.c(t2)</pre></td>
+            <td> <pre>t1 := x &lt;- a()
+t2 := y &lt;- b()
+t3 := t1 &lt;- c(t2)</pre></td>
+          </tr>
+        </table>
+      </div>
+      <p>In a conventional RPC system, each of the three calls on the left requires
+        its own separate round trip. Typically these would be chained, causing
+        the sequence as a whole to require three sequential round trips. Even
+        when making maximal use of available parallelism, the &quot;<tt>c(...)</tt>&quot;
+        message could not be sent until both &quot;<tt>a()</tt>&quot; and &quot;<tt>b()</tt>&quot;
+        had returned, resulting in a minimum delay of two sequential round trips.</p>
+      <p>By contrast, the right hand side can stream out all three calls directly,
+        without waiting for any round trips. To see why, lets visualize these
+        messages using <a href="../concurrency/msg-passing.html#pipe-send">our
+        standard Granovetter</a> notation: </p>
+      <P ALIGN="center"><img src="../concurrency/images/pipe-example2.gif" width="528" height="453" alt="Pipelining Example">
+      <p ALIGN="left">The key is that later messages can be sent specifying promises
+        for the results of earlier messages as recipients or arguments, despite
+        the fact that these promises are unresolved at the time these messages
+        are sent. This allows VatL to stream out all three messages at the same
+        time, possibly in the same packet. </p>
+      <p ALIGN="left">Often the promise arguments in these messages still won't
+        be resolved when their messages arrive, which is fine. However, often
+        they will, especially in communications patterns that resemble client-server
+        computing. For example, let's suppose VatL is a client-like vat, making
+        use of a service offered by server-like vat VatR. First <tt>a()</tt> gets
+        delivered to X, which, let's say, computes (finds or generates) a local
+        object T1 as a result. Then <tt>b()</tt> gets delivered to Y, which, let's
+        say, does the same, resulting in T2. Finally, when <tt>c(...)</tt> is
+        arrives at VatR, t1 is already resolved to T1, so <tt>c(...)</tt> gets
+        delivered to T1, with a t2 argument that's already resolved to the local
+        object T2. </p>
+      <p ALIGN="left">Unfortunately, T1 cannot count on the argument being resolved
+        by the time it receives <tt>c(...)</tt>, so this client-server pattern
+        does not enable the code for T1 to be simpler. But it does often allow
+        the typical case to be processed efficiently.</p>
+      <h1 ALIGN="left">Abstraction <i>vs</i> Efficiency: Mobile Almost-Code</h1>
+      <p ALIGN="left">For the sake of modularily, we seek to carve up our systems
+        at good abstraction boundaries. For security, we wish to make divisions
+        at trust and administration boundaries. For partition-survival, we divide
+        to enable continued meaningful (if degraded) operation of the separated
+        components. Fortunately, these three should correlate, and do in practice.
+      </p>
+      <p ALIGN="left">But we'd also like to spread our distributed computations
+        across separate machines according to the performance consequences. The
+        key performance issue is often latency. And as hardware improves, latency
+        will clearly dominate as the limiting factor. At the endpoints, processing
+        will be ever cheaper and buffers larger, with the limits still many orders
+        of magnitude away. At the pipes between these endpoints, bandwidth will
+        likewise increase by many orders of magnitude, but latency will remain
+        limited by the speed of light. Pipes between fixed endpoints can be made
+        wider but not shorter.</p>
+      <p ALIGN="left">In a conventional RPC-based client-server system, if the
+        &quot;<tt>t3 := (x.a()).c(y.b())</tt>&quot; were sufficiently common,
+        the temptation would be to add a method for this pattern to the server,
+        in order to save the round trip. The client could simply call this &quot;higher
+        level&quot; method. However, this is often at odds with modularity goals.
+        &quot;Higher-level&quot; often means more specialized, or <i>policy</i>
+        rather than <i>mechanism</i>. Good modular systems of abstractions should
+        normally export orthogonal composable primitives which are useful only
+        when composed, but leave it to their clients to determine which composition
+        to use. But this causes the client to compose several invocations to do
+        any one useful thing.</p>
+      <p ALIGN="left">When this tension gets severe, the only real way to resolve
+        it is with real mobile code. The client sends code to the server, such
+        that on arrival the code can locally invoke the orthogonal composable
+        primitives exported by the server. <i><b><font color="#009000">E</font></b></i>
+        is designed to support such real mobile code well and securely. But with
+        promise pipelining, <i><b><font color="#009000">E</font></b></i>'s normal
+        remote invocation can be seen as a lightweight special case of mobile
+        code. The sending side, by making these invocations on remote references,
+        causes the CapTP implementation to encode and send the moral equivalent
+        of an expression involving <i>functional composition</i> (the use of function
+        calls as arguments in other function calls). The receiving side, in decoding
+        and processing these messages is effectively acting as an interpreter
+        for the language these expressions are encoded in.</p>
+      <p ALIGN="left">An important future direction is to reconcile these two
+        forms of mobile code into one uniform mobile code support mechanism.</p>
+      <h1 ALIGN="left">Related Work</h1>
+      <p ALIGN="left"><a href="http://www.udanax.com/gold/index.html">Udanax Gold</a>
+        and <a href="http://www.sunless-sea.net/wiki/FrontPage">Purple</a> has
+        a similar system (dating from the 1991, 1992 time frame), but only for
+        assymetric (ie, client server) two-party communication. However, none
+        of this technology was released until 1999, and was never explained in
+        a published document.</p>
+      <p ALIGN="left">Both &quot;<a href="http://www.lcs.mit.edu/publications/pubs/pdf/MIT-LCS-TR-624.pdf">A
+        Safe, Efficient Object Database Interface Using Batched Futures</a>&quot;
+        by Phillip Lee Bogle, 1994, and the related <br>
+        &quot;<a href="http://www.lcs.mit.edu/publications/pubs/pdf/MIT-LCS-TR-658.pdf">Increasing
+        Cross-Domain Call Batching using Promises and Batched Control Structures</a>&quot;
+        by Quinton Y. Zondervan, 1995, have strong similarities to the Udanax
+        pipelining work, though discovered independently. (Both were theses done
+        with Barbara Liskov as their thesis advisor.)</p>
+      <p ALIGN="left">Recently found: <br>
+        Barbara Liskov and Liuba Shrira. <a href="http://citeseer.ist.psu.edu/context/84982/0">Promises:
+        linguistic support for efficient asynchronous procedure calls in distributed
+        systems</a>. In PLDI, pages 260--267, July 1988. (<a href="http://portal.acm.org/citation.cfm?id=54016">Available
+        from ACM</a> with subscription) </p>
+      <p ALIGN="left">The Udanax promise architecture influenced the way <a href="../../history/joule/index.html">Joule</a>'s
+        network protocol, Indra, implemented distributed Joule Channels. CapTP's
+        pipelining descends directly from this work, although the abstraction
+        it pipelines is more similar to the Udanax Promise than the Joule Channel.
+        Unfortunately, there is no publicly available description of Indra (yet?).</p>
+      <p ALIGN="left">And of course, if you buy the analogy, the rich CPU architecture
+        literature on instruction pipelining with register renaming is all possibly
+        relevant. And since inter-machine pipes are much deeper than instruction
+        pipes, we potentially have a lot more to gain from (approximately) their
+        techniques than they do.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elib</a>&nbsp;/&nbsp;<a href="index.html">distrib</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="partial-failure.html" title="Back to: Handling Partial Failure"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Handling Partial Failure" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="obj-passing.html" title="On to: Types of Object Passing"><img src="../../images/next.gif" width="64" height="32" alt="On to: Types of Object Passing" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

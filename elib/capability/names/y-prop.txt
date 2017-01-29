@@ -1,0 +1,33 @@
+Ed Gerck wrote:
+
+>[...] Spoofing and
+> MITM become quite easy to do if you trust an introducer to tell you where to go.
+
+At 03:52 AM 7/15/2003  Tuesday, Ben Laurie wrote: What is a CA other than an introducer?
+
+This is exactly backwards. Use of CAs are vulnerable to MITM attack by prior arrangement -- by enabling the CA to mount such an attack. Both the CA and the introducer are equally able to place themselves (or an agent of themselves) in the middle, but when an introducer does it, *by definition* it isn't a MITM attack.
+
+By definition? A CA certifies to Bob that the key K corresponds to some entity (Carol) that Bob might know by the name N. (In PGP, N is allegedly Carol's email address.) Unaddressed and assumed away is the issue of how Bob came to know name N. In actuality, someone (Alice) who already knew Bob and Carol told Bob about Carol as part of a message. This message gives semantic context to the introduction, so that Bob may choose how to regard Carol based on his relationship with Alice, and based on what Alice said in her introduction message. This account is equally valid among objects in a pure object programming system, and among people as described by Granovetter.
+
+In the absence of someone like Alice performing such an introduction, how did Bob come to know about Carol's existence? How did Bob come to regard Carol with any prior properties (i.e., properties not derived purely by interaction with Carol)? The Y property follows simply from the observation that authenticity of initial introduction is simply for Bob to know that the Carol he's talking to is the Carol Alice meant to introduce him to; and that the introduction message as received is that which was sent -- that Bob can take into account what Alice says about Carol. By definition, Alice can't introduce him to an inauthentic party, because whoever Alice introduces him to, that's who Alice introduced him to.
+
+However, between machines Alice can only send bits, not direct connections. 
+If Alice's message includes a conventional (non-self-authenticating) name N for Carol, then Bob must resort to other means to attempt to ensure that the Carol he's talking to is the Carol Alice meant. Since these means rely on third parties (typically CAs) for their correctness, they are vulnerable to misbehavior by these third parties -- it is they who can mount a MITM attack, leading Bob to connect to someone other than who Alice meant. If Alice's message instead designates Carol with a self-authenticating designator, like a public key fingerprint, then there is no remaining MITM problem.
+
+Of course, Alice can still betray whatever trust Bob has in her by introducing Bob to Carol-the-thief saying "Here's Carol-the-saint". But this simply means that Bob's trust in Alice was misplaced. Since Bob only knows about Carol from Alice, he should not invest any more trust in Carol than the trust he has in Alice, no matter what assurance Alice includes as context in the introduction message. If Carol fails to live up to Alice's statements about her, that should tarnish Alice's reputation just as Alice's direct misbehavior would. (After all, for all we know, Carol may be a front for Alice.)
+
+Of course, the world isn't purely electronic. And by this analysis, the purely electronic world cannot bootstrap trustable connectivity from scratch. By this logic of introduction, only connectivity begets connectivity, and most of the existing trusted connectivity in the world in non-electronic. That's why PGP users often put their fingerprints on their business cards -- at our current level of technology, the face to face interaction where cards are transferred are beyond feasible MITM attack by anyone other than the Mission Impossible team. Alice the physical person introduces Bob the physical person to Alice's electronic presence Carol. The card is the message. Bob can't know that it's really Alice's electronic presence that's been "named", but he know that it is the electronic presence that person at the party wanted Bob to think was herself.
+
+Much of the prior human connectivity that we must leverage is held together by knowledge of human names in a multitude of name spaces. This means we still have the correspondence problem CAs were built to solve, and which SPKI and PetNames do solve in a sound fashion. See http://www.erights.org/elib/capability/pnml.html .
+
+With one further primitive, equality, we have reached the limits of what is possible for key distribution.
+
+If Dana also introduces Bob to Carol by using Carol's same self-authenticating designator K, Bob can compare these and see they are the same. As a result, the prior properties with which he may regard Carol are the union of the prior properties resulting from Alice's introduction and that resulting from Dana's introduction. Further, Bob knows that Carol is *mutually acceptable* to both Alice and Dana as who they meant in their respective messages. Depending on the specifics, this may enable Bob to trust Carol in ways that he does not Alice or Dana individually. This enables corroboration. See
+http://www.erights.org/elib/equality/grant-matcher/index.html
+
+All key distribution schemes are repeated applications of introduction and corroboration, and nothing more is possible. Once this is realized, many bad key distribution schemes should become obviously bad.
+
+---------------------------------------- Text by me above is hereby placed in the public domain
+
+        Cheers,
+        --MarkM

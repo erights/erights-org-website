@@ -1,0 +1,74 @@
+<HTML><HEAD><TITLE>Source for DieRolling Example</TITLE></HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#FF0000" VLINK="#FF0000">
+<PRE WIDTH=80>
+  /*
+  Die Rolling Example II
+    April 21, 1996
+      Copyright 1996 Electric Communities
+        All Rights Reserved Worldwide.
+  */
+
+  import ec.e.run.EInteger;
+  import java.util.Random;
+
+  public class DemoRoller
+    {
+    public static void main(String args[]) // <A TARGET="walkthru" HREF="walkthru.html#step01" NAME="step01">Step 1</A>
+      {
+      DieRoller rollerOne = new DieRoller(); // <A TARGET="walkthru" HREF="walkthru.html#step02" NAME="step02">Step 2</A>
+      DieRoller rollerTwo = new DieRoller(); // <A TARGET="walkthru" HREF="walkthru.html#step03" NAME="step03">Step 3</A>
+
+      EInteger rollerOneHash, rollerOneX; // <A TARGET="walkthru" HREF="walkthru.html#step04" NAME="step04">Step 4</A>
+      EInteger rollerTwoHash, rollerTwoX; // <A TARGET="walkthru" HREF="walkthru.html#step05" NAME="step05">Step 5</A>
+
+      rollerOne <- doDieRoll(&rollerOneHash, &rollerOneX,
+        rollerTwoHash, rollerTwoX); // <A TARGET="walkthru" HREF="walkthru.html#step06" NAME="step06">Step 6</A>
+
+      rollerTwo <- doDieRoll(&rollerTwoHash, &rollerTwoX,
+        rollerOneHash, rollerOneX); // <A TARGET="walkthru" HREF="walkthru.html#step07" NAME="step07">Step 7</A>
+      } // <A TARGET="walkthru" HREF="walkthru.html#step08" NAME="step08">Step 8</A> (main is finished)
+    }
+
+  eclass DieRoller
+    {
+    Random randomGenerator = new Random();
+
+    emethod doDieRoll(EDistributor myHash, EDistributor myX,
+      EInteger hisHash, EInteger hisX) // <A TARGET="walkthru" HREF="walkthru.html#step09" NAME="step09">Step 09</A>, <A TARGET="walkthru" HREF="walkthru.html#step10" NAME="step10">Step 10</A>
+      {
+
+      long X = randomGenerator.nextLong(); // <A TARGET="walkthru" HREF="walkthru.html#step11" NAME="step11">Step 11</A>
+
+      myHash <- forward(new EInteger(OneWayHash(X))); // <A TARGET="walkthru" HREF="walkthru.html#step12" NAME="step12">Step 12</A>
+
+      ewhen hisHash (long otherHash) // <A TARGET="walkthru" HREF="walkthru.html#step13" NAME="step1318">Steps 13-18</A>
+        {
+        myX <- forward(new EInteger(X)); // <A TARGET="walkthru" HREF="walkthru.html#step19" NAME="step19">Step 19</A>
+
+          ewhen hisX (long otherX) // <A TARGET="walkthru" HREF="walkthru.html#step20" NAME="step2024">Steps 20-24</A>
+            {
+            long finalResult = Combine(X, otherX); // <A TARGET="walkthru" HREF="walkthru.html#step25" NAME="step25">Step 25</A>
+
+            System.out.println("Roll result = " + finalResult);
+
+            if (OneWayHash(otherX) != otherHash) {
+              System.out.println("There was cheating.");
+              }
+            }
+         }
+      }
+
+    long OneWayHash(long a) /* Placeholder function */
+    {
+      return (a);
+    }
+
+    long Combine(long a, long b)
+    {
+      return (((a ^ b) % 6) + 1);
+    }
+  }
+
+</PRE>
+</BODY></HTML>

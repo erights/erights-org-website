@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+   <TITLE>Hello ewhen</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.0Gold (Win95; I) [Netscape]">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+
+<PRE><IMG SRC="midi_e.gif" ALT="Electric Communities: E Programming Language" HEIGHT=30 WIDTH=30>  <A HREF="index.html">Contents</A>  <A HREF="../index.html">Home Page</A>
+</PRE>
+
+<H1>Hello ewhen</H1>
+
+<P>
+<HR></P>
+
+<BLOCKQUOTE>
+<P>This tutorial demonstrates the <TT>ewhen</TT> statement. Since <TT>ewhen</TT>
+defers execution of code until a requested value has been supplied, you
+can use this statement to:</P>
+
+<P> </P>
+
+<UL>
+<LI><B>'Bridge' your Java and E code. </B>You can use <TT>ewhen</TT> to
+obtain Java values from E-objects, and thus bridge your Java and E code.
+For example, you can use <TT>ewhen</TT> to get a Java integer value from
+an EInteger object, and add this value to a Java integer. </LI>
+
+<LI><B>Impose sequentiality.</B><I> </I>This enables your E-code to function
+seamlessly with Java code, and even behave like Java code, with less coding
+complexity than Java. </LI>
+
+<LI><B>Obtain values from other E-objects.</B> Since E-methods themselves
+do not return values, you can use <TT>ewhen</TT> to get values or other
+data from other E-objects. </LI>
+</UL>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H2>Hello E-When</H2>
+
+<BLOCKQUOTE>
+<P>To run this tutorial, enter the following code and study the walkthrough
+that accompanies it. This example is also available in the online example
+suite as <I>HelloEWhen.e</I></P>
+
+<P> </P>
+
+<PRE>
+<TT>/* 
+  HelloEWhen.e
+  Tutorial for ewhen statement
+  Copyright 1996 Electric Communities, all rights reserved.
+
+  Program output:
+
+  Sent StartHelloEWhenInstance
+  In HelloEWhenObj
+  In HelloEWhenObj2
+  Hello World with 7
+
+*/
+
+import ec.e.lang.EInteger;
+
+public class HelloEWhen
+{    
+  public static void main(String args[]) {  
+    HelloWorldEWhenObj theInstance = new HelloWorldEWhenObj();
+    theInstance &lt;- StartHelloEWhenInstance();
+    System.out.println(&quot;Sent StartHelloEWhenInstance&quot;);
+    }
+}
+
+eclass HelloWorldEWhenObj
+{
+  EInteger anEInteger;
+  emethod StartHelloEWhenInstance() {
+    HelloEWhenObj2 first = new HelloEWhenObj2();
+    System.out.println(&quot;In HelloEWhenObj &quot;);
+    first &lt;- hello(&amp;anEInteger);
+    ewhen anEInteger (int thisInt) {
+      System.out.println(&quot;Hello World with &quot; + thisInt);
+    }
+  }
+}
+
+eclass HelloEWhenObj2 
+{
+  emethod hello(EDistributor putEIntHere) {
+    System.out.println(&quot;In HelloEWhenObj2&quot;);
+    putEIntHere &lt;- forward( new EInteger(7) );
+  }
+}</TT>
+
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H2>The Walkthrough</H2>
+
+<BLOCKQUOTE>
+<OL>
+<LI><TT>main</TT> instantiates the E-object <TT>theInstance</TT>, an instance
+of E-class <TT>HelloWorldEWhenObj</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>main</TT> sends the message <TT>StartHelloEWhenInstance</TT> to
+<TT>theInstance</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>StartHelloEWhenInstance</TT> sends the message <TT>hello</TT> to
+<TT>first</TT>, passing as an argument the distributor for the channel
+representing the uninitialized instance variable <TT>anEInteger</TT>.</LI>
+
+<P> </P>
+
+<LI><TT>StartHelloEWhenInstance</TT> executes an <TT>ewhen</TT> statement
+that says, ``When you get a value for the instance variable <TT>anEInteger</TT>,
+assign it to <TT>thisInt</TT> and execute the following code block.'' <TT>StartHelloEWhenInstance</TT>
+waits for the value to be defined.</LI>
+
+<P> </P>
+
+<LI>Meanwhile, <TT>first</TT> executes the <TT>HelloEWhenObj2</TT> E-method
+<TT>hello</TT> to handle the message sent to it.</LI>
+
+<P> </P>
+
+<LI><TT>hello</TT> instantiates a new <TT>EInteger</TT> with a value of
+7 and forwards the specified distributor's channel to point to this value.</LI>
+
+<P> </P>
+
+<LI><TT>StartHelloEWhenInstance</TT>'s <TT>ewhen</TT> statement detects
+that an <TT>EInteger</TT> is now defined, assigns its value to <TT>thisInt</TT>,
+and prints out, ``Hello World with 7''.</LI>
+
+<P> </P>
+</OL>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H2>Summary</H2>
+
+<BLOCKQUOTE>
+<P>You have used <TT>ewhen</TT> to implement optimistic computation, since
+the <TT>ewhen</TT> code execution was deferred until the required instance
+variable was initialized. This code would not work in another object-oriented
+language, since that language would think the code was incomplete (because
+of the uninitialized variables). Using E you don't have to make assumptions
+about network latency; your code will simply complete as much as it can.
+</P>
+
+<P>Generally, you should also include timeouts (see the <I>E Programmer's
+Manual </I>section on time-outs) to prevent your code from simply waiting
+until it gets the requested value. In this exercise you're creating this
+code by yourself on one machine, but in practice, you would be working
+with other objects on other machines.</P>
+
+<P> </P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H2><A NAME="Compiling and Running"></A>Compiling and Running</H2>
+
+<BLOCKQUOTE>
+<P>To compile source code for the E runtime, use the <I>ecomp</I> compiler:</P>
+
+<P> </P>
+
+<PRE><TT>  ecomp</TT> <I>filename</I></PRE>
+
+<P>The <I>ecomp</I> command compiles E and Java source files directly into
+Java bytecodes. You can then run your compiled program with the E Java
+interpreter (the<TT> javaec</TT> command):</P>
+
+<P> </P>
+
+<PRE><TT>  javaec</TT> <I>filename</I></PRE>
+
+<P>For more information on these commands, see the <I>E Tools and Utilities
+</I>section in the <I>E Programmer's Guide</I>.</P>
+
+<P> </P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<ADDRESS>Copyright (c) 1996 Electric Communities. All rights reserved worldwide.<BR>
+Most recent update: 5/29/96</ADDRESS>
+
+<P> </P>
+
+</BODY>
+</HTML>

@@ -1,0 +1,374 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>Mailkeys as a Horton-like protocol</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">capability</a>&nbsp;/&nbsp;<a href="index.html">horton</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="amplify.html" title="Back to: Horton with Rights Amplification"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Horton with Rights Amplification" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="notes.html" title="On to: How Horton Hears a Who"><img src="../../../images/next.gif" width="64" height="32" alt="On to: How Horton Hears a Who" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b> 
+              Mailkeys as a <br>
+              Horton-like protocol</b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <p>At <a href="http://www.xs4all.nl/%7Ermeijer/mailkeys.pdf">http://www.xs4all.nl/~rmeijer/mailkeys.pdf</a> 
+        Rob Meijer explains Mailkeys, a proposal for &quot;Fighting spam with 
+        capability keys&quot;. He <a href="http://www.eros-os.org/pipermail/cap-talk/2007-May/007709.html">asked</a> 
+        on cap-talk how mailkeys and Horton compare. A discussion at HP Labs <a href="http://www.eros-os.org/pipermail/cap-talk/2007-June/007779.html">concluded</a> 
+        mailkeys works, first, for its original problem domain: email spam with 
+        legacy compatibility constraints. Additionally, we believed that mailkeys 
+        could be modeled in pure object-capability terms, and that the result 
+        could be used as a Horton-style intermediation.</p>
+      <p>This page shows such a Horton-style pure object-capability re-packaging 
+        of the mailkeys proposal. It is derived from and comparable to the lexically 
+        nested presentation of Horton shown <a href="amplify.html">here</a>.</p>
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.9</span>&quot;)</pre>
+      </blockquote>
+      <p>Unchanged from <a href="base.html">the original</a>:</p>
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defobj">c</span> {
+<span class="stdout">&gt; </span>    <span class="keyword">to</span> <span class="defverb">hi</span>(<span class="keyword">_</span>) {
+<span class="stdout">&gt; </span>        println("<span class="litchars">hi</span>")
+<span class="stdout">&gt; </span>    }
+<span class="stdout">&gt; </span>}
+<span class="stdout"># value: &lt;c&gt;
+ 
+? </span>c.hi(c)
+<span class="stdout"># stdout: hi
+#
+ 
+? </span><span class="keyword">def</span> <span class="defobj">b</span> {
+<span class="stdout">&gt; </span>    <span class="keyword">to</span> <span class="defverb">foo</span>(<span class="defvar">c</span>) {
+<span class="stdout">&gt; </span>        c.hi(c)
+<span class="stdout">&gt; </span>    }
+<span class="stdout">&gt; </span>}
+<span class="stdout"># value: &lt;b&gt;
+ 
+? </span>b.foo(c)
+<span class="stdout"># stdout: hi
+#
+ 
+? </span><span class="keyword">def</span> <span class="defobj">makeA</span>(<span class="defvar">b</span>, <span class="defvar">c</span>) {
+<span class="stdout">&gt; </span>    <span class="keyword">def</span> <span class="defobj">a</span> {
+<span class="stdout">&gt; </span>        <span class="keyword">to</span> <span class="defverb">start</span>() {
+<span class="stdout">&gt; </span>            b.foo(c)
+<span class="stdout">&gt; </span>        }
+<span class="stdout">&gt; </span>    }
+<span class="stdout">&gt; </span>    <span class="keyword">return</span> a
+<span class="stdout">&gt; </span>}
+<span class="stdout"># value: &lt;makeA&gt;
+ 
+? </span><span class="keyword">def</span> <span class="defvar">directA</span> := makeA(b, c)
+<span class="stdout"># value: &lt;a&gt;
+ 
+? </span>directA.start()
+<span class="stdout"># stdout: hi
+#</span></pre>
+      </blockquote>
+      <p>In the <a href="amplify.html">earlier Horton code</a>, the inter-principal 
+        Horton protocol consists mostly of the protocol of Who objects (seal) 
+        and the protocol of Stub objects (deliver/intro). The stubs provide the 
+        fine-grain specificity needed to know what specific app-object is being 
+        addressed, and Who to blame for such access. The Who (like a public key 
+        in many cryptographic protocols) provides the coarse-grain identity respresenting 
+        a responsible party. An important attribute of Who objects is that they 
+        can be reliably compared for equality. In our <a href="../../../download/horton/document.pdf">draft 
+        paper</a>, for brevity, we say only </p>
+      <blockquote> 
+        <p>Should Bob and Carol ever come to <i>know each other independently 
+          of Alice</i>, they can then blame each other, rather than Alice, for 
+          actions logged by P3 and S3. Say C is a wiki page. If Carol <i>believes 
+          that Bob is not a pseudonym for Alice</i>, and Carol decides that Bob 
+          has abused this page, Carol should then revoke Bob’s access without 
+          revoking Alice’s access by shutting off S3.<br>
+          [emphasis added]</p>
+      </blockquote>
+      <p>Unexplained is how such knowledge of independence could ever come about. 
+        How can Carol validly believe that Bob is not a pseudonym for Alice? Remember 
+        that, by &quot;Bob&quot; here, we mean simply the entity identified by 
+        the Who object labeled &quot;Bob&quot; in the diagrams. In the scenario 
+        presented in the paper, Carol has received Bob's Who object only from 
+        Alice. Within only this scenario, Carol indeed has no evidence that Bob 
+        is independent of Alice, and there's nothing that either Alice or Bob 
+        can do by themselves to repair this situation (short of out of band channels 
+        such as a face to face meeting). Until Carol does have such evidence of 
+        independence, Carol <i>should</i> rationally hold Alice responsible for 
+        all actions taken by Bob.</p>
+      <p>But let's say that Carol has a pre-existing relationship with Dave, i.e., 
+        with a responsible party identified by a Who object we will label &quot;Dave&quot; 
+        in our diagrams. By <i>pre-existing</i>, we mean in the sense that we 
+        already assume that Carol has a pre-existing relationship with Alice. 
+        Now, if Dave also tells Carol about Bob, and <i>if Carol can tell that 
+        this is the same Bob</i>, and if Carol believes that Alice and Dave are 
+        independent, then Carol might be able to derive some sense that this Bob 
+        is independent from both. (Of course, whether Carol has evidence that 
+        Bob is independent depends on what Alice and Dave told Carol about Bob 
+        when they introduced her to Bob. Horton does not itself standardize the 
+        form of such statements.)</p>
+      <p>Many object-capability systems provide a <a href="../../equality/grant-matcher/history.html">controversial</a> 
+        equality primitive, EQ, that says whether both arguments directly designate 
+        the same object. (In E, the EQ primitive is spelled &quot;==&quot;.) EQ 
+        does its job primitively <a href="http://www.eros-os.org/pipermail/cap-talk/2006-December/006246.html">without 
+        sending messages</a> to the argument objects. The answer is according 
+        to the local platform (TCB), not according to the objects being asked. 
+        Given such a primitive, Carol can simply ask whether the Who objects she 
+        received from Alice and Dave are EQ. If they are, then Alice and Dave 
+        are talking about the same other party.</p>
+      <p>Mailkeys makes use of email addresses in ways that seemed at first to 
+        require something more than EQ. In mailkeys, the email addresses &quot;bob+3a66fo@op.nu&quot; 
+        and &quot;bob+4d7fb1@op.nu&quot; represent different ways of reaching 
+        Bob. The field between the &quot;+&quot; and the &quot;@&quot; are unguessable 
+        swissnumbers, providing the same specificity are the Stub objects in the 
+        Horton protocol. However, if Carol hears about the first address from 
+        Alice, and she hears about the second address from Dave, it seems (based 
+        on email conventions) that Carol can conclude, by comparing the addresses 
+        excluding these fields, that these both represent addresses for directly 
+        contacting the same party.</p>
+      <p>To model this in object-capability terms, we take the &quot;bob+@op.nu&quot; 
+        part to correspond to an EQ-able Who object. We'd then represent the role 
+        of the unguessable swissnumber instead by an unforgeable EQ-able key object 
+        with no behavior of its own. (One is easily created in E by evaluating 
+        &quot;<span class="keyword"><tt>def</tt></span><tt> <span class="defobj">key</span> 
+        {}</tt>&quot;.) For Alice to effectively send a &quot;foo&quot; message 
+        to Bob's B, she'd actually send a &quot;deliver&quot; message to Bob's 
+        Who carrying a key in addition to the rest of the encoding of the &quot;foo&quot; 
+        message. The key provides all the specificity in this system that the 
+        Stub objects provide in Horton: It identifies for Bob both which of his 
+        app-objects the message is intended for, and it identifies for Bob who 
+        should be held responsible for sending the message.</p>
+      <blockquote> 
+        <pre><span class="comment"># E sample</span>
+ 
+<span class="keyword">def</span> <span class="defvar">makeQuoteln</span> := &lt;elang:<span class="litchars">interp.makeQuoteln</span>&gt;
+<span class="keyword">def</span> <span class="defvar">makeWeakKeyMap</span> := &lt;unsafe:<span class="litchars">org.erights.e.elib.tables.makeWeakKeyMap</span>&gt;
+
+<span class="keyword">def</span> <span class="defobj">makePrincipal</span>(<span class="defvar">label</span> :String) {
+    <span class="keyword">def</span> <span class="defvar">reportln</span> := makeQuoteln(println, `$label<span class="litchars"> said:</span>`, 77)
+    <span class="keyword">def</span> <span class="defvar">proxyAmps</span> := makeWeakKeyMap()
+    <span class="keyword">def</span> <span class="defvar">tokenAmps</span> := makeWeakKeyMap()
+    <span class="keyword">def</span> <span class="defvar">giftAmps</span> := makeWeakKeyMap()
+    <span class="keyword">def</span> <span class="defvar">provideAmps</span> := makeWeakKeyMap()
+    
+    <span class="keyword">def</span> <span class="defobj">makeProxy</span>(<span class="defvar">whoBlame</span>, <span class="defvar">tokenKey</span>) {
+        <span class="keyword">def</span> <span class="defvar">log</span> := makeQuoteln(reportln,
+                               `<span class="litchars">I ask </span>$whoBlame<span class="litchars"> to:</span>`,
+                               75)
+        <span class="keyword">def</span> <span class="defobj">proxy</span> {
+            <span class="comment"># as P1: whoBlame=Bob, tokenKey=T1</span>
+            <span class="keyword">match</span> [<span class="defvar">verb</span>, [<span class="defvar">p2</span>]] {
+                log(`$verb<span class="litchars">/1</span>`)
+                <span class="keyword">def</span> [<span class="defvar">t2</span>, <span class="defvar">whoCarol</span>] := proxyAmps[p2]
+                <span class="keyword">def</span> <span class="defvar">gt3</span> := whoCarol.intro(t2, whoBlame)
+                <span class="keyword">def</span> <span class="defvar">p3Desc</span> := [gt3, whoCarol]
+                whoBlame.deliver(tokenKey, verb, [p3Desc])
+            }
+        }
+        proxyAmps[proxy] := [tokenKey, whoBlame]
+        <span class="keyword">return</span> proxy
+    }
+    
+    <span class="comment"># as Carol</span>
+    <span class="keyword">def</span> <span class="defobj">wrap</span>(<span class="defvar">t3</span>, <span class="defvar">whoBob</span>) {
+        <span class="comment"># t3 is the tokenKey for only Bob to use, for Bob to know only Carol</span>
+        <span class="comment"># could have provided. wrap needs to return a key that Alice sees,</span>
+        <span class="comment"># that Alice therefore could misuse as well, so this needs to be a</span>
+        <span class="comment"># key that only Bob can successfully use to obtain t3.</span>
+        <span class="keyword">def</span> <span class="defobj">provideKey</span> {}
+        provideAmps[provideKey] := t3
+        <span class="keyword">return</span> whoBob.store(provideKey)
+    }
+    
+    <span class="comment"># as Bob</span>
+    <span class="keyword">def</span> <span class="defobj">unwrap</span>(<span class="defvar">gt3</span>, <span class="defvar">whoCarol</span>) {
+        def <span class="defvar">provideKey</span> := giftAmps[gt3]
+        <span class="keyword">return</span> whoCarol.obtain(provideKey)
+    }
+    
+    <span class="keyword">def</span> <span class="defobj">makeToken</span>(<span class="defvar">whoBlame</span>, <span class="defvar">targ</span>) {
+        <span class="keyword">def</span> <span class="defobj">tokenKey</span> {}
+        tokenAmps[tokenKey] := [targ, whoBlame]
+        <span class="keyword">return</span> tokenKey
+    }
+    
+    <span class="keyword">def</span> <span class="defobj">whoMe</span> {
+        <span class="keyword">to</span> <span class="defverb">__printOn</span>(<span class="defvar">out</span> :TextWriter) {
+            out.print(label)
+        }
+        <span class="comment"># as Carol</span>
+        <span class="keyword">to</span> <span class="defverb">obtain</span>(<span class="defvar">provideKey</span>) {
+            <span class="keyword">return</span> provideAmps[provideKey]
+        }
+        <span class="keyword">to</span> <span class="defverb">intro</span>(<span class="defvar">t2</span>, <span class="defvar">whoBob</span>) {
+            <span class="keyword">def</span> [<span class="defvar">targC</span>, <span class="defvar">whoAlice</span>] := tokenAmps[t2]
+            <span class="keyword">def</span> <span class="defvar">log</span> := makeQuoteln(reportln,
+                                   `$whoAlice<span class="litchars"> asks me to:</span>`,
+                                   75)
+            log(`<span class="litchars">meet </span>$whoBob`)
+            <span class="keyword">def</span> <span class="defvar">t3</span> := makeToken(whoBob, targC)
+            <span class="keyword">return</span> wrap(t3, whoBob)
+        }
+        <span class="comment"># as Bob</span>
+        <span class="keyword">to</span> <span class="defverb">store</span>(<span class="defvar">provideKey</span>) {
+            <span class="keyword">def</span> <span class="defobj">giftKey</span> {}
+            giftAmps[giftKey] := provideKey
+            <span class="keyword">return</span> giftKey
+        }
+        <span class="keyword">to</span> <span class="defverb">deliver</span>(<span class="defvar">t1</span>, <span class="defvar">verb</span>, [<span class="defvar">p3Desc</span>]) {
+            <span class="keyword">def</span> [targB, whoAlice] := tokenAmps[t1]
+            <span class="keyword">def</span> <span class="defvar">log</span> := makeQuoteln(reportln,
+                                   `$whoAlice<span class="litchars"> asks me to:</span>`,
+                                   75)
+            log(`$verb<span class="keyword">/1</span>`)
+            <span class="keyword">def</span> [<span class="defvar">gt3</span>, <span class="defvar">whoCarol</span>] := p3Desc
+            <span class="keyword">def</span> <span class="defvar">t3</span> := unwrap(gt3, whoCarol)
+            <span class="keyword">def</span> <span class="defvar">p3</span> := makeProxy(whoCarol, t3)
+            E.call(targB, verb, [p3])
+        }
+    }
+    
+    <span class="keyword">def</span> <span class="defobj">principal</span> {
+        <span class="keyword">to</span> <span class="defverb">__printOn</span>(<span class="defvar">out</span> :TextWriter) {
+            out.print(label)
+        }
+        <span class="keyword">to</span> <span class="defverb">who</span>() {
+            <span class="keyword">return</span> whoMe
+        }
+        <span class="keyword">to</span> <span class="defverb">encodeFor</span>(<span class="defvar">targ</span>, <span class="defvar">whoBlame</span>) {
+            <span class="keyword">def</span> <span class="defvar">tokenKey</span> := makeToken(whoBlame, targ)
+            <span class="keyword">return</span> wrap(tokenKey, whoBlame)}
+        <span class="keyword">to</span> <span class="defverb">decodeFrom</span>(<span class="defvar">giftKey</span>, <span class="defvar">whoBlame</span>) {
+            <span class="keyword">def</span> <span class="defvar">tokenKey</span> := unwrap(giftKey, whoBlame)
+            <span class="keyword">return</span> makeProxy(whoBlame, tokenKey)
+        }
+    }
+    <span class="keyword">return</span> principal
+}</pre>
+      </blockquote>
+      <p>Unchanged: </p>
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">alice</span> := makePrincipal("<span class="litchars">Alice</span>")
+<span class="stdout"># value: Alice
+ 
+? </span><span class="keyword">def</span> <span class="defvar">bob</span> := makePrincipal("<span class="litchars">Bob</span>")
+<span class="stdout"># value: Bob
+ 
+? </span><span class="keyword">def</span> <span class="defvar">carol</span> := makePrincipal("<span class="litchars">Carol</span>")
+<span class="stdout"># value: Carol</span></pre>
+      </blockquote>
+      <p>Unchanged: </p>
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">gs1</span> := bob.encodeFor(b, alice.who())
+ 
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">gs2</span> := carol.encodeFor(c, alice.who())
+ 
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">p1</span>  := alice.decodeFrom(gs1, bob.who())
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">p2</span>  := alice.decodeFrom(gs2, carol.who())
+<span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">a</span> := makeA(p1, p2)</pre>
+      </blockquote>
+      <p>Unchanged: </p>
+      <blockquote> 
+        <pre><span class="stdout">? </span>a.start()
+<span class="stdout"># stdout: Alice said:
+#         &gt; I ask Bob to:
+#         &gt; &gt; foo/1
+#         Carol said:
+#         &gt; Alice asks me to:
+#         &gt; &gt; meet Bob
+#         Bob said:
+#         &gt; Alice asks me to:
+#         &gt; &gt; foo/1
+#         Bob said:
+#         &gt; I ask Carol to:
+#         &gt; &gt; hi/1
+#         Carol said:
+#         &gt; Bob asks me to:
+#         &gt; &gt; meet Carol
+#         Carol said:
+#         &gt; Bob asks me to:
+#         &gt; &gt; hi/1
+#         hi
+#</span></pre>
+      </blockquote>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">capability</a>&nbsp;/&nbsp;<a href="index.html">horton</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="amplify.html" title="Back to: Horton with Rights Amplification"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Horton with Rights Amplification" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="notes.html" title="On to: How Horton Hears a Who"><img src="../../../images/next.gif" width="64" height="32" alt="On to: How Horton Hears a Who" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

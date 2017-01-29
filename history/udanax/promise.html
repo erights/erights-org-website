@@ -1,0 +1,933 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="description" content="Resurrection, excavation and documentatation of the original Xanadu Hypertext architecture">
+    <meta name="keywords" content="xanadu, udanax, enfilade, xanalogical, ent, orgl, nelson, python, hypertext"><title>Transcript of The Promise System</title><!-- Provide a Site-Wide Style Standard -->
+
+    
+
+    
+    <link rel="stylesheet" href="promise_files/global_css.css" type="text/css"><!-- But Permit Local Override of Styles --></head>
+
+  <body height="1024" topmargin="0" leftmargin="0" bgcolor="#000000" link="#770088" marginheight="0" marginwidth="0" text="#333333" vlink="#000000">
+  <a name="topofpage"></a>
+  <basefont face="Verdana, Arial, Helvetica, sans-serif" size="2">
+  <table align="center" bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0" width="99%">
+    <tbody><tr>
+      <td rowspan="2" align="left" bgcolor="#ccccff" valign="top">
+        <a href="http://www.sunless-sea.net/"><img src="promise_files/sitetitle_img.gif" alt="Welcome to Sunless-Sea" border="0"></a>
+      </td>
+      <td align="center" bgcolor="#ccccff" valign="bottom">
+                  <font face="arial,helvetica" size="2">
+            <i>What a person thinks on his own, without being stimulated
+by the thoughts and experiences of other people, is even
+in the best case rather paltry and monotonous. -Einstein
+</i>
+          </font>
+              </td>
+      <td rowspan="2" align="right" bgcolor="#ccccff" valign="bottom">
+        <!-- SiteSearch Google -->
+<form method="get" action="http://www.google.com/custom" target="_top">
+  <table bgcolor="#ccccff" border="0" cellpadding="0" cellspacing="0">
+    <tbody><tr>
+      <td align="left" nowrap="nowrap" valign="top">
+        <a href="http://www.google.com/">
+        <img src="promise_files/Logo_25wht.gif" alt="Google" border="0">
+        </a>
+      </td>
+      <td nowrap="nowrap">
+        <input name="domains" value="www.sunless-sea.net;www.xanadu.net;www.udanax.com" type="hidden">
+        <input name="q" size="20" maxlength="255" value="" type="text">
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <input name="sa" value="Search" type="submit">
+      </td>
+      <td nowrap="nowrap">
+        <table border="0">
+          <tbody><tr>
+            <td>
+              <input name="sitesearch" value="" checked="checked" type="radio">
+              <font color="#000000" size="-1">Entire Web</font>
+            </td>
+            <td>
+              <input name="sitesearch" value="www.sunless-sea.net" type="radio">
+              <font color="#000000" size="-1">sunless-sea.net</font>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <input name="sitesearch" value="www.xanadu.net" type="radio">
+              <font color="#000000" size="-1">xanadu.net</font>
+            </td>
+            <td>
+              <input name="sitesearch" value="www.udanax.com" type="radio">
+              <font color="#000000" size="-1">udanax.com</font>
+            </td>
+          </tr>
+        </tbody></table>
+        <input name="client" value="pub-7758221727948076" type="hidden">
+        <input name="forid" value="1" type="hidden">
+        <input name="ie" value="ISO-8859-1" type="hidden">
+        <input name="oe" value="ISO-8859-1" type="hidden">
+        <input name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;" type="hidden">
+        <input name="hl" value="en" type="hidden">
+      </td>
+    </tr>
+  </tbody></table>
+</form>
+<!-- SiteSearch Google -->
+
+      </td>
+    </tr>
+    <tr>
+      <td align="center" bgcolor="#ccccff" valign="bottom">&nbsp;
+                  
+              </td>
+    </tr>
+  </tbody></table>
+
+<table align="center" bgcolor="#ffffff" border="0" cellpadding="5" cellspacing="0" width="99%">
+  <tbody><tr>
+    <td rowspan="5" align="left" bgcolor="#ccccff" valign="top">
+            <!-- dtml-try -->
+              <font size="2"><b>
+<b><sub>SITENAV</sub></b><br>
+
+&nbsp;<a href="http://xanadu.meetup.com/">meetings</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/RecentChanges">what's new?</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/FrontPage/wiki_map">whiteboards</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/forum/addPostingForm">post article</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/FrontPage">frontpage</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/Downloads">downloads</a><br>
+
+<br>
+<b><sub>ORIENTATION</sub></b><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki2/Main/Legalisms">legalisms</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki2/Main/History">history</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/Definitions">glossary</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki2/People">participants</a><br>
+<br>
+<b><sub>BACK-ENDS</sub></b><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/UdanaxGreen">udanax-green</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/UdanaxGold">udanax-gold</a><br>
+<br>
+<b><sub>ALGORITHMS</sub></b><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/CoordSpaceTheory">coordspaces</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/EnfiladeTheory">enfilade</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/EntTheory">ent</a><br>
+<br>
+<b><sub>OLD MANUALS</sub></b><br>
+&nbsp;<a href="http://www.sunless-sea.net/XanaduInfoArch" alt="Xanadu Information Architecture">XIA</a><br>
+<br>
+<b><sub>HELPING</sub></b><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/Puzzles">puzzles</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/Needed">needs</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/Funding">funding</a><br>
+<a href="http://www.ginx.com/nx/donate/jrush"><img src="promise_files/nxclick_img.gif" alt="Like the site? Click to donate!" border="1" height="31" width="106"></a>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input name="cmd" value="_xclick" type="hidden">
+<input name="business" value="jrush@timecastle.net" type="hidden">
+<input name="item_name" value="Donation to Sunless-Sea Project" type="hidden">
+<input name="item_number" value="sunless" type="hidden">
+<input name="no_shipping" value="1" type="hidden">
+<input name="return" value="http://www.sunless-sea.net" type="hidden">
+<input name="cancel_return" value="http://www.sunless-sea.net" type="hidden">
+<input name="no_note" value="1" type="hidden">
+<input name="currency_code" value="USD" type="hidden">
+<input name="tax" value="0" type="hidden">
+<input src="promise_files/x-click-but04.gif" name="submit" alt="Support Sunless-Sea with a Donation via PayPal!" border="1" type="image">
+</form>
+
+<br>
+&nbsp;<a href="http://www.timecastle.net/stats/sunless-sea.net/">site-traffic</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/forum/manage">admin</a><br>
+<br>
+</b></font>
+<p><br>
+          <!-- dtml-except -->
+      <!-- EXCEPTION < xdtml-var absolute_url> -->
+    <!-- /dtml-try -->
+        <!-- dtml-try -->
+              <font size="2"><b>
+<b><sub>SITENAV</sub></b><br>
+
+&nbsp;<a href="http://xanadu.meetup.com/">meetings</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/RecentChanges">what's new?</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/FrontPage/wiki_map">whiteboards</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/forum/addPostingForm">post article</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/FrontPage">frontpage</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/Downloads">downloads</a><br>
+
+<br>
+<b><sub>ORIENTATION</sub></b><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki2/Main/Legalisms">legalisms</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki2/Main/History">history</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/Definitions">glossary</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki2/People">participants</a><br>
+<br>
+<b><sub>BACK-ENDS</sub></b><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/UdanaxGreen">udanax-green</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/UdanaxGold">udanax-gold</a><br>
+<br>
+<b><sub>ALGORITHMS</sub></b><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/CoordSpaceTheory">coordspaces</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/EnfiladeTheory">enfilade</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/EntTheory">ent</a><br>
+<br>
+<b><sub>OLD MANUALS</sub></b><br>
+&nbsp;<a href="http://www.sunless-sea.net/XanaduInfoArch" alt="Xanadu Information Architecture">XIA</a><br>
+<br>
+<b><sub>HELPING</sub></b><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/Puzzles">puzzles</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/wiki/Needed">needs</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/Funding">funding</a><br>
+<a href="http://www.ginx.com/nx/donate/jrush"><img src="promise_files/nxclick_img.gif" alt="Like the site? Click to donate!" border="1" height="31" width="106"></a>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input name="cmd" value="_xclick" type="hidden">
+<input name="business" value="jrush@timecastle.net" type="hidden">
+<input name="item_name" value="Donation to Sunless-Sea Project" type="hidden">
+<input name="item_number" value="sunless" type="hidden">
+<input name="no_shipping" value="1" type="hidden">
+<input name="return" value="http://www.sunless-sea.net" type="hidden">
+<input name="cancel_return" value="http://www.sunless-sea.net" type="hidden">
+<input name="no_note" value="1" type="hidden">
+<input name="currency_code" value="USD" type="hidden">
+<input name="tax" value="0" type="hidden">
+<input src="promise_files/x-click-but04.gif" name="submit" alt="Support Sunless-Sea with a Donation via PayPal!" border="1" type="image">
+</form>
+
+<br>
+&nbsp;<a href="http://www.timecastle.net/stats/sunless-sea.net/">site-traffic</a><br>
+&nbsp;<a href="http://www.sunless-sea.net/forum/manage">admin</a><br>
+<br>
+</b></font>
+</p><p><br>
+          <!-- dtml-except -->
+      <!-- EXCEPTION < xdtml-var absolute_url> -->
+    <!-- /dtml-try -->
+  
+
+    </p></td>
+
+    <td align="left" valign="top" width="100%">
+      <font bgcolor="#ffffff">&nbsp;
+
+</font><h1><font bgcolor="#ffffff">Transcript of "The Promise System"</font></h1>
+<h1><font bgcolor="#ffffff">Presented by Mark S Miller</font></h1>
+
+        <p><font bgcolor="#ffffff">Initially transcribed by David Jones</font></p>
+
+
+<p><font bgcolor="#ffffff">0:00:26 MM The promise system exists to solve several different
+problems, in trying to do a client server system. The interface to the
+Xanadu server is conceptually not simply like your are sending
+messages, sort of like the one-bit object???, but rather there is a
+whole bunch of little objects that you send messages to. Sort of all
+the objects on the surface of the Xanadu server, and in response to a
+message to one object, one frequently gets another object is created
+or made accessible to which you then get a pointer to or capability
+to.</font></p>
+
+<p><font bgcolor="#ffffff">0:01:17 MM This talk as we will be providing is pitched to those
+who know C++ but are not assumed to know particularly anything
+else.</font></p>
+
+<p><font bgcolor="#ffffff">0:01:27 MM So in exchange for a message to one object, you may get
+hold of another object, and then you have various message that you can
+send to it. This protocol consisting of a bunch of different classes
+and messages that define the interface to the server.</font></p>
+
+<p><font bgcolor="#ffffff">0:01:50 MM Initially we came up with a fairly standard Remote
+Procedure Call idea for how you stretch this across a wire so that the
+front-end application in interacting with the Xanadu server can be
+interacting with local C++ objects which really mirror the remote C++
+objects and every message sent to the local object, under remote
+procedure call terminology, gets marshalled into a network packet,
+sent across, unmarshalled over there, into a data structure ?????
+which can be sent to the local C++ object, whatever the return from
+that local message, that return gets marshalled, sent back across this
+network packet, gets unmarshalled, and returned to the guy in the
+front-end who originally invoked the message. This was all very clean,
+but it had several problems, the major problem being that it made you
+very very sensitive to network latency.</font></p>
+
+<p><font bgcolor="#ffffff">0:03:10 ?? You could only have one invocation?? in the pipe at once?</font></p>
+
+<p><font bgcolor="#ffffff">0:03:13 MM Right.</font></p>
+
+<p><font bgcolor="#ffffff">0:04:15 MM A common observation about local area networks, is local
+area networks for most things that you do with them are not really a
+problem with lack of bandwidth but rather latency, they really have
+plenty of bandwidth when you compare it with what is happening inside
+a computer, and the other thing is that the result of paying this network
+latency cost is that it forced you into a terrible engineering
+trade-off with respect to the semantic level of the interface to the
+server.</font></p>
+
+<p><font bgcolor="#ffffff"><img src="promise_files/PromiseSystem_0012.jpg"></font></p>
+
+<p><font bgcolor="#ffffff">0:05:00 MM Over here [left] we have the server that is semantically
+defined in terms of a bunch of simple composable primitives and then
+on top of this we have [centre] a lot of typical idioms of things that we
+compose out of those primitives and over here [right] we have a client that is
+sitting on top of that composition. What we would like to do for
+flexibility and semantic cleanliness is to say that this stuff is in
+the server machine and this stuff is all part of the client. This is
+basically all just library code that the client links in, because that
+way if the clients wants to try variations on the idiom there is
+nothing special about this idioms. The problem is that the client
+makes one request at this level and that might turn into a whole lot
+of traffic at this level, so from a network latency problem given the
+restriction of RPC what you end up getting forced into that. And
+before we started the promise system we were worried about precisely
+that trade off. The promise system essentially lets us stick with this
+both semantically and implementationally without paying the
+penalty.</font></p>
+
+<p><font bgcolor="#ffffff">0:06:34 MM Now, how does it work?</font></p>
+
+<p><font bgcolor="#ffffff"><img src="promise_files/PromiseSystem_0013.jpg"></font></p>
+
+<p><font bgcolor="#ffffff">0:06:49 MM What we did was we sacrificed transparency. The class
+hierarchy on the server side that defines the semantic surface of the
+server, gets transformed into a parallel class hierarchy that exists
+on the client side. The parallelism keeps intact the kind of semantic
+transparency, the details at the C++ level, a client who is talking to
+this is definitely not compilation compatible with a client that is
+built to talk to that.</font></p>
+
+<p><font bgcolor="#ffffff"><img src="promise_files/PromiseSystem_0014.jpg"></font></p>
+
+<p><font bgcolor="#ffffff">0:07:42 MM What happens is, over here we have a client application
+and inside his machine he's talking to an XuFoo object. When he sends
+the x message, to the XuFoo object, then the XuFoo object has a return
+which is a XuInt value, so what happens is, the x message gets
+marshalled and we have a network packet or a network part of a network
+packet with this x message in it, that thing gets streamed out to the
+server machine immediately - there is a stream going from client to
+server. So when you send the x message to this guy, then what happens
+is, this gets put on the stream, that will eventually make it here but
+instead of waiting for the x - within the server there is the actual
+foo object - so instead of waiting for this message to make it here
+for the foo object to receive it and the result to come back, since
+you know that the result is going to be an XuInt value, what happens
+locally is this guy essentially creates an object of the right type,
+which is a promise for the return value. And returns that as the
+return value of that invocation immediately.</font></p>
+
+<p><font bgcolor="#ffffff"><img src="promise_files/PromiseSystem_0015.jpg"></font></p>
+
+<p><font bgcolor="#ffffff">0:09:54 MM Now the thing is, the int value is an interesting case
+because an int value is something that represents an integer value and
+you don't know what the value is yet. Well, what's over here is the
+primitive class hierarchy that is defined by the promise system
+itself.</font></p>
+
+<p><font bgcolor="#ffffff">0:10:21 ?? Internal to its working?</font></p>
+
+<p><font bgcolor="#ffffff">0:10:23 MM It is also visible to the client, so these are all
+visible class hierarchy. In fact there are some other classes that are
+internal. When you take a class protocol and do the promise
+transformation to it, the interface that you are presenting to the
+front-end client that uses your API necessarily include these classes.
+The blue one is not really here, just the black classes here. All of
+the other classes like XuFoo hang off of Promise. Generally they hang
+off of Promise but they can also be subclasses of some of these other
+classes, and also ????????. The first useful approximation is that the
+classes resulting from this transformation specific to your kind of
+server hang off of Promise, and for all of those all of the input
+arguments and all of the output arguments are simply other promises.
+So for them, you don't have to wait for a round trip before you can do
+everything that they can do. So with an XuFoo there are two things
+that you can do with it, which is m and x, and you can do m and x to
+your hearts content without waiting for a round trip. However some of
+the things that they return to you, such as an XuInt value such that
+some of the operations on these primitive values like a value message
+to an XuInt value which returns to you a raw integer. And that is
+something you can only do once the promise is fulfilled.</font></p>
+
+<p><font bgcolor="#ffffff">0:12:20 MM So what is going on here is, as we make requests each
+request gets put on the output stream immediately, so we've got this
+sequence of requests on this output stream, and the output stream can
+just sort of opportunistically be going out there, it does not have to
+get flushed immediately onto the wire. And we have a stream of return
+results coming back, so for a message, lets say that returns an XuFoo,
+which I don't have an example of here, the corresponding result packet
+over here would simply say whether or not that request succeeded or
+not. If it succeeded you don't need any other information, if it
+failed then you need all the exceptional information. That was by the
+way where all of the hard problems dealing with the promise system
+were. Were what happens if the result of invoking x over here is that
+x over here raises an exception instead of returning a value. You've
+already returned a promise for the return value and the computation
+has gone forward. So coming up with a good abstraction so that this guy
+can deal with the fact that he has gone forward with a promise for a
+return value that turns out never to appear here, is where all the
+interesting design was.</font></p>
+
+<p><font bgcolor="#ffffff"><img src="promise_files/PromiseSystem_0016.jpg"></font></p>
+
+<p><font bgcolor="#ffffff">0:13:54 MM A promise can be in one of three states. A promise is
+born <b>not-ready</b>, then when the result comes back the promise
+either makes a transition to being <b>fulfilled</b> or <b>broken</b>.
+So if the request was successful then you have a fulfilled promise, if
+the request was not successful then the promise turns into a broken
+promise.</font></p>
+
+<p><font bgcolor="#ffffff">0:16:12 ?? And this is something that happens on the client end?</font></p>
+
+<p><font bgcolor="#ffffff">0:16:16 MM Right. So once the result packet from the x request over
+here comes back this XuInt value either turns into a fulfilled int
+value or it turns into a broken int value. Now if it is fulfilled, in
+the case of an int value the packet that comes back actually contains
+the integer value. So a fulfilled int value actually can now respond
+to the value message with no problem, and similarity for a float
+value.</font></p>
+
+<p><font bgcolor="#ffffff">MM 0:16:54 <b>Broken promises</b> by the way actually have two
+varieties of broken, there is <b>directly</b> and <b>indirectly
+broken</b>. In the case where the operation X raised an exception then
+you have a directly broken promise, and with a directly broken promise
+you can inquire about the exception that caused it to be broken, and
+that is the problem. You can ask what was the problem? Why did you
+break your promise to me? An indirectly broken promise results from
+making a request where either the recipient of the request or one of
+the arguments of the request was itself a broken promise, because what
+can happen here is that I've got this int value back now what I can do
+with this int value is I can now make a further request of the int
+value, so I can take two int values and add them together and get a
+new int value, but it turns out that if the original x message results
+in a broken promise then this int value becomes a broken promise and
+therefore there is no integer back over here for me to ask to be added
+to another integer. So broken promises are never really represented by
+objects at all on the server, it's the comm layer that either one side
+of the wire or the other depending on how much information exists
+locally or not, can tell that this request involves a broken promise
+and therefore the promise that results from the broken request is
+indirectly broken and the broken promise that caused this guy to be
+indirectly broken is this guys excuse. Why did you break your promise
+to me? Oh don't blame me, it's his fault! And then you can track down
+the excuse chain to find the directly broken promises problem. You can
+have a chain of indirectly broken promises and that chain always has
+to end in a directly broken promise that has a problem.</font></p>
+
+<p><font bgcolor="#ffffff">0:19:30 ?? And that chain exists over on C?</font></p>
+
+<p><font bgcolor="#ffffff">0:19:34 MM Yes, in the heap on C. That chain does not take up any
+server storage.</font></p>
+
+<p><font bgcolor="#ffffff">0:20:06 MM The result is that we can now have all of these
+primitive things that we can use to compose together and something
+that's this idiom that involves doing the foo operation on this and
+taking the result and applying this operation to that, it just becomes
+a stream of these small requests going out here. This guy is able to
+just process these requests one after the other and it's really just
+like sending a program across the wire. We really are in some sense
+getting a lot of the kinds of benefits you get with postscript????
+type window system where you can send these little procedures over
+where the procedure then executes locally and you get the result of
+the procedure in some sense coming back but without ever sending over
+something that defines the procedure, that would take you into a whole
+level of complexity that you wouldn't want to get into. Another way
+you can think of this is in terms of floating point processors do,
+register renaming, so every time you make one of these requests to any
+promise object you always get a new promise object, because obviously
+the promises cant know that the promise turns out to be a promise for
+an object that it replied with earlier, and there is an internal
+numbering system where these things are numbered so you can think of
+the requests going out of here kind of like an instruction stream to
+one of these infinite register machines. The games being played by
+being able to delay the responses getting sent back are very much the
+kinds of things you get with funny instruction scheduling.</font></p>
+
+<p><font bgcolor="#ffffff">0:22:11 ?? The program as it is in some sense that is shipped over to the
+server becomes a data flow program.</font></p>
+
+<p><font bgcolor="#ffffff">0:22:21 MM In what sense? The semantics are defined such that the server is
+obligated to execute these things in sequence. And the result chain
+also has to be in the same sequence. And in fact part of the
+compactness of the protocol results from that assumption.</font></p>
+
+<p><font bgcolor="#ffffff">0:22:48 MM The place where this bottoms out again is raw data. We
+talked about raw int values and float values, and the other place
+where we get raw data are arrays. There are four kinds of arrays. This
+is probably a level of detail not worth talking about...</font></p>
+
+<p><font bgcolor="#ffffff">0:23:18 MM I gave you the rational for why we created the promise
+system, and it turns out that the major benefit of the promise system
+was not with respect to network latency, it was with respect
+interactive performance in the context of server latency. No matter
+how blindingly fast our server is, it is a server that a bunch of
+users are going to be beating on simultaneously and sometimes the
+server itself is going to be slow. In a direct manipulation user
+interface you want the part of the user interface that is the direct
+manipulation part to always be speedy. When you click on something,
+when you do various operations, you like to feel like the part that is
+immediate, the part that is driven by the mouse action always happens
+immediately. And to a first approximation, and there are some
+exceptions by we are moving in this direction, but to a first
+approximation the way we achieve this is all of the direct
+manipulation parts of our front-end simply result in requests being
+streamed out and local manipulation happens, ie the direct manipulation part,
+never waits for a round trip.</font></p>
+
+<p><font bgcolor="#ffffff">0:24:42 MM There is an operation that I didn't mention that is
+called <b>force</b>. The force operation, which is in the front-end
+library, forces a flush of this stream, and actually places a special
+force marker in the stream over here. So the stream gets flushed, such
+that the server can see it all now. When the server sees the forced
+marker it then flushes the result stream, so that this guy can see it
+all. If you just flushed the stream without the force marker then
+there would be nothing forcing the result stream to get flushed, and
+you could still hang. And finally the force operation in the front-end
+library waits for the result stream to catch up with the last
+request.</font></p>
+
+<p><font bgcolor="#ffffff">0:25:34 MM The goal here is that a really responsive front-end
+should never force other than for operations where it is acceptable to
+put up an hour glass. Like save or something. Even if it typically
+takes a very small amount of time, that operation is when you are
+dependent on the server coming back in. Like I said, we are not at
+that goal yet, but we are moving in that direction.</font></p>
+
+<p><font bgcolor="#ffffff">0:26:08 MM So for example, say you have a document on the screen,
+and you bring up a link pane, what happens is that the process of
+bringing up the link pane causes a bunch of messages to get streamed
+out over here but with no force. The bringing up of the pane is just
+all local user interface stuff, it doesn't depend on any information
+back from the server. But displaying links in the link pane depends on
+information back from the server, so what you do is drive this off of
+various kinds of <b>detector hooks</b>. Detector hooks are basically
+call-back objects, so there is one very important kind of detector
+hook which is a ready hook which simply waits for a given promise to
+be ready. A lot of the things that happen in the front-end happen as a
+result of making some requests and then posting a ready hook that
+simply says "execute this object and send the standard message to this
+ready hook object when the result stream has caught up with where the
+request stream is right now." What happens is while you are
+interacting, user interface events; mouse motion and keyboard typing
+take priority over processing results back from the back-end, so while
+you are doing things the front-end is responding to you directly and
+sending requests out to the back-end and then when you are not doing
+things, processing the result stream that in turn triggers ready hooks
+that have been posted and now asynchronously you get things filling in
+on the screen and other things happening that needed the data. The
+things that didn't need the data are the direct manipulation things,
+and the things that did need the data can wait until the user is idle.
+Or of course try and slip it in. Idle is relative performance term,
+the faster the computer is the smaller amount of time that constitutes
+idle.</font></p>
+
+<p><font bgcolor="#ffffff">0:28:38 ?? All of these promises once made, you try to fill them.
+There is no concept of trying to get away with not doing one.</font></p>
+
+<p><font bgcolor="#ffffff">0:28:52 MM There is. I didn't mention, but over here at the top of
+the class hierarchy is a class Counted???. All of these promise
+objects as well as the various detector objects, are <b>reference
+counted</b>. For class xuFoo, the pointers to it are actually class
+objects of type xuFooP. So this is like saying xuFoo* at, except by
+using xuFooP at, the object f is an object that acts like a pointer to
+an xuFoo except that xuFoos keep a reference count of how many xuFooP
+point at it. The result is that lets say you have the following piece
+of code.</font></p>
+
+<p><font bgcolor="#ffffff"><img src="promise_files/PromiseSystem_0017.jpg"></font></p>
+
+<p><font bgcolor="#ffffff">0:30:37 MM So over here we've got variables which are external to
+this block g and i. Inside the block is send a zip message to a g and
+get back a promise for a foo, then we send to the foo message x with
+that very foo as argument, and we get back a promise for an integer,
+and then at the close of the curlys this variable goes out of scope,
+its destructor gets invoked and the ref counter of the foo goes away
+and what gets put out on the output stream is a packet saying this
+promise is now no longer needed. The server does not have any logic in
+it to do anything with those packets, it just ignores them, but they
+are in the protocol so that if the computation of the intermediate is
+not necessary in order to compute the things that are necessary then
+you know that you can skip it. If we use the garbage collector instead
+of ref counts over here then there would be no good guarantee about
+when you would find out that you didn't need f, and therefore there
+would be a delay before you could tell the server that you didn't it,
+and that would probably be a sufficient delay to ruin the effect. It
+is this ability that enables all the query optimisation kinds of
+things that the database folks do, even though we are not doing any of
+that right now. This is the thing that allows a sent over procedure to
+have a local variable so that the server can act like an optimising
+compiler for the procedure and optimise out the existence one of the
+variables.</font></p>
+
+<p><font bgcolor="#ffffff">0:33:14 ?? This allows several processes to be going on at once in
+C, all using this interface. Is there any restriction about the
+various processes on the client and having their side-effects take
+place in some order.</font></p>
+
+<p><font bgcolor="#ffffff">0:33:42 MM The promise library itself assumes it is only going to
+be invoked in a single threaded fashion. So as long as you put mutual
+exclusion around access to the promise library it doesn't care if
+there is any further multi-threading in the client. That would be the
+case independent of what we get, we didn't have to do anything of
+course to enable that. The expectation is that if you want
+multi-threads accessing the server you can either do mutual-exclusion
+around your local promise library as a whole, or you can have multiple
+independent instantiations of the promise library each of which
+is maintaining its own pair of threads to the server.</font></p>
+
+<p><font bgcolor="#ffffff">MM 0:33:45 Now let me talk a little about generating this. We
+started off by generating these from an annotated version of this. We
+stopped doing that. What we now have is a file that sort of looks like
+suggestively like C++ but it is in our own defined syntax which
+basically contains a definition in a rule sub-language, an entire
+server protocol, as well as assigning numbers to the individual
+classes and numbers to the individual requests. That way assignment of
+numbers is standardised by the file, the file is the thing that
+defines the protocol that goes over the wire. And then that file gets
+processed both to create the promise library classes that do the
+marshalling, all the helper code that does the marshalling, as well as
+to create not foo itself but the code within the server that does the
+unmarshalling and invokes it. If the types as they appear within the
+client, the text in the received file does not match the types as they
+exist in the classes that it specifies then you get a type checking
+error when you try to compile and link them together.</font></p>
+
+<p><font bgcolor="#ffffff">0:36:38 MM Another interesting thing, speaking of types is, we talk
+about the way we do <b>casts</b> in the promise system. One of the things
+that you have to face in C++ all the time.</font></p>
+
+<p><font bgcolor="#ffffff"><img src="promise_files/PromiseSystem_0018.jpg"></font></p>
+
+<p><font bgcolor="#ffffff">0:37:23 MM Let me introduce a notation that I like for talking
+about static and dynamic types. I was influenced by David Arrells????
+notation for what he calls hiraps???? which are a mixture of
+Venn-diagrams and directed graphs. He makes a compelling case that
+Venn-diagrams are much better off with labelled boxes rather than just
+putting the label inside the box. In any case, this represents that
+bar and zap are subclasses of foo, and we are going to represent a
+pointer in a double way. Actual objects are these shaded circular
+things in this convention. Pointer has both a static part and a
+dynamic part. The static part refers to a box and the dynamic part
+refers to an object. The different places that you can exist within a
+box defines different behaviours that you can have, and the box say
+you can have any behaviour within this allowable space of behaviours.
+You can have any state, lets call it a state rather than a behaviour.
+You can have any state within this allowable space of states, so for
+example if zap is a leaf class the different places in zap define
+different states according to the values of your instance variables.
+So from the point of view of foo, which is not a leaf class, part of
+the state of an object which is a kind of foo is what class it has, ie
+the vtable pointers is really an instance variable which is part of
+its state. Within that class the other instance variables determine in
+a more fine grained way where it is in the state space. The static
+part of a pointer points at the box, the dynamic part points at an
+object and the correctness constraint on the type-checking system is
+that the place that the dynamic pointer points at has to be within the
+box that the static pointer points at. This is a complete aside from
+the promise system, the place where this diagramming turned out to
+make an essential clear explanation is within the server code, we have
+a notion of type safe become, where an object at runtime can change
+its class and continue to be the same object. We figured out how to do
+that and maintain type safety. What happens is you have to pre-declare
+in the class hierarchy which classes have instance that may become
+other classes. For example if instances of zap may become instances of
+bar then there is a declaration in zap that may become zap bar. The
+correctness constraint is that if this declaration appears, then there
+must also be a declaration as follows. Not-a-type zap. In general if
+you have got a class hierarchy and this guy may become that guy, then
+this guy may not be a type and that guy may not be a type. Basically
+the guy who may become some other guy, he may not be a type, and all
+his ancestors until you get to the common super type with the guy he
+may become may not be types. What it means to not be a type, and I've
+diagrammed this with a dotted box. These two declarations result in
+zap being this dotted box, it's dotted because the object can escape.
+See the solid box says that the object can dynamically change its
+behaviour but only within the cage, the box is also a cage. The dotted
+box is not a cage. Cages may close to keep things in, but they don't
+keep things out. So this object may now transition to being a bar and
+the result of this declaration is that because of the way in which we
+declare pointers, the set of macros that we use by convention to
+declare pointers, if you try to declare a pointer as a type
+pointer-to-zap you get a compile time error. You find out that zap
+cannot have pointers that are statically declared as pointers to zap.
+However what you can do is you can use our cast macro to cast. Lets say
+that f is a member function that is declared only in zap. You may not
+declare a pointer of type pointer-to-zap and therefore there is no
+situation in which you can say q foo because there is no pointer type
+for q to be declared as. But what you can do is momentarily do this
+cast, this is a safe cast, that checks that at this instant this
+object is within this cage. And during that instant that allows the
+member function f to be applied to it. However you cant divide this
+expression up into something that assigns the variable and then uses
+the variable because there is no variable you can use to preserve the
+effect of the cast, which is good because it is only an instantaneous
+property.</font></p>
+
+<p><font bgcolor="#ffffff">0:45:26 MM Now the reason I mention all of this. All this may
+become stuff is completely irrelevant to the promise system and
+completely irrelevant to the front-end programmer. The front-end
+programmer is programming in C++ and he is not programming in
+<b>Xperanto</b>????. Let me introduce you to some language names here
+by the way. So Xperanto or Xpidgin??? are the two names, we have been
+using the name Xpidgin but we are likely to transfer over to Xperanto.
+We had this language that has a semantics that can be specified, and
+part of my task over the next 13 months is to specify it, but this
+language exists in some sense by convention on top of both Smalltalk
+and C++. So like the pidgin language, it doesn't have a fixed grammar,
+and it is also a compromise between existing languages, and also like
+the pidgin language you can tell by which grammatical constructs that
+someone uses what their native language is. So Xperanto has two ways
+that it can be written, and those are referred to as Xtalk and X++
+which is the Xperanto language as written in the Smalltalk notation
+versus the Xperanto language as written in the C++ notation. But all
+that is completely internal to the server.</font></p>
+
+<p><font bgcolor="#ffffff">0:47:50 MM I'll leave this notation up here for talking about what
+tasks look like over the promise system. Also it is the case that none
+of the object that are on the semantic surface of the server are
+objects that may change there class dynamically. So all that class
+changing issue is also not an issue with respect to the promise
+system.</font></p>
+
+<p><font bgcolor="#ffffff">0:48:33 MM If in our original class we've got a member function
+that returns a foo star then in our transformed promise for a foo
+class then we have something that returns a promise for a foo as a
+static type. However we are calling our dynamic picture its the case
+that when we invoke this member function on our promise for foo since
+we don't what the dynamic type of the actual object that gets created
+on the server that the promise that we are getting is bound to then
+the only thing that we have to go on is the declared static type so we
+actually go ahead and create a promise that will be bound to, lets say
+it is a bar. So now lets say this particular invocation of the x
+message is actually going to create or make accessible a var object
+from the back-end, however since statically all we know is it is some
+kind of foo we get back a promise for a foo, and then we get that back
+immediately it's only when the result packet comes back that it really
+is in some sense bound to this particular object. Lets say what we
+want to do is the equivalent of the thing I was doing earlier with the
+cast macro. The way we write that in the client library is lets say b
+gets xubar::cast, we use a static member function. Lets say zip is a
+message that only xubars can respond to. What we have done here is
+we've taken f and we've optimistically casted it to a bar. What that
+does is it sends another packet out on the request stream saying "try
+to cast f down to a bar" and it immediately creates a promise of type
+bar which is a promise for the result of the cast. There is still no
+round trips needed. Now when we zip on the result of that cast
+operator and get back whatever the result of the zip is. And we can do
+all of that immediately without waiting for a round trip. Now lets say
+that in fact f is not a kind of bar, its a kind of zap. Well then what
+happens is the cast operation results in b being a broken promise and
+then the result of the zip operation returns will be an indirectly
+broken promise where its excuse is b, and b's problem is case
+violation. So we can go ahead and optimistically try things out, and
+then the whole optimistic chain gets broken as a result of our bad
+assumptions, and we can even go ahead and optimistically try out
+several chains, and we actually use this in the code. In straight line
+code we can cast f to a bar and do some things if it turns out to be a
+bar and also cast f to a zap and do some things in the case it turns
+out to be a zap. What will happen is the entire sequence goes out to
+the engine, we're not using the term server or backend anymore, and
+depending on what the dynamic type is of f one or the other of those
+two parts will be rejected and result in indirectly broken
+promises.</font></p>
+
+<p><font bgcolor="#ffffff">0:53:19 ?? But perhaps the other wont be.</font></p>
+
+<p><font bgcolor="#ffffff">0:53:23 MM If f is necessarily either a zap or a bar, then one of
+these two will be successful. If f maybe a bar or maybe a zap or maybe
+something else then you might end up with both of them failing.</font></p>
+
+<p><font bgcolor="#ffffff">0:53:47 MM So there is two techniques here you can use. One is that
+you go ahead and try to be exhaustive, and other is if one case really
+stands out as the typical case you can just optimistically go ahead
+and do the typical case inline and then only wait for the round trip
+and the recovery code to bother with the atypical case.</font></p>
+
+<p><font bgcolor="#ffffff">0:54:17 MM To me it's very interesting and weird to the degree to
+which there are analogies between what we went through with the
+promise system and the kind of things one does with instruction
+scheduling. Optimising for the typical case and letting the atypical
+case be both out of line and be something that loses all latency
+optimisations.</font></p>
+
+<p><font bgcolor="#ffffff">0:54:40 ?? And the attempt to deal with exceptions is a big pain in
+instruction scheduling.</font></p>
+
+<p><font bgcolor="#ffffff">0:54:47 MM In fact the broken promises were directly inspired by
+the handling of NANDs. The way we refer to broken promises while we
+were designing them, the other phrase we used was they are Not An
+Object (NAO). So when they propagate through they result in things
+being derivedly not numbers.</font></p>
+
+<p><font bgcolor="#ffffff">1:00:13 MM The promise system allows a certain degree of
+asynchronity, but because of the imposition of sequence, the degree of
+asynchronous is quite limited. The results have to come back in the
+same sequence as the requests. The results in some sense are just the
+result of the request. The reason we need <b>detectors</b> is because
+Xanadu is an interpersonal medium some of the things you want to be
+informed about are the results of things other people are doing, not
+the result of requesting the ????.</font></p>
+
+<p><font bgcolor="#ffffff">1:01:23 MM Part of detectors are so that you can get asynchronous
+notifications and be able to react to things other people have done,
+so basically you can post a persistent query is the model that we use,
+and as there come to be more answers to that query you continue to get
+informed of further answers. The other reason for detectors is that
+even when they are just a result of things you've done, in order to
+allow the backend to engage in further latency optimisations, this is
+a further optimisation that we have not engaged in yet but we know we
+want to, we have all the hooks there but haven't jumped into the water
+yet, is there are certain parts of the semantics that we have very
+carefully defined as this particular class of results of this
+operation happens eventually. You are guaranteed that it will
+eventually happen but it does not need to happen immediately and you
+are not guaranteed when it happens. In order to find out that the
+result happened out of band you have a detector.</font></p>
+
+<p><font bgcolor="#ffffff">1:02:58 MM The way in which it works as far as the class hierarchy
+is concerned is that we actually have a parallel set of detector
+classes and detector hook classes. The super classes are Dectector and
+Hook, we will leave off the Xu's, and under that we might have
+FooDector and FooHook, and BarDector and BarHook, etc. The hook
+classes are really the ones that are significant to the user of the
+library, the detector classes themselves are much more internal to the
+library, they are basically the object that the hook gets posted on.
+And what happens in terms of managing the protocol is that the way you
+post a detector is you make a request whose return value is a
+detector, so instead of getting a promise back you get a detector
+object back, and then you post hooks onto the detector object, and
+that works well with the other mechanisms of the protocol in terms of
+assigning a unique number to the detector so that then the
+asynchronous notifications can have that number to use, and it works
+well with respect to the whole ref counting system. So that when you
+drop the detector object then that's the notification object to the
+back-end that we are no longer interested in messages that come back
+to the detector because they might be crossing each other. There is
+all the logic to be able to continue to accept messages for a detector
+that no longer exists and just drop them on the fly, as opposed to
+some kind of weird angle??? reference ???.</font></p>
+
+<p><font bgcolor="#ffffff">1:05:34 ?? And you eventually get to the point where you don't have
+to do that anymore?</font></p>
+
+<p><font bgcolor="#ffffff">1:05:40 MM Right, when the reply stream catches up with the place in the
+request stream where the detector was dropped we know then that we no
+longer have to keep track of what we needed to keep track of in order
+to be able throw away those messages.</font></p>
+
+<p><font bgcolor="#ffffff">1:05:56 ?? So you can take it off the list of hints which you can
+drop on the fly?</font></p>
+
+<p><font bgcolor="#ffffff">1:06:02 MM So what we actually do is leave the detector object
+there in a funny state until we catch up to the place where we dropped
+it. How the mechanism works I may have gotten wrong, but I believe
+that is how it works. In any case whether the user uses the hook
+classes is the hook classes themselves that are defined are abstract
+classes and the notification messages, the messages to the hook
+classes that correspond to the notification messages in the protocol,
+the asynchronous notifications, those are all pure-virtual functions
+in the hook classes, so the way in which the user uses the hook
+classes is by creating subclasses of them that contain the action that
+the users application program wants to take in response to a given
+notification. So those classes exist purely to be subclassed by the
+user in order to add these actions to them.</font></p>
+
+<p><font bgcolor="#ffffff">1:07:20 MM At the level of the promise system I think I've pretty
+much said what there is to say. The notifications come in, there is
+code that unmarshalls the notification as they come in, then goes to
+the detector and all the hooks posted on that detector, of which right
+now because of the way the client library is set up there is
+necessarily one, and the result of that is that it invokes whatever
+action the user had that hook object do.</font></p>
+
+<p><font bgcolor="#ffffff">1:08:22 MM I just described to you the hook invocation mechanism as
+it existed a while ago, the bug that we find with it was that by
+invoking the hook action immediately, as soon as you received that
+reply packet, we ended up essentially with some scheduling problems.
+It was very much the kind of problem you get into when dealing with
+multiple threads, even though really there is not multiple threads
+happening on either side of the wire here. The reason being that some
+operations in the front-end would cause a force that would force the
+reply packet back immediately, some of those operations themselves
+would happen within the code that was the action code of a hook. So
+while processing one hook one could in the midst of processing one
+asynchronous notification cause the reception of another asynchronous
+notification and get nested and in so doing and one could always
+carefully code the hook actions so that was never any problem but
+because - I don't remember how we got into trouble with that, and I
+can't justify why it is right now, so suffice to say we did get into
+trouble and what we ended up doing instead is the asynchronous
+notifications are reified and delayed and then what you do is the
+front-end at the top of its event loop, when it is not processing user
+actions that's where it processes the delayed detector
+invocations.</font></p>
+
+<p><font bgcolor="#ffffff">1:10:42 ?? From other detectors that you were processing
+before?</font></p>
+
+<p><font bgcolor="#ffffff">1:10:50 MM Right, basically as you are processing one detector
+event if it causes other detector events to be noticed they get queued
+up and it is only once you have finished and gone back to the top of
+your event loop, if there is no user action waiting then you go to the
+next one. This has the additional advantage of once again you are able
+to give user events greater responsiveness in that if there is a user
+event waiting you are only going to go through one asynchronous
+notification before you get back to the user.</font></p>
+
+<p><font bgcolor="#ffffff">1:11:24 ?? Let me ask a different view if you will, who wrote all
+the code for this?</font></p>
+
+<p><font bgcolor="#ffffff">1:11:33 MM In some sense all of us, but for the promise library
+itself dean, robby and myself between us we wrote 95% of the promise
+library code.</font></p>
+
+<p><font bgcolor="#ffffff">1:11:53 ?? Are you distinguishing between the server and client
+layer or are you including all of it?</font></p>
+
+<p><font bgcolor="#ffffff">1:12:09 MM The server side of the promise system was written I
+think almost entirely by dean. The client side all three of us had a
+major hand in it.</font></p>
+
+<p><font bgcolor="#ffffff">1:12:16 ?? Client side is a set of C++ functions which one can
+operate on that live on this machine for example. How much effort is
+there?</font></p>
+
+<p><font bgcolor="#ffffff">1:12:30 MM Getting it done the first time was interesting. We had a
+first design which involved a lot more forcing and a different set of
+abstractions for how you deal with exceptions. It is still the case
+that it is a complicated piece of engineering. Even with all the
+learning it would take a long time. How long did it take? Less than a
+man year. Between three of us, it might very well be nine man months.
+One thing in general I should point, I am a very good qualitative
+thinker and very bad quantitative thinker, so robby could give you a
+more informed answer.</font></p>
+
+<p><font bgcolor="#ffffff">1:13:58 ?? Suppose we said our front end will not be Windows but
+will be a Next station?</font></p>
+
+<p><font bgcolor="#ffffff">1:14:08 MM This thing is highly portable, the client library is
+used by the server regression tester called Arnold, the thing that
+exercises the server. Arnold has run successfully on Suns, on the SGI,
+and on the PC. So we certainly believe that the client library itself
+is highly portable, given a C++ compiler. The one interesting thing to
+port, interesting for some platforms is the comm aspect. The place
+where it interfaces with TCP/IP sockets. All the interesting stuff in
+the promise system simply depends on having there be some kind of
+communication system that gives you reliable byte streams with flush.
+Given something that gives you reliable byte streams with flush I
+think the rest of it is just highly portable and depends on hardly
+anything except C++.</font></p>
+
+<p><font bgcolor="#ffffff">1:15:20 ?? Who should I ask about moving this comms mechanism to
+NeXT Step?</font></p>
+
+<p><font bgcolor="#ffffff">1:15:28 MM Well I suppose Robby would be the right person to ask.
+But NeXTStep, especially since it's Unix based and has TCP/IP in it,
+it should be trivial. I would be surprised if it took more than two
+man weeks to get the thing working and would be surprised if that the
+vast majority of that were not just the details of the TCP/IP system.
+As far as the rest of the promise system is concerned, I would be
+surprised if it took as much as a week.</font></p>
+
+</td></tr></tbody></table></body></html>

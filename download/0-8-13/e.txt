@@ -1,0 +1,195 @@
+#!/usr/bin/env bash
+
+# Copyright 2002 Combex, Inc. under the terms of the MIT X license
+# found at http://www.opensource.org/licenses/mit-license.html
+
+# E Driver Script (or E Driver Script Template)
+#
+# If you are looking at "e-template.txt", then you are looking at a
+# template to be used to construct "e".
+# In this case, for some variable definitions, you should instead see
+# text of the form, for example,
+#
+#     EHOME=$<<e.home>>
+#
+# but with curly brackets instead of angle brackets.
+# 
+# In the comment preceding this, you should see an example of a
+# possible value of this property, such as
+# "c:/Program Files/erights.org/".  Were this variable to have this
+# value in the "e" file, it would appear as
+#
+#     EHOME=c:/Program Files/erights.org/
+#
+# All these variables come from eprops.txt.  See that file for more
+# complete documentation.
+#
+# @author Mark S. Miller
+# @author Tyler Close
+
+set -e
+
+# Where is E installed?  This should be the root directory of the
+# installation.  The definition of EPATH below assumes EHOME ends with
+# a "/".  XXX We should fix this to be more tolerant.
+#
+# For example, "c:/Program Files/erights.org/"
+
+EHOME="c:/Program Files/erights.org/"
+
+# What executable Java command should be used?
+#
+# For example, "d:/jdk1.3/bin/java.exe"
+
+JCMD="c:/j2sdk1.4.0-rc/bin/java.exe"
+
+# The initial classpath (which is actually a pathlist -- a list of
+# filepaths).
+#
+# If you change this definition to have more than one element, be sure
+# to use the separator for your platform.  See the definition of "SEP"
+# below.  This initial setting is added on to by -cpa and -cpb.
+#
+# Assumes EHOME ends in a "/".  See note on EHOME above.
+
+EPATH=${EHOME}e.jar
+
+
+# This function normalizes a file path so that bash will recognize it
+# in command position.  In the Cygwin environment (a Unix-like
+# compatibility environment for MSWindows), this just uses
+# "cygpath -u" to convert to Cygwin's idea of a Unix-like path.
+#
+# In all other environments, this is an identity function
+
+function normalizeBashPath {
+    if (type -p cygpath.exe > /dev/null); then
+        cygpath -u "$1"
+    else
+        echo "$1"
+    fi
+}
+
+# This function normalizes a file path so E will recognize it.  In the
+# Cygwin environment, this needs to undo the funny path prefix
+# manipulation done by cygwin, such as turning "d:" into "//d/", or
+# "d:/cygwin/bin" into "/usr/bin".  However, we still use only forward
+# slashes, not backslashes, as path separators, in order for the
+# normalized path to pass through bash without needing further escapes.
+#
+# In all other environments, this is an identity function
+
+function normalizeEPath {
+    if (type -p cygpath.exe > /dev/null); then
+        path=`cygpath -w "$1"`
+        echo "${path//\\\\//}"
+    else
+        echo "$1"
+    fi
+}
+
+JCMD=`normalizeBashPath "$JCMD"`
+
+
+# What to say do I'm confused
+
+function usage {
+    echo "For usage, say \"e --help\""
+    exit -1
+}
+
+
+# JOPTS are options to Java
+
+declare -a JOPTS
+
+function jpush {
+    JOPTS[${#JOPTS[@]}]=$1
+}
+
+# These should come from props
+jpush "-Xfuture"
+
+
+# EOPTS are options to Interp
+
+declare -a EOPTS
+
+function epush {
+    EOPTS[${#EOPTS[@]}]=$1
+}
+
+
+# SEP is the platform dependent pathlist separator.  On MSWindows/cygwin,
+# it's ";".  Everywhere else it's ":".
+#
+# Used to build the -cp value to passed to java.
+
+if [ "$OSTYPE" = "cygwin" ]
+then
+    SEP=";"
+else
+    if [ "$OSTYPE" = "cygwin32" ]
+    then
+        SEP=";"
+    else
+        SEP=":"
+    fi
+fi
+
+# The name of the script defaults to "--interact"
+
+ESCRIPT=--interact
+
+EXECFLAG=exec
+
+while [ $(($# >= 1)) = 1 ]; do
+    case $1 in
+        -cpa)       shift
+                    if [ $(($# < 1)) = 1 ]; then usage; fi
+                    EPATH=${EPATH}${SEP}$1
+                    shift;;
+        -cpb)       shift
+                    if [ $(($# < 1)) = 1 ]; then usage; fi
+                    EPATH=$1${SEP}${EPATH}
+                    shift;;
+        -D*)        jpush "$1"; shift;;
+        -J*)        jpush "${1#-J}"; shift;;
+        --headless) epush "$1"; shift;;
+        --help) 
+            echo "e [-options] [script [args...]]"
+            echo "where options are:"
+            echo "  -cpa <afterpath>     Adds to end of classpath."
+            echo "  -cpb <beforepath>    Adds to beginning of classpath."
+            echo "  -D<name>=<value>     Defines Property.  Passed to java."
+            echo "  -J<java-option>      java-option passed to java."
+            echo "    For example, \"e -J-version\" shows the Java version."
+            echo "  --headless           Runs without gui support."
+            echo "  --help               Prints this out and exits."
+            echo "  --show               Shows the java command line, rather"
+            echo "                       than executing it."
+            echo "and script is one of"
+            echo "  filename.e           The E script file to execute"
+            echo "  -                    Use stdin as script file"
+            echo "  --interact           An interactive command line"
+            echo "no script & args is equivalent to \"--interact\""
+            exit 0;;
+        --show)     EXECFLAG=show; shift;;
+        -)          ESCRIPT="-";                   shift; break;;
+        --interact) ESCRIPT="--interact";          shift; break;;
+        -*)         usage;;
+        *)          ESCRIPT=`normalizeEPath "$1"`; shift; break;;
+    esac
+done
+
+CMD=("${JCMD}" -cp "${EPATH}" "${JOPTS[@]}" "-De.home=${EHOME}" \
+    org.erights.e.elang.interp.Interp "${EOPTS[@]}" \
+    "$ESCRIPT" "$@")
+
+if [ $EXECFLAG = exec ]; then
+    exec "${CMD[@]}"
+else
+    for i in "${CMD[@]}"; do
+        echo $i
+    done
+fi

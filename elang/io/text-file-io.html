@@ -1,0 +1,593 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Text File I/O</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">io</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="uri-exprs.html" title="Back to: URI Expressions"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: URI Expressions" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><img src="../../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>Text
+              File I/O</b></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <h2>Pay no attention to the man behind the curtain.</h2>
+      <p>(The following lines of code set up your file system so that this test 
+        will succeed. It fetches the text of the Jabberwock poem <a href="http://www.erights.org/elang/intro/jabberwocky.txt">from 
+        the web</a> and places it into your &quot;<tt>c:/jabbertest/</tt>&quot; 
+        directory, which it creates if needed. It also ensures deletes any files 
+        or directories named &quot;<tt>jabberwocky2.txt</tt>&quot; or &quot;<tt>a</tt>&quot; 
+        in that directory if such exists, since the following test cases make 
+        use of their absence.)</p>
+      <p> 
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+? def poem := &lt;http://www.erights.org/elang/intro/jabberwocky.txt&gt;
+# value: &lt;http://www.erights.org/elang/intro/jabberwocky.txt&gt;
+ 
+? &lt;file:c:/jabbertest&gt;.mkdirs(null); null
+? &lt;file:c:/jabbertest/jabberwocky.txt&gt;.setText(poem.getText())
+? &lt;file:c:/jabbertest/jabberwocky2.txt&gt;.delete(null); null
+? &lt;file:c:/jabbertest/a/b/c&gt;.delete(null); null
+? &lt;file:c:/jabbertest/a/b&gt;.delete(null); null
+? &lt;file:c:/jabbertest/a&gt;.delete(null); null
+</pre>
+      </blockquote>
+      <hr>
+      <h1>&quot;&lt;file:...&gt;&quot; URI Expressions</h1>
+      <p>As explained in <a href="uri-exprs.html"><i>URI Expressions</i></a>, 
+        the value of a &quot;<tt>&lt;file:...&gt;</tt>&quot; URI expression 
+        is a <tt>java.io.File</tt> object. Such a file object doesn't necessarily 
+        represent a file that already exists on your file system. It might represent 
+        an existing directory, an existing &quot;normal&quot; file (a non-directory), 
+        or it might represent a file that doesn't yet exist -- a potential file 
+        or directory. You can test which as follows:</p>
+      <blockquote> 
+        <pre>? def j1 := &lt;file:c:/jabbertest/jabberwocky.txt&gt;
+# value: &lt;file:c:/jabbertest/jabberwocky.txt&gt;
+
+? j1.<b>exists</b>()
+# value: true
+
+? j1.<b>isNormal</b>()
+# value: true
+
+? j1.<b>isDirectory</b>()
+# value: false</pre>
+      </blockquote>
+      <p>Not surprisingly, the jabberwocky.txt file we created earlier exists, 
+        and is a normal file, and therefore is not a directory. 
+      <blockquote> 
+        <pre>? def j2 := &lt;c:/jabbertest/jabberwocky2.txt&gt;
+# value: &lt;file:c:/jabbertest/jabberwocky2.txt&gt;</pre>
+      </blockquote>
+      The URI here shows an allowable shorthand. For the convenience of MSWindows 
+      users, if the URI begins with a single letter followed by a colon, then 
+      a preceding &quot;<tt>file:</tt>&quot; is assumed. (On MSWindows this 
+      single letter is known as the <i>drive letter</i>, and names approximately 
+      a mounted volume.) 
+      <blockquote> 
+        <pre>? j2.exists()
+# value: false
+
+? j2.isNormal()
+# value: false
+
+? j2.isDirectory()
+# value: false</pre>
+      </blockquote>
+      <p>On the other hand, &quot;jabberwocky2.txt&quot; does not yet exist, and 
+        is therefore neither normal nor a directory.</p>
+      <blockquote> 
+        <pre>? def desk := &lt;file:~/Desktop&gt;
+# value: &lt;file:c:/Documents and Settings/millerm1/Desktop/&gt;
+
+? desk.exists()
+# value: true
+
+? desk.isNormal()
+# value: false
+
+? desk.isDirectory()
+# value: true</pre>
+      </blockquote>
+      <p>&quot;desk&quot; now represents our Windows Desktop which, as you can 
+        see, is a directory.</p>
+      <blockquote> 
+        <pre>? desk.<b>getCanonicalPath</b>()
+# value: &quot;c:/Documents and Settings/millerm1/Desktop/&quot;
+</pre>
+      </blockquote>
+      <p>To aid portability, E enables (and encourages) you to deal with Files 
+        using &quot;/&quot; as the path separator character. But you can use &quot;getCanonicalPath&quot; 
+        when you want to see what the path-name of the file looks like to your 
+        operating system. 
+      <blockquote> 
+        <pre>? desk.<b>getName</b>()
+# value: "Desktop"
+
+? desk.<b>getParent</b>()
+# value: &quot;c:/Documents and Settings/millerm1/&quot;
+
+? j1.getName()
+# value: &quot;jabberwocky.txt&quot;
+
+? j1.getParent()
+# value: "c:/jabbertest/"
+</pre>
+      </blockquote>
+      <p>&quot;<tt>getName()</tt>&quot; and &quot;<tt>getParent()</tt>&quot; 
+        both return Strings (not Files) representing the local name of the file 
+        within its containing directory, and the name of this containing directory, 
+        respectively.</p>
+      <p>The methods <b>canRead</b>(), <b>canWrite</b>(), <b>delete</b>(), and 
+        <b>renameTo</b>(file) all behave just as in Java, and operate on both 
+        normal files and directories. See the javadoc-umentation.</p>
+      <h2><a name="ReadingText"></a>Reading Text</h2>
+      <p>As we saw in the Jabberwocky example, if you use a normal File as the 
+        collection of a for loop, E assumes the file is a text file, and treats 
+        it as a collection of lines.</p>
+      <blockquote> 
+        <pre>? var size := 0
+# value: 0
+ 
+? for line in &lt;c:/jabbertest/jabberwocky.txt&gt; {
+&gt;     size += line.size()
+&gt; }
+ 
+? size
+# value: 270</pre>
+      </blockquote>
+      <p>To aid portability, each of these lines ends with a newline character, 
+        '\n', independent of how newlines are actually represented on the current 
+        platform. On Windows newlines are represented with a pair of characters, 
+        so the above size is smaller than the Windows file size. 
+      <blockquote> 
+        <pre>? &lt;c:/jabbertest/jabberwocky.txt&gt;.getText().size()
+# value: 270</pre>
+      </blockquote>
+      <p>You can also read the whole (presumed) text file into one big String 
+        using &quot;<tt>getText()</tt>&quot;. As you might be able to guess 
+        from the agreement on size, <tt>getText()</tt> also turns platform-specific 
+        newlines into newline characters.</p>
+      <p>When you don't want to read the whole file at once, you instead open 
+        a text reading stream on the File using &quot;textReader&quot;:</p>
+      <blockquote> 
+        <pre>? def reader := &lt;c:/jabbertest/jabberwocky.txt&gt;.<b>textReader</b>()
+# value: &lt;a BufferedReader&gt;
+ 
+? reader.<b>readChar</b>()
+# value: '\''
+
+? reader.<b>readLine</b>()
+# value: "Twas brillig and the slithy toves "
+
+? reader.<b>readString</b>(10)
+# value: "Did gyre a"
+
+? reader.<b>readString</b>(1000).size()
+# value: 232</pre>
+      </blockquote>
+      <p>&quot;readChar&quot; returns the next character. &quot;readLine&quot; 
+        reads a line of text, but, following Java conventions, without the terminating 
+        newline. &quot;readString(num)&quot; will read num characters, and return 
+        them as a String. However, if there aren't num character left before the 
+        end of file, it will return the rest of the characters and leave the stream 
+        at end of file. 
+      <blockquote> 
+        <pre>? reader.readChar() == null
+# value: true</pre>
+      </blockquote>
+      <p>When the stream is at end of file, the above read-requests all return 
+        null.</p>
+      <blockquote> 
+        <pre>? reader.<b>close</b>()
+? reader.readChar()
+# problem: &lt;IOException: Stream closed&gt;</pre>
+      </blockquote>
+      <p>When you're done with a stream, you should always be sure to close it. 
+        That's fine for interactive use, but how can you be sure your program 
+        will close the stream when an I/O error might throw you out of your function 
+        before you get to your close message? By using try/finally:</p>
+      <blockquote> 
+        <pre>? def reader := &lt;c:/jabbertest/jabberwocky.txt&gt;.textReader()
+# value: &lt;a BufferedReader&gt;
+
+? var size := 0
+# value: 0
+
+? try {
+&gt;     while((def line := reader.readLine()) != null) {
+&gt;         size += line.size()
+&gt;     }
+&gt;     size
+&gt; } finally {
+&gt;     reader.close()
+&gt; }
+# value: 261</pre>
+      </blockquote>
+      <p>This loop uses a reader to loop through the file one line at a time. 
+        The &quot;finally&quot; clause will be sure we close the stream no matter 
+        how we exit the try block. If, for example, &quot;reader readLine&quot; 
+        throws an IOException (always a possibility), the stream will still be 
+        closed.</p>
+      <p>Notice that the cumulative size is smaller than before. This is because 
+        &quot;readLine&quot; produces lines <i>not</i> terminated by any form 
+        of newline.</p>
+      <blockquote> 
+        <pre>? &lt;c:/jabbertest/jabberwocky2.txt&gt;.exists()
+# value: false
+
+? &lt;c:/jabbertest/jabberwocky2.txt&gt;.textReader()
+# problem: &lt;FileNotFoundException: c:\jabbertest\jabberwocky2.txt \
+#           (The system cannot find the file specified)&gt;</pre>
+      </blockquote>
+      <p>(Note that the above example doesn't yet pass as an Updoc test case due 
+        to the <i><a href="../tools/updoc.html#continuation-bug">line continuation 
+        bug</a></i>.) 
+      <p>Not surprisingly, you can't open a text Reader on a file that doesn't 
+        exist. However... 
+      <h2><a name="WritingText"></a>Writing Text</h2>
+      <blockquote> 
+        <pre>? def writer := &lt;c:/jabbertest/jabberwocky2.txt&gt;.<b>textWriter</b>()
+# value: &lt;a TextWriter&gt;
+ 
+? &lt;c:/jabbertest/jabberwocky2.txt&gt;.exists()
+# value: true</pre>
+      </blockquote>
+      <p>... you can open a TextWriter, which also causes the file to be created 
+        if needed. You then fill the file with content by writing to the TextWriter, 
+        and then closing it. For example, to copy the contents of &lt;c:/jabbertest/jabberwocky.txt&gt; 
+        into &lt;c:/jabbertest/jabberwock2.txt&gt;:</p>
+      <blockquote> 
+        <pre>? try {
+&gt;     for line in &lt;c:/jabbertest/jabberwocky.txt&gt; {
+&gt;         writer.<b>print</b>(line)
+&gt;     }
+&gt; } finally {
+&gt;     writer.close()
+&gt; }</pre>
+      </blockquote>
+      <p>Once again, we use a try/finally expression to ensure that the Writer 
+        gets closed no matter how we leave the expression.</p>
+      <p>&quot;print(object)&quot; prints the stringified form of the object to 
+        the Writer. The stringified form of a String is the String itself. The 
+        stringified form of an object is what gets printed out after &quot;# value: 
+        &quot;. <font color="#ff0000">(*** No longer quite true. Need to explain 
+        about the quoted form.)</font> For example, the stringified form of a 
+        number is just its decimal representation:</p>
+      <blockquote> 
+        <pre>? 2 + 3
+# value: 5
+
+? 2 / 3
+# value: 0.6666666666666666</pre>
+      </blockquote>
+      <p>This is the form that would get written to a file if these values were 
+        used as the argument of a &quot;print&quot; message.</p>
+      <blockquote> 
+        <pre>? &lt;c:/jabbertest/jabberwocky2.txt&gt;.getText().size()
+# value: 270</pre>
+      </blockquote>
+      <p>As we see from the size, our file-copy code copied the whole file.</p>
+      <p>We can turn the above pattern into a useful little function for copying 
+        text files:</p>
+      <blockquote> 
+        <pre>? def textFileCopy(srcFile, destFile) :void {
+&gt;     def writer := destFile.textWriter()
+&gt;     try {
+&gt;         for line in srcFile {
+&gt;             writer.print(line)
+&gt;         }
+&gt;     } finally {
+&gt;         writer.close()
+&gt;     }
+&gt; }
+# value: &lt;textFileCopy&gt;</pre>
+      </blockquote>
+      <p>Using this function, we can copy files simply: 
+      <blockquote> 
+        <pre>? textFileCopy(&lt;c:/jabbertest/jabberwocky.txt&gt;,
+&gt;              &lt;c:/jabbertest/jabberwocky2.txt&gt;)</pre>
+      </blockquote>
+      <p>Your interactive command-line interpreter already has an TextWriter that's 
+        always open, called &quot;stdout&quot;, that displays text on your command 
+        line interpreter window:</p>
+      <blockquote> 
+        <pre>? stdout
+# value: &lt;a TextWriter&gt;
+  
+? stdout.<b>println</b>(2/3)
+0.6666666666666666</pre>
+      </blockquote>
+      <p>TextWriters also respond to a &quot;println&quot; message, which is just 
+        like &quot;print&quot;, except that it also provides a newline on the 
+        end. Similarly, there is also a &quot;lnPrint&quot; message that provides 
+        a newline on the beginning. If we wanted to write a text-copy function 
+        that worked on already open streams, rather than opening and closing them 
+        ourselves, we might write:</p>
+      <blockquote> 
+        <pre>? def textStreamCopy(reader, writer) :void {
+&gt;     while ((def line := reader.readLine()) != null) {
+&gt;         writer.println(line)
+&gt;     }
+&gt; }
+# value: &lt;textStreamCopy&gt;
+
+? def reader := &lt;c:/jabbertest/jabberwocky.txt&gt;.textReader()
+# value: &lt;a BufferedReader&gt;
+
+? try {
+&gt;     textStreamCopy(reader, stdout)
+&gt; } finally {
+&gt;     reader.close()
+&gt; }
+Twas Brillig and the Slithy Toves
+Did gyre and gimbal in the wabe
+All mimsy were the borogroves
+and the Momerathes outgrabe.
+
+&quot;Beware the Jabberwock my son
+The jaws that bite
+the claws that catch
+Beware the Jubjub bird and shun
+The frumious bandersnatch.&quot;</pre>
+      </blockquote>
+      <p>We print to the writer using &quot;println&quot; above, since &quot;reader 
+        readLine&quot; returns a line without the terminal newline.</p>
+      <p>If we replace the line containing &quot;stdout&quot; above with</p>
+      <blockquote> 
+        <pre>&gt;     textStreamCopy(reader, stdout <b>indent</b>(&quot;...&quot;))</pre>
+      </blockquote>
+      <p>and do the above sequence again, we get</p>
+      <blockquote> 
+        <pre>Twas Brillig and the Slithy Toves
+...Did gyre and gimbal in the wabe
+...All mimsy were the borogroves
+...and the Momerathes outgrabe.
+...
+...&quot;Beware the Jabberwock my son
+...The jaws that bite
+...the claws that catch
+...Beware the Jubjub bird and shun
+...The frumious bandersnatch.&quot;
+...</pre>
+      </blockquote>
+      <p>When you send the &quot;indent(prefix)&quot; message to an TextWriter, 
+        it returns a new TextWriter that writes to the same destination, but adding 
+        the extra prefix after every newline. 
+      <blockquote> 
+        <pre>? stdout.indent(&quot;...&quot;).<b>lnPrint</b>(&lt;c:/jabbertest/jabberwocky.txt&gt;.getText())
+
+...Twas Brillig and the Slithy Toves
+...Did gyre and gimbal in the wabe
+...All mimsy were the borogroves
+...and the Momerathes outgrabe.
+...
+...&quot;Beware the Jabberwock my son
+...The jaws that bite
+...the claws that catch
+...Beware the Jubjub bird and shun
+...The frumious bandersnatch.&quot;
+...</pre>
+      </blockquote>
+      <p>Finally, there are also global &quot;print&quot; and &quot;println&quot; 
+        functions that send the corresponding message to stdout and also return 
+        their argument.</p>
+      <blockquote> 
+        <pre>? <b>println</b>(2/3)
+0.6666666666666666
+# value: 0.6666666666666666</pre>
+      </blockquote>
+      <h2><a name="Directories"></a>Directories</h2>
+      <p>As we saw in the original Jabberwocky example, if you use a for-loop 
+        to iterate a File object that is a directory, the loop variable gets bound 
+        to each File (normal file or directory) in this directory. With this piece 
+        of information, we can now write our first non-trivial useful program:</p>
+      <blockquote> 
+        <pre>? def writeDirMap(filedir, writer) :void {
+&gt;     writer.lnPrint(filedir.getName())
+&gt;     if (filedir.isDirectory()) {
+&gt;         writer.print(&quot;/&quot;)
+&gt;         def indentation := (&quot; &quot; * filedir.getName().size()) + &quot;/&quot;
+&gt;         def nested := writer.indent(indentation)
+&gt;         try {
+&gt;             for file in filedir {
+&gt;                 writeDirMap(file, nested)
+&gt;             }
+&gt;         } finally {
+&gt;             nested.close()
+&gt;         }
+&gt;     }
+&gt; }
+# value: &lt;writeDirMap&gt;</pre>
+      </blockquote>
+      <p>&quot;writeDirMap&quot; is a recursive function only meant to be called 
+        from &quot;dirMapper&quot;. &quot;filedir&quot; is a File object that 
+        may represent either a normal file or a directory. writeMapDir uses &quot;lnPrint&quot; 
+        to print the local-name part of filedir onto writer, preceded by a newline. 
+        If filedir is a normal file, we're done. If it's a directory, then we 
+        suffix the name with a &quot;/&quot;, so someone looking at the output 
+        can tell it's a directory, and then call ourselves recursively with each 
+        File (normal file or directory) in this directory. In this recursive call, 
+        we pass a new TextWriter, &quot;nested&quot; which is just like &quot;writer&quot;, 
+        except that it has an extra prefix string consisting of a number of spaces 
+        equal to our local name, followed by a &quot;/&quot;. As you'll see, this 
+        results in outline-style output in which it's easy to figure out what's 
+        under what. This prefix string gets output after the newline written by 
+        the call to &quot;lnPrint&quot; in the nested call to &quot;writeDirMap&quot;. 
+      <blockquote> 
+        <pre>? def dirMapper(filedir, destFile) :void {
+&gt;     def writer := destFile.textWriter()
+&gt;     try {
+&gt;         writeDirMap(filedir, writer)
+&gt;         writer.println()
+&gt;     } finally {
+&gt;         writer.close()
+&gt;     }
+&gt; }
+# value: &lt;dirMapper&gt;</pre>
+      </blockquote>
+      <p>Just wraps the top-level call to &quot;writeDirMap&quot; with the opening 
+        of a Writer onto destFile, and the insertion of the last newline. We can 
+        call &quot;dirMapper&quot; to get a useful textual roadmap to a portion 
+        of our directory hierarchy. For example, when I map out my Windows Start 
+        Menu: 
+      <blockquote> 
+        <pre>? dirMapper(&lt;file&gt;[&quot;/Windows/Start Menu&quot;],
+&gt;           &lt;file:/startMenuMap.txt&gt;)</pre>
+      </blockquote>
+      <pre>The beginning of my resulting file looks like</pre>
+      <blockquote> 
+        <pre>Start Menu/
+          /ebash.pif
+          /Programs/
+          /        /CRT/
+          /        /   /CRT Help.lnk
+          /        /   /CRT.lnk
+          /        /   /README.lnk
+          /        /   /ORDER.lnk
+          /        /MS-DOS Prompt.pif
+          /        /4dos.pif
+          /        /Internet Mail.lnk
+          /        /Microsoft NetMeeting.lnk</pre>
+      </blockquote>
+      <p>Yours, of course, will differ in the details. If you map your &lt;file:/&gt; 
+        instead, go out and get a cup of java. It'll take a while. (My little 
+        laptop has over 53,000 files and directories on it, each of which produces 
+        a line in the map file.)</p>
+      <p>We've seen how to create new normal files -- by opening up a textWriter. 
+        How do we create directories? With &quot;mkdir&quot; or &quot;mkdirs&quot;:</p>
+      <blockquote> 
+        <pre>? def abc := &lt;c:/jabbertest/a/b/c&gt;
+# value: &lt;file:c:/jabbertest/a/b/c&gt;
+
+? abc.exists()
+# value: false</pre>
+      </blockquote>
+      <p>At this point, &lt;file:/jabbertest/a/b/c&gt; is neither a directory 
+        nor a normal file. 
+      <blockquote> 
+        <pre>? abc.<b>mkdirs</b>(null)
+# value: true</pre>
+      </blockquote>
+      <p>If <tt>&lt;file:/jabbertest/a/b&gt;</tt> already existed, and was 
+        a directory, then &quot;<tt>mkdir</tt>&quot; would have been adequate. 
+        However, if <tt>&lt;file:/jabbertest/a/b&gt;</tt> didn't exist, &quot;<tt>mkdir</tt>&quot; 
+        would have failed. &quot;<tt>mkdirs</tt>&quot;, on the other hand, 
+        creates the parent directories as necessary in order to create <tt>&lt;file:/jabbertest/a/b/c&gt;</tt> 
+        as a directory. 
+      <blockquote> 
+        <pre>? abc.exists()
+# value: true</pre>
+        <pre>? abc.isDirectory()
+# value: true
+ 
+? abc
+# value: &lt;file:c:/jabbertest/a/b/c/&gt;</pre>
+      </blockquote>
+      <p>abc now prints out with a terminal slash to indicate that it represents 
+        a directory.</p>
+      <blockquote> 
+        <pre>? def ab := &lt;c:/jabbertest/a/b&gt;
+# value: &lt;file:c:/jabbertest/a/b/&gt;
+
+? ab<b>[</b>&quot;c&quot;<b>]</b>
+# value: &lt;file:c:/jabbertest/a/b/c/&gt;
+
+? ab[&quot;..&quot;]
+# problem: &lt;SecurityException: &quot;..&quot; not allowed: ..&gt;</pre>
+      </blockquote>
+      <p>Directories are collections, mapping from local file names to the contained 
+        Files (normal files or directories). We've already seen that directories 
+        support the for-loop the way would expect such a collection to. In addition, 
+        we can use the square-bracket indexing operator to get a File of a given 
+        name within a directory. However, we can only descend the directory hierarchy. 
+        For reasons explained in <i>Capability Programming Patterns</i> E disallows 
+        the use of &quot;..&quot; to navigate upwards. 
+      <h2><a name="URLs"></a>URLs</h2>
+      <p><font color="#ff0000">*** to be written</font></p>
+      <p> 
+      <P ALIGN="left">&nbsp; 
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">io</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="uri-exprs.html" title="Back to: URI Expressions"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: URI Expressions" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><img src="../../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

@@ -1,0 +1,470 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>E Idioms Quick Reference Card</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="index.html">elang</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="intro/index.html" title="Back to: E Language Tutorial"><img src="../images/prev.gif" width="64" height="32" alt="Back to: E Language Tutorial" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" -->x<!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="grammar/index.html" title="On to: Grammar and Expansions"><img src="../images/next.gif" width="64" height="32" alt="On to: Grammar and Expansions" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>E
+              Idioms<br>
+              Quick Reference</b><br>
+              <font size="4">mostly by Marc Stiegler</font></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p>This is intended as a compact representation of frequently-used syntax
+        and frequently-encountered special characteristics of <i><b><font color="#009000">E</font></b></i>.
+        The beginning <i><b><font color="#009000">E</font></b></i> user may find
+        it a handy reference while experimenting and reading the book; the experienced
+        <i><b><font color="#009000">E</font></b></i> programmer may find it handy
+        as a refresher if returning to the language after some time. This reference
+        does not touch quasi-literals, regular expressions, pattern matching,
+        parse trees, or Kernel-<i><b><font color="#009000">E</font></b></i> at all.
+      <ul>
+        <li><a href="#Simple">Simple Statements</a>: def, var, assign, print,
+          add, comment
+        <li><a href="#Flow">Basic Flow</a>: if, while, for, try
+        <li><a
+        href="#Modules">Modules</a>: Function, Singleton Object, Object Maker,
+          Delegation, Matching
+        <li><a href="#io">Text File I/O</a>
+        <li><a href="#Windowing">Windowed Apps</a>
+        <li><a
+        href="#Structures">Data Structures</a>: Strings, ConstLists, ConstMaps,
+          FlexLists, FlexMaps
+        <li><a href="#Java">Java Interface</a>
+        <li><a href="#Asynch">Asynch Sends</a>
+        <li><a href="#Remote">Remote Comm</a> </li>
+      </ul>
+      <hr>
+      <p><a name=Simple>
+        <!-- -->
+        </a><b>Simple Statements</b>
+      <pre>def a := 2 + 3
+var a2 := 4
+a2 += 1
+def b := &quot;answer: &quot;
+println(b + a)
+<font class="comment">// Note: the plus sign is interpreted by the object on the left, so b as a string
+# causes plus to mean string concatenation. The statement &quot;b + a&quot;
+//creates a concatenated string without explicit conversion; &quot;a + b&quot; would fail
+// as it tried to cast string b to an integer for addition to a.</font>
+</pre>
+      <hr>
+      <p><a name=Flow>
+        <!-- -->
+        </a><b>Basic Flow</b>
+      <table border=1 cellpadding=6>
+        <tr>
+          <td>
+            <pre>if (a == b) {
+    println("match")
+} else {
+    println("no match")
+}</pre>
+          </td>
+          <td>
+            <pre>while (a &lt; b) {
+    a += 1
+}</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre>try {
+    3 // 0
+} catch err {
+    println(&quot;error: &quot; + err)
+} finally {
+    println(&quot;always&quot;)
+}</pre>
+          </td>
+          <td>
+            <pre>for next in 1..3 {
+    println(next)
+}</pre>
+            <pre>for key =&gt; value in map {
+    println(&quot;got pair&quot;)
+}</pre>
+          </td>
+        </tr>
+        <tbody> </tbody>
+      </table>
+      <hr>
+      <p><a name=Modules>
+        <!-- -->
+        </a><b>Modules</b>
+      <table border=1 cellpadding=2>
+        <tbody>
+        <tr>
+          <td><b>Function</b></td>
+          <td><b>Singleton Object (stateless)</b></td>
+        </tr>
+        <tr>
+          <td>
+            <pre>def addTwoPrint(number) :any {
+    println(number + 2)
+    number + 2
+}
+<font class="comment"># &quot;:any&quot; returns value of last expression
+# If no &quot;:any&quot; part, the function/method is void</font>
+def twoPlusThree := addTwoPrint(3)</pre>
+          </td>
+          <td>
+            <pre>def adder {
+    to add1(number) :any {number + 1}
+    to add2(number) :any {number + 2}
+}
+def result := adder.add1(3)</pre>
+          </td>
+        </tr>
+        <tr>
+          <td><b>Objects with state</b></td>
+          <td><b>Objects self-referencing</b> during construction</td>
+        </tr>
+        <tr>
+          <td>
+            <pre>def makeOperator(baseNum) :any {
+    def randomVariable := 3
+    def operator {
+        to addBase(number) :any {
+            baseNum + number
+        }
+        to multiplyBase(number) :any {
+            baseNum * number
+        }
+    }
+}
+def threeHandler := makeOperator(3)
+def threeTimes2 := threeHandler.multiplyBase(2)</pre>
+          </td>
+          <td>
+            <pre>def makeOp() :any {
+    def op
+    def myAlerter := makeAlerter(op)
+    bind op {
+        to respondToAlert() {
+            myAlerter(&quot;got alert&quot;)
+        }
+    }
+}</pre>
+          </td>
+        </tr>
+        <tr>
+          <td><b>Delegation</b></td>
+          <td><b>Matching an Interface like a Java Adapter</b></td>
+        </tr>
+        <tr>
+          <td>
+            <pre>def makeExtendedFile(myFile) :any {
+    def extendedFile extends myFile {
+        to append(text) {
+            var current := myFile.getText()
+            current := current + text
+            myFile.setText(current)
+        }
+    }
+}</pre>
+          </td>
+          <td>
+            <pre>def makeUpListener(reactor) :any {
+    def upListener {
+        to mouseUp(event) {
+            reactor.mouseUp()
+        }
+        match [verb, args] {}
+    }
+}
+<font class="comment"># upListener meets the Java MouseListener interface</font></pre>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <hr>
+      <p><a name=io>
+        <!-- -->
+        </a>
+      <table border="1">
+        <tbody>
+        <tr>
+          <td><b>Text File I/O</b></td>
+          <td><b><a name="Windowing">Windowed</a> Applications</b> </td>
+        </tr>
+        <tr>
+          <td>
+            <p>Text files are always normalized to use linefeed (<tt>'\n'</tt>)
+              as end of line when read in to the program; the end of line is converted
+              to native format upon being written out. File paths can always use
+              &quot;/&quot; to separate subdirectories</p>
+            Tilda (~) is a reference to home directory, with meaning in MSWindows
+            and Linux.
+            <pre>    def fileA := &lt;file:~/Desktop/text.txt&gt;
+    def fileB := &lt;file: &quot;/home/marcs/text.txt&quot;&gt;
+
+<font class="comment"># Note the blank space between the colon and the quote above</font>
+
+    def fileC := &lt;c:/windows/desktop/text.txt&gt;
+    fileA.setText(&quot;abc&quot;)
+    def contents := fileA.getText()
+    for line in contents.split(&quot;\n&quot;) {
+        println(line)
+    } </pre>
+          </td>
+          <td>
+            <pre><font class="comment"># label A consumes horizontal space,
+# textArea consumes vertical space and
+# space beneath both labelA and labelB</font>
+
+def panel :=
+JPanel`$labelA.X   $labelB
+       $textArea.Y      &gt; `
+
+<font class="comment"># build app
+# display windows
+# in window listener on
+# WindowClosing event:</font>
+
+interp.continueAtTop()
+
+<font class="comment"># at end of program, after
+# construction and window opening</font>
+
+interp.blockAtTop()</pre>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <hr>
+      <p><a name=Structures>
+        <!-- -->
+        </a><b>Data Structures</b>
+      <table border=1 cellpadding=2>
+        <tbody>
+        <tr>
+          <td><b>ConstList</b></td>
+          <td><b>ConstMap</b></td>
+        </tr>
+        <tr>
+          <td>
+            <pre>var a := [8,6,"a"]
+
+<font class="comment"># a[2] == "a" is true
+# a.size() == 3 is true </font>
+
+for i in a {println(i)}
+a := a + ["b"]
+
+<font class="comment"># a(0,2) == [8,6] is true</font>
+
+def flexA := a.diverge()</pre>
+          </td>
+          <td>
+            <pre>def m := ["c" =&gt; 5]
+
+<font class="comment"># m["c"] == 5 is true
+# m.size() == 1 is true
+</font>
+for key =&gt; value in m {
+    println(value)
+}
+def flexM := m.diverge()</pre>
+          </td>
+        </tr>
+        <tr>
+          <td><b>FlexList</b></td>
+          <td><b>FlexMap</b></td>
+        </tr>
+        <tr>
+          <td>
+            <pre>flexA.append(["b"])
+flexA.push("b")
+constA := flexA.snapshot()</pre>
+          </td>
+          <td>
+            <pre>flexM["b"] := 2
+flexM.removeKey("b")
+def constM := flexM.snapshot()</pre>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <p>Strings are ConstLists of <tt>char</tt> that have additional methods
+        including Java string operators.<br>
+        Flex structures respond to all Const messages except the comparison operators
+        ("&lt;", &lt;=", etc...).<br>
+        All these structures have many methods not listed here.
+      <hr>
+      <p><a name=Java>
+        <!-- -->
+        </a><b>Java Interface</b>
+      <p>
+      <pre>
+<font class="comment"># we can directly name awt and swing classes using URI syntax</font>
+
+    def frame1 := &lt;awt:Frame&gt;()
+    def frame2 := &lt;swing:JFrame&gt;()
+    def panel := &lt;swing:JPanel&gt;()
+    E.call(frame2.getContentPane(), &quot;add(Component)&quot;, [panel])
+<font class="comment">
+# E.call() needed when a method name in Java is overloaded with multiple
+# methods with the same number of arguments, different types, and the different
+# types are super/sub classes of one another</font>
+
+    def byte := &lt;import:java.lang.Byte&gt;.asType()
+    def byteArray := byte[300]
+<font class="comment">
+# creates a Java array of primitive objects,
+# byte, char, int, etc. </font>
+</pre>
+      <hr>
+      <b> emakers</b><br>
+      <pre>def uiKit := &lt;import:com.skyhunter.ex.uiKit&gt;
+def buttonFunc() {println("pressed button")}
+def button := uiKit.newToolButton(iconImage, &quot;tip&quot;, buttonFunc)
+def makeDialogVow := &lt;import:com.skyhunter.ex.swing.dialogVowMakerAuthor&gt;(&lt;swing:JFrame&gt;)
+def helpDialog := makeDialogVow(&quot;Help&quot;,
+                                &quot;&lt;html&gt;&lt;b&gt;Help&lt;/b&gt;&lt;p&gt;This is help.&lt;/html&gt;&quot;,
+                                null,
+                                [&quot;OK&quot;])</pre>
+      <b><a name=Asynch></a></b>
+      <hr>
+      <b>Eventual Sends</b>
+      <table border="1">
+        <tbody>
+        <tr>
+          <td>
+            <pre>abacus &lt;- add(a,b)</pre>
+          </td>
+          <td>
+            <pre>when (abacus &lt;- add(a,b)) -&gt; done(answer) {
+    println(&quot;computation complete:&quot; + answer)
+} catch problem {
+    println(&quot;promise broken &quot; + problem)
+} finally {
+    println(&quot;always&quot;)
+}</pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre>def carRcvr := makeCarRcvr &lt;- (&quot;Mercedes&quot;)
+Ref.whenBroken(carRcvr, def lost(brokenRef) {
+    println(&quot;Lost connection to carRcvr&quot;)
+})</pre>
+          </td>
+          <td>
+            <pre>def [resultVow, resolver] := Ref.promise()
+when (resultVow) -&gt; done(result) {
+    println(result)
+} catch prob {
+    println(&quot;oops: &quot; + prob)
+}
+resolver.resolve(&quot;this text is the answer&quot;)</pre>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <hr>
+      <p><a name=Remote>
+        <!-- -->
+        </a><b>Remote Comm</b>
+      <table border=1 cellpadding=2>
+        <tbody>
+        <tr>
+          <td><b>Initialization</b></td>
+        </tr>
+        <tr>
+          <td>
+            <pre>introducer.onTheAir()              </pre>
+            <pre>def makeURI(obj) :any {
+    introducer.sturdyToURI(sturdyRef.temp(obj))
+} </pre>
+            <pre>def makeFromURI(uri) :any {
+    introducer.sturdyFromURI(uri).getRcvr()
+} </pre>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="index.html">elang</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="intro/index.html" title="Back to: E Language Tutorial"><img src="../images/prev.gif" width="64" height="32" alt="Back to: E Language Tutorial" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" -->x<!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="grammar/index.html" title="On to: Grammar and Expansions"><img src="../images/next.gif" width="64" height="32" alt="On to: Grammar and Expansions" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

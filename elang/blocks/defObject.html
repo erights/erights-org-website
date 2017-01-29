@@ -1,0 +1,434 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Defining Objects</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">blocks</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="defFunc.html" title="Back to: Defining Functions"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Defining Functions" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="delegation.html" title="On to: Delegation"><img src="../../images/next.gif" width="64" height="32" alt="On to: Delegation" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><b>Defining
+              Objects</b><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <div>
+        <div align="center"><img src="images/defObj.gif" width="268" height="140">
+        </div>
+      </div>
+      <p class="Body"> This construct is used to define an object with multiple
+        methods. This definition expression evaluates to an object, and the <i>
+        param</i> variable is defined to hold this object. Each &quot;<tt>to</tt>&quot;
+        with its following scope box is a method. No two methods may have the
+        both the same verb and number of arg-patterns (or <i>
+        arity</i> ). When this object is called, if the calling message does
+        not have the same verb and arity as any of the object's methods, a <tt>java.lang.NoSuchMethodException</tt>
+        is thrown. </p>
+      <p class="Body"> If it does match a method, then the arguments are matched
+        against the arg-patterns. If this match fails, a <font color="#ff0000">***to
+        be specified</font> exception is thrown. It this succeeds, then, in the
+        context of the resulting variable definitions, the method-expression is
+        evaluated. The value of the method expression is the value of the call.</p>
+      <p class="Body"> <font color="#ff0000">***Below is Really complicated explanation
+        of shorthands, longhands, and I didn't get it</font></p>
+      <p class="Body"> In this <a href="../../elib/capability/ode/ode-objects.html#dispatch">classic
+        example</a>, the outer object is written as a function, and the inner
+        object is written out explicitly.</p>
+      <blockquote>
+        <pre class="updoc"><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+? def makePoint(x, y) :any {
+&gt;     def point {
+&gt;         to getX() :any {x}
+&gt;         to getY() :any {y}
+&gt;     }
+&gt; }
+# value: &lt;makePoint&gt;
+
+? def pt := makePoint(3, 5)
+# value: &lt;point&gt;
+
+? pt.getX()
+# value: 3</pre>
+      </blockquote>
+      <p class="Body"> Our original concise distance function is actually</p>
+      <blockquote>
+        <pre class="updoc">? def distance {
+&gt;     to run(x, y) :any {
+&gt;         (x**2 + y**2).asFloat64().sqrt()
+&gt;     }
+&gt; }
+# value: &lt;distance&gt;</pre>
+      </blockquote>
+      <p class="Body"> <font color="#ff0000">***must invent better examples than
+        the predicate category thing. Need to start out with a simpler example,
+        then in intro to this thing, you need concrete example of 2 predicates
+        you want to use and make them conjunct, etc. Vector addition for points.***</font></p>
+      <p class="Body"> Let's refer to a one argument function that returns a boolean
+        as a <i>predicate</i>. In other words, let's say that an object with a
+        one argument &quot;<tt>run</tt>&quot; method that returns a boolean is
+        a predicate. We can think of a predicate as like a category -- whether
+        the predicate's <tt>run</tt> method says true or false determines if the
+        argument is or isn't in the category. However, when thinking of categories,
+        it is natural to want to combine categories with the equivalent of intersection,
+        union, etc. </p>
+      <p class="Body">The simple predicate notion does not provide for this, and
+        if we required every predicate to support these new operations, we'd make
+        it too hard to define a new predicate. Instead, here's <i> makeCategory</i>
+        function, which, when given a predicate, gives back a category. Categories
+        act like the predicate they wrap, but also support composition with the
+        usual &quot;&amp;&quot; (and),&quot;|&quot; (or), &quot;^&quot; (xor),
+        and &quot;!&quot; (not) operators. </p>
+      <p class="Body"><font color="#ff0000">***no prior discussion of how <tt>&amp;</tt>
+        maps onto <tt>&quot;and</tt>&quot;. I recommend using &quot;<tt>and</tt>&quot;
+        in the example, and on the way thru, mention in passing we could have
+        used &quot;<tt>&amp;</tt>&quot; which maps onto &quot;<tt>and</tt>&quot;.</font></p>
+      <blockquote>
+        <pre class="updoc">? def makeCategory(pred) :any {
+&gt;     def category {
+&gt;         to (specimen) :any { pred(specimen) }
+&gt;
+&gt;         to and(other) :any {
+&gt;             makeCategory(def _(specimen) :any {
+&gt;                 pred(specimen) &amp;&amp; other(specimen)
+&gt;             })
+&gt;         }
+&gt;
+&gt;         <i><font class="comment"># ... similarly for &quot;or&quot; and &quot;xor&quot;</font></i>
+&gt;
+&gt;         to not(other) :any {
+&gt;             makeCategory(def _(specimen) :any {
+&gt;                 !(pred(specimen))
+&gt;             })
+&gt;         }
+&gt;     }
+&gt; }
+# value: &lt;makeCategory&gt;</pre>
+      </blockquote>
+      <p class="Body"> Ok, now let's define some simple predicates and categories</p>
+      <blockquote>
+        <pre class="updoc">
+? def evenPred(num) :any { num %% 2 == 0 }
+# value: &lt;evenPred&gt;
+
+? def even := makeCategory(evenPred)
+# value: &lt;category&gt;</pre>
+      </blockquote>
+      <p class="Body"> The <i> even</i> category was defined
+        in two separate steps. Since a function definition expression has the
+        function as its value, you can also define a category in one step:</p>
+      <blockquote>
+        <pre class="updoc">
+? def small := makeCategory(def _(num) :any {
+&gt;     num &lt; 100
+&gt; })
+# value: &lt;category&gt;</pre>
+      </blockquote>
+      <p class="Body"> <font color="#ff0000">***having shown everyone this massive
+        cuteness of the one line mega complex definition, ever after in examples
+        use the 2 separate definition process***</font></p>
+      <p class="Body"> Ok, let's intersect the categories.</p>
+      <blockquote>
+        <pre class="updoc">
+? def both := even &amp; small
+# value: &lt;category&gt;
+
+? both(38)
+# value: true
+
+? both(37)
+# value: false
+
+? both(102)
+# value: false</pre>
+      </blockquote>
+      <p class="Body"> Of these numbers, only 38 is both even and small.</p>
+      <div>
+        <h3 class="Body3"> Matching Messages</h3>
+        <div>
+          <div align="center"><img src="images/objNMatch.gif" width="264" height="218">
+          </div>
+        </div>
+        <p class="Body"> What if none of the methods match a call? Using the earlier
+          form, an exception will always get throws back to the caller, but sometimes
+          the callee would like to intervene. After the set of methods, an object
+          definition may optionally have a sequence of matchers. These are the
+          same matchers that appear in the switch statement, and you can validly
+          think of them as if they were enclosed in a</p>
+      </div>
+      <blockquote>
+        <div>
+          <pre class="updoc">
+<b>if</b> (...<font class="comment">/*no methods match*/</font>) {
+    <b>switch</b> ([<i>verb</i>, <i>args</i>]) {
+        <b>match</b> <i>pattern</i> {
+            <i>matcher-expression</i>
+        }
+        ...
+    }
+}</pre>
+        </div>
+      </blockquote>
+      <div>
+        <p class="Body"> In other words, the verb and args from the incoming message
+          are turned into a two-element ConstList which is then pattern matched
+          against each of the patterns in sequence until a match succeeds. If
+          none succeed, a <font color="#ff0000">***to be specified</font> exception
+          is thrown. If one does match, the corresponding matcher-expression is
+          evaluated, and the value of the matcher-expression is the value of the
+          call.</p>
+        <p class="Body"> One use of the flexibility is simply a more flexible
+          alternative to method definition. Even though an individual method definition
+          only accepts a fixed number of arguments, here's a version of our distance
+          function that can accept any number of arguments.</p>
+      </div>
+      <blockquote>
+        <div>
+          <pre class="updoc">
+? def distance {
+&gt;     match [==&quot;run&quot;, args] {
+&gt;         var sum := 0.0
+&gt;         for n in args { sum += n**2 }
+&gt;         sum.sqrt()
+&gt;     }
+&gt; }
+# value: &lt;distance&gt;
+
+? distance(3, 4)
+# value: 5.0
+
+? distance(3, 4, 5)
+# value: 7.0710678118654755</pre>
+        </div>
+      </blockquote>
+      <div>
+        <p class="Body"> Although this example illustrates the power of matchers
+          in object definitions, it's poor style. For such examples, its usually
+          better to accept an EList as an argument.</p>
+        <p class="Body"> <font color="#ff0000">***make sure in EList chapter you
+          have an example of using an EList to send a variable size bag of arguments
+          to a function</font></p>
+        <p class="Body"> More interesting is the use of matchers for delegation.
+          In the above makeCategory code, the category objects respond to &quot;and&quot;,
+          &quot;or&quot;, &quot;xor&quot;, and &quot;not&quot; themselves, but
+          pass the &quot;run(specimen)&quot; message through to the wrapped predicate.
+          If a predicate responds only to &quot;run(specimen)&quot;, then a category
+          that wraps this predicate is like the predicate and more. However, it
+          a particular predicate object also responds to additional messages the
+          category doesn't know about, the above category code will hide this
+          part of the wrapped predicate.</p>
+        <p class="Body"> Here is an alternative category implementation that uses
+          match to delegate all messages it doesn't understand to the wrapped
+          predicate.</p>
+      </div>
+      <blockquote>
+        <div>
+          <pre class="updoc">
+? def makeCategory(pred) :any {
+&gt;     def category {
+&gt;         to and(other) :any {
+&gt;             makeCategory(def _(specimen) :any {
+&gt;                 pred(specimen) &amp;&amp; other(specimen)
+&gt;             })
+&gt;         }
+&gt;
+&gt;         <i><font class="comment"># ... similarly for &quot;or&quot; and &quot;xor&quot;</font></i>
+&gt;
+&gt;         to not(other) :any {
+&gt;             makeCategory(def _(specimen) :any {
+&gt;                 !(pred(specimen))
+&gt;             })
+&gt;         }
+&gt;         match [verb, args] {
+&gt;             E.call(pred, verb, args)
+&gt;         }
+&gt;     }
+&gt; }
+# value: &lt;makeCategory&gt;</pre>
+        </div>
+      </blockquote>
+      <div>
+        <p class="Body"> &quot;<tt>E</tt>&quot; is a primitive service which is
+          always in scope. Use &quot;<tt>E.call(<i>pred</i>,<i>verb</i>,<i>args</i>)</tt>&quot;
+          to call an object with a computed message, when you don't statically
+          know the verb or the individual arguments. <tt>x.max(y)</tt> is equivalent
+          to <tt>E.call(x,&quot;max&quot;,[y])</tt>.</p>
+      </div>
+      <blockquote>
+        <div>
+          <pre class="updoc">
+? def evenPred {
+&gt;     to (num) :any {num %% 2 == 0}
+&gt;     to foo() :any {&quot;bar&quot;}
+&gt; }
+# value: &lt;evenPred&gt;
+
+? def even := makeCategory(evenPred)
+# value: &lt;category&gt;
+
+? even(3)
+# value: false
+
+? even.foo()
+# value: &quot;bar&quot;</pre>
+        </div>
+      </blockquote>
+      <div>
+        <p class="Body"> Even though the category code doesn't know anything about
+          the &quot;foo&quot; message, the wrapping category, &quot;even&quot;
+          delegated it to the wrapped predicate &quot;evenPred&quot;. </p>
+        <h3 class="Body">Example: Lazy Evaluation</h3>
+        <p class="Body">Here's a demonstration of a technique called <i> lazy
+          evaluation</i> , where you have an object that represents the results
+          of a potential calculation, but the calculation isn't performed until
+          it's needed.</p>
+      </div>
+      <div></div>
+      <blockquote>
+        <div>
+          <pre class="updoc">? var num := 0
+# value: 0
+
+
+? def numThunk() :any { num }
+# value: &lt;numThunk&gt;</pre>
+        </div>
+      </blockquote>
+      <div>
+        <p class="Body"> <font color="#ff0000">***need to define a thunk as an
+          expression to evaluate, perhaps a primality test</font></p>
+        <p class="Body"> The <i>postponed</i> argument given to <i>LazyMaker</i>
+          is a no-argument function (ie, a thunk), and held by the resulting <i>
+          lazy</i> object, represents the potential (or postponed) calculation.
+          The actual calculation happens when the thunk is called. In lazy evaluation,
+          once the calculation is performed, it's result is remembered and reused.</p>
+      </div>
+      <blockquote>
+        <div>
+          <pre class="updoc">
+? def LazyMaker(postponed) :any {
+&gt;     var value := null
+&gt;     var hasValue := false
+&gt;     def lazy {
+&gt;         match [verb, args] {
+&gt;             if (hasValue) {
+&gt;                 value
+&gt;             } else {
+&gt;                 hasValue := true
+&gt;                 value := postponed()
+&gt;             }
+&gt;             E.call(value, verb, args)
+&gt;         }
+&gt;     }
+&gt; }
+# value: &lt;LazyMaker&gt;</pre>
+        </div>
+        <div>
+          <pre class="updoc">? def lazyNum := LazyMaker(numThunk)
+# value: &lt;lazy&gt;
+
+? num += 1
+# value: 1
+
+? lazyNum + 0
+# value: 1</pre>
+        </div>
+      </blockquote>
+      <div>
+        <p class="Body"> This addition causes <i> numThunk</i>
+          to be evaluated, and the resulting value remembered.</p>
+      </div>
+      <blockquote>
+        <div>
+          <pre class="updoc">? num += 1
+# value: 2</pre>
+        </div>
+        <div>
+          <pre class="updoc">? lazyNum + 0
+# value: 1</pre>
+        </div>
+      </blockquote>
+      <div>
+        <p class="Body"> As we see, further changes to what <i> numThunk</i> would
+          calculate no longer effect <i> lazyNum</i>.</p>
+      </div>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">elang</a>&nbsp;/&nbsp;<a href="index.html">blocks</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="defFunc.html" title="Back to: Defining Functions"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Defining Functions" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="delegation.html" title="On to: Delegation"><img src="../../images/next.gif" width="64" height="32" alt="On to: Delegation" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

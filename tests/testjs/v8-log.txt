@@ -1,0 +1,49 @@
+V8 version 2.3.9 [console: dumb]
+
+this (15.1) .Infinity writable?: should be false but was true
+this (15.1) .NaN writable?: should be false but was true
+this (15.1) .undefined writable?: should be false but was true
+Math (15.8) .LOG10E doesn't have expected value: should be 0.4342944819032518 but was 0.43429448190325176
+RegExp.prototype (15.10.6) [[Class]]: should be [object RegExp] but was [object Object]
+Error.prototype.toString (15.11.4.4) None of the built-in functions described in (15) shall have a prototype property unless otherwise specified ...
+RangeError.prototype (15.11.7.7) .message absent
+RangeError.prototype (15.11.7.7) .name enumerable?: should be false but was true
+TypeError.prototype (15.11.7.7) .message absent
+TypeError.prototype (15.11.7.7) .name enumerable?: should be false but was true
+EvalError.prototype (15.11.7.7) .message absent
+EvalError.prototype (15.11.7.7) .name enumerable?: should be false but was true
+URIError.prototype (15.11.7.7) .message absent
+URIError.prototype (15.11.7.7) .name enumerable?: should be false but was true
+ReferenceError.prototype (15.11.7.7) .message absent
+ReferenceError.prototype (15.11.7.7) .name enumerable?: should be false but was true
+SyntaxError.prototype (15.11.7.7) .message absent
+SyntaxError.prototype (15.11.7.7) .name enumerable?: should be false but was true
+passed: 3719
+failed: 18
+
+
+Failed to fail: var class = 1;
+Failed to fail: "use strict"; var class = 1;
+Failed to fail: var enum = 1;
+Failed to fail: "use strict"; var enum = 1;
+Failed to fail: var export = 1;
+Failed to fail: "use strict"; var export = 1;
+Failed to fail: var extends = 1;
+Failed to fail: "use strict"; var extends = 1;
+Failed to fail: var import = 1;
+Failed to fail: "use strict"; var import = 1;
+Failed to fail: var super = 1;
+Failed to fail: "use strict"; var super = 1;
+Failed to fail: "use strict"; var implements = 1;
+Failed to fail: "use strict"; var interface = 1;
+Failed to fail: "use strict"; var let = 1;
+Failed to fail: "use strict"; var package = 1;
+Failed to fail: "use strict"; var private = 1;
+Failed to fail: "use strict"; var protected = 1;
+Failed to fail: "use strict"; var public = 1;
+Failed to fail: "use strict"; var static = 1;
+Failed to fail: "use strict"; var yield = 1;
+"var native = 1;" failed with SyntaxError: Unexpected token native
+""use strict"; var native = 1;" failed with SyntaxError: Unexpected token native
+passed: 93
+failed: 23

@@ -1,0 +1,450 @@
+ 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>The Power of Scheme's Ellipses</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elang</a>&nbsp;/&nbsp;<a href="../index.html">quasi</a>&nbsp;/&nbsp;<a href="index.html">terms</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="quasi-term-spec.html" title="Back to: Quasi Term Trees: The Spec"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Quasi Term Trees: The Spec" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><img src="../../../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>The 
+              Power of Ellipses<br>
+              <font size="5">Borrowed from Scheme</font></B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <P ALIGN="left">Like regular expressions, our quasi-literal term-tree patterns 
+        and expressions have quantifiers. These quanitifiers annotate the pattern 
+        or expression to its left. 
+      <ul>
+        <li>'<span class="litchars">?</span>' means optional -- zero or one occurrence.</li>
+        <li>'<span class="litchars">+</span>' means one or more occurrences.</li>
+        <li>'<span class="litchars">*</span>' means zero or more occurrences.</li>
+      </ul>
+      <P ALIGN="left">These quantifiers normally just annotate patterns. Why do 
+        we also apply them to expressions? In order to incorporate the expressiveness 
+        of Scheme's &quot;...&quot; notation. This is best explained by transposing 
+        Scheme's examples into term trees: 
+      <P>The text in the boxes below is from the <a href="http://www.schemers.org/Documents/FAQ/#AEN942">Scheme 
+        FAQ</a>. 
+      <div align="center">
+        <table width="80%" border="1" cellpadding="12" bgcolor="#FFFFCC">
+          <tr> 
+            <td> <div
+class="TITLEPAGE"
+></div
+>
+              <div
+class="qandaset"
+> 
+                <div
+class="qandadiv"
+> 
+                  <div
+class="qandaentry"
+> 
+                    <div
+class="answer"
+></div
+>
+                  </div
+>
+                  <div
+class="qandaentry"
+> 
+                    <div
+class="question"
+> <b
+>5.6. </b
+>How are ellipses (<tt
+class="literal"
+>...</tt
+>) "counted" during macro expansion?</div
+>
+                    <div
+class="answer"
+> 
+                      <p
+> Section 4.3.2 of R5RS states 
+                      <blockquote
+class="BLOCKQUOTE"
+> 
+                        <p
+>Pattern variables that occur in subpatterns followed by one or more instances 
+                          of the identifier ... are allowed only in subtemplates 
+                          that are followed by as many instances of .... They 
+                          are replaced in the output by all of the subforms they 
+                          match in the input, distributed as indicated. It is 
+                          an error if the output cannot be built up as specified. 
+                        </p
+>
+                      </blockquote
+>
+                      It is important to understand what is meant by "followed" 
+                      in the above. Take for example the pattern 
+                      <pre
+class="programlisting"
+>(a (b c ...) (d e ...) ...)</pre
+>
+                      What matters is how many ellipsis <i
+class="emphasis"
+>structurally</i
+> follow a variable rather than <i
+class="emphasis"
+>lexically</i
+>. The variables <tt
+class="literal"
+>a</tt
+>, <tt
+class="literal"
+>b</tt
+>, <tt
+class="literal"
+>c</tt
+>, <tt
+class="literal"
+>d</tt
+> and <tt
+class="literal"
+>e</tt
+> are followed by three, three, three, two and two ellipses respectively, but 
+                      struturally they are followed by none, none, one, one and 
+                      two ellipses respectively. The difference between the structural 
+                      and lexical ellipsis counts arises because ellipses only 
+                      apply to the pattern/template immediatetly preceeding them. 
+                      Thus, the above pattern can supply the input for the template 
+                      <pre
+class="programlisting"
+>((a c ...) (b d ...) (e ...) ...)</pre
+>
+                      The structural ellipsis count of the template variables 
+                      matches that of the pattern, whereas the lexical template 
+                      count is completely different. </div
+>
+                  </div
+>
+                </div
+>
+              </div
+></td>
+          </tr>
+        </table>
+      </div>
+      <P ALIGN="left">Likewise for term trees of course. For us, the corresponding 
+        example quasi-literal expression (&quot;template&quot; above) might be 
+      <blockquote> 
+        <pre>term`<span class="litchars">[[</span>$a<span class="litchars">, </span>$c<span class="litchars">*], [</span>$b<span class="litchars">, </span>$d<span class="litchars">*], [</span>$e<span class="litchars">*]*]</span>`</pre>
+      </blockquote>
+      <P ALIGN="left">Note that the square brackes are just syntactic sugar for 
+        a term with &quot;<tt>.tuple.</tt>&quot; for a functor name. So the above 
+        is equivalent to: 
+      <blockquote> 
+        <pre>term`<span class="litchars">.tuple.(.tuple.(</span>$a<span class="litchars">, </span>$c<span class="litchars">*), .tuple.(</span>$b<span class="litchars">, </span>$d<span class="litchars">*), .tuple.(</span>$e<span class="litchars">*)*)</span>`</pre>
+      </blockquote>
+      <P ALIGN="left">Here's a full example where we use a quasi-literal pattern 
+        (&quot;pattern&quot; above) to bind the variables, which we then use as 
+        input for the above expression (&quot;template&quot;): 
+      <blockquote> 
+        <pre align="left"><span class="stdout">? </span><span class="keyword">pragma</span>.syntax(&quot;<span class="litchars">0.8</span>&quot;)
+
+<span class="stdout">? </span><span class="keyword">def</span> term`<span class="litchars">[</span>@<span class="defvar">a</span><span class="litchars">, [</span>@<span class="defvar">b</span><span class="litchars">, </span>@<span class="defvar">c</span><span class="litchars">*], [</span>@<span class="defvar">d</span><span class="litchars">, </span>@<span class="defvar">e</span><span class="litchars">*]*]</span>` := term`<span class="litchars">[1, [2, 3, 4], [5], [6, 7, 8]]</span>`
+<span class="stdout"># value: term`[1,
+#              [2, 3, 4],
+#              [5],
+#              [6, 7, 8]]`
+ 
+? </span>a
+<span class="stdout"># value: term`1`
+ 
+? </span>b
+<span class="stdout"># value: term`2`
+ 
+? </span>c
+<span class="stdout"># value: [term`3`, term`4`]
+ 
+? </span>d
+<span class="stdout"># value: [term`5`, term`6`]
+ 
+? </span>e
+<span class="stdout"># value: [[], [term`7`, term`8`]]
+ 
+? </span>term`<span class="litchars">[[</span>$a<span class="litchars">, </span>$c<span class="litchars">*], [</span>$b<span class="litchars">, </span>$d<span class="litchars">*], [</span>$e<span class="litchars">*]*]</span>`<span class="stdout">
+# value: term`[[1, 3, 4],
+#              [2, 5, 6],
+#              [],
+#              [7, 8]]`</span></pre>
+      </blockquote>
+      <div align="center">
+        <table width="80%" cellpadding="12" border="1" bgcolor="#FFFFCC">
+        <tr> 
+          <td> <div
+class="TITLEPAGE"
+></div
+>
+            <div
+class="qandaset"
+> 
+              <div
+class="qandadiv"
+> 
+                <div
+class="qandaentry"
+> 
+                  <div
+class="answer"
+></div
+>
+                </div
+>
+                <div
+class="qandaentry"
+> 
+                  <div
+class="question"
+> 
+                    <div
+class="TITLEPAGE"
+></div
+>
+                    <div
+class="qandaset"
+> 
+                      <div
+class="qandadiv"
+> 
+                        <div
+class="qandaentry"
+> 
+                            <div
+class="answer"
+> One issue that is not addressed by the R5RS explanation of macro expansion is 
+                              how ellipses templates are expanded when they combine 
+                              variables that matched input of different size. 
+                              The canonical example for this is 
+                              <pre
+class="programlisting"
+>(define-syntax foo
+  (syntax-rules ()
+    ((foo (a ...) (b ...)) '((a b) ...))))
+(foo (1 2) (3 4 5)) ;=&gt; ?</pre
+>
+                            In different Schemes this is either an error or produces 
+                            the result <tt
+class="literal"
+>'((1 3) (2 4))</tt
+>, i.e. the "oversized" matches are automatically shortend as needed. </div
+>
+                        </div
+>
+                      </div
+>
+                    </div
+>
+                  </div
+>
+                </div
+>
+              </div
+>
+            </div
+></td>
+        </tr>
+      </table></div>
+      <P ALIGN="left">When these variables are different sizes, since this is 
+        a likely indicator of a bug, and because its easily repaired when it's 
+        intentional, E considers this case to be an error. 
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">def</span> term`<span class="litchars">foo([</span>@<span class="defvar">a</span><span class="litchars">*],[</span>@<span class="defvar">b</span><span class="litchars">*])</span>` := term`<span class="litchars">foo([1,2],[3,4,5])</span>`
+<span class="stdout"># value: term`foo([1, 2],
+#                 [3, 4, 5])`
+ 
+? </span>a
+<span class="stdout"># value: [term`1`, term`2`]
+ 
+? </span>b
+<span class="stdout"># value: [term`3`, term`4`, term`5`]
+ 
+? </span>term`<span class="litchars">[[</span>$a<span class="litchars">,</span>$b<span class="litchars">]*]</span>`
+<span class="stderr"># problem: Failed: Inconsistent shape: 2 vs 3</span></pre>
+      </blockquote>
+      <P ALIGN="left">So let's shorten <tt>b</tt> and see what success looks like 
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">b2</span> := b(0,2)
+<span class="stdout"># value: [term`3`, term`4`]
+ 
+? </span>term`<span class="litchars">[[</span>$a<span class="litchars">,</span>$b2<span class="litchars">]*]</span>`
+<span class="stdout"># value: term`[[1, 3],
+#              [2, 4]]`</span>
+</pre>
+      </blockquote>
+      <P ALIGN="left">But when the variable is too <i>flat</i>, so to speak (insufficient 
+        dimensions or rank), E takes the same permissive attitude as shown by 
+        the following Scheme example. 
+      <div align="center">
+        <table width="80%" cellpadding="12" border="1" bgcolor="#FFFFCC">
+        <tr> 
+          <td> <div
+class="TITLEPAGE"
+></div
+>
+            <div
+class="qandaset"
+> 
+              <div
+class="qandadiv"
+> 
+                <div
+class="qandaentry"
+> 
+                    <div
+class="answer"
+> Some Schemes relax the above "matching ellipses count" requirement by allowing 
+                      allowing template variables to be followed by <i
+class="emphasis"
+>at least</i
+> as many ellipses as their corresponding pattern variables. The resulting expansion 
+                      repeats the matched input. Thus 
+                      <pre
+class="programlisting"
+>(define-syntax foo
+  (syntax-rules ()
+    ((foo (a ...) (b ...) ...) '(((a b) ...) ...))))
+(foo (1 2) (3 4) (5 6 7)) ;=&gt; '(((1 3) (1 4)) ((2 5) (2 6) (2 7)))</pre
+>
+                    produces the desired result. Note however that in any ellipses 
+                    sub-template there must be at least one template variable 
+                    for which the ellipsis count is <i
+class="emphasis"
+>exactly</i
+> the same as in the pattern, otherwise the macro expander would not be able to 
+                    determine how many times to repeat the matched input of the 
+                    template variables with ellipsis counts higher than in the 
+                    pattern.</div
+>
+                </div
+>
+              </div
+>
+            </div
+></td>
+        </tr>
+      </table></div>
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">def</span> term`<span class="litchars">foo([</span>@<span class="defvar">a</span><span class="litchars">*], [</span>@<span class="defvar">b</span><span class="litchars">*]*)</span>` := term`<span class="litchars">foo([1,2], [3,4], [5,6,7])</span>`
+<span class="stdout"># value: term`foo([1, 2],
+#                 [3, 4],
+#                 [5, 6, 7])`
+ 
+? </span>a
+<span class="stdout"># value: [term`1`, term`2`]
+ 
+? </span>b
+<span class="stdout"># value: [[term`3`, term`4`], [term`5`, term`6`, term`7`]]
+ 
+? </span>term`<span class="litchars">[[[</span>$a<span class="litchars">,</span>$b<span class="litchars">]*]*]</span>`
+<span class="stdout"># value: term`[[[1, 3],
+#               [1, 4]],
+#              [[2, 5],
+#               [2, 6],
+#               [2, 7]]]`</span></pre>
+      </blockquote>
+      <p>Since literal data is repeated as many times as necessary, variables 
+        that are too flat, like <tt>a</tt> above, are treated in a way that's 
+        intermediate between the treatment of literal data and the treatment of 
+        variables, like <tt>b</tt> above, of adequate dimensionality.</p>
+      <p>What are some other good examples of the power of Scheme's &quot;...&quot; 
+        that we should also use here?</p>
+      <h3>Acknowledgements</h3>
+      <p>Who should we acknowledge for Scheme's &quot;...&quot; system? Darius 
+        Bacon writes:</p>
+      <blockquote>I'm not sure, but the earliest I've seen it was in a Compiler 
+        Construction volume around 1972 -- there was a paper (by William Waite? 
+        can't remember) about an essentially equivalent rewriting system with 
+        a different syntax. The Scheme report did not acknowledge it, so I guess 
+        it's a reinvention. </blockquote>
+      <p>(any further information about the origin of the idea would be appreciated)</p>
+      <p>We also thank Matthias Radestock, the editor of the FAQ we quote from 
+        above.</p>
+      <p>Dean Tribble, who suggested incorporating the power of Scheme's &quot;...&quot; 
+        into the quasi-literal handing of Term trees.</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">elang</a>&nbsp;/&nbsp;<a href="../index.html">quasi</a>&nbsp;/&nbsp;<a href="index.html">terms</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="quasi-term-spec.html" title="Back to: Quasi Term Trees: The Spec"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Quasi Term Trees: The Spec" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><img src="../../../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

@@ -1,0 +1,135 @@
+<!-- =================================================================
+
+    DTD for Kernel-E parse trees (actually, ASTs) as DOM trees
+
+TYPICAL INVOCATION:
+
+    <!DOCTYPE seqExpr SYSTEM
+              "http://www.erights.org/elang/kernel/kernel-e-NNN.dtd">
+
+    where NNN is the version number.  
+    This dtd is version number 0.8.10.
+
+===================================================================== -->
+
+<!ENTITY % eExpr '(
+           Integer
+         | Float64
+         | Char
+         | String
+
+         | Noun
+         | slotExpr
+         | assignExpr
+         | seqExpr
+         | matchBindExpr
+         | defineExpr
+         | hideExpr
+         | ifExpr
+         | escapeExpr
+         | loopExpr
+         | catchExpr
+         | finallyExpr
+         | callExpr
+         | sendExpr
+         | objectExpr
+)'>
+
+<!ENTITY % simplePattern '(
+           finalPattern
+         | varPattern
+         | ignorePattern
+)'>
+
+<!ENTITY % pattern '(
+           finalPattern
+         | varPattern
+         | ignorePattern
+         | suchThatPattern
+         | listPattern
+         | cdrPattern
+)'>
+
+<!ENTITY % behavior '(
+           eScript
+         | matcher
+)'>
+
+<!-- literal expressions -->
+
+<!ELEMENT Integer (#PCDATA)>
+<!ELEMENT Float64 (#PCDATA)>
+<!ELEMENT Char (#PCDATA)>
+<!ELEMENT String (#PCDATA)>
+
+<!-- other expressions -->
+
+
+<!ELEMENT Noun (#PCDATA)>
+  
+<!ELEMENT slotExpr (Noun)>
+
+<!ELEMENT assignExpr (Noun, %eExpr;)>
+
+<!ELEMENT seqExpr ((%eExpr;)+)>
+
+<!ELEMENT matchBindExpr (%eExpr;, %pattern;)>
+
+<!ELEMENT defineExpr (%pattern;, %eExpr;)>
+
+<!ELEMENT hideExpr (%eExpr;)>
+
+<!ELEMENT ifExpr (%eExpr;, %eExpr;, %eExpr;)>
+
+<!ELEMENT escapeExpr (%simplePattern;, %eExpr;)>
+
+<!ELEMENT loopExpr (%eExpr;)>
+
+<!ELEMENT catchExpr (%eExpr;, %pattern;, %eExpr;)>
+
+<!ELEMENT finallyExpr (%eExpr;, %eExpr;)>
+
+<!ELEMENT callExpr (%eExpr;, Verb, (%eExpr;)*)>
+
+<!ELEMENT sendExpr (%eExpr;, Verb, (%eExpr;)*)>
+
+<!ELEMENT objectExpr (docComment, String, auditors, %behavior;)>
+
+<!-- patterns -->
+
+<!ELEMENT finalPattern (Noun, %eExpr;)>
+
+<!ELEMENT varPattern (Noun, %eExpr;)>
+
+<!ELEMENT ignorePattern EMPTY>
+
+<!ELEMENT suchThatPattern (%pattern;, %eExpr;)>
+
+<!ELEMENT listPattern ((%pattern;)*)>
+
+<!ELEMENT cdrPattern (listPattern, %pattern;)>
+
+
+<!-- other elements -->
+
+<!ELEMENT auditors (Noun*)>
+
+<!ELEMENT eMethod (docComment, Verb, listPattern, %eExpr;,
+                       %eExpr;)>
+
+<!ELEMENT matcher (%pattern;, %eExpr;)>
+
+<!ELEMENT eScript (eMethod*, matcher?)>
+
+<!ELEMENT docComment (Text | DocTag)*>
+
+<!ELEMENT DocTag (Identifier, Text)>
+
+<!ELEMENT Verb (#PCDATA)>
+
+<!ELEMENT Identifier (#PCDATA)>
+
+<!ELEMENT Text (#PCDATA)>
+
+
+

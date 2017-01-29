@@ -1,0 +1,4531 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+   <TITLE>The E Class Library</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.0Gold (Win95; I) [Netscape]">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+
+<PRE><IMG SRC="midi_e.gif" ALT="Electric Communities: E Programming Language" HEIGHT=30 WIDTH=30>  <A HREF="index.html">Contents</A>  <A HREF="../index.html">Home Page</A>
+</PRE>
+
+<P>
+<HR></P>
+
+<H1>The E Class Library</H1>
+
+<P>
+<HR></P>
+
+<BLOCKQUOTE>
+<P>This chapter is a reference to the E classes.In addition to Java classes,
+E has its own library of classes to support the E runtime environment.</P>
+
+<P>E provides two types of classes: those derived from <A HREF="#EObjectclass">E's
+<I>EObject </I>class</A>, and those that are derived from Java's <A HREF="#Objectclass"><I>Object</I>
+class</A>. E also provides several Java <A HREF="#interface">interfaces</A>,
+and its own <A HREF="#einterface">E-interfaces.</A></P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="EObjectclass"></A>EObject classes </H1>
+
+<BLOCKQUOTE>
+<P>The <I>EObject</I> class is similar to Java's <I>Object</I> class. It
+is E's root class; objects derived from <I>EObject</I> implement E's security
+and messaging capabilities. Many of these are similar to Java's classes.
+For example, <I>EBoolean</I> is very similar to Java's <I>Boolean</I> class,
+with the added E functionality.</P>
+
+<P>In contrast to Java object classes, which contain methods that are invoked
+directly by other objects (using standard method call/return semantics),
+an E-object responds only to messages sent by other objects.</P>
+
+<P>The <I>EObject</I> classes include:</P>
+
+<P><A HREF="#EBoolean">EBoolean <BR>
+</A><A HREF="#EChannel">EChannel <BR>
+</A><A HREF="#EDistributor">EDistributor <BR>
+</A><A HREF="#EDouble">EDouble <BR>
+</A><A HREF="#EFalse">EFalse<BR>
+</A><A HREF="#EFloat">EFloat<BR>
+</A><A HREF="#EInteger">EInteger <BR>
+</A><A HREF="#ELong">ELong<BR>
+</A><A HREF="#ENull">ENull<BR>
+</A><A HREF="#EObject">EObject <BR>
+</A><A HREF="#EPrintStream">EPrintStream <BR>
+</A><A HREF="#ESealer">ESealer <BR>
+</A><A HREF="#EString">EString <BR>
+</A><A HREF="#ETrue">ETrue<BR>
+</A><A HREF="#EUnsealer">EUnsealer</A><BR>
+</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="Objectclass"></A>Java Object E-runtime classes</H1>
+
+<BLOCKQUOTE>
+<P>The classes in E that derive from Java's <I>Object</I> class are also
+part of the E runtime. However, these classes do not have E functionality
+such as messaging. In E, these classes are generally prefixed by the letters
+Rt (with a few exceptions). These classes include:</P>
+
+<P><A HREF="#PObjDB">PObjDB<BR>
+</A><A HREF="#RtClock">RtClock<BR>
+</A><A HREF="#RtClockTerminator">RtClockTerminator<BR>
+</A><A HREF="#RtConnection">RtConnection<BR>
+</A><A HREF="#RtConnector">RtConnector<BR>
+</A><A HREF="#RtDBViewLimiter">RtDBViewLimiter<BR>
+</A><A HREF="#RtDecoder">RtDecoder<BR>
+</A><A HREF="#RtEARL">RtEARL<BR>
+</A><A HREF="#RtEARLrestrictor">RtEARLrestrictor<BR>
+</A><A HREF="#RtEException">RtEException<BR>
+</A><A HREF="#RtEEnvironment">RtEEnvironment<BR>
+</A><A HREF="#RtEncoder">RtEncoder<BR>
+</A><A HREF="#RtEnvelope">RtEnvelope<BR>
+</A><A HREF="#RtFile">RtFile<BR>
+</A><A HREF="#RtFileDataInput">RtFileDataInput<BR>
+</A><A HREF="#RtFileDataOutput">RtFileDataOutput<BR>
+</A><A HREF="#RtFileDirectory">RtFileDirectory<BR>
+</A><A HREF="#RtFileEnvironment">RtFileEnvironment<BR>
+</A><A HREF="#RtLauncher">RtLauncher<BR>
+</A><A HREF="#RtNetworkController">RtNetworkController<BR>
+</A><A HREF="#RtRandomAccessFile">RtRandomAccessFile<BR>
+</A><A HREF="#RtRegistration">RtRegistration<BR>
+</A><A HREF="#RtRegistrar">RtRegistrar<BR>
+</A><A HREF="#RtSystem">RtSystem<BR>
+</A><A HREF="#RtTimer">RtTimer</A><BR>
+</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="einterface"></A>E-interfaces</H1>
+
+<BLOCKQUOTE>
+<P>E provides its own E-interfaces, which describe E messages, like Java
+interfaces describe Java methods. Like Java, you use the <TT>import</TT>
+and <TT>implements</TT> statements to use E-interfaces. E provides the
+following E-interfaces: </P>
+
+<P><A HREF="#ELaunchable">ELaunchable<BR>
+</A><A HREF="#IBoolean">IBoolean</A><BR>
+</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="interface"></A>Java interfaces provided by E</H1>
+
+<BLOCKQUOTE>
+<P>E provides several interfaces that contain methods supporting the E
+runtime. These are regular Java interfaces; you use the <TT>import</TT>
+and <TT>implements</TT> statements to use them.</P>
+
+<P>The E runtime Java interfaces include:</P>
+
+<P><A HREF="#RtAwakeAfterDecoding">RtAwakeAfterDecoding<BR>
+</A><A HREF="#RtCodeable">RtCodeable<BR>
+</A><A HREF="#RtDBViewFilter">RtDBViewFilter<BR>
+</A><A HREF="#RtDecodeable">RtDecodeable<BR>
+</A><A HREF="#RtEncodeable">RtEncodeable<BR>
+</A><A HREF="#RtNotificationHandler">RtNotificationHandler<BR>
+</A><A HREF="#RtTickHandling">RtTickHandling<BR>
+</A><A HREF="#RtTimeoutHandling">RtTimeoutHandling</A><BR>
+</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="EBoolean"></A>EBoolean</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.run.EBoolean;</TT></P>
+
+<P><TT>import ec.e.db.*;</TT></P>
+
+<P>The <I>EBoolean</I> class is an <I>EObject</I> wrapper for boolean data
+values, and serves as a place for boolean-oriented operations. </P>
+
+<H2>Creation</H2>
+
+<P><I>EBoolean</I> has no public constructor. Use its two built-in constants,
+<TT>etrue</TT> and <TT>efalse</TT>.</P>
+
+<H2>E-methods</H2>
+
+<P>None</P>
+
+<H2>Interfaces</H2>
+
+<P><I>RtCodeable</I></P>
+
+<H2>Return value</H2>
+
+<P><TT>ETrue</TT> has the following return value method:</P>
+
+<PRE><TT>protected Object value() {return ((Object)(new Boolean(true)));</TT>
+</PRE>
+
+<P><TT>EFalse</TT> has the following return value method:</P>
+
+<PRE><TT>protected Object value() {return ((Object)(new Boolean(false)));</TT>
+</PRE>
+
+<H2>Example</H2>
+
+<P>None</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="EChannel"></A>EChannel</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.ec.run.EChannel;</TT></P>
+
+<P><I>EChannel</I> is the base class for all channels, which are one-way
+conduits carrying messages in envelopes from one E-object to another. Channels
+do not respond to messages themselves.</P>
+
+<P>Channels are one-way because E-messages do not have a return value.
+Each channel has a distributor that routes messages in the channel to the
+appropriate destination E-objects. Messaging is asynchronous. This means
+that when you forward a channel to a new recipient, it receives all the
+messages that have ever been sent through that channel. </P>
+
+<P>Once you have forwarded a channel, you cannot unforward it, though you
+can forward a channel more than once. You can also forward a channel to
+many recipients simultaneously; all messages sent through that channel
+are received by all the recipients.</P>
+
+<P>All variables descended from <I>EObject</I> that are not explicitly
+initialized are implicitly initialized to a new instance of <I>EChannel</I>
+and are initially unforwarded.</P>
+
+<H2>Creation</H2>
+
+<P>Create a new channel by using the <TT>new</TT> operator:</P>
+
+<P><TT><I>channelName</I> = new EChannel(); </TT></P>
+
+<P>or by declaring a new object:</P>
+
+<P><TT>EObject<I>channelName </I></TT></P>
+
+<H2>E-methods</H2>
+
+<P>None.</P>
+
+<H2>Example</H2>
+
+<P>Each of these two statements creates a new channel named <TT>hudson</TT>:</P>
+
+<PRE><TT>hudson = new EChannel();</TT>
+</PRE>
+
+<PRE><TT>Eobject hudson;</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="EDistributor"></A>EDistributor</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.run.EDistributor;</TT></P>
+
+<P><I>EDistributor</I> is the class of all distributors, which route the
+messages in a channel to the destination E-objects.</P>
+
+<P>To extract a channel's distributor, use:</P>
+
+<PRE><TT>  &amp;</TT><I>channelName</I></PRE>
+
+<P>The result is of class <I>EDistributor</I> and you can treat it as a
+normal value; for example, you can pass it as a message parameter.</P>
+
+<P>You can only use the <TT>&amp;</TT> operator within the scope of the
+channel variable's initial declaration. You cannot use this operator on
+a channel which has been passed as the parameter of an E message or Java
+method call, or stored as an instance variable of an object other than
+that object itself.</P>
+
+<H2>Creation</H2>
+
+<P>Distributors are generated internally by using the <TT>&amp;</TT> operator.</P>
+
+<H2>E-methods</H2>
+
+<P>To forward messages in a channel to an E-object, send a <TT>forward</TT>
+message to the channel's distributor with the forwarding destination as
+the parameter:</P>
+
+<P><TT><I>distributorName</I> &lt;- forward(<I>destinationEObject</I>);
+</TT></P>
+
+<P>or </P>
+
+<P><TT>&amp;<I>channelName</I> &lt;- forward(<I>destinationEObject</I>);
+</TT></P>
+
+<H2>Example</H2>
+
+<P>Forward a a channel associated with a distributor called <TT>MyResult</TT>
+to an E-object <I>Answer</I>:</P>
+
+<PRE><TT>  emethod DieRollEwith (Edistributor MyResult)
+    {
+      MyResult &lt;- forward (Answer);
+    }</TT>
+</PRE>
+
+<P>Forward a channel named <TT>hudson</TT> to an E-object named <I>bob</I>:</P>
+
+<PRE><TT>  &amp;hudson &lt;- forward(bob);</TT></PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="EDouble"></A>EDouble</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.lang.EDouble;</TT></P>
+
+<P>The <I>EDouble</I> class is an <I>EObject</I> wrapper for double data
+values, and serves as a place for double-oriented operations. </P>
+
+<H2>Creation</H2>
+
+<P><TT><I>edouble</I> = new EDouble(<I>double value</I> ); </TT></P>
+
+<BLOCKQUOTE>
+<P>Constructs an <I>EDouble</I> wrapper for the specified double value.</P>
+</BLOCKQUOTE>
+
+<H2>E-methods</H2>
+
+<P>The following E-methods implement mathematical functions for an <I>EDouble</I>.</P>
+
+<P><TT>emethod dadd(EDouble operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Add two <I>EDoubles</I>, resulting in a new <I>EDouble</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod dsub(EDouble operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Subtract two <I>EDoubles</I>, resulting in a new <I>EDouble. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod dmul(EDouble operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Multiply two <I>EDoubles</I>, resulting in a new <I>EDouble. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod ddiv(EDouble operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Divide two <I>EDoubles</I>, resulting in a new <I>EDouble. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod dmod(EDouble operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Take the modulus of two <I>EDoubles</I>, resulting in a new <I>EDouble.
+</I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod dmax(EDouble operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Max of two <I>EDoubles</I>, resulting in a new <I>EDouble. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod dmin(EDouble operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Min of two <I>EDoubles</I>, resulting in a new <I>EDouble. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod atan2(EDouble operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Rectangular arc tangent of two <I>EDoubles</I>, resulting in a new <I>EDouble.
+</I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod pow(EDouble operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Power of two <I>EDoubles</I>, resulting in a new <I>EDouble. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod dneg(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Negative of an <I>EDouble</I>, resulting in a new <I>EDouble. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod dabs(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Absolute value of an <I>EDouble</I>, resulting in a new <I>EDouble.
+</I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod sin(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Sine of an <I>EDouble</I>, resulting in a new <I>EDouble. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod cos(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Cosine of an <I>EDouble</I>, resulting in a new <I>EDouble. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod tan(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Tangent of an <I>EDouble</I>, resulting in a new <I>EDouble. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod asin(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Arc sine of an <I>EDouble</I>, resulting in a new <I>EDouble. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod acos(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Arc cosine of an <I>EDouble</I>, resulting in a new <I>EDouble. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod atan(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Arc tangent of an <I>EDouble</I>, resulting in a new <I>EDouble. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod exp(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Exponential of an <I>EDouble</I>, resulting in a new <I>EDouble. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod log(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Natural logarithm of an <I>EDouble</I>, resulting in a new <I>EDouble.
+</I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod sqrt(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Square root of an <I>EDouble</I>, resulting in a new <I>EDouble. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod floor(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Floor of an <I>EDouble</I>, resulting in a new <I>EDouble. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod ceil(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Ceiling of an <I>EDouble</I>, resulting in a new <I>EDouble. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod rint(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Integer value of an <I>EDouble</I>, resulting in a new <I>EDouble. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod asInteger(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Cast an <I>EDouble</I> to <I>EInteger</I>, resulting in a new <I>EInteger.
+</I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod dlt(EDouble operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EDoubles</I> with less-than sign(&lt;), resulting in
+an <I>EBoolean. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod dleq(EDouble operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EDoubles</I> with less-than equal-to sign(&lt;=), resulting
+in an <I>EBoolean. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod dgt(EDouble operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EDoubles</I> with greater-than sign(&gt;), resulting
+in an <I>EBoolean. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod dgeq(EDouble operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EDoubles</I> with greater-than equal-to sign(&gt;=),
+resulting in an <I>EBoolean. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod deq(EDouble operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EDoubles</I> with equal-to sign(=), resulting in an <I>EBoolean.
+</I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod dneq(EDouble operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EDoubles</I> with not equal-to sign (!=), resulting in
+an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<H2>Return value</H2>
+
+<P>Returns a Java <TT>double</TT> data type with the following <TT>value</TT>
+method:</P>
+
+<PRE><TT>  double value() {return mydouble};</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="EFalse"></A>EFalse</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.run.EFalse;</TT></P>
+
+<P><TT>import ec.e.run.IBoolean;</TT></P>
+
+<P>An object of this class represents a <I>EBoolean</I> with a value of
+FALSE.</P>
+
+<H2>Creation</H2>
+
+<P>This class has one unique instance, referenced by the <TT>efalse</TT>
+keyword.</P>
+
+<H2>E-methods</H2>
+
+<P><TT>emethod and(EBoolean operand, EDistributor result) </TT></P>
+
+<P><TT>emethod or(EBoolean operand, EDistributor result) </TT></P>
+
+<P><TT>emethod xor(EBoolean operand, EDistributor result) </TT></P>
+
+<P><TT>emethod eqv(EBoolean operand, EDistributor result) </TT></P>
+
+<P><TT>emethod not(EDistributor result) </TT></P>
+
+<H2>E-interfaces</H2>
+
+<P><I>IBoolean</I></P>
+
+<H2>Return value</H2>
+
+<P>Returns a Java <TT>Boolean</TT> data type of <TT>false</TT> with the
+following <TT>value</TT> method:</P>
+
+<PRE><TT>protected Object value() {return((Object)(new Boolean(false)));}</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="EFloat"></A>EFloat</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.lang.EFloat;</TT></P>
+
+<P>The <I>EFloat</I> class is an <I>EObject</I> wrapper for float data
+values, and is a place for float-oriented operations.</P>
+
+<H2>Creation</H2>
+
+<P><TT><I>newfloat</I> = new EFloat (<I>float value</I> ); </TT></P>
+
+<BLOCKQUOTE>
+<P>Constructs an <I>EFloat</I> wrapper for the specified float value. </P>
+</BLOCKQUOTE>
+
+<H2>E-methods</H2>
+
+<P>The following E-methods implement mathematical functions for an <I>EFloat</I>.
+</P>
+
+<P><TT>emethod add(EFloat operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Add two <I>EFloats</I>, resulting in a new <I>EFloat</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod sub(EFloat operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Subtract two <I>EFloats</I>, resulting in a new <I>EFloat</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod mul(EFloat operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Multiply two <I>EFloats</I>, resulting in a new <I>EFloat</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod div(EFloat operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Divide two <I>EFloats</I>, resulting in a new <I>EFloat</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod mod(EFloat operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Take the modulus of two <I>EFloats</I>, resulting in a new <I>EFloat</I>.
+</P>
+</BLOCKQUOTE>
+
+<P><TT>emethod max(EFloat operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Max of two <I>EFloats</I>, resulting in a new <I>EFloat</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod min(EFloat operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Min of two <I>EFloats</I>, resulting in a new <I>EFloat</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod atan2(EFloat operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Rectangular arc tangent of two <I>EFloats</I>, resulting in a new <I>EFloat</I>.
+</P>
+</BLOCKQUOTE>
+
+<P><TT>emethod pow(EFloat operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Power of two <I>EFloats</I>, resulting in a new <I>EFloat</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod neg(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Negative of an <I>EFloat</I>, resulting in a new <I>EFloat</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod abs(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Absolute value of an <I>EFloat</I>, resulting in a new <I>EFloat</I>.
+</P>
+</BLOCKQUOTE>
+
+<P><TT>emethod sin(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Sine of an <I>EFloat</I>, resulting in a new <I>EFloat</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod cos(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Cosine of an <I>EFloat</I>, resulting in a new <I>EFloat</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod tan(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Tangent of an <I>EFloat</I>, resulting in a new <I>EFloat</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod asin(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Arc sine of an <I>EFloat</I>, resulting in a new <I>EFloat</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod acos(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Arc cosine of an <I>EFloat</I>, resulting in a new <I>EFloat</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod atan(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Arc tangent of an <I>EFloat</I>, resulting in a new <I>EFloat</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod exp(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Exponential of an <I>EFloat</I>, resulting in a new <I>EFloat</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod log(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Natural logarithm of an <I>EFloat</I>, resulting in a new <I>EFloat</I>.
+</P>
+</BLOCKQUOTE>
+
+<P><TT>emethod sqrt(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Square root of an <I>EFloat</I>, resulting in a new <I>EFloat</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod floor(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Floor of an <I>EFloat</I>, resulting in a new <I>EFloat</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod ceil(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Ceiling of an <I>EFloat</I>, resulting in a new <I>EFloat</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod rint(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Integer value of an <I>EFloat</I>, resulting in a new <I>EFloat</I>.
+</P>
+</BLOCKQUOTE>
+
+<P><TT>emethod asInteger(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Cast an <I>EFloat</I> to <I>EInteger</I>, resulting in a new <I>EInteger.
+</I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod lt(EFloat operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EFloats</I> with less-than operation (&lt;) resulting
+in an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod leq(EFloat operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EFloats</I> with less-than or equal-to operation (&lt;=)
+resulting in an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod gt(EFloat operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EFloats</I> with greater-than operation (&gt;) resulting
+in an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod geq(EFloat operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EFloats</I> with greater-than or equal-to operation (&gt;=)
+resulting in an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod eq(EFloat operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EFloats</I> with equal-to operation (==) resulting in
+an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod neq(EFloat operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EFloats</I> with not equal-to operation (!=) resulting
+in an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<H2>Return value</H2>
+
+<P>Returns a Java <TT>float</TT> data type with the following <TT>value</TT>
+method:</P>
+
+<PRE><TT>  float value() {return myfloat};</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="EInteger"></A>EInteger</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.lang.EInteger;</TT></P>
+
+<P>The <I>EInteger</I> class is an <I>EObject</I> wrapper for integer values.
+It holds a 32-bit value.</P>
+
+<H2>Creation</H2>
+
+<P><TT><I>einteger</I> = new EInteger(<I>integer value</I> ); </TT></P>
+
+<H2>E-methods</H2>
+
+<P>These E-methods implement mathematical functions for an <I>EInteger</I>.</P>
+
+<P><TT>emethod add(EInteger operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Add two <I>EIntegers</I>, resulting in a new <I>EInteger</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod sub(EInteger operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Subtract two <I>EIntegers</I>, resulting in a new <I>EInteger</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod mul(EInteger operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Multiply two <I>EIntegers</I>, resulting in a new <I>EInteger.</I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod div(EInteger operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Divide two <I>EIntegers</I>, resulting in a new <I>EInteger. </I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod mod(EInteger operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Take the modulus two <I>EIntegers</I>, resulting in a new <I>EInteger</I>.
+</P>
+</BLOCKQUOTE>
+
+<P><TT>emethod band(EInteger operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Bitwise AND of two <I>EIntegers</I>, resulting in a new <I>EInteger</I>.
+</P>
+</BLOCKQUOTE>
+
+<P><TT>emethod bor(EInteger operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Bitwise OR of two <I>EIntegers</I>, resulting in a new <I>EInteger</I>.
+</P>
+</BLOCKQUOTE>
+
+<P><TT>emethod bxor(EInteger operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Bitwise XOR of two <I>EIntegers</I>, resulting in a new <I>EInteger</I>.
+</P>
+</BLOCKQUOTE>
+
+<P><TT>emethod max(EInteger operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Max of two <I>EIntegers</I>, resulting in a new <I>EInteger</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod min(EInteger operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Min of two <I>EIntegers</I>, resulting in a new <I>EInteger</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod neg(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Negative of an <I>EInteger</I>, resulting in a new <I>EInteger</I>.
+</P>
+</BLOCKQUOTE>
+
+<P><TT>emethod bnot(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Bitwise NOT of an <I>EInteger</I>, resulting in a new <I>EInteger</I>.
+</P>
+</BLOCKQUOTE>
+
+<P><TT>emethod abs(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Absolute value of an <I>EInteger</I>, resulting in a new <I>EInteger</I>.
+</P>
+</BLOCKQUOTE>
+
+<P><TT>emethod asDouble(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Cast an <I>EInteger</I> to <I>EDouble</I>, resulting in a new <I>EDouble</I>.
+</P>
+</BLOCKQUOTE>
+
+<P><TT>emethod lt(EInteger operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EIntegers </I>with less than operation (&lt;), resulting
+in an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod leq(EInteger operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EIntegers </I>with less than equal-to operation (&lt;=),
+resulting in an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod gt(EInteger operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EIntegers </I>with greater than operation (&gt;), resulting
+in an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod geq(EInteger operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EIntegers </I>with greater-than equal-to operation (&gt;=),
+resulting in an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod eq(EInteger operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EIntegers </I>with equal-to operation (==), resulting
+in an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod neq(EInteger operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EIntegers </I>with not equal-to operation (!=), resulting
+in an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<H2>Return value</H2>
+
+<P>Returns a Java <TT>int</TT> data type with the following <TT>value</TT>
+method:</P>
+
+<PRE><TT>  int value() {return myint};</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="ELong"></A>ELong</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.lang.ELong;</TT></P>
+
+<P>The <I>ELong</I> class is an <I>EObject</I> wrapper for long (64- bit)
+data values, and is a place for long-oriented operations.</P>
+
+<H2>Creation</H2>
+
+<P><TT><I>newelong</I> = new ELong (<I>long value</I> ); </TT></P>
+
+<BLOCKQUOTE>
+<P>Constructs an <I>ELong</I> wrapper for the specified long value. </P>
+</BLOCKQUOTE>
+
+<H2>E-methods</H2>
+
+<P>The following E-emethods implement mathematical functions for an <I>ELong</I>.
+</P>
+
+<P><TT>emethod add(ELong operand, EDistributor result </TT></P>
+
+<BLOCKQUOTE>
+<P>Add two <I>ELong</I>s, resulting in a new <I>ELong</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod sub(ELong operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Subtract two<I> ELong</I>s, resulting in a new <I>ELong</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod sub(ELong operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Multiply two <I>ELong</I>s, resulting in a new <I>ELong</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod div(ELong operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Divide two <I>ELongs</I>, resulting in a new <I>ELong</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod mod(ELong operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Take the modulus of two <I>ELong</I>s, resulting in a new <I>ELong</I>.
+</P>
+</BLOCKQUOTE>
+
+<P><TT>emethod band(ELong operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Bitwise AND of two <I>ELong</I>, resulting in a new <I>ELong</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod bor(ELong operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Bitwise OR of two <I>ELong</I>s, resulting in a new <I>ELong.</I> </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod bxor(ELong operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Bitwise XOR of two <I>ELongs</I>, resulting in a new <I>ELong.</I> </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod max(ELong operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Max of two <I>ELong</I>s, resulting in a new <I>ELong.</I> </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod min(ELong operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Min of two <I>ELong</I>s, resulting in a new <I>ELong.</I> </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod neg(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Negative of an <I>ELong</I>, resulting in a new <I>ELong.</I> </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod bnot(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Bitwise NOT of an <I>ELong</I>, resulting in a new <I>ELong.</I> </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod abs(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Absolute value of an <I>ELong</I>, resulting in a new <I>ELong.</I>
+</P>
+</BLOCKQUOTE>
+
+<P><TT>emethod asDouble(EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Cast an ELong to <I>EDouble</I>, resulting in a new <I>EDouble.</I>
+</P>
+</BLOCKQUOTE>
+
+<P><TT>emethod lt(ELong operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>ELong</I>s with less than operation (&lt;), resulting
+in an <I>EBoolean.</I> </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod leq(ELong operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>ELong</I>s with less than/equal-to operation (&lt;=),
+resulting in an <I>EBoolean.</I> </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod gt(ELong operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>ELong</I>s with greater than operation (&gt;), resulting
+in an <I>EBoolean.</I> </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod geq(ELong operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>ELong</I>s with greater than/equal to operation (&gt;=),
+resulting in an <I>EBoolean.</I> </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod eq(ELong operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>ELong</I>s with equal to operation (==) resulting in
+an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod neq(ELong operand, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>ELong</I>s with not equal to operation (!=) resulting
+in an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<H2>Return value</H2>
+
+<P>Returns a Java <TT>long</TT> data type with the following <TT>value</TT>
+method:</P>
+
+<PRE><TT>  long value() {return mylong};</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="ENull"></A>ENull</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.run.ENull;</TT></P>
+
+<P><TT>import ec.e.db.RtCodeable;</TT></P>
+
+<P>This class has one unique instance which is referenced when you use
+the <TT>enull</TT> keyword. An <I>ENull</I> is useful for two purposes:</P>
+
+<UL>
+<LI>To put in places where semantically you mean &quot;null&quot;, but
+aren't allowed to pass Java null (such as the <TT>put()</TT> method in
+a hashtable).</LI>
+
+<LI>As an E-object which will always return Java null from its value method,
+thus &quot;passing&quot; null into an <TT>ewhen</TT>. See the example.</LI>
+</UL>
+
+<H2>Creation</H2>
+
+<P>This class has one unique instance, referenced by the <TT>enull</TT>
+keyword.</P>
+
+<H2>E-methods</H2>
+
+<P>None.</P>
+
+<H2>Interfaces</H2>
+
+<P><I>RtCodeable</I></P>
+
+<H2>Return value</H2>
+
+<P>Returns a null value with the following method:</P>
+
+<PRE><TT>protected Object value() {return null;}</TT>
+</PRE>
+
+<H2>Example</H2>
+
+<PRE><TT>EObject nullobject;
+
+// This will cause val in the ewhen to evaluate to null
+&amp;nullobject &lt;- forward(enull); 
+ewhen nullobject (Object val) {
+// val == null when someone forwards enull to nullobject's
+// distributor
+......</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="EObject"></A>EObject</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.run.EObject;</TT></P>
+
+<P><I>EObject</I> is the base class for all objects in the E programming
+language. E-objects are special Java objects that communicate by passing
+messages; they give E its added messaging and security capabilities.</P>
+
+<P>E-objects possess private and protected instance variables, Java methods,
+and E-methods. The instance variables and Java methods can only be accessed
+directly from within the E-object itself. All references to the instance
+variables or Java objects must be made relative to <TT>this</TT> or <TT>super</TT>,
+either explicitly or implicitly. References to E-objects can be passed
+across the network by sending them as parameters in messages.</P>
+
+<P>An E-object has an E-method for each message it is designed to receive.
+The code in the E-method is invoked when the corresponding message is received.</P>
+
+<P>E-objects can act on other E-objects only if they have privileges to
+do so, and they never acquire unlimited access to system resources. At
+load time, E grants capabilities to E-objects that specifically request
+them, but only if the capabilities are permitted to the particular E-object.
+The programmer controls permission for the capabilities of each E-object.
+Granting permission for capabilities imparts trust to an E-object by allowing
+it to send specific messages to specific objects.</P>
+
+<H2>Creation </H2>
+
+<P>None</P>
+
+<H2>E-methods </H2>
+
+<P>None</P>
+
+<H2>Example</H2>
+
+<P>None</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="EPrintStream"></A>EPrintStream</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.lang.EPrintStream;</TT></P>
+
+<P>The <I>EPrintStream</I> class is an <I>EObject</I> wrapper that implements
+an output stream, and contains methods for printing. </P>
+
+<H2>Creation</H2>
+
+<P><TT><I>printobject</I> =new EPrintStream(PrintStream stream); </TT></P>
+
+<H2>E-methods</H2>
+
+<P><TT>emethod printObject(Object obj); </TT></P>
+
+<BLOCKQUOTE>
+<P>Prints a Java object. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod printEObject(EObject anEObject); </TT></P>
+
+<BLOCKQUOTE>
+<P>Prints an object derived from <I>EObject</I>. </P>
+</BLOCKQUOTE>
+
+<H2>Example</H2>
+
+<P>None</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="ESealer"></A>ESealer</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.run.ESealer;</TT></P>
+
+<P><I>ESealer</I> is the base class for all sealers, which encapsulate
+messages into sealed envelopes that are sent through channels to E-objects.
+Sealers, unsealers, and envelopes are implicit in message sends. You do
+not create or modify them directly. </P>
+
+<P>An envelope encapsulates the parameters of a message and ensures that
+they can only be read by the recipient E-object with the correct unsealer.
+The envelope is created by the sealer method of the sending E-object, which
+marks the envelope to indicated the unsealer needed to open it. The message
+in the envelope is secured by the unforgeable sealer and unsealer associated
+with it.</P>
+
+<H2>Creation </H2>
+
+<P>None</P>
+
+<H2>E-methods </H2>
+
+<P>None</P>
+
+<H2>Example</H2>
+
+<P>None</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="EString"></A>EString</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.lang.EString;</TT></P>
+
+<P>The <I>EString</I> class is an <I>EObject</I> wrapper for character
+strings. </P>
+
+<H2>Creation</H2>
+
+<P><TT><I>estring</I> =new EString(<I>string value</I> ); </TT></P>
+
+<H2>E-methods</H2>
+
+<P>The following E-methods implement standard string functions.</P>
+
+<P><TT>emethod length(EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Take the length of an <I>EString</I>, resulting in a new <I>EInteger</I>.
+</P>
+</BLOCKQUOTE>
+
+<P><TT>emethod slt(EString operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EStrings</I> with the less-than operator (&lt;), resulting
+in an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod sleq(EString operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EStrings</I> with the less-than equal-to operator (&lt;=),
+resulting in an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod sgt(EString operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EStrings</I> with the greater-than operator (&gt;), resulting
+in an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod sgeq(EString operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EStrings</I> with the greater-than equal-to operator
+(&lt;=), resulting in an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod seq(EString operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EStrings</I> with the equal-to operator (==), resulting
+in an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod sneq(EString operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Compare two <I>EStrings</I> with the not equal-to operator (!=), resulting
+in an <I>EBoolean</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>emethod substring(EInteger start, EInteger end, EDistributor result);
+</TT></P>
+
+<BLOCKQUOTE>
+<P>Compute a substring of an <I>EString</I>, resulting in new <I>EString.
+</I></P>
+</BLOCKQUOTE>
+
+<P><TT>emethod concat(EString operand, EDistributor result); </TT></P>
+
+<BLOCKQUOTE>
+<P>Concatenate two <I>EStrings</I>, resulting in a new <I>EString. </I></P>
+</BLOCKQUOTE>
+
+<H2>Return value</H2>
+
+<P>Returns a Java <TT>string</TT> data type with the following <TT>value</TT>
+method:</P>
+
+<PRE><TT>  String value() {return mystring};</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="ETrue"></A>ETrue</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.run.ETrue;</TT></P>
+
+<P><TT>import ec.e.run.IBoolean;</TT></P>
+
+<P>This class represents a <I>EBoolean</I> with a value of TRUE.</P>
+
+<H2>Creation</H2>
+
+<P>This class has one unique instance, referenced by the <TT>etrue</TT>
+keyword.</P>
+
+<H2>E-methods</H2>
+
+<P><TT>emethod and(EBoolean operand, EDistributor result) </TT></P>
+
+<P><TT>emethod or(EBoolean operand, EDistributor result) </TT></P>
+
+<P><TT>emethod xor(EBoolean operand, EDistributor result) </TT></P>
+
+<P><TT>emethod eqv(EBoolean operand, EDistributor result) </TT></P>
+
+<P><TT>emethod not(EDistributor result) </TT></P>
+
+<H2>E-interfaces</H2>
+
+<P><I>IBoolean</I></P>
+
+<H2>Return value</H2>
+
+<P>Returns a Java <TT>Boolean</TT> data type of <TT>true</TT> with the
+following <TT>value</TT> method:</P>
+
+<PRE><TT>protected Object value() {return((Object)(new Boolean(true)));}</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="EUnsealer"></A>EUnsealer</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.run.EUnsealer;</TT></P>
+
+<P><I>EUnsealer</I> is the base class for all unsealers, which open sealed
+envelopes sent to E-objects.</P>
+
+<P>An envelope encapsulates the parameters of a message and ensures that
+they can only be read by the recipient E-object with the correct unsealer.
+The envelope is created by the sealer method of the sending E-object, which
+marks the envelope to indicated the unsealer needed to open it. The message
+in the envelope is secured by the unforgeable sealer and unsealer associated
+with it.</P>
+
+<P>Sealers, unsealers, and envelopes are implicit in message sends. You
+do not create or modify them directly. </P>
+
+<P>If several E-objects have references to the same unsealer, they should
+all be able to receive the same message.</P>
+
+<H2>Creation </H2>
+
+<P>None</P>
+
+<H2>E-methods </H2>
+
+<P>None</P>
+
+<H2>Example</H2>
+
+<P>None</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="PObjDB"></A>PObjDB</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.db.PObjDB;</TT></P>
+
+<P><TT>import ec.e.db.RtDBViewFilter;</TT></P>
+
+<P><TT>import ec.e.db.RtEncodingManager;</TT></P>
+
+<P><TT>import ec.e.db.RtDecodingManager;</TT></P>
+
+<P>This class lets you store objects to and retrieve them from a database.
+This lets you store your objects to disk and later retrieve them in other
+applications. You must create your own storage and retrieval procedures
+using the E functionality; E does not do either operation automatically.
+</P>
+
+<H2>Creation</H2>
+
+<P><TT><I>databaseobject</I> = new PObjDB(String fileName); </TT></P>
+
+<BLOCKQUOTE>
+<P>Construct a new database object (<I>PObjDB</I>) based on an existing
+disk file. </P>
+</BLOCKQUOTE>
+
+<P><TT><I>databaseobject</I> = new PObjDB(PObjDB parent); </TT></P>
+
+<BLOCKQUOTE>
+<P>Construct a child database object based on an existing, currently open
+database object. </P>
+</BLOCKQUOTE>
+
+<H2>Methods</H2>
+
+<P><TT>public RtStreamKey put(Object object) throws DBAccessException;
+</TT></P>
+
+<BLOCKQUOTE>
+<P>This saves an object to an object database, and return a <I>RtStreamKey</I>
+as a token. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void put(Object rootKey, RtStreamKey streamKey) throwsDBAccessException;
+</TT></P>
+
+<BLOCKQUOTE>
+<P>Saves a stream key (<I>RtStreamKey</I>) to an object database under
+a root key name. Overwrites any existing root key with that name. Note
+that the root key cannot itself be a stream key. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtStreamKey get(Object rootKey) throws DBAccessException;
+</TT></P>
+
+<BLOCKQUOTE>
+<P>Get a stream key (<I>RtStreamKey</I>) that was previously stored under
+<TT>rootKey</TT>. If the stream key does not exist, null is returned. <I>DBAccessException</I>
+is returned if the request is illegal under security policies. </P>
+</BLOCKQUOTE>
+
+<P><TT>public Object get(RtStreamKey key) throws DBAccessException; </TT></P>
+
+<BLOCKQUOTE>
+<P>Given a <I>RtStreamKey</I>, return a copy of the object that was stored
+out and registered for it. Successive attempts at getting an object will
+return multiple copies. </P>
+</BLOCKQUOTE>
+
+<P><TT>public boolean contains(Object key) throws DBAccessException; </TT></P>
+
+<BLOCKQUOTE>
+<P>Test to determine if something is stored in the database under the given
+key. In this case, <TT>key</TT> can be either a <I>RtStreamKey</I> or a
+root key object. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void commit() throws DBAccessException; </TT></P>
+
+<BLOCKQUOTE>
+<P>Commit the changes made to this database back into the parent database.
+This only works if this database is indeed a child and the permissions
+permit. </P>
+</BLOCKQUOTE>
+
+<P><TT>public synchronized void closeDB() </TT></P>
+
+<BLOCKQUOTE>
+<P>Close the database and store back file header information. </P>
+</BLOCKQUOTE>
+
+<H2>Interfaces</H2>
+
+<P><I>RtDBViewFilter</I></P>
+
+<P><I>RtEncodingManager</I></P>
+
+<P><I>RtDecodingManager</I></P>
+
+<H2>Example</H2>
+
+<PRE><TT>import java.lang.*;
+import ec.e.db.*;
+import ec.e.stream.StreamDB;
+
+public class DBexample
+{
+  public static void main (String args[]) {
+    String dbFileName;
+    if(args.length &gt; 1) {
+      StreamDB.setDebugOn();
+    }
+    try {
+      System.out.println(&quot;Creating PObjDB&quot;);
+
+      if(args.length == 0)
+        dbFileName = &quot;/tmp/ExampleDB&quot;;
+      else dbFileName = args[0];
+
+      PObjDB btdb = new PObjDB(dbFileName);
+      System.out.println(&quot;DB created named: 
+        &quot; + dbFileName);
+      Object cat1[] = new Object[2];
+      Object cat2;
+      cat1[0] = &quot;Meow&quot;;
+      cat1[1] = new Integer(123456);
+      System.out.println(&quot;Storing first test object.&quot;);
+      RtStreamKey catKey = btdb.put(cat1);
+      System.out.println(catKey);
+      System.out.println(&quot;Closing root PObjDB file&quot;);
+      btdb.closeDB();
+      System.out.println(&quot;Reopening root file with an 
+        update view.&quot;);
+
+      PObjDB db1 = new PObjDB(dbFileName);
+      PObjDB db2 = new PObjDB(db1);
+      cat2 = db2.get(catKey);
+      System.out.println(&quot;Retrieved object &quot; + cat2);
+      System.out.println(&quot;Writing a string named DogName to
+        the update view&quot;);
+      String dog1 = new String(&quot;Woof&quot;);
+      RtStreamKey dogKey = db2.put(dog1);
+
+      db2.put(&quot;DogName&quot;, dogKey);
+      System.out.println(&quot;Committing the update view 
+        back against the root file.&quot;);
+      db2.commit();
+      db2.closeDB();
+      db1.closeDB();
+      System.out.println(&quot;Reopening the root file using a 
+        read only view limiter&quot;);
+      PObjDB db3 = new PObjDB(dbFileName);
+
+    /* Now open the view limiter */
+      RtDBViewLimiter readOnlyView = new RtDBViewLimiter
+        (db3, true, false, false, null, null);
+      RtStreamKey dog2Key = db3.get(&quot;DogName&quot;);
+      Object dog2 = db3.get(dog2Key);
+      System.out.println(&quot;Object retrieved under DogName 
+        is &quot; + dog2);
+      System.out.println(&quot;Attempting to write to the
+        readOnlyView&quot;);
+      System.out.println(&quot;(This should produce a
+        DBAccessException)&quot;);
+      readOnlyView.put(new String(&quot;BadGuy&quot;));
+      System.out.println(&quot;Security failure&quot;);
+    } 
+    catch (Exception e) {e.printStackTrace();}
+  }
+}</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtClock"></A>RtClock</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.run.RtClock;</TT></P>
+
+<P><TT>import ec.e.run.RtTickHandling;</TT></P>
+
+<P><I>RtClock</I> is a Java class implementing basic timer services. All
+<I>RtClock</I> objects runs in their own thread (the <I>RtClock</I> thread),
+and call the method:</P>
+
+<PRE><TT>  void tick(Object arg, int time) </TT></PRE>
+
+<P>on objects on every tick of the clock. See the interface definition
+for <I>RtTickHanding</I> for more information about the tick method.</P>
+
+<P>Clocks are created by specifying the resolution of the clock, a target
+object to be sent the tick method on each clock tick, and an argument to
+be sent to the tick method.</P>
+
+<P>The target object specified must implement the <I>RtTickHandling</I>
+interface. Note that the tick method is called in the <I>RtClock</I> thread,
+not the thread which was running at the time the <I>RtClock</I> was created.</P>
+
+<P>Clocks are created in the stopped state, and must be explicitly started
+for ticks to occur.</P>
+
+<H2>Creation</H2>
+
+<P><TT><I>clock</I> = new RtClock(long resolution, EObject target, RtEnvelope
+envelope) </TT></P>
+
+<P><TT><I>clock</I> = new RtClock(long resolution, EObject target, RtEnvelope
+envelope, Object tickInfo[]) </TT></P>
+
+<P><TT><I>clock</I> = new RtClock(long resolution, RtTickHandling target,
+Object arg) </TT></P>
+
+<P><TT><I>clock</I> = new RtClock(long resolution, EDistributor key) </TT></P>
+
+<UL>
+<LI><TT>resolution</TT> is the fine grained resolution of the clock</LI>
+
+<LI><TT>target</TT> is the object to have the tick method invoked for each
+tick. This target can either be an <I>RtTickHandling</I> object, or an
+E-object.</LI>
+
+<LI><TT>arg</TT> is passed into the tick method on each tick.</LI>
+
+<LI><TT>envelope</TT> is an object of class <I>RtEnvelope</I>; you can
+create this envelope and have it sent to the target with every tick.</LI>
+
+<LI><TT>key</TT> is a distributor that is set to the tick number. You can
+do a <TT>ewhen</TT> or <TT>ewhenever</TT> on this key.</LI>
+
+<LI><TT>tickInfo</TT> is an array of at least size 1 which will have the
+tick number (a java <I>Integer</I> object) stuck into its index 0 on each
+tick before the envelope is invoked on the target. The array can be larger
+than 1 so that the caller can put other information in indexes 1 and beyond.</LI>
+
+<P>This lets the method invoked by the envelope know for what tick it is
+being called. To accomplish this, the original caller of the <I>RtClock</I>
+constructor should create an array of at least one <I>Object</I>, and pass
+that in as <TT>tickInfo</TT>, and also put it in an argument in the envelope
+so the callback can see it.</P>
+</UL>
+
+<H2>Methods</H2>
+
+<P><TT>public synchronized void start () </TT></P>
+
+<BLOCKQUOTE>
+<P>Starts the clock so that the tick method is sent to the target on every
+clock tick. The clock starts at whatever time it was at when stopped. If
+this is the first time the clock has been started, it starts from 0. </P>
+</BLOCKQUOTE>
+
+<P><TT>public synchronized void start (int atTick) </TT></P>
+
+<BLOCKQUOTE>
+<P>Starts the clock from <TT>atTick</TT>. </P>
+</BLOCKQUOTE>
+
+<P><TT>public synchronized void stop () </TT></P>
+
+<BLOCKQUOTE>
+<P>Stops the clock, tick methods are no longer sent. </P>
+</BLOCKQUOTE>
+
+<P><TT>public synchronized void reset () </TT></P>
+
+<BLOCKQUOTE>
+<P>Resets the clock to time 0 without stopping the clock. If the clock
+was stopped it stays stopped. </P>
+</BLOCKQUOTE>
+
+<P><TT>public synchronized void set (int toTick) </TT></P>
+
+<BLOCKQUOTE>
+<P>Sets the clock to <TT>toTick</TT> without stopping the clock. If the
+clock was stopped, it stays stopped. </P>
+</BLOCKQUOTE>
+
+<P><TT>public synchronized int getTicks () </TT></P>
+
+<BLOCKQUOTE>
+<P>Gets the current number of ticks since the clock was originally started
+or reset from 0. </P>
+</BLOCKQUOTE>
+
+<P><TT>public synchronized RtTickHandling getTarget() </TT></P>
+
+<BLOCKQUOTE>
+<P>Gets the target that is sent each tick. </P>
+</BLOCKQUOTE>
+
+<P><TT>public synchronized void setTarget (RtTickHandling target) </TT></P>
+
+<BLOCKQUOTE>
+<P>Sets the target that is sent each tick method. </P>
+</BLOCKQUOTE>
+
+<P><TT>public synchronized void setTargetAndEnvelope (EObject target, RtEnvelope
+envelope) </TT></P>
+
+<BLOCKQUOTE>
+<P>Set the E-object target and envelope that is sent on each tick. </P>
+</BLOCKQUOTE>
+
+<P><TT>public synchronized void getEnvelope() </TT></P>
+
+<BLOCKQUOTE>
+<P>Gets the envelope that is sent each tick. </P>
+</BLOCKQUOTE>
+
+<P><TT>public synchronized RtTickHandling getTarget () </TT></P>
+
+<BLOCKQUOTE>
+<P>Gets the target that is sent each tick method. </P>
+</BLOCKQUOTE>
+
+<P><TT>public synchronized void setArg (Object arg) </TT></P>
+
+<BLOCKQUOTE>
+<P>Sets the <TT>arg</TT> value that is sent on each tick method. </P>
+</BLOCKQUOTE>
+
+<P><TT>public synchronized Object getArg () </TT></P>
+
+<BLOCKQUOTE>
+<P>Gets the arg value that is sent on each tick method. </P>
+</BLOCKQUOTE>
+
+<P><TT>public synchronized void setResolution (int resolution) </TT></P>
+
+<BLOCKQUOTE>
+<P>Sets the resolution of the clock. </P>
+</BLOCKQUOTE>
+
+<P><TT>public synchronized int getResolution () </TT></P>
+
+<BLOCKQUOTE>
+<P>Gets the resolution of the clock. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void terminate () </TT></P>
+
+<BLOCKQUOTE>
+<P>Stops the clock and frees all the resources it consumes. Clocks must
+be explicitly terminated as they are entered into a list of all clocks
+upon creation. They are not removed from this list until they are terminated,
+or the <I>RtClockTerminator</I> method <TT>terminateAllClocks</TT> is called.
+</P>
+</BLOCKQUOTE>
+
+<H2>Interfaces</H2>
+
+<P><I>RtTimeOutHandling</I></P>
+
+<H2>Example</H2>
+
+<PRE><TT>import java.lang.*;
+import ec.e.run.RtClock;
+import ec.e.run.RtTickHandling;
+
+class ClockTest implements RtTickHandling
+{
+  private static int n = 1;
+  private static RtClock clock;
+  
+  public static void main (String args[]) {
+    ClockTest test = new ClockTest();
+    clock = new RtClock(1000, test, &quot;Testing&quot;);
+
+    System.out.println(&quot;Clock will tick once a 
+      second for 10 seconds&quot;);
+  }
+
+  public void tick (Object arg, int n)  {
+    System.out.println(&quot;Clock ticked (&quot; + n + &quot;) with
+      &quot; + arg);
+    if (++n &gt; 10) {
+      RtClock.terminate();
+    }
+  }
+}</TT></PRE>
+
+<H4>Example 2</H4>
+
+<P>This example uses the <TT>tickInfo</TT> parameter.</P>
+
+<PRE><TT>public eclass EUsesClock {
+  private String name = &quot;anonymous&quot;;
+// Constructor left as an exercise for the reader
+
+  emethod exampleMethod () {
+// TickInfo is a place for the clock to put the current tick
+    Object tickInfo[] = new Object[1];
+// Create the envelope (note &lt;- is not a message send, but
+// the envelope assignment operator in this usage)
+    RtEnvelope env;
+    env &lt;- callbackMethod (name, tickInfo);
+// Create the clock telling it to set the tick in tickInfo[0]
+// and then to invoke callbackMethod on this object every 
+// 1000 milliseconds ...
+    RtClock clock = new RtClock(1000, this, env, tickInfo);
+  }
+
+// This is the actual callback method, it gets passed
+// the current tick in tickInfo[0] 
+  emethod callbackMethod (String name, Object tickInfo[]) {
+    Integer tick = (Integer)tickInfo[0];
+    System.out.println(name + &quot; invoked on tick &quot; + tick);
+  }
+}</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtClockTerminator"></A>RtClockTerminator</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.run.RtClockTerminator;</TT></P>
+
+<P>This class contains the <TT>terminateAllClocks</TT> method, which terminates
+the thread in which all clocks are run.</P>
+
+<H2>Creation</H2>
+
+<P>None</P>
+
+<H2>Methods</H2>
+
+<P><TT>public static void terminateAllClocks () </TT></P>
+
+<BLOCKQUOTE>
+<P>Terminates the clock thread. </P>
+</BLOCKQUOTE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtConnection"></A>RtConnection</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.comm.RtConnection;</TT></P>
+
+<P>This class handles network connections.</P>
+
+<H2>Creation</H2>
+
+<P>Implicitly created as network connections are formed.</P>
+
+<H2>Methods</H2>
+
+<P><TT>public void disconnect () </TT></P>
+
+<BLOCKQUOTE>
+<P>Disconnects the connection, causing the connection's listening thread
+to exit, and all resources used by the thread (including import and export
+tables) to be cleaned up. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void registerForNotification (RtNotificationHandler handler,
+Object arg, String type) </TT></P>
+
+<BLOCKQUOTE>
+<P>Adds <TT>handler</TT> to list of objects which are notified when certain
+conditions occur. Upon notification, the <TT>arg</TT> is passed to the
+<TT>handler</TT>, the info object is the <I>RtConnection</I>, and the type
+details the specific notification. Currently, only the type <TT>RtConnection.RtDisconnectionNotification</TT>
+is recognized, and the notification is sent whenever the connection disconnects
+(either explicitly due to a call to the <I>RtNetworkController</I> <TT>stopNetworkEnvironment</TT>
+method or the <I>RtConnection</I> <TT>disconnect</TT> method, or implicitly
+when a connection fails). </P>
+</BLOCKQUOTE>
+
+<P><TT>public void unregisterForNotification (RtNotificationHandler handler,
+Object arg, String type) </TT></P>
+
+<BLOCKQUOTE>
+<P>Unregisters the object for notification of the specified type. Arg and
+type must match what was passed into the <TT>registerForNotification</TT>
+call. </P>
+</BLOCKQUOTE>
+
+<P><TT>public boolean isProxyOnConnection (Object object) </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns true if the Object is an E Proxy for an object on the other
+side of the connection, false otherwise. </P>
+</BLOCKQUOTE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtConnector"></A>RtConnector</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.comm.RtConnector;</TT></P>
+
+<P><I>RtConnector</I> is the class used to establish a network connector.
+A connector encapsulates the right to establish outbound connections to
+other objects in the network, named by their URL. </P>
+
+<P>An E-object finds and connects to another E-object on the network by
+using one of <I>RtConnector</I>'s <TT>lookup</TT> methods. You can restrict
+this access by limiting the EARL that can be looked up. You can restrict
+the domain name, object pathname, port, or class. See the<I> Getting Started
+with E </I>chapter for a description of how E-object EARLs are designated.</P>
+
+<H2>Creation</H2>
+
+<P>You get the first instance of this class by calling <TT>getConnector</TT>()
+on the <I>RtEEnvironment</I> object passed by the <I>RtLauncher</I>.</P>
+
+<H2>Methods</H2>
+
+<P><TT>public void lookup(String domainName, String objectPath, EDistributor
+result) </TT></P>
+
+<P><TT>public void lookupOnPort(String domainName, String objectPath, int
+port, EDistributor result) </TT></P>
+
+<BLOCKQUOTE>
+<P>Both of these methods look up an E-object on the network. </P>
+</BLOCKQUOTE>
+
+<UL>
+<LI><TT>domainName</TT> is the domain name of the connecting object. </LI>
+
+<LI><TT>objectPath</TT> is the path name of the desired object.</LI>
+
+<LI><TT>result</TT> is a distributor forwarded to the object if it is found.</LI>
+
+<LI><TT>port</TT> is the network port on which the object is vended.</LI>
+</UL>
+
+<P><TT>public RtEARLrestrictor getRestrictor() </TT></P>
+
+<BLOCKQUOTE>
+<P>Gets the current restrictions for the connector object. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtConnector restrictDomainName(String restriction) </TT></P>
+
+<BLOCKQUOTE>
+<P>Restrict domain name lookup access. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtConnector restrictObjectPath(String restriction) </TT></P>
+
+<BLOCKQUOTE>
+<P>Restrict object path name lookup access. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtConnector restrictRootClass(Class restriction)</TT></P>
+
+<BLOCKQUOTE>
+<P>Restrict class lookup access. </P>
+</BLOCKQUOTE>
+
+<H2>Example</H2>
+
+<P>This example shows a client connecting to a host using <TT>env.getConnector()</TT>,
+which creates a <I>RtConnector</I>. For the full source code, see the section
+<I>Creating a connector and registrar</I> in the <I>E Runtime</I> chapter.</P>
+
+<PRE><TT>import ec.e.comm.*;
+
+//
+// This is where it all starts, the main function 
+//
+public class HelloExample
+{
+    public static void main(String args[]) {
+        RtLauncher.launch(new HelloLauncher(), args);
+    }
+}
+
+//
+// This object is totally trusted and makes subenvironment
+// things that are passed to other less trusted objects.
+
+eclass HelloLauncher implements ELaunchable
+{
+  emethod go(RtEEnvironment env) {
+    RtNetworkController con;
+    int defaultPortNumber = env.getDefaultPortNumber();
+
+    String hostname = env.getProperty(&quot;host&quot;);
+    .........
+      // We're the client, connect to host
+      HelloExampleClient client = new HelloExampleClient();
+      con =
+       env.startNetworkEnvironment(defaultPortNumber+1);
+      client &lt;- goClient(env, con, hostname);
+    }
+    }
+}
+
+eclass HelloNetworkObject
+{
+...<I>network controller code
+
+</I>}</TT>
+</PRE>
+
+<P><TT>eclass HelloExampleClient extends HelloNetworkObject { emethod goClient
+(RtEEnvironment env, RtNetworkController con, String hostname) { HelloExampleHost
+host; this.setNetworkController(con); etry { System.out.println(&quot;Connecting
+to host&quot;); env.getConnector().lookupOnPort(hostname, &quot;HelloExampleHost&quot;,
+RtComMonitor.keBasePortNumber, &amp;host); } ecatch (RtDirectoryEException
+e) { System.out.println(&quot;Client caught exception: &quot; + e.getMessage());
+} host &lt;- helloThere(&quot;This is a string&quot;, this); } } eclass
+HelloExampleHost extends HelloNetworkObject { <I>...host code </I>} </TT></P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtDBViewLimiter"></A>RtDBViewLimiter</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.db.RtDBViewLimiter;</TT></P>
+
+<P><TT>import ec.e.db.RtDBViewFilter;</TT></P>
+
+<P>This class is an implementation of a <I>DBViewFilter</I> that imposes
+access control list semantics on an underlying database view.</P>
+
+<P>The grantor creates a <I>RtDBViewLimiter</I> object, initialized with
+the desired policy control parameters. This can be passed on to the grantee,
+who will be restricted to the operations allowed. These objects can be
+chained, with each link further limiting the powers of the ultimate grantee.
+An attempt to establish a less restrictive policy will fail because all
+operations pass control back through the delegation chain.</P>
+
+<P>There are three master control flags:</P>
+
+<UL>
+<LI><TT>readPolicy</TT></LI>
+
+<LI><TT>writePolicy</TT></LI>
+
+<LI><TT>commitPolicy</TT></LI>
+</UL>
+
+<P>There are also two key control lists, which control which root keys
+the grantee is permitted to read or change. A null key control list has
+no access restrictions, and lets you read and store all root keys. Otherwise
+the list lets you read or store only the specified root keys. These lists
+do not effect access to stream keys, which are considered to be capabilities
+in themselves.</P>
+
+<H2>Creation</H2>
+
+<P><TT><I>viewlimiter object</I> = new RtDBViewLimiter(RtDBViewFilter parent,
+boolean readPolicy, booleanwritePolicy,boolean commitPolicy, Hashtable
+readKeys, HashtablewriteKeys); </TT></P>
+
+<BLOCKQUOTE>
+<P>Constructs a <I>RtDBViewLimiter</I> object, with appropriate access
+control policies, based on an existing, open <I>PObjDB</I> or <I>RtDBViewLimiter</I>
+object. </P>
+</BLOCKQUOTE>
+
+<H2>Methods</H2>
+
+<P><TT>public RtStreamKey put(Object object) throws DBAccessException;
+</TT></P>
+
+<BLOCKQUOTE>
+<P>This saves an object to an object database, and return a <I>RtStreamKey</I>
+as a token. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void put(Object rootKey, RtStreamKey streamKey) throwsDBAccessException;
+</TT></P>
+
+<BLOCKQUOTE>
+<P>Saves a stream key (<I>RtStreamKey</I>) to an object database under
+a root key name. Overwrites any existing root key with that name. Note
+that the <I>RootKey</I> cannot itself be a stream key. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtStreamKey get(Object rootKey) throws DBAccessException;
+</TT></P>
+
+<BLOCKQUOTE>
+<P>Get a stream key (<I>RtStreamKey</I>) that was previously stored under
+<I>rootKey</I>. If the stream key does not exist, null is returned. <I>DBAccessException</I>
+is returned if the request is illegal under security policies. </P>
+</BLOCKQUOTE>
+
+<P><TT>public Object get(RtStreamKey key) throws DBAccessException; </TT></P>
+
+<BLOCKQUOTE>
+<P>Given a <I>RtStreamKey</I>, return a copy of the object that was stored
+out and registered for it. Successive attempts at getting an object will
+return multiple copies. </P>
+</BLOCKQUOTE>
+
+<P><TT>public boolean contains(Object key) throws DBAccessException; </TT></P>
+
+<BLOCKQUOTE>
+<P>Test to determine if something is stored in the database under the given
+key. In this case, <TT>key</TT> can be either a <I>RtStreamKey</I> or a
+root key object. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void commit() throws DBAccessException; </TT></P>
+
+<BLOCKQUOTE>
+<P>Commit the changes made to this database back into the parent database.
+This only works if this database is indeed a child and the permissions
+permit. </P>
+</BLOCKQUOTE>
+
+<H2>Interfaces</H2>
+
+<P><I>RtDBViewFilter</I></P>
+
+<H2>Example</H2>
+
+<P>None</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtDecoder"></A>RtDecoder</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.db.RtDecoder;</TT></P>
+
+<P>This class is a data input stream opened on an input stream buffer.
+<I>RtDecoder</I> implements the standard Java <I>DataInputStream</I> protocol,
+along with some extensions for reading and writing object references. </P>
+
+<H2>Creation</H2>
+
+<P>An object of this class is created internally.</P>
+
+<H2>Methods</H2>
+
+<P><TT>public Object decode () </TT></P>
+
+<BLOCKQUOTE>
+<P>Decodes the object and its information when reading it from an object
+database. </P>
+</BLOCKQUOTE>
+
+<H2>Example</H2>
+
+<PRE><TT>import ec.e.comm.*;
+import ec.e.stream.*;
+import java.util.*;
+import ec.e.db.*;
+
+eclass HelloLauncher implements ELaunchable
+{
+  emethod go (RtEEnvironment env) {
+    RtNetworkController con = env.startNetworkEnvironment();
+    HelloReceiver r = new HelloReceiver();
+    HelloSender   s = new HelloSender();
+    r &lt;- receive(env);
+    s &lt;- send(env, con);
+  }
+}
+public class CoderExample
+{
+  public static void main(String args[]) {
+    RtLauncher.launch(new HelloLauncher());
+  }
+}</TT>
+</PRE>
+
+<P><TT>class HelloEException extends RtEException { public HelloEException(String
+message) { super(message); } } class Opaque implements RtCodeable, RtAwakeAfterDecoding
+{ Opaque next; Person person; Opaque (Person aPerson) { next = this; //
+Make a circular ref person = aPerson; // Person refers to us, we refer
+to person } public void encode (RtEncoder coder) { try { coder.encodeObject(person);
+coder.encodeObject(next); } catch (Exception e) { System.out.println(&quot;Exception
+occured encoding Opaque&quot;); e.printStackTrace(); } } // This is an
+example of a seek routine public Object decode (RtDecoder coder) { System.out.println(&quot;In
+decodeObject for Opaque&quot;); try { person = (Person) coder.decodeObject();
+next = (Opaque) coder.decodeObject(); // Print of Person would fail, //
+person not fully decoded System.out.println(&quot;Person is &quot; + person);
+} catch (Exception e) { System.out.println(&quot;Error decoding Opaque&quot;);
+e.printStackTrace(); } // Return ourself return this; } </TT></P>
+
+<P><TT>public void awakeAfterDecoding () { System.out.println(&quot;Opaque
+object woke up&quot;); // Safe to do now, everything has been fully decoded
+System.out.println(&quot;Person is &quot; + person); } } // // This class
+relies on the standard Encoding/Decoding // the system provides // class
+Person { String name; Opaque opie; String group; transient int temp; //
+Won't be encoded/decoded since transient static final int magic = 1234;
+// Static and final aren't encoded/decoded either Person (String aName,
+String aGroup) { name = aName; group = aGroup; opie = new Opaque(this);
+} public String toString () { return (name + &quot; in &quot; + group);
+} } eclass HelloSender { RtEEnvironment environment; RtNetworkController
+networkController; emethod send (RtEEnvironment env, RtNetworkController
+con) { HelloReceiver otherGuy; environment = env; networkController = con;
+Person whacker = new Person(&quot;Whacker&quot;, &quot;Software&quot;);
+Person wally = new Person(&quot;Wally&quot;, &quot;Engineering&quot;);
+</TT></P>
+
+<P><TT>// Lookup the other guy etry { env.getConnector().lookup(&quot;localhost&quot;,
+&quot;Doohickey&quot;, &amp;otherGuy); } ecatch (RtDirectoryEException
+e) { System.out.println(&quot;Caught exception on lookup: &quot; + e.getMessage());
+} // Send a message, this will result in sending // the &quot;yeah&quot;
+message to us otherGuy &lt;- hello(whacker, this); // Send a message again,
+this time wrapping it in an etry // On the second message, the other guy
+will throw an E // exception which will propagate back into the ecatch.
+etry { otherGuy &lt;- hello(wally, this); } ecatch (HelloEException e)
+{ System.out.println(&quot;Caught expected exception: &quot; + e.getMessage());
+networkController.stopNetworkEnvironment(); } } emethod yeah () { System.out.println(&quot;Received
+a yeah message&quot;); } } eclass HelloReceiver { boolean sent = false;
+emethod receive (RtEEnvironment env) { env.getRegistrar().register(&quot;Doohickey&quot;,
+this); } emethod hello (Person person, HelloSender sender) { System.out.println(&quot;Hola
+Mundo from &quot; + person); if (sent == false) { sent = true; sender &lt;-
+yeah(); } else { ethrow new HelloEException(&quot;Just testing&quot;);
+} } } </TT></P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtEARL"></A>RtEARL</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.comm.RtEARL</TT></P>
+
+<P>This class gets an EARL (E Absolute Reference Locator). An EARL is the
+E equivalent to a Universal Resource Locator (URL), and references an E-object.</P>
+
+<H2>Creation</H2>
+
+<P><TT><I>reference</I> = new RtEARL(String <I>referenceString</I> ) </TT></P>
+
+<BLOCKQUOTE>
+<P>Creates an EARL from the unparsed absolute string. </P>
+</BLOCKQUOTE>
+
+<P><TT><I>reference</I> = new RtEARL(String <I>referenceString</I> , int
+<I>referencePort</I> ) </TT></P>
+
+<P><TT><I>reference</I> = new RtEARL(RtEARL <I>seedEARL</I> , String <I>referenceString</I>
+) </TT></P>
+
+<BLOCKQUOTE>
+<P>Creates an EARL from the unparsed EARL in the context of the specified
+EARL. </P>
+</BLOCKQUOTE>
+
+<H2>Methods</H2>
+
+<P><TT>public String getProtocol() </TT></P>
+
+<BLOCKQUOTE>
+<P>Gets the protocol referred to by the EARL. </P>
+</BLOCKQUOTE>
+
+<P><TT>public String getHost() </TT></P>
+
+<BLOCKQUOTE>
+<P>Gets the host name referred to by the EARL. </P>
+</BLOCKQUOTE>
+
+<P><TT>public int getPort() </TT></P>
+
+<BLOCKQUOTE>
+<P>Get the port number referred to by this EARL. </P>
+</BLOCKQUOTE>
+
+<P><TT>public String getRef() </TT></P>
+
+<BLOCKQUOTE>
+<P>Gets the actual descriptor referred to by this EARL. For example, running
+<TT>getRef()</TT> on <TT>http://www.communities.com/filetoget</TT> returns
+<TT>filetoget</TT>. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void ParseEARL(RtEARL seedEARL, String theString) </TT></P>
+
+<BLOCKQUOTE>
+<P>Generates an EARL object from a string, picking up default values from
+the seed given. </P>
+</BLOCKQUOTE>
+
+<P><TT>public EDirectoryServer connect(RtComMonitor thruMonitor) </TT></P>
+
+<BLOCKQUOTE>
+<P>Connects to a remote machine and gets a proxy to its directory server.
+</P>
+</BLOCKQUOTE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtEARLrestrictor"></A>RtEARLrestrictor</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.comm.RtEARLrestrictor;</TT></P>
+
+<P>This class contains the restrictions for both connectors and registrars.
+Generally, your program does not directly access an object of this class.
+However, you can do so to find the restrictions of either of these objects.
+</P>
+
+<H2>Creation</H2>
+
+<P>This class is generated automatically when you create a restricted path
+environment for a connector or registrar. You get it in <I>RtConnector</I>'s
+or <I>RtRegistrar</I>'s <TT>getRestrictor</TT> method.</P>
+
+<H2>Methods</H2>
+
+<P><TT>public String getDomainName() </TT></P>
+
+<P><TT>public String getObjectPath() </TT></P>
+
+<P><TT>public int getPort() </TT></P>
+
+<P><TT>public Class getRootClass( </TT></P>
+
+<P><TT>public RtEARLrestrictor restrictDomainName(String restriction) </TT></P>
+
+<P><TT>public RtEARLrestrictor restrictObjectPath(String restriction) </TT></P>
+
+<P><TT>public RtEARLrestrictor restrictPort(int restriction) </TT></P>
+
+<P><TT>public RtEARLrestrictor restrictRootClass(Class restriction) </TT></P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtEException"></A>RtEException</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.run.RtEException;</TT></P>
+
+<P><I>RtEException</I> is the base class for all E exceptions. These are
+exceptions thrown by <TT>ethrow</TT> and caught by <TT>ecatch</TT> blocks.
+All E exceptions must be based on this class.</P>
+
+<P>Unlike Java, E does not require your E-methods to either catch or declare
+non-runtime E exceptions.</P>
+
+<P>Note that <I>RtEException</I> is based on the Java <I>RuntimeException</I>
+class, not <I>Exception,</I> so it does not encapsulate a back stack trace.</P>
+
+<H2>Creation</H2>
+
+<P><TT><I>exception</I> = new RtEException (<I>exceptionstring</I> ) </TT></P>
+
+<H2>Methods</H2>
+
+<P><TT>public String getMessage() </TT></P>
+
+<BLOCKQUOTE>
+<P>Gets the detail message of the exception. </P>
+</BLOCKQUOTE>
+
+<H2>Example</H2>
+
+<PRE><TT>class UniqueEException extends RtEException {
+    public UniqueEException(String message) {
+        super(message);
+    }
+}</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtEEnvironment"></A>RtEEnvironment</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.comm.RtEEnvironment;</TT></P>
+
+<P>Use this class to create E environment objects. These objects contain
+classes and methods to create other objects that take full advantage of
+the E environment facilities, such as networking and file system access.
+</P>
+
+<P>You &quot;launch&quot; an E-object to give it full access to all of
+an E Environment's facilities. From this trusted object, you can create
+a more specified, restricted environment and pass this to another object.</P>
+
+<P>You can pass in arguments when you launch an object to set environment
+properties and arguments. You can pass in properties (those of <TT>x=y</TT>
+format, such as<TT> host=localhost</TT>), or arguments pertinent to your
+environment (arguments without &quot;=&quot;). When you launch an object,
+those arguments are put into an environment dictionary.</P>
+
+<P>You can pass in either arguments specific to that launched object, or
+the same ones that were entered at the command line. This lets you set
+the same environment properties for your launched object as you did for
+your main program. </P>
+
+<P>In both Java and E, when you enter command line arguments to your program,
+these are put into a standard arguments array. In E, when you launch an
+object, any arguments of the form <TT>x=y</TT> are stripped out of the
+standard argument array, and put into a Properties hashtable, with <TT>x</TT>
+being the property key, and <TT>y</TT> being the property value. This makes
+it easy to specify properties on the command line, and then later retrieve
+specific ones to pass to environment objects. Arguments without &quot;=&quot;
+are retained in the standard argument string array.</P>
+
+<P><B>NOTE:</B> After you launch an object, E strips out any E-provided
+system arguments (the -EC* arguments) from the standard arguments array,
+since these are only pertinent to that execution of the program. See the
+description of these arguments in the <I>E compiler </I>documentation in
+Appendix A for more information.</P>
+
+<P>To access the arguments and property hash table, you use <I>RtEEnvironment</I>'s
+<TT>getObjectFromDictionary</TT> method.</P>
+
+<H2>Creation</H2>
+
+<P><TT><I>environmentobject</I> = new RtEEnvironment(RtNetworkEnvironment
+net,RtFileEnvironment file, Hashtable dict) </TT></P>
+
+<P>or</P>
+
+<P><TT>RtEEnvironment <I>environmentobject </I></TT></P>
+
+<H2>Constants</H2>
+
+<P><TT>public final static String DefaultPropertyValue = &quot;DefaultPropertyValue&quot;;</TT></P>
+
+<BLOCKQUOTE>
+<P>This is the default value for arguments passed in without values. For
+example, if you specify an argument <TT>&quot;client=&quot;</TT>, and then
+get the property value, the value <TT>DefaultPropertyValue</TT> is returned.
+You can check for this default value using the == symbol. For example:</P>
+
+<PRE><TT>  if (env.getProperty(&quot;port&quot;)
+    ==RtEEnvironment.DefaultPropertyValue)
+  ...</TT></PRE>
+</BLOCKQUOTE>
+
+<H2>Methods</H2>
+
+<P><TT>public RtConnector getConnector() </TT></P>
+
+<BLOCKQUOTE>
+<P>Get the first instance of a <I>RtConnector</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtFileEnvironment getFileEnvironment() </TT></P>
+
+<BLOCKQUOTE>
+<P>Get the first instance of a <I>RtFileEnvironment</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtRegistrar getRegistrar() </TT></P>
+
+<BLOCKQUOTE>
+<P>Get the first instance of a <I>RtRegistrar</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>public Object putObjectInDictionary(Object key, Object value) </TT></P>
+
+<BLOCKQUOTE>
+<P>Stores the specified object in the environment dictionary. </P>
+</BLOCKQUOTE>
+
+<P><TT>public Object getObjectFromDictionary(Object key) </TT></P>
+
+<BLOCKQUOTE>
+<P>Gets the specified object from the environment dictionary. You can get
+either of the following: </P>
+
+<UL>
+<LI>A hash table of all environment properties by specifying key <TT>&quot;Properties&quot;</TT></LI>
+
+<LI>The command line arguments string array by specifying key <TT>&quot;Args&quot;</TT></LI>
+</UL>
+</BLOCKQUOTE>
+
+<P><TT>public boolean startNetworkEnvironment (int port) </TT></P>
+
+<P><TT>public boolean startNetworkEnvironment () </TT></P>
+
+<BLOCKQUOTE>
+<P>These two methods both start a network environment, and return a <I>RtNetworkController</I>
+object, which you can use to control and stop the network environment.
+</P>
+</BLOCKQUOTE>
+
+<P><TT>public boolean isNetworkEnvironmentStarted () </TT></P>
+
+<BLOCKQUOTE>
+<P>Indicates whether the E network environment is started. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtEEnvironment createEEnvironment (Hashtable components)
+</TT></P>
+
+<BLOCKQUOTE>
+<P>This method creates a new <I>RtEEnvironment</I> object which is based
+on an existing environment. The caller (that is, the <I>RtEnvironment</I>
+on which this method) can selectively grant its capabilities to the new
+object (see the following list). The <TT>Hashtable</TT> can (but does not
+have to) contain the following:</P>
+
+<UL>
+<LI>The key <TT>Connector</TT> and the value an <I>RtConnector</I>.</LI>
+
+<LI>The key <TT>Registrar</TT> and the value an <I>RtRegistrar</I>.</LI>
+
+<LI>The key <TT>FileEnvironment</TT> and the value an <I>RtFileEnvironment</I>.</LI>
+
+<LI>The key <TT>Dictionary</TT> and the value a hashtable.</LI>
+</UL>
+
+<P>Any of these that are not in the <TT>Hashtable</TT> will be taken from
+the <I>RtEEnvironment</I> object the method is called on.</P>
+</BLOCKQUOTE>
+
+<P><TT>public String getProperty (String key) </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns the value for the specified key. Property value(s) are kept
+in a Property dictionary created by <I>RtLauncher</I>'s <TT>launch</TT>
+method. <TT>RtLauncher.launch </TT>creates this dictionary from the passed-in
+array of arguments. For example, if you passed the argument <TT>host=localhost</TT>,
+calling <I><TT>object</TT></I> <TT>.getProperty(&quot;host&quot;)</TT>
+returns <TT>localhost</TT>.</P>
+</BLOCKQUOTE>
+
+<H2>Example</H2>
+
+<P>The following sample program demonstrates using <I>RtEEnvironment</I>
+to create restricted E application environments. This example restricts
+an object's file system access so it can only traverse a specific directory
+hierarchy.</P>
+
+<P>Assume you run this example with the following line:</P>
+
+<PRE><TT>  javaec ec.examples.file path=/tmp/examples</TT>
+</PRE>
+
+<P>This path argument will be passed to the launched object.</P>
+
+<PRE><TT>  import java.lang.*;
+  import java.io.*;
+  import java.util.Hashtable;
+  
+  import ec.e.comm.*;
+  
+  //
+  // This is the boilerplate main that starts the whole
+  // ball rolling. You launch something you trust and let
+  // that make the determination of what it wants to hand
+  // out to other objects.
+  //
+  public class FileExample
+  {
+    public static void main(String args[]) {
+      if (args.length &lt; 1) {
+        System.out.println(&quot;Need to specify restriction 
+          dir path&quot;);
+        System.exit(0);
+      }
+      //In this launch method, args is the string array 
+      //passed to main when you ran javaec
+      RtLauncher.launch(new EFileExampleLauncher(), args);
+    }
+  }
+  
+  //
+  // This is what is launched, and as stated before is something
+  // you trust. It determines what to hand out to other entities.
+  // In this (simple) case, it uses the directory handed to it
+  // from the command line arguments (found in the RtEEnvironment)
+  // to determine the subdirectory it grants access to.
+  //</TT>
+</PRE>
+
+<P><TT>eclass EFileExampleLauncher implements ELaunchable { emethod go
+(RtEEnvironment env) { // Get the path property we entered at command line,
+// and use this as the directory to restrict to String resPath=env.getProperty(&quot;path&quot;);
+System.out.println(&quot;Restricting path to &quot; + resPath); // Get
+the file environment and make the more restricted one RtFileEnvironment
+fileEnv = env.getFileEnvironment(); RtFileEnvironment restrictedFileEnv
+= fileEnv.restrictPath(resPath); // Create the entity we trust with this
+restricted // file environment and hand it the file env in a message EFileExample
+theFileExample = new EFileExample(); theFileExample &lt;- doStuff (restrictedFileEnv);
+} } // // This code would be loaded from somewhere else and // you would
+provide the restricted file environment to it. // eclass EFileExample {
+emethod doStuff (RtFileEnvironment fileEnv) { try { String dirName = &quot;/test/temp&quot;;
+System.out.println(&quot;Dir Env rooted at &quot; + fileEnv.getDirectory(dirName).getPath());
+// This will return an object for temp in the // restricted file env RtFileDirectory
+dir = fileEnv.getDirectory(dirName); // This will return a file object
+for temp/filetest RtFile testFile = dir.getFile(&quot;filetest&quot;);
+// etc.... } catch (IOException e) { System.out.println(&quot;Exception
+occurred: &quot; + e.getMessage()); e.printStackTrace(); } } } </TT></P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtEncoder"></A>RtEncoder</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.db.RtEncoder;</TT></P>
+
+<P>This class is a data output stream opened on an output stream buffer.
+<I>RtEncoder</I> implements the standard Java <I>DataOutputStream</I> protocol,
+along with some extensions for reading and writing object references. </P>
+
+<H2>Creation</H2>
+
+<P>An object of this class is created internally.</P>
+
+<H2>Methods</H2>
+
+<P><TT>public void encode (Object object) </TT></P>
+
+<BLOCKQUOTE>
+<P>Encodes the object and its information to store it to an object database.
+</P>
+</BLOCKQUOTE>
+
+<H2>Example</H2>
+
+<PRE><TT>import ec.e.comm.*;
+import ec.e.stream.*;
+import java.util.*;
+import ec.e.db.*;
+
+eclass HelloLauncher implements ELaunchable
+{
+  emethod go (RtEEnvironment env) {
+    RtNetworkController con = env.startNetworkEnvironment();
+    HelloReceiver r = new HelloReceiver();
+    HelloSender   s = new HelloSender();
+    r &lt;- receive(env);
+    s &lt;- send(env, con);
+  }
+}
+
+public class CoderExample
+{
+  public static void main(String args[]) {
+    RtLauncher.launch(new HelloLauncher());
+  }
+}</TT>
+</PRE>
+
+<P><TT>class HelloEException extends RtEException { public HelloEException(String
+message) { super(message); } } class Opaque implements RtCodeable, RtAwakeAfterDecoding
+{ Opaque next; Person person; Opaque (Person aPerson) { next = this; //
+Make a circular ref person = aPerson; // Person refers to us, we refer
+to person } public void encode (RtEncoder coder) { try { coder.encodeObject(person);
+coder.encodeObject(next); } catch (Exception e) { System.out.println(&quot;Exception
+occured encoding Opaque&quot;); e.printStackTrace(); } } // This is an
+example of a seek routine public Object decode (RtDecoder coder) { System.out.println(&quot;In
+decodeObject for Opaque&quot;); try { person = (Person) coder.decodeObject();
+next = (Opaque) coder.decodeObject(); // Print of Person would fail, //
+person not fully decoded System.out.println(&quot;Person is &quot; + person);
+} catch (Exception e) { System.out.println(&quot;Error decoding Opaque&quot;);
+e.printStackTrace(); } // Return ourself return this; } </TT></P>
+
+<P><TT>public void awakeAfterDecoding () { System.out.println(&quot;Opaque
+object woke up&quot;); // Safe to do now, everything has been fully decoded
+System.out.println(&quot;Person is &quot; + person); } } // // This class
+relies on the standard Encoding/Decoding // the system provides // class
+Person { String name; Opaque opie; String group; transient int temp; //
+Won't be encoded/decoded since transient static final int magic = 1234;
+// Static and final aren't encoded/decoded either Person (String aName,
+String aGroup) { name = aName; group = aGroup; opie = new Opaque(this);
+} public String toString () { return (name + &quot; in &quot; + group);
+} } eclass HelloSender { RtEEnvironment environment; RtNetworkController
+networkController; emethod send (RtEEnvironment env, RtNetworkController
+con) { HelloReceiver otherGuy; environment = env; networkController = con;
+Person whacker = new Person(&quot;Whacker&quot;, &quot;Software&quot;);
+Person wally = new Person(&quot;Wally&quot;, &quot;Engineering&quot;);
+// Lookup the other guy etry { env.getConnector().lookup(&quot;localhost&quot;,
+&quot;Doohickey&quot;, &amp;otherGuy); </TT></P>
+
+<P><TT>} ecatch (RtDirectoryEException e) { System.out.println(&quot;Caught
+exception on lookup: &quot; + e.getMessage()); } // Send a message, this
+will result in sending // the &quot;yeah&quot; message to us otherGuy &lt;-
+hello(whacker, this); // Send a message again, this time wrapping it in
+an etry // On the second message, the other guy will throw an E // exception
+which will propagate back into the ecatch. etry { otherGuy &lt;- hello(wally,
+this); } ecatch (HelloEException e) { System.out.println(&quot;Caught expected
+exception: &quot; + e.getMessage()); networkController.stopNetworkEnvironment();
+} } emethod yeah () { System.out.println(&quot;Received a yeah message&quot;);
+} } eclass HelloReceiver { boolean sent = false; emethod receive (RtEEnvironment
+env) { env.getRegistrar().register(&quot;Doohickey&quot;, this); } emethod
+hello (Person person, HelloSender sender) { System.out.println(&quot;Hola
+Mundo from &quot; + person); if (sent == false) { sent = true; sender &lt;-
+yeah(); } else { ethrow new HelloEException(&quot;Just testing&quot;);
+} } } </TT></P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtEnvelope"></A>RtEnvelope</H1>
+
+<BLOCKQUOTE>
+<P>i<TT>mport ec.e.run.RtEnvelope;</TT></P>
+
+<P><I>RtEnvelope</I> is the Java class for all envelopes, which encapsulate
+messages. Envelopes can be opened only by an E-object with the correct
+unsealer.</P>
+
+<P>An envelope encapsulates the parameters of a message and ensures that
+they can only be read by a recipient E-object with the correct unsealer.
+The envelope is marked by a sealer that indicates the unsealer needed to
+open it. The message in the envelope is secured by the unforgeable sealer
+and unsealer associated with it.</P>
+
+<H2>Creation and methods</H2>
+
+<P>Envelopes are created implicitly on the E-message send, and are queued
+on the E runtime message queue, along with the object the message was sent
+to and the current runtime environment. The E compiler also creates unopened
+envelopes when you compile an E program.</P>
+
+<H2>Example</H2>
+
+<P>None</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtFile"></A>RtFile </H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.comm.RtFile;</TT></P>
+
+<P>This class lets you get a series of file objects related to a file.
+These objects can be read-only, write-only and read-write. </P>
+
+<H2>Creation</H2>
+
+<P>An object of this class is created by a call to either a <I>RtFileEnvironment</I>
+or <I>RtFileDirectory</I> object.</P>
+
+<H2>Methods</H2>
+
+<P><TT>public InputStream getInputStream() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns an <I>InputStream</I> object associated with this file. </P>
+</BLOCKQUOTE>
+
+<P><TT>public OuputStream getOutputStream() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns an <I>OuputStream</I> object associated with this file. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtFileDataInput getDataInput() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns a read-only seekable file object that implements the Java <TT>DataInput</TT>
+interface. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtFileDataOutput getDataOutput() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns a write-only seekable file object that implements the Java <TT>DataOutput</TT>
+interface. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtRandomAccessFile getRandomAccessFile() throws IOException
+</TT></P>
+
+<BLOCKQUOTE>
+<P>Returns a read-write seekable file object that implements the java <TT>DataInput</TT>
+and <TT>DataOutput</TT> interfaces, as well as other methods documented
+in the next section. </P>
+</BLOCKQUOTE>
+
+<P><TT>public String getPath() </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns the path associated with the file. </P>
+</BLOCKQUOTE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtFileDataInput"></A>RtFileDataInput</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.comm.RtFileDataInput;</TT></P>
+
+<P>This class is a data input wrapper class for <I>java.io.RandomFileAccess</I>.
+This class is a seekable read-only file. </P>
+
+<H2>Creation</H2>
+
+<P>An object of this class is created by invoking a <TT>getDataInput</TT>
+method on an existing <I>RtFile </I>object.</P>
+
+<H2>Methods</H2>
+
+<P><TT>public void close() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Closes the file. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void seek(long pos) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Sets the file pointer to the specified absolute position. </P>
+</BLOCKQUOTE>
+
+<P><TT>public int skipBytes(int n) throws IOException </TT></P>
+
+<P><TT>public long getFilePointer() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns the current location of the file pointer. </P>
+</BLOCKQUOTE>
+
+<P><TT>public long length() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns the length of the file. </P>
+</BLOCKQUOTE>
+
+<P><TT>public int read() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a byte. </P>
+</BLOCKQUOTE>
+
+<P><TT>public int read(byte b[],int off, int len) throws IOException </TT></P>
+
+<P><TT>public int read(byte b[]) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read an array of bytes. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void readFully(byte b[]) throws IOException </TT></P>
+
+<P><TT>public final void readFully(byte b[], int off, int len)throws IOException
+</TT></P>
+
+<P><TT>public final boolean readBoolean() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a boolean. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final byte readByte() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a byte. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final int readUnsignedByte() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read an unsigned byte. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final short readShort() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a short. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final int readUnsignedShort() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read an unsigned short. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final char readChar() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a char. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final int readInt() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read an int. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final long readLong() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a long. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final float readFloat() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a float. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final double readDouble() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a double. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final String readLine() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a line terminated by a `/n' or EOF. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final String readUTF() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a UTF format string. </P>
+</BLOCKQUOTE>
+
+<H2>Interfaces</H2>
+
+<P><I>java.io.DataInput</I></P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtFileDataOutput"></A>RtFileDataOutput</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.comm.RtFileDataOuput;</TT></P>
+
+<P>This class is a data output wrapper class for <I>java.io.RandomFileAccess</I>,
+and is a seekable write-only file. </P>
+
+<H2>Creation</H2>
+
+<P>An object of this class is created by invoking a <TT>getDataOutput</TT>
+method on an existing <I>RtFile </I>object.</P>
+
+<H2>Methods</H2>
+
+<P><TT>public void close() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Closes the file. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void seek(long pos) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Sets the file pointer to the specified absolute position. </P>
+</BLOCKQUOTE>
+
+<P><TT>public int skipBytes(int n) throws IOException </TT></P>
+
+<P><TT>public long getFilePointer() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns the current location of the file pointer. </P>
+</BLOCKQUOTE>
+
+<P><TT>public long length() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns the length of the file. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void write(int b) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a byte. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void write(byte b[]) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write an array of bytes. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void write(byte b[],int off,int len) throws IOException </TT></P>
+
+<P><TT>public final void writeBoolean(boolean v) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a boolean. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeByte(int v) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a byte. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeShort(int v) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a short. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeChar(int v) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a char. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeInt(int v) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write an int. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeLong(long v) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a long. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeFloat(float v) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a float. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeDouble(double v) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a double. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeBytes(String s) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a string as a sequence of bytes. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeChars(String s) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a string as a sequence of chars. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeUTF(String s) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a string in UTF format. </P>
+</BLOCKQUOTE>
+
+<H2>Interfaces</H2>
+
+<P><I>java.io.DataOuput</I></P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtFileDirectory"></A>RtFileDirectory </H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.comm.RtFileDirectory;</TT></P>
+
+<P>This class lets you navigate and retrieve existing files and directories
+within its path. It cannot create or delete files or directories. You cannot
+use '..' as a file token. </P>
+
+<H2>Creation</H2>
+
+<P>An object of this class is created by a call on an <I>RtFileEnvironment</I>.</P>
+
+<H2>Methods</H2>
+
+<P><TT>public RtFile getFile(String path) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns file if it exists, otherwise it throws an exception. </P>
+</BLOCKQUOTE>
+
+<P><TT>public boolean exists(String path) </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns <TT>true</TT> if a file object exists at that path. </P>
+</BLOCKQUOTE>
+
+<P><TT>public String[] list() </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns a string array of the directories' contents. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtFileDirectory chdir(String path) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns an <I>RtFileDirectory</I> object if there is a directory under
+that path, otherwise it throws an exception. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtFileDirectory getParent() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns an <I>RtFileDirectory</I> object if there is a directory at
+that path, otherwise it throws an exception. </P>
+</BLOCKQUOTE>
+
+<P><TT>public String getPath() </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns path within the restriction. </P>
+</BLOCKQUOTE>
+
+<H2>Example</H2>
+
+<P>None</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtFileEnvironment"></A>RtFileEnvironment </H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.comm.RtFileEnvironment;</TT></P>
+
+<P>This class encapsulates all of the file management functions, including
+getting, creating and deleting directories and files. It works within a
+restricted path. The <I>RtFileEnvironment</I> that you get from the E Environment
+starts with read/write access to the entire file system, which you can
+then restrict and give to less trusted objects. </P>
+
+<P>You get files and objects by string names which return <I>RtFileDirectory</I>
+or <I>RtFile</I> objects. You cannot use '..' as a file token. </P>
+
+<H2>Creation</H2>
+
+<P>You get the first instance of this object by calling <TT>getFileEnvironment()</TT>
+on the <I>RtEEnvironment</I> passed by the <I>RtLauncher</I>.</P>
+
+<H2>Methods</H2>
+
+<P><TT>public RtFileEnvironment restrictPath(String path) </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns a further restricted <I>RtFileEnvironment</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>public boolean exists(String path) </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns <TT>true</TT> if an object exists in that path, it does not
+distinguish between files and directories. </P>
+</BLOCKQUOTE>
+
+<P><TT>public boolean isFile(String path) </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns <TT>true</TT> if there is a file at that path. </P>
+</BLOCKQUOTE>
+
+<P><TT>public boolean isDirectory(String path) </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns <TT>true</TT> if there is a directory at that path. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtFile getFile(String path) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns the <I>RtFile</I> if it exists. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtDirectory getDirectory(String path) </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns a <I>RtFileDirectory</I> if it exists within the restricted
+scope, otherwise it returns null. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtFileDirectory mkdir(String path) </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns a <I>RtFileDirectory</I> if creation was successful, otherwise
+it returns null. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtFileDirectory mkdirs(String path) </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns a <I>RtFileDirectory</I> if creation of all the directories
+in the path was successful, otherwise it returns <TT>null</TT>. </P>
+</BLOCKQUOTE>
+
+<P><TT>public boolean renameTo(String path, String newName) </TT></P>
+
+<BLOCKQUOTE>
+<P>Renames the file object at that path, returns <TT>true</TT> if successful.
+</P>
+</BLOCKQUOTE>
+
+<P><TT>public boolean delete(RtFile thisFile) </TT></P>
+
+<BLOCKQUOTE>
+<P>Deletes the given file, returns <TT>true</TT> if successful. </P>
+</BLOCKQUOTE>
+
+<P><TT>public boolean delete(RtFileDirectory thisDir) </TT></P>
+
+<BLOCKQUOTE>
+<P>Deletes the given directory, returns <TT>true</TT> if successful. </P>
+</BLOCKQUOTE>
+
+<P><TT>public boolean delete(String path) </TT></P>
+
+<BLOCKQUOTE>
+<P>Tries to delete the path without distinguishing if it is a directory
+or a file, returns <TT>true</TT> if successful. </P>
+</BLOCKQUOTE>
+
+<H2>Example</H2>
+
+<P>This program excerpt restricts an object's file system access so it
+can only traverse a specific directory hierarchy. Assume you run this program
+with the following command line:</P>
+
+<PRE><TT>  javaec ec.examples.FileExample &quot;path=/tmp/examples</TT>
+</PRE>
+
+<P>The path string (&quot;path=/tmp/examples&quot;) is passed to the launched
+object, which uses it to build a restricted file access.</P>
+
+<PRE><TT>  import java.util.Hashtable;
+  import ec.e.comm.*;
+  
+  public class FileExample
+  {
+    public static void main(String args[]) {
+      if (args.length &lt; 1) {
+        System.out.println(&quot;Need to specify restriction 
+          dir path&quot;);
+        System.exit(0);
+      }
+      RtLauncher.launch(new EFileExampleLauncher(), args);
+    }
+  }
+  </TT></PRE>
+
+<P><TT>eclass EFileExampleLauncher implements ELaunchable { emethod go
+(RtEEnvironment env) { // Get the path property we entered at command line,
+// and use this as the directory to restrict to String resPath=env.getProperty(&quot;path&quot;);
+System.out.println(&quot;Restricting path to &quot; + resPath); // Get
+the file environment and make the more restricted one RtFileEnvironment
+fileEnv = env.getFileEnvironment(); RtFileEnvironment restrictedFileEnv
+= fileEnv.restrictPath(resPath); // Create the entity we trust with this
+restricted // file environment and hand it the file env in a message EFileExample
+theFileExample = new EFileExample(); theFileExample &lt;- doStuff (restrictedFileEnv);
+} } .......... </TT></P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtLauncher"></A>RtLauncher </H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.comm.RtLauncher;</TT></P>
+
+<P><I>RtLauncher</I> is the class that launches objects in the E runtime.
+This class's <TT>launch</TT> method creates general <I>RtEEnvironment</I>
+instances, and launches a target object by invoking the <TT>go</TT> method
+of the ELaunchable E-interface. That object can restrict the environment
+and launch other objects with the more restricted environment.</P>
+
+<H2>Creation</H2>
+
+<P>None. Only static methods are used in this class.</P>
+
+<H2>Methods</H2>
+
+<P><TT>static public void launch(EObject userObject) </TT></P>
+
+<P><TT>static public void launch (EObject userObject, String args) </TT></P>
+
+<BLOCKQUOTE>
+<P>Both of these methods launch a new object containing all the <I>RtEEnvironment</I>
+functionality. You create objects from this class and then give them more
+specific functionality, such as a file server. <TT>args</TT> is a string
+array that lets you pass in arguments. You can pass in the argument string
+array entered at the command line (by using the args parameter) or a argument
+string specific to that object. This feature lets you pass these same arguments
+to objects you are &quot;sub-launching&quot;. </P>
+
+<P>If you pass in an argument of the form <TT>x=y</TT> (for example, <TT>host=george</TT>),
+E strips this argument out of the argument array and puts it in a properties
+table, with <TT>x</TT> being the key, and <TT>y</TT> being the value. You
+can then use <I>RtEEnvironment</I>'s <TT>getProperty</TT> method to retrieve
+a value associated with a specific key. See the documentation on this method
+for more information.</P>
+
+<P>Note that any standard <TT>EC*</TT> arguments are stripped out of the
+standard arguments array when you launch an object. This lets you run a
+program with standard command-line arguments without them being passed
+to any objects you launched. See the description of these arguments in
+the <I>E Java Interpreter</I> documentation in Appendix A, <I>E Tools and
+Utilities</I>.</P>
+</BLOCKQUOTE>
+
+<P><TT>static public void setupClassLoader(int securitymode); </TT></P>
+
+<BLOCKQUOTE>
+<P>You can set up E's class loader to run in three different security modes:
+</P>
+
+<UL>
+<LI><TT>0 (SL_NONE)</TT></LI>
+
+<P>The loader does not check the class for proper certification.</P>
+
+<LI><TT>1 (SL_PERMISSIVE)</TT></LI>
+
+<P>The loader checks the class for the proper certificate, but still loads
+the class even if the class check fails.</P>
+
+<LI><TT>2 (SL_STRICT)</TT></LI>
+
+<P>If the loader encounters an &quot;illegal&quot; class, it does not load
+the class, and exits.</P>
+</UL>
+
+<P>Levels 0 and 1 are for development purposes only. They let you develop
+and test without having a completely built certificate database. Level
+0 is especially fast since it does no checking; this makes it useful for
+testing purposes (for example, testing performance). Level 1 is slower,
+but does not require signed certificates during development and testing.
+For more information on E's certification and authentication features,
+see the <I>E Runtime</I> chapter's section on <I>Authentication</I>, and
+also the <I>Class Blesser</I> section in Appendix A, <I>E Tools and Utilities</I>.</P>
+</BLOCKQUOTE>
+
+<H2>Example</H2>
+
+<P>This example launches a <I>EFileExampleLauncher</I> object. The arguments
+passed to launch is the string argument passed from the command line.</P>
+
+<PRE><TT>  import java.lang.*;
+  import java.util.Hashtable;
+  import ec.e.comm.*;
+  
+  //
+  // This is the boilerplate main that starts the whole
+  // ball rolling. You launch something you trust and let
+  // that make the determination of what it wants to hand
+  // out to other objects.
+  //
+  public class FileExample
+  {
+    public static void main(String args[]) {
+      if (args.length &lt; 1) {
+        System.out.println(&quot;Need to specify restriction 
+          dir path&quot;);
+        System.exit(0);
+      }</TT>
+</PRE>
+
+<P><TT>//In this launch method, args is the string array //passed to main
+when you ran javaec RtLauncher.launch(new EFileExampleLauncher(), args);
+} } // // This is what is launched, and as stated before is something //
+you trust. It determines what to hand out to other entities. // In this
+(simple) case, it uses the directory handed to it // from the command line
+arguments (found in the RtEEnvironment) // to determine the subdirectory
+it grants access to. // eclass EFileExampleLauncher implements ELaunchable
+{ emethod go (RtEEnvironment env) { // Get the path property we entered
+at command line, // and use this as the directory to restrict to String
+resPath=env.getProperty(&quot;path&quot;); System.out.println(&quot;Restricting
+path to &quot; + resPath); // Get the file environment and make the more
+restricted one RtFileEnvironment fileEnv = env.getFileEnvironment(); RtFileEnvironment
+restrictedFileEnv = fileEnv.restrictPath(resPath); // Create the entity
+we trust with this restricted // file environment and hand it the file
+env in a message EFileExample theFileExample = new EFileExample(); theFileExample
+&lt;- doStuff (restrictedFileEnv); } } ............. </TT></P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtNetworkController"></A>RtNetworkController</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.run.EEnvironment;</TT></P>
+
+<P>This class contains the <TT>stopNetworkEnvironment</TT> method, which
+lets you stop a network environment. Only those objects with access to
+the <I>RtNetworkController</I> class can shut down a network environment.</P>
+
+<H2>Creation</H2>
+
+<P>An instance of this class is returned from a <I>RtEEnvironment</I>'s
+<TT>startNetworkEnvironment</TT> method.</P>
+
+<H2>Methods</H2>
+
+<P><TT>public void stopNetworkEnvironment () </TT></P>
+
+<P><TT>public void stopNetworkEnvironment (boolean stopAllConnectionsToo)
+</TT></P>
+
+<BLOCKQUOTE>
+<P>Both of these methods shut down an E network environment started by
+the <TT>startNetworkEnvironment</TT> method. </P>
+</BLOCKQUOTE>
+
+<BLOCKQUOTE>
+<P>The first method takes no arguments, and stops all connections. The
+second method shuts down all connections if <TT>stopAllConnectionsToo</TT>
+is <TT>true</TT>; if false, they are not stopped. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtConnection getConnectionForHost(String hostname) </TT></P>
+
+<P><TT>public RtConnection getConnectionForHostAndPort(String hostname,
+int port) </TT></P>
+
+<BLOCKQUOTE>
+<P>These two methods both get the <I>RtConnection</I> object for the given
+hostname. You can pass in <TT>localhost</TT> for the local machine. The
+<TT>getConnectionForHostAndPort</TT> distinguishes the port as well. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void setNetworkDelegate(Object delegate) </TT></P>
+
+<H2>Example</H2>
+
+<PRE><TT>eclass HelloLauncher implements ELaunchable
+{
+  emethod go (RtEEnvironment env) {
+
+// This is the new API, you get back a network controller
+// from the startNetworkEnvironment method on the RtEEnvironment
+
+    RtNetworkController con = env.startNetworkEnvironment();
+
+// We trust one of these objects with the capability to
+// shutdown the network, but we don't want to let other
+// objects (like &quot;LessTrustedObject&quot;) have this capability
+
+    MoreTrustedObject mto = new HelloReceiver(env, con);
+    LessTrustedObject lto = new LessTrustedObject(env);
+  }
+}
+
+eclass MoreTrustedObject
+{
+  RtNetworkController networkController;
+
+  MoreTrustedObject (RtEEnvironment env, 
+      RtNetworkController con) {
+    networkController = con;
+        // ...
+  }
+
+  emethod shutdown () {
+  // This object can shut down the Com system because it
+  // has the capability implicit in the networkController.
+
+    networkController.stopNetworkEnvironment();
+        // ...
+  }
+}</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtRandomAccessFile"></A>RtRandomAccessFile</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.comm.RtRandomAccessFile;</TT></P>
+
+<P>This class wraps a complete random access file. It encapsulates the
+methods for Java's <I>RandomAccessFile</I> class.</P>
+
+<H2>Creation</H2>
+
+<P>An object of this class is created by invoking a <TT>getRandomAccessFile</TT>
+method on an existing <I>RtFile </I>object.</P>
+
+<H2>Methods</H2>
+
+<P>These methods are the same as Java's <I>RandomAccessFile</I> class.</P>
+
+<P><TT>public void close() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Close the file. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void seek(long pos) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Set the file pointer to the specified absolute position. </P>
+</BLOCKQUOTE>
+
+<P><TT>public int skipBytes(int n) throws IOException </TT></P>
+
+<P><TT>public long getFilePointer() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Return the current location of the file pointer. </P>
+</BLOCKQUOTE>
+
+<P><TT>public long length() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Return the length of the file. </P>
+</BLOCKQUOTE>
+
+<P><TT>public int read() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a byte. </P>
+</BLOCKQUOTE>
+
+<P><TT>public int read(byte b[], int, int) throws IOException </TT></P>
+
+<P><TT>public int read(byte b[]) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read an array of bytes. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void readFully(byte b[]) throws IOException </TT></P>
+
+<P><TT>public final void readFully(byte b[], int off,int len) throws IOException
+</TT></P>
+
+<P><TT>public final boolean readBoolean() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a Boolean. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final byte readByte() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a byte. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final int readUnsignedByte() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read unsigned byte. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final short readShort() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a short. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final int readUnsignedShort() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read an unsigned short. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final char readChar() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a char. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final int readInt() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a int. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final long readLong() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a long. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final float readFloat() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a float. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final double readDouble() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a double. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final String readLine() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a line terminated by a `/n' or EOF. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final String readUTF() throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Read a UTF format string. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void write(int b) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a byte. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void write(byte b[]) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write an array of bytes. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void write(byte b[],int off,int len) throws IOException </TT></P>
+
+<P><TT>public final void writeBoolean(boolean v) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a boolean. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeByte(int v) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a byte. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeShort(int v) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a short. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeChar(int v) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a char. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeInt(int v) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write an int. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeLong(long v) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a long. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeFloat(float v) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a float. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeDouble(double v)throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a double. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeBytes(String s) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a string as a sequence of bytes. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeChars(String s) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a string as a sequences of chars. </P>
+</BLOCKQUOTE>
+
+<P><TT>public final void writeUTF(String s) throws IOException </TT></P>
+
+<BLOCKQUOTE>
+<P>Write a string in UTF format. </P>
+</BLOCKQUOTE>
+
+<H2>Interfaces</H2>
+
+<P><I>java.io.DataInput</I></P>
+
+<P><I>java.io.DataOutput</I></P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtRegistration"></A>RtRegistration</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.comm.RtRegistration;</TT></P>
+
+<P>This class encapsulates functionality for an E-object that is registered
+(through E registration facilities) on the network.</P>
+
+<H2>Creation</H2>
+
+<P>Registering an E-object using <I>RtRegistrar</I>'s <TT>register</TT>
+method returns an object of this class. You do not create a <I>RtRegistration</I>
+object manually.</P>
+
+<H2>Methods</H2>
+
+<P><TT>public void unregister() throws RtDirectoryException </TT></P>
+
+<BLOCKQUOTE>
+<P>Unregisters an object from the network. </P>
+</BLOCKQUOTE>
+
+<H2>Example</H2>
+
+<P>None</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtRegistrar"></A>RtRegistrar</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.comm.RtRegistrar;</TT></P>
+
+<P>This class encapsulates the right to register objects by name in the
+local machine's object directory.</P>
+
+<P>To register an E-object, use the <TT>register</TT> method. You can use
+the methods in this class to generate a more restricted registration path,
+and pass that down to objects that register in a more restricted environment.
+To unregister an object, use <I>RtRegistration</I>'s <TT>unregister</TT>
+method.</P>
+
+<H2>Creation</H2>
+
+<P>Created internally by <I>RtEEnvironment</I>. You get the first instance
+of this class by calling <TT>getRegistrar</TT>() on an <I>RtEEnvironment</I>
+object.</P>
+
+<H2>Methods</H2>
+
+<P><TT>public RtEARLrestrictor getRestrictor() </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns the current registrar's restricted path. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtRegistrar restrictObjectPath(String restriction) </TT></P>
+
+<P><TT>public RtRegistrar restrictRootClass(Class restriction) </TT></P>
+
+<P><TT>public RtRegistration register(String objectPath, EObject obj) </TT></P>
+
+<BLOCKQUOTE>
+<P>Registers the object on the network according to the <TT>objectPath</TT>.
+This method returns an object of class <I>RtRegistration</I>.You can use
+<I>RtRegistration</I>'s <TT>unregister</TT> method to unregister your object.
+</P>
+</BLOCKQUOTE>
+
+<P><TT>public RtNetworkEnvironment getNetworkEnvironment() </TT></P>
+
+<H2>Example</H2>
+
+<P>This example instantiates a host object, and then uses the <TT>getRegistrar()</TT>
+method to register it, which creates an <I>RtRegistrar</I>. A client can
+then use this information to connect to the host. For the full code, see
+the section <I>Creating a connector and registrar</I> in the<I> E Runtime</I>
+chapter.</P>
+
+<PRE><TT>import ec.e.comm.*;
+
+//
+// This is where it all starts, the main function 
+//
+public class HelloExample
+{
+  public static void main(String args[]) {
+    RtLauncher.launch(new HelloLauncher(), args);
+  }
+}
+
+//
+// This guy is totally trusted and makes subenvironment
+// things that are passed to other less trusted objects.
+
+eclass HelloLauncher implements ELaunchable
+{
+  emethod go(RtEEnvironment env) {
+    RtNetworkController con;
+    int defaultPortNumber = env.getDefaultPortNumber();
+
+    String hostname = env.getProperty(&quot;host&quot;);
+    if (hostname == null) {
+      // We'll be the host
+      HelloExampleHost host = new HelloExampleHost();
+      con = env.startNetworkEnvironment(defaultPortNumber);
+      host &lt;- goHost(env, con);
+  .....
+    }
+  }
+}</TT>
+</PRE>
+
+<P><TT>eclass HelloNetworkObject { <I>code </I>} eclass HelloExampleClient
+extends HelloNetworkObject { <I>....client code </I>} eclass HelloExampleHost
+extends HelloNetworkObject { emethod goHost (RtEEnvironment env, RtNetworkController
+con) { this.setNetworkController(con); System.out.println(&quot;Registering
+host&quot;); env.getRegistrar().register(&quot;HelloExampleHost&quot;,
+this); } emethod helloThere (String theString, EObject sender) { System.out.println(&quot;Hello
+World&quot;); if (sender != null) sender &lt;- stopNetwork(); this &lt;-
+stopNetwork(); } } </TT></P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtSystem"></A>RtSystem</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.comm.RtSystem;</TT></P>
+
+<P>This class encapsulates the functionality of the<I> java.lang.System</I>
+class, and provides similar access to system functionality in the E runtime.
+You should use this class instead of <I>java.lang.System</I> in your E
+program.</P>
+
+<H2>Creation</H2>
+
+<P>You do not create an object of this class manually.</P>
+
+<H2>Variables</H2>
+
+<P><TT>in </TT></P>
+
+<BLOCKQUOTE>
+<P><TT>public static InputStream in = System.in. </TT></P>
+</BLOCKQUOTE>
+
+<BLOCKQUOTE>
+<P>Standard input stream. </P>
+</BLOCKQUOTE>
+
+<P><TT>out </TT></P>
+
+<BLOCKQUOTE>
+<P><TT>public static OutputStream out = System.out </TT></P>
+</BLOCKQUOTE>
+
+<BLOCKQUOTE>
+<P>Standard output stream. This stream lets you print messages. </P>
+</BLOCKQUOTE>
+
+<P><TT>err </TT></P>
+
+<BLOCKQUOTE>
+<P><TT>public static PrintStream err = System.err; </TT></P>
+</BLOCKQUOTE>
+
+<BLOCKQUOTE>
+<P>Standard error stream. You can use this stream to print error messages.
+</P>
+</BLOCKQUOTE>
+
+<H2>Methods</H2>
+
+<P><TT>public static long currentTimeMillis() </TT></P>
+
+<BLOCKQUOTE>
+<P>Returns the current system time in milliseconds GMT since this epoch
+(00:00:00: UTC, January 1, 1970). It is a signed 64 bit integer and will
+not overflow until the year 292280995. </P>
+</BLOCKQUOTE>
+
+<P><TT>public static void arraycopy(Object src, int src_position,Object
+dst,int dst_position,int length) </TT></P>
+
+<BLOCKQUOTE>
+<P>Copies an array of Java objects. </P>
+
+<UL>
+<LI><TT>src</TT> is the source data.</LI>
+
+<LI><TT>src_position</TT> is the start position in the source data.</LI>
+
+<LI><TT>dst</TT> is the destination</LI>
+
+<LI><TT>dst_position</TT> is the start position in the destination data.</LI>
+
+<LI><TT>length</TT> is the length of the data to be copied.</LI>
+</UL>
+</BLOCKQUOTE>
+
+<P><TT>public static void gc()</TT></P>
+
+<BLOCKQUOTE>
+<P>Returns the Java garbage collector (note that this is not the E distributed
+garbage collector). You generally do not have to call this manually since
+the Java garbage collector runs automatically whenever the system is idle,
+or when object allocation fails. </P>
+</BLOCKQUOTE>
+
+<P><TT>public static void runFinalization() </TT></P>
+
+<BLOCKQUOTE>
+<P>Runs the finalization methods of any objects pending finalization. You
+generally do not have to call this method manually since finalization methods
+are called asynchronously by a finalization thread. However, since you
+choose finalized resources, there is no built-in equivalent of the garbage
+collector running when the system runs out of memory. You can use this
+method to build equivalent functionality into your resource allocators.
+</P>
+</BLOCKQUOTE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtTimer"></A>RtTimer</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.run.RtTimer;</TT></P>
+
+<P><I>RtTimer</I> is a Java class implementing basic timer services. An
+<I>RtTimer</I> object runs in its own thread, and calls a <TT>handleTimeout</TT>
+method on objects when a specified timeout occurs. See the interface definition
+for <I>RtTimeoutHandling</I> for more information about the <TT>handleTimeout
+method.</TT></P>
+
+<P>Timeouts are requested by specifying a timeout interval in milliseconds,
+and an object to call back when the timeout occurs. The object specified
+must implement the Java <TT>RtTimeoutHandling</TT> interface, as the method
+<TT>handleTimeout</TT> is called when the timeout occurs. Note that the
+<TT>handleTimeout</TT> method should be called in the <I>RtTimer</I>'s
+thread, not the thread which was running at the time of the request.</P>
+
+<P>Note there is one thread per <I>RtTimer</I>. If you just want to have
+one timer thread, only create one <I>RtTimer</I> and have everything use
+that.</P>
+
+<H2>Creation</H2>
+
+<P><TT><I>timer</I> = new RtTimer(); </TT></P>
+
+<BLOCKQUOTE>
+<P>You can also optionally specify a name to be used as the name of the
+thread: </P>
+</BLOCKQUOTE>
+
+<P><TT><I>timer</I> = new RtTimer(String name); </TT></P>
+
+<H2>Methods</H2>
+
+<P><TT>public int setTimeout (long millis, RtTimeoutHandling target, Object
+arg) </TT></P>
+
+<P><TT>public int setTimeout (long millis, EObject target, RtEnvelope envelope)
+</TT></P>
+
+<P><TT>public int setTimeout (long millis, EDistributor key){ </TT></P>
+
+<UL>
+<LI><TT>millis</TT> is the millisecond timeout value</LI>
+
+<LI><TT>target</TT> is an object implementing <TT>RtTimeoutHandling</TT>
+which will have its <TT>handleTimeout</TT> method invoked when the timeout
+occurs </LI>
+
+<LI><TT>arg</TT> is an argument which will be passed to the target object's
+<TT>handleTimeout</TT> method.The return value is a timer ID which is unique
+within this specific <I>RtTimer</I> instance. This can be used to cancel
+the timeout, and is passed to the target object's <TT>handleTimeout</TT>
+methods.</LI>
+</UL>
+
+<P><TT>public boolean cancelTimeout (int tid) </TT></P>
+
+<BLOCKQUOTE>
+<P><TT>tid</TT> is the timer ID returned by a previous call to <TT>setTimeout</TT>
+on the same <I>RtTimer</I>. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void terminate () </TT></P>
+
+<BLOCKQUOTE>
+<P>Stops the thread running the timer. All pending timeouts are cancelled.
+</P>
+</BLOCKQUOTE>
+
+<H2>Example</H2>
+
+<PRE><TT>eclass ThingThatHandlesTimeouts
+{
+  emethod doSomething (EObject other) {
+    EBoolean timeout;
+    EInteger result;
+    RtTimer timer = new RtTimer();
+    int tid;
+    
+    // set timeout
+    tid = timer.setTimeout(1000, &amp;timeout);
+    
+    // Ask some other object to do something for us
+    other &lt;- askForResult(&amp;result);
+    
+    // Other object notifies us it is done 
+    // by forwarding something to result
+    ewhen result (int res) {
+      timer.cancelTimeout(tid); // We don't need it
+      timer.terminate();  
+      System.out.println(&quot;Got result: &quot; + res);
+    }
+    // We'll enter here if we timeout before 
+    // the other responds
+    eorwhen timeout (boolean t) {
+      System.out.println(&quot;Timed out&quot;);
+      timer.terminate();  
+    }
+  }
+}</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="ELaunchable"></A>ELaunchable</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.comm.ELaunchable;</TT></P>
+
+<P>This E-interface contains the <TT>go</TT> method. You use this method
+when creating E Environment objects that create restricted environments
+for other objects. See the<I> Creating access-controlled objects</I> section
+in the <I>E Runtime</I> chapter for an example.</P>
+
+<H2>E-methods</H2>
+
+<P><TT>go (RtEEnvironment <I>env</I> ); </TT></P>
+
+<BLOCKQUOTE>
+<P>To create an E Environment object, you first launch a trusted object
+with <TT>RtLauncher.launch</TT>. In the class definition of this trusted
+object, you invoke the <TT>go</TT> method to give the E- object full access
+to the E environment capabilities. The <TT>go</TT> method passes an <I>RtEEnvironment</I>
+object parameter so your class can access the <I>RtEEnvironment</I> facilities.</P>
+</BLOCKQUOTE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="IBoolean"></A>IBoolean </H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.run.IBoolean;</TT></P>
+
+<P>This E-interface contains mathematical functions used for <I>EBoolean</I>
+objects.</P>
+
+<H2>E-methods</H2>
+
+<P><TT>and(EBoolean operand, EDistributor result); </TT></P>
+
+<P><TT>or(EBoolean operand, EDistributor result); </TT></P>
+
+<P><TT>xor(EBoolean operand, EDistributor result); </TT></P>
+
+<P><TT>eqv(EBoolean operand, EDistributor result); </TT></P>
+
+<P><TT>not(EDistributor result); </TT></P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtAwakeAfterDecoding"></A>RtAwakeAfterDecoding</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.db.RtAwakeAfterDecoding;</TT></P>
+
+<P>This is a method interface for objects that need to take some action
+after a graph of objects has been decoded. <I>RtDecoder</I> checks objects
+it decodes to see if they implement this interface, and remembers the ones
+that do. After decoding an entire graph, <I>RtDecoder</I> calls the <TT>awakeAfterDecoding</TT>
+method on all of the objects that implement this interface.</P>
+
+<H2>Methods</H2>
+
+<P><TT>void awakeAfterDecoding () </TT></P>
+
+<BLOCKQUOTE>
+<P>This is called on objects (that implement the <I>RtAwakeAfterDecoding</I>
+interface) after all objects in a graph of objects have been decoded. This
+allows objects in a complex graph to take some action (such as start a
+thread running) when it is sure that all of the objects that are a part
+of that graph have been decoded (it might not be safe to do certain things
+in the <TT>decode()</TT> method called on objects, as other objects in
+the graph might not be completely decoded at that point).</P>
+</BLOCKQUOTE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtCodeable"></A>RtCodeable</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.db.RtCodeable;</TT></P>
+
+<P>This class is an interface for object storage methods. Using the methods
+in this interface lets you define your own methods for storing and filing
+a class state to and from the stream objects used to implement persistence
+and communication. This can be more efficient than relying on the native
+method stream-in and stream-out code. It can also be more robust with respect
+to instance variable type and position changes. For example, you can include
+code for your class that recognizes older versions streamed out long ago.
+</P>
+
+<P>This interface extends <I>RtEncodeable</I> and <I>RtDecodeable</I>,
+and thus contains their <TT>encode</TT> and <TT>decode</TT> methods (respectively).
+Generally, you should use <I>RtCodeable</I> to encode/decode objects, rather
+than using than <I>RtEncodeable</I> or <I>RtDecodeable.</I></P>
+
+<P>However, there will be situations where an object should be only codeable
+but not decodeable, and vice versa. For example, you may want to encode
+an object of class A so that it is decoded as an instance of a different
+class B, but not want to force instances of class B to be encodeable. In
+these types of situations, implement the object(s) using either <I>RtEncodeable</I>
+(to use only the <TT>encode</TT> method), or <I>RtDecodeable</I> (to only
+use the <TT>decode</TT> method). See the documentation on these interfaces
+for more information.</P>
+
+<H2>Methods</H2>
+
+<P>Contains the <TT>RtEncodeable.encode</TT> and <TT>RtDecodeable.decode</TT>
+methods since it extends both of these classes. See the documentation on
+these methods for more information.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtDecodeable"></A>RtDecodeable</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.db.RtDecodeable; </TT></P>
+
+<P>This interface contains the decode method used for retrieving an object
+from a object database. Using the <TT>decode</TT> method lets you define
+your own method for recalling an object (from the data stream) that is
+used to implement persistence and communication. This can be more efficient
+than relying on the native stream-in code. It can also be more robust with
+respect to instance variable type and position changes.</P>
+
+<P>Generally, you will want to use the <I>RtCodeable</I> interface when
+encoding and decoding objects. This interface extends <I>RtDecodeable</I>
+and <I>RtEncodeable</I>, and thus contains the <TT>encode</TT> and <TT>decode</TT>
+methods of these interfaces. </P>
+
+<P>However, there will be situations where an object should be only decodeable,
+and not encodeable, and vice versa. For example, assume you encode an object
+of class A so that it is decoded as an instance of a different class B.
+However, you might not want to force instances of class B to be encodeable
+just because you want to decode them; in other words, you want objects
+of class B to be sent over the network by reference only, even though they
+can show up as a copy when an A is encoded. </P>
+
+<P>To do this, have class <I>A </I>implement <I>RtEncodeable</I>, and class
+<I>B</I> implement <I>RtDecodeable</I>. This lets instances of <I>A </I>be
+encodeable, but only lets instances of <I>B</I> (encoded from an <I>A</I>)
+be decoded, and not encodeable themselves.</P>
+
+<H2>Methods</H2>
+
+<P><TT>Object decode (RtDecoder coder); </TT></P>
+
+<BLOCKQUOTE>
+<P>Read an object from the stream. This method calls the appropriate read
+method on the<I> RtDecoder</I> object to load internal state. <I>RtDecoder</I>
+implements the standard Java <I>DataInputStream</I> protocols, along with
+some extensions for reading and writing objects. </P>
+</BLOCKQUOTE>
+
+<BLOCKQUOTE>
+<P>You can override this method with your own decoding methods to customize
+how your objects are read from the database. </P>
+</BLOCKQUOTE>
+
+<BLOCKQUOTE>
+<P>Note that the <TT>decode</TT> method is expected to return the object
+decoded, which should usually be yourself. (In some special cases this
+object can be different from the object sent the decode message, if necessary).
+</P>
+</BLOCKQUOTE>
+
+<BLOCKQUOTE>
+<P>The <TT>decode</TT> method attempts to respect the interconnections
+of objects in the context of a given stream-out or stream-in operation.
+</P>
+</BLOCKQUOTE>
+
+<BLOCKQUOTE>
+<P>If the object needs to decode a sub-object, it can call <TT>decode</TT>
+on the <I>RtDecoder</I>. </P>
+</BLOCKQUOTE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtEncodeable"></A>RtEncodeable</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.db.RtEncodeable;</TT></P>
+
+<P>This interface contains the <TT>encode</TT> method used for storing
+an object to an object database. Using the <TT>encode</TT> method lets
+you define your own method for storing an object that is used to implement
+persistence and communication. This can be more efficient than relying
+on the native stream-out code. It can also be more robust with respect
+to instance variable type and position changes. For example, you can include
+code for your class that recognizes older versions streamed out long ago.</P>
+
+<P>Generally, you will want to use the <I>RtCodeable</I> interface when
+encoding and decoding objects, instead of this interface. <I>RtCodeable</I>
+extends <I>RtDecodeable</I> and <I>RtEncodeable</I>, and thus contains
+the <TT>encode</TT> and <TT>decode</TT> methods of these interfaces. </P>
+
+<P>However, there will be situations where an object should be only decodeable,
+and not encodeable, and vice versa. For example, assume you encode an object
+of class A so that it is decoded as an instance of a different class B.
+However, you might not want to force instances of class B to be encodeable
+just because you want to decode them; in other words, you want objects
+of class B to be sent over the network by reference only, even though they
+can show up as a copy when an A is encoded. </P>
+
+<P>To do this, have class <I>A </I>implement <I>RtEncodeable</I>, and class
+<I>B</I> implement <I>RtDecodeable</I>. This lets instances of <I>A </I>be
+encodeable, but only lets instances of <I>B</I> (encoded from an <I>A</I>)
+be decoded, and not encodeable themselves.</P>
+
+<H2>Methods</H2>
+
+<P><TT>void encode (RtEncoder coder); </TT></P>
+
+<BLOCKQUOTE>
+<P>Stores an object to an output stream. This method calls appropriate
+write methods on the<I> RtEncoder</I> object to save internal state. <I>RtEncoder</I>
+implements the standard Java<I>DataOutputStream</I> protocol, along with
+some extensions for writing objects. </P>
+</BLOCKQUOTE>
+
+<BLOCKQUOTE>
+<P>You can override this method with your own encoding method to customize
+how your objects are saved to the database. </P>
+</BLOCKQUOTE>
+
+<BLOCKQUOTE>
+<P><TT>encode</TT> attempts to respect the interconnections of objects
+in the context of a given stream-out or stream-in operation. If the object
+needs to encode a sub-object, it can call <TT>encode</TT> on the <I>RtEncoder</I>.
+Conversely, a sub-object can be decoded using the <TT>decodeObject</TT>
+method on the <I>RtDecoder</I>. </P>
+</BLOCKQUOTE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtDBViewFilter"></A>RtDBViewFilter</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.db.RtDBViewFilter;</TT></P>
+
+<P>This class is an interface to a persistent object database. You can
+use the methods in this interface to impose access restrictions.</P>
+
+<H2>Methods</H2>
+
+<P><TT>public RtStreamKey put(Object object) throws DBAccessException;
+</TT></P>
+
+<BLOCKQUOTE>
+<P>This saves an object to an object database, and return a <I>RtStreamKey</I>
+as a token. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void put(Object rootKey, RtStreamKey streamKey) throwsDBAccessException;
+</TT></P>
+
+<BLOCKQUOTE>
+<P>Saves a stream key to an object database under a root key name. Overwrites
+any existing root key with that name. Note that the <TT>RootKey</TT> cannot
+itself be a stream key. </P>
+</BLOCKQUOTE>
+
+<P><TT>public RtStreamKey get(Object rootKey) throws DBAccessException;
+</TT></P>
+
+<BLOCKQUOTE>
+<P>Get a stream key that was previously stored under <TT>rootKey</TT>.
+If the stream key does not exist, null is returned. <I>DBAccessException</I>
+is returned if the request is illegal under security policies. </P>
+</BLOCKQUOTE>
+
+<P><TT>public Object get(RtStreamKey key) throws DBAccessException; </TT></P>
+
+<BLOCKQUOTE>
+<P>Given a <I>RtStreamKey</I>, return a copy of the object that was stored
+out and registered for it. Successive attempts at getting an object will
+return multiple copies. </P>
+</BLOCKQUOTE>
+
+<P><TT>public boolean contains(Object key) throws DBAccessException; </TT></P>
+
+<BLOCKQUOTE>
+<P>Test to determine if something is stored in the database under the given
+key. In this case, <TT>key</TT> can be either a <I>RtStreamKey</I> or a
+root key object. </P>
+</BLOCKQUOTE>
+
+<P><TT>public void commit() throws DBAccessException; </TT></P>
+
+<BLOCKQUOTE>
+<P>Commit the changes made to this database back into the parent database.
+This only works if this database is indeed a child and the permissions
+permit. </P>
+</BLOCKQUOTE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtNotificationHandler"></A>RtNotificationHandler</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.comm.RtNotificationHandler;</TT></P>
+
+<P>This is an interface that defines the <TT>handleNotification</TT> method.</P>
+
+<H2>Methods</H2>
+
+<P><TT>public void handleNotification (String type, Object arg, Object
+info) </TT></P>
+
+<BLOCKQUOTE>
+<P>This method is called when notifications are sent to a <I>NotificationHandler</I>
+instance. <TT>Type</TT> is a string identifying the notification type,
+<TT>arg</TT> is an arg passed in when registering for the notification,
+and <TT>info</TT> is additional information sent by the agency posting
+the notification. </P>
+</BLOCKQUOTE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtTickHandling"></A>RtTickHandling</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.run.RtTickHandling;</TT></P>
+
+<P><I>RtTickHandling</I> is an interface objects must implement if they
+are a target for an <I>RtClock</I> object. The interface defines the tick
+method which is invoked each time the clock ticks.</P>
+
+<H2>Methods</H2>
+
+<P><TT>public void tick(Object arg, int ticks) </TT></P>
+
+<UL>
+<LI><TT>arg</TT> is an argument passed to the constructor for the <I>RtClock</I>.</LI>
+
+<LI><TT>ticks</TT> is the number of ticks that have elapsed since the timer
+was started from 0 or reset.</LI>
+</UL>
+
+<H2>Example</H2>
+
+<PRE><TT>import java.lang.*;
+import ec.e.run.RtTickHandling;
+import ec.e.run.RtClock;
+
+class ClockTest implements RtTickHandling
+{
+  private static int n = 1;
+  private static RtClock clock;
+  public static void main (String args[]) {
+    ClockTest test = new ClockTest();
+    clock = new RtClock(1000, test, &quot;Testing&quot;);
+    System.out.println(&quot;Clock will tick once a 
+      second for 10 seconds&quot;);
+  }
+  public void tick (Object arg, int n) {
+    System.out.println(&quot;Clock ticked (&quot; + n + &quot;) with
+      &quot; + arg);
+    if (++n &gt; 10) {
+      RtClockTerminator.terminateAllClocks();
+    }
+  }
+}</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="RtTimeoutHandling"></A>RtTimeoutHandling</H1>
+
+<BLOCKQUOTE>
+<P><TT>import ec.e.run.RtTimeoutHandling;</TT></P>
+
+<P><I>RtTimeoutHandling</I> is a Java interface. An object that is the
+target for a <TT>setTimeout</TT> on an <I>RtTimer</I> object must implement
+<I>RtTimeoutHandling</I>. The interface defines the <TT>handleTimeout</TT>
+method which is invoked when the request timeout occurs.</P>
+
+<H2>Methods</H2>
+
+<P><TT>public abstract void handleTimeout (Object arg, int timerId) </TT></P>
+
+<UL>
+<LI><TT>arg</TT> is the argument passed into the <TT>setTimeout</TT> method
+on the <I>RtTimer</I> .</LI>
+
+<LI><TT>timerId</TT> is the timer ID returned from the call to the <I>RtTimer</I>'s
+<TT>setTimeout</TT> method made to setup the timeout.</LI>
+</UL>
+
+<H2>Example</H2>
+
+<PRE><TT>import java.lang.*;
+import ec.e.run.RtTimeoutHandling;
+import ec.e.run.RtTimer;
+
+class TimerTest implements RtTimeoutHandling {
+  static RtTimer tt = new RtTimer();
+  static final long timeToWait = 2000L;
+  public static void main (String args[]) {
+    TimerTest test = new TimerTest();
+    int tid;
+    tid = tt.setTimeout(timeToWait, test, &quot;Main&quot;);
+    System.out.println(&quot;Waiting &quot; + timeToWait + 
+    &quot; millis for &quot; + tid);
+  }
+  public void handleTimeout (Object arg, int tid){
+    System.out.println(&quot;Timer fired for &quot; + tid + 
+    &quot; arg was &quot; + arg);
+    tt.terminate();
+  }
+}</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<ADDRESS>Copyright (c) 1996 Electric Communities. All rights reserved worldwide.<BR>
+Most recent update: 7/19/96<BR>
+</ADDRESS>
+
+</BODY>
+</HTML>

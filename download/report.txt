@@ -1,0 +1,92 @@
+
+ignoring c:/e/doc/download/0-8-10/E-nix-0.8.10.tar.gz
+ignoring c:/e/doc/download/0-8-10/E-src-0.8.10.tar.gz
+ignoring c:/e/doc/download/0-8-10/E-src-0.8.10.zip
+ignoring c:/e/doc/download/0-8-10/E-win32-0.8.10.zip
+ignoring c:/e/doc/download/0-8-10/e.jar
+skipping c:/e/doc/download/0-8-10/e.txt
+skipping C:/e/doc/download/0-8-10/e.txt~
+skipping c:/e/doc/download/0-8-10/eprops.txt
+ignoring C:/e/doc/download/0-8-10/eprops.txt~
+skipping c:/e/doc/download/0-8-10/index.html
+skipping c:/e/doc/download/0-8-10/README.html
+skipping c:/e/doc/download/0-8-10/release-notes.html
+skipping c:/e/doc/download/0-8-10/report.txt
+c:/e/doc/download/0-8-10/unix-bin.html:..
+skipping c:/e/doc/download/0-8-10/unix-src.html
+skipping c:/e/doc/download/0-8-10/windows-bin.html
+skipping c:/e/doc/download/0-8-10/windows-src.html
+skipping c:/e/doc/download/0-8-10alpha/e.txt
+skipping c:/e/doc/download/0-8-10alpha/eprops.txt
+skipping c:/e/doc/download/0-8-10alpha/index.html
+skipping c:/e/doc/download/0-8-10alpha/README.html
+skipping c:/e/doc/download/0-8-10alpha/release-notes.html
+c:/e/doc/download/0-8-10alpha/unix-bin.html:..
+skipping c:/e/doc/download/0-8-10alpha/unix-src.html
+skipping c:/e/doc/download/0-8-10alpha/windows-bin.html
+skipping c:/e/doc/download/0-8-10alpha/windows-src.html
+ignoring c:/e/doc/download/0-8-10beta/E-nix-0.8.10beta1.tar.gz
+ignoring c:/e/doc/download/0-8-10beta/E-src-0.8.10beta1.tar.gz
+ignoring c:/e/doc/download/0-8-10beta/E-src-0.8.10beta1.zip
+ignoring c:/e/doc/download/0-8-10beta/E-win32-0.8.10beta1.zip
+ignoring c:/e/doc/download/0-8-10beta/e.jar
+skipping c:/e/doc/download/0-8-10beta/e.txt
+skipping c:/e/doc/download/0-8-10beta/eprops.txt
+skipping c:/e/doc/download/0-8-10beta/index.html
+skipping c:/e/doc/download/0-8-10beta/README.html
+skipping c:/e/doc/download/0-8-10beta/release-notes.html
+c:/e/doc/download/0-8-10beta/unix-bin.html:..
+skipping c:/e/doc/download/0-8-10beta/unix-src.html
+skipping c:/e/doc/download/0-8-10beta/windows-bin.html
+skipping c:/e/doc/download/0-8-10beta/windows-src.html
+ignoring c:/e/doc/download/0-8-10delta/E-nix-0.8.10delta4.tar.gz
+ignoring c:/e/doc/download/0-8-10delta/E-src-0.8.10delta4.tar.gz
+ignoring c:/e/doc/download/0-8-10delta/E-src-0.8.10delta4.zip
+ignoring c:/e/doc/download/0-8-10delta/E-win32-0.8.10delta4.zip
+ignoring c:/e/doc/download/0-8-10delta/e.jar
+skipping c:/e/doc/download/0-8-10delta/e.txt
+skipping c:/e/doc/download/0-8-10delta/eprops.txt
+c:/e/doc/download/0-8-10delta/index.html:
+expr: println(<resource:java/awt/AWTEvent.safej> getText())class(name("java.awt.AWTEvent"),      method(static("true"),             signature("new(Event)"),             suppress("true"),             comment),      method(static("true"),             signature("new(Object, int)"),             suppress("true"),             comment),      method(static("false"),             signature("setSource(Object)"),             suppress("true"),             comment),      method(static("false"),             signature("getID()"),             suppress("true"),             comment),      method(static("false"),             signature("toString()"),             suppress("true"),             comment),      method(static("false"),             signature("paramString()"),             suppress("true"),             comment),      byproxy,      selfless,      byconstruction,      persistent,      safe("false"),      comment)
+missing original syntax error
+new syntax error: 
+                  println(<resource:java/awt/AWTEvent.safej> getText())class(name("java.awt.AWTEvent"),      method(static("true"),             signature("new(Event)"),             suppress("true"),             comment),      method(static("true"),             signature("new(Object, int)"),             suppress("true"),             comment),      method(static("false"),             signature("setSource(Object)"),             suppress("true"),             comment),      method(static("false"),             signature("getID()"),             suppress("true"),             comment),      method(static("false"),             signature("toString()"),             suppress("true"),             comment),      method(static("false"),             signature("paramString()"),             suppress("true"),             comment),      byproxy,      selfless,      byconstruction,      persistent,      safe("false"),      comment)
+                  ^
+
+skipping c:/e/doc/download/0-8-10delta/README.html
+skipping c:/e/doc/download/0-8-10delta/release-notes.html
+c:/e/doc/download/0-8-10delta/unix-bin.html:..
+skipping c:/e/doc/download/0-8-10delta/unix-src.html
+skipping c:/e/doc/download/0-8-10delta/windows-bin.html
+skipping c:/e/doc/download/0-8-10delta/windows-src.html
+ignoring c:/e/doc/download/0-8-10epsilon/E-nix-0.8.10epsilon1.tar.gz
+ignoring c:/e/doc/download/0-8-10epsilon/E-src-0.8.10epsilon1.tar.gz
+ignoring c:/e/doc/download/0-8-10epsilon/E-src-0.8.10epsilon1.zip
+ignoring c:/e/doc/download/0-8-10epsilon/E-win32-0.8.10epsilon1.zip
+ignoring c:/e/doc/download/0-8-10epsilon/e.jar
+skipping c:/e/doc/download/0-8-10epsilon/e.txt
+skipping c:/e/doc/download/0-8-10epsilon/eprops.txt
+skipping c:/e/doc/download/0-8-10epsilon/index.html
+skipping c:/e/doc/download/0-8-10epsilon/README.html
+skipping c:/e/doc/download/0-8-10epsilon/release-notes.html
+c:/e/doc/download/0-8-10epsilon/unix-bin.html:..
+skipping c:/e/doc/download/0-8-10epsilon/unix-src.html
+skipping c:/e/doc/download/0-8-10epsilon/windows-bin.html
+skipping c:/e/doc/download/0-8-10epsilon/windows-src.html
+ignoring c:/e/doc/download/0-8-10gamma/E-nix-0.8.10gamma2.tar.gz
+ignoring c:/e/doc/download/0-8-10gamma/E-nix-0.8.10gamma3.tar.gz
+ignoring c:/e/doc/download/0-8-10gamma/E-src-0.8.10gamma2.tar.gz
+ignoring c:/e/doc/download/0-8-10gamma/E-src-0.8.10gamma2.zip
+ignoring c:/e/doc/download/0-8-10gamma/E-src-0.8.10gamma3.tar.gz
+ignoring c:/e/doc/download/0-8-10gamma/E-src-0.8.10gamma3.zip
+ignoring c:/e/doc/download/0-8-10gamma/E-win32-0.8.10gamma2.zip
+ignoring c:/e/doc/download/0-8-10gamma/E-win32-0.8.10gamma3.zip
+ignoring c:/e/doc/download/0-8-10gamma/e.jar
+c:/e/doc/download/0-8-10gamma/e.txt:
+skipping C:/e/doc/download/0-8-10gamma/e.txt~
+ignoring c:/e/doc/download/0-8-10gamma/e3.jar
+c:/e/doc/download/0-8-10gamma/eprops.txt:
+c:/e/doc/download/0-8-10gamma/index.html:
+skipping c:/e/doc/download/0-8-10gamma/README.html
+c:/e/doc/download/0-8-10gamma/release-notes.html:
+c:/e/doc/download/0-8-10gamma/unix-bin.html:

@@ -1,0 +1,239 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>Testing Data-Pluribus</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">distrib</a>&nbsp;/&nbsp;<a href="index.html">vattp</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="DataComm_startup.html" title="Back to: Data Pluribus Startup Protocol"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Data Pluribus Startup Protocol" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="DataCommThruFirewalls.html" title="On to: Tunneling Thru Firewalls"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Tunneling Thru Firewalls" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Testing<br>
+              VatTP</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <p><b>Last updated:</b><i> [98/06/18 Marick]</i> </p>
+      <p>Brian Marick wrote this document. Bill Frantz (frantz-at-pwpconsult.com) 
+        is responsible for the code.</p>
+      <h4>Related Documents</h4>
+      <p><a href="CommSystemOverview.html">CommSystemOverview.html</a></p>
+      <h2>Level of Effort </h2>
+      <table cellspacing=0 border=0 cellpadding=7 width=823>
+        <tr> 
+          <td width="26%" valign="TOP"> <p align="CENTER"><b>Aspect</b> </td>
+          <td width="26%" valign="TOP"> <p align="CENTER"><b>Assessment</b> </td>
+          <td width="48%" valign="TOP"> <p align="CENTER"><b>Justification</b> 
+          </td>
+        </tr>
+        <tr> 
+          <td width="26%" valign="TOP"> <p>Suspected bugginess </td>
+          <td width="26%" valign="TOP"> <p>Low </td>
+          <td width="48%" valign="TOP"> <p>Not a major rewrite - design roughly 
+              the same, with some fixes. Most bugs likely due to cleanup. </td>
+        </tr>
+        <tr> 
+          <td width="26%" valign="TOP"> <p>Likely visibility of bugs </td>
+          <td width="26%" valign="TOP"> <p>Moderate </td>
+          <td width="48%" valign="TOP"> <p>Based on past experience, many comm 
+              system bugs go unnoticed by users. But this is fundamental code. 
+          </td>
+        </tr>
+        <tr> 
+          <td width="26%" valign="TOP"> <p>Likely severity of bugs </td>
+          <td width="26%" valign="TOP"> <p>Moderate </td>
+          <td width="48%" valign="TOP"> <p>As above - the product seems to survive 
+              many comm system bugs. </td>
+        </tr>
+        <tr> 
+          <td width="26%" valign="TOP"> <p>Difficulty of exercising through normal 
+              use or whole-product testing </td>
+          <td width="26%" valign="TOP"> <p>Easy for normal use cases, high for 
+              error cases. </td>
+          <td width="48%" valign="TOP">&nbsp;</td>
+        </tr>
+        <tr> 
+          <td width="26%" valign="TOP"> <p>Difficulty of debugging problems when 
+              they're found in normal use or whole-product testing </td>
+          <td width="26%" valign="TOP"> <p>Moderate </td>
+          <td width="48%" valign="TOP"> <p>Low level code, but Bill will make 
+              heavy use of tracing. </td>
+        </tr>
+      </table>
+      <p>Overall, this is probably one of the safest subsystems to leave lightly 
+        tested. Note: not all of the datacomm layer is designed. (See Issues.) 
+        How the new pieces will be tested is TBD.</p>
+      <h2>Who Does What?</h2>
+      <p>Brian Marick will suggest tests to Bill Frantz, who will implement them. 
+        Bill will also think of new tests on his own.</p>
+      <h2>Total Effort</h2>
+      <p>1-2 full days of Brian's time. Bill's time is already included in his 
+        schedule for the task.</p>
+      <h2>Repeatability and Automation </h2>
+      <p>I suggest that only two tests (performance and load) be automated. They 
+        will cover normal operation and be easy to automate. Future changes may 
+        result in manual rerunning of other tests that aren't worth automating.</p>
+      <h2>What Is To Be Tested (Overview)</h2>
+      <p>I will flesh out some of these categories later. Some of them may not 
+        need fleshing out. Some of them may have already been adequately done.</p>
+      <p>Highest priority categories are in red.</p>
+      <h3>Startup</h3>
+      <h4>Startup races</h4>
+      <p>A straightforward exhaustive search of the possible interleavings of 
+        simultaneous startup should be done. This can be implemented manually 
+        in the debugger. These tests will not be saved.</p>
+      <p>For variety, try some of the cases when the connections are new, some 
+        when the connections were suspended.</p>
+      <p>This is not high priority only because it has already been tested to 
+        some extent.</p>
+      <h4>Registrar handling</h4>
+      <p>The registrar-handling code allows the comm system to query several locations 
+        when making a connection, and allows those locations to redirect the search 
+        to other locations. Should be tested if the code has changed. Can be deferred 
+        until there's a functioning PLS. Defer if it saves trouble. These tests 
+        do not need to be preserved.</p>
+      <h3><font color="#ff0000">Error handling </font></h3>
+      <p>Try both clean and dirty TCP shutdowns (kill process vs. kill machine). 
+      </p>
+      <p>Try with messages queued in incoming queue (shutdown notice queued after 
+        those messages). (Trace behavior in debugger.)</p>
+      <p>Try sending a new message after shutdown (should get exception).</p>
+      <p>Related to API state testing (described below), in that errors should 
+        be caused to arrive when the datacomm subsystem is in various states.</p>
+      <h3>Shutdown</h3>
+      <p>Shutdown with messages queued going out (via both variants of sendMsg).</p>
+      <p>Explore simultaneous shutdown races as with startup.</p>
+      <h3><font color="#ff0000">Load testing</font></h3>
+      <p>A single test with N partners. Each partner will open connections, send 
+        and receive messages, and shut them down. Messages should be checked for 
+        non-corruption. In at least some of the cases, connections should be suspended. 
+        There is enough randomness to exercise thread safety. The test should 
+        be cyclic and by default run for a large number of cycles (it can be run 
+        for a shorter number of cycles as a smoke test).</p>
+      <p>This test should be fully automated.</p>
+      <h3>Suspension of connections</h3>
+      <p>Covered adequately by load testing and API state testing.</p>
+      <h3>Threading</h3>
+      <p>Covered by load testing.</p>
+      <h3>API</h3>
+      <p>For each method, I'll derive test cases, looking especially for odd or 
+        easily overlooked cases. Bill can inspect the list and try those he deems 
+        important.</p>
+      <p>I will especially concentrate on deriving a model of the internal state 
+        of the datacomm system (e.g., "connection suspended") and explore what 
+        happens when certain methods are called in certain states.</p>
+      <h3>Encryption</h3>
+      <p>Check by inspection. This is old code, except for code that solves the 
+        "man in the middle" problem. The common case (no spoofing) is tested in 
+        normal use. The code to detect spoofing should be easy to check by inspection, 
+        probably not worth writing the test support.</p>
+      <h2>Performance</h2>
+      <p>Here are some performance test ideas:</p>
+      <ol>
+        <li>Compare raw sendMsg performance over a dialup to sendMsg performance 
+          during a simulated art download. (To determine soon if it's likely we'll 
+          need a low priority queue for art download.) This does not need to be 
+          repeatable.</li>
+        <li>Simple end-to-end link throughput, simulating the amount of traffic 
+          for a typical transition. (How realistic to make this?) Determine how 
+          much is due to the datacomm layer and how much due to TCP/IP. These 
+          numbers will be used to see where any comm bottlenecks are. Should be 
+          a repeatable test.</li>
+      </ol>
+      <p>During test 2, OptimizeIt should be used to size this subsystem. (Walendo 
+        is the guide, here.) We'll track those sizes, as well as performance.</p>
+      <h2>Test Support Needed </h2>
+      <p>TBD. Should be only some minor driver code surrounding the subsystem, 
+        sufficient to drive these tests.</p>
+      <h2>Issues</h2>
+      <h4>Resolved Issues</h4>
+      <h4>Open Issues</h4>
+      <p>Some things are not yet designed:</p>
+      <ul>
+        <li>Firewall support</li>
+        <li>Pinging </li>
+        <li>PLS cooperation (for moving identities between network addresses)</li>
+      </ul>
+      <p>There's no test plan for them yet. </p>
+      <p>There are still some open issues called out in <a href="index.html">NewECommSystem.html</a>. 
+        As they're resolved, they'll need to be checked.</p>
+      <p>&nbsp;</p>
+      <P ALIGN="left">&nbsp; <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">distrib</a>&nbsp;/&nbsp;<a href="index.html">vattp</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="DataComm_startup.html" title="Back to: Data Pluribus Startup Protocol"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Data Pluribus Startup Protocol" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="DataCommThruFirewalls.html" title="On to: Tunneling Thru Firewalls"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Tunneling Thru Firewalls" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

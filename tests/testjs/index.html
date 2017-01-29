@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+          "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>ES5 Tester</title>
+</head>
+
+<body> 
+  <h1>ES5 Tester</h1>
+  <p>
+    We will be refactoring these into Sputnik and test262 tests. But
+    the results below are immediately useful and seem correct, so here
+    they are for now in an unpolished form. These tests assume a
+    browser that's on its way to being ES5 compliant, as it uses some
+    ES5 APIs to drive the tests.</p>
+  <p>
+    It should work at least starting with Chrome 9, Safari 5, FireFox
+    3.6, IE 9, and Opera 11. I haven't tried it on earlier or other
+    browsers.</p>
+
+  <div id="logid"></div>
+  <script src="Tester.js"></script>
+  <script src="stdkeywords.js"></script>
+  <script src="checkkeywords.js"></script>
+  <script src="stdheap.js"></script>
+  <script src="checkheap.js"></script>
+  <script>
+    Tester.reportResults();
+  </script>
+</body>
+</html>

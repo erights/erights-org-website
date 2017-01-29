@@ -1,0 +1,199 @@
+
+C:\tools\jdk1.4\j2sdk1.4.2\bin\javaw.exe -Dx.interp.interactive=true -De.swi
+ngLnF=none -classpath
+C:\tools\jdk1.4\j2sdk1.4.2\jre\lib\charsets.jar;C:\tools\jdk1.4\j2sdk1.4.2\j
+re\lib\jce.jar;C:\tools\jdk1.4\j2sdk1.4.2\jre\lib\jsse.jar;C:\tools\jdk1.4\j
+2sdk1.4.2\jre\lib\plugin.jar;C:\tools\jdk1.4\j2sdk1.4.2\jre\lib\rt.jar;C:\to
+ols\jdk1.4\j2sdk1.4.2\jre\lib\sunrsasign.jar;C:\tools\jdk1.4\j2sdk1.4.2\jre\
+lib\ext\dnsns.jar;C:\tools\jdk1.4\j2sdk1.4.2\jre\lib\ext\ldapsec.jar;C:\tool
+s\jdk1.4\j2sdk1.4.2\jre\lib\ext\localedata.jar;C:\tools\jdk1.4\j2sdk1.4.2\jr
+e\lib\ext\sunjce_provider.jar;C:\Dev\erights\main;C:\Dev\e\src\safej;C:\Dev\
+e\src\esrc;C:\Dev\e\src\bin\resources;C:\Dev\e\e.jar;C:\Dev\eproj\slang
+org.erights.e.elang.interp.Interp --interact
+? def mySrv := <import:server>("My")
+# syntax error: use ':=' for assignment, or '==' for equality
+#                   res = res * i
+#                       ^
+#   <file:/C:/Dev/eproj/slang/server.emaker#:span::7:20::7:20>
+
+? def mySrv := <import:server>("My")
+# value: <server>
+
+? mySrv.print("test")
+# value: "My : test"
+
+? mySrv.factorial(200)
+# value:
+78865786736479
+
+? def makeVat := <unsafe:org.erights.e.elib.vat.Vat>
+
+def prettyVat := makeVat.make("headless", "Pretty Server")
+def pretty := prettyVat.seed(<import:server>, "run", ["MY"])# value:
+<unsafe:org.erights.e.elib.vat.Vat>
+
+? ? # value: <Vat Pretty Server in <runs in Pretty Server>>
+
+? pretty <- print("hello")
+=== 2003-10-24T18:38:45.762Z (PendingEvent.report:PendingEvent.java:81) WRN
+causality: Problem in turn <<Vat parsing -.e in <runs in parsing -.e>>,55>:
+--vvvv--
+syntax error
+
+<EParser>.parse()
+*** @
+<file:/C:/Dev/e/src/esrc/org/erights/e/elang/cmd/makeParseFuncAuthor.emaker#
+:span::52:36::52:40>
+<...parseFunc$1>()
+<...parseFunc$1>()
+<__loop>(<...parseFunc$1>)
+<parseFunc>()
+<parseFunc>()
+
+syntax error:
+  def pretty := prettyVat.seed(<import:server>, "run", ["MY"])pretty <-
+print("hello")
+                                                                      ^
+  <-.e#:span::8:68::8:68>
+ at org.quasiliteral.syntax.BaseLexer.syntaxError(BaseLexer.java:315)
+ at org.erights.e.elang.syntax.EParser.yyerror(EParser.java:1720)
+ at d.execute(EMethod.java:141)
+ at org.erights.e.elang.evm.EMethodNode.execute(EMethodNode.java:95)
+ at org.erights.e.elang.evm.EImpl.callAll(EImpl.java:86)
+ at org.erights.e.elib.prim.CallableScript.execute(CallableScript.java:53)
+ at org.erights.e.elib.prim.E.callAll(E.java:151)
+ at
+org.erights.e.elib.vat.PendingDelivery.innerRun(PendingDelivery.java:105)
+ at org.erights.e.elib.vat.PendingEvent.run(PendingEvent.java:66)
+ at org.erights.e.elib.vat.HeadlessRunner.run(HeadlessRunner.java:176)
+ at java.lang.Thread.run(Thread.java:534)
+
+--^^^^--
+
+=== 2003-10-24T18:38:46.283Z (SendingContext.report:SendingContext.java:97)
+WRN
+causality: Sent by <<Vat parsing -.e in <runs in parsing -.e>>,54>
+# syntax error:
+#   def pretty := prettyVat.seed(<import:server>, "run", ["MY"])pretty <-
+print("hello")
+#                                                                       ^
+#   <-.e#:span::8:68::8:68>
+
+?
+def pretty := prettyVat.seed(<import:server>, "run", ["MY"])?
+# value: <Eventual ref>
+
+? pretty <- print("another test")
+# value: "MY : another test"
+
+? def m := pretty <- factorial(3000)
+# value: <Eventual ref>
+
+? m
+# value:
+4149359603437854085556867093086612170951119194931809917689467657697558565123
+5319500860007652178003420075184635383617118495750871114045907794553402161068
+339611621037904000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000
+
+? def m := pretty <- factorial(5000)
+when (m) -> done(x) { println("RESULT: " + x) } catch e {}
+# value: <Eventual ref>
+
+? # value: <Eventual ref>
+
+?
+? RESULT:
+4228577926605543522201064200233584405390786674626646748849782402181358052708
+1082006908990478717063875370847466573006854458784860666838127363372108937727
+876312793903630584769040367353385551052571
+6826503176824057439934148623923319814325791821933218989404508650136109980983
+8399311099635598132800104973158859631213185380120504678764291066936560043730
+56334000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000
+
+? when (m) -> done(x) { println("RESULT: " + x) } catch e {}
+# value: <Eventual ref>
+
+RESULT:
+4228577926605543522201064200233584405390786674626646748849782402181358052708
+10820000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000
+?
+? m
+# value:
+4228577926605543522201064200233584405390786674626646748849782402181358052708
+1082006908990478717063875370847466573006854458784860666838127363372108937727
+876300000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000
+
+? def m := pretty <- factorial(5000)
+when (m) -> done(x) { println("RESULT: " + x) } catch e {}# value: <Eventual
+ref>
+
+
+? # value: <Eventual ref>
+
+? m
+# value: <Eventual ref>
+
+? m
+# value: <Eventual ref>
+
+? RESULT:
+4228577926605543522201064200233584405390786674626646748849782402181358052708
+108000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000
+,
+=== 2003-10-24T18:43:10.643Z (PendingEvent.report:PendingEvent.java:81) WRN
+causality: Problem in turn <<Vat parsing -.e in <runs in parsing -.e>>,190>:
+--vvvv--
+syntax error
+
+<EParser>.parse()
+*** @
+<file:/C:/Dev/e/src/esrc/org/erights/e/elang/cmd/makeParseFuncAuthor.emaker#
+:span::52:36::52:40>
+<...parseFunc$1>()
+<...parseFunc$1>()
+<__loop>(<...parseFunc$1>)
+<parseFunc>()
+<parseFunc>()
+
+syntax error:
+  ,
+  ^
+  <-.e#:span::25:0::25:0>
+ at org.quasiliteral.syntax.BaseLexer.syntaxError(BaseLexer.java:315)
+ at org.erights.e.elang.syntax.EParser.yyerror(EParser.java:1720)
+ at org.erights.e.elang.syntax.EParser.yyparse(EParser.java:2248)
+ at org.livery.innerRun(PendingDelivery.java:105)
+ at org.erights.e.elib.vat.PendingEvent.run(PendingEvent.java:66)
+ at org.erights.e.elib.vat.HeadlessRunner.run(HeadlessRunner.java:176)
+ at java.lang.Thread.run(Thread.java:534)
+
+--^^^^--
+
+=== 2003-10-24T18:43:10.663Z (SendingContext.report:SendingContext.java:97)
+WRN
+causality: Sent by <<Vat parsing -.e in <runs in parsing -.e>>,187>
+# syntax error:
+#   ,
+#   ^
+#   <-.e#:span::25:0::25:0>
+
+? m
+# value:
+4228577926605543522201064200233584405390786674626646748849782402181358052708
+1082006908990478717063875370847466573006854458784860666838127363372108937727
+8763100000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000
+
+?

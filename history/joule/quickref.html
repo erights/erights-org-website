@@ -1,0 +1,600 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>Joule Quick Reference 1.0</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">history</a>&nbsp;/&nbsp;<a href="index.html">joule</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="bouncer.html" title="On to: The Bouncer: Proving Properties of Instruction-Level Programs"><img src="../../images/next.gif" width="64" height="32" alt="On to: The Bouncer: Proving Properties of Instruction-Level Programs" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>Joule 
+              Quick Reference 1.0</b></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <p>From <a href="http://www.agorics.com/Library/Joule/quickref.html">http://www.agorics.com/Library/Joule/quickref.html</a>:</p>
+      <BR>
+      <P>This document provides reference information for the existing Joule implementation. 
+      </P>
+      <H3>1. Basic Concepts </H3>
+      <BR>
+      Joule embodies a new computational model for building distributed systems. 
+      A running Joule system consists of many <A HREF="#server">servers</A> concurrently 
+      and asynchronously sending <A HREF="#message">messages</A> to each other. 
+      Picture a Joule computation not as a sequence of instructions ordered in 
+      time, but as a dataflow diagram spread out in space; focus not on what happens 
+      when, but on what is connected to what else. <BR>
+      <BR>
+      Every object in a Joule system, from complex databases and bank accounts 
+      down to simple arrays and numbers, is a <I>server.</I> To get a server to 
+      do work (that is, to make use of its service), you <I>send a message</I> 
+      to it. (For example, you could send a get: message to an array server to 
+      obtain one of its elements.) <BR>
+      <BR>
+      Joule <I><A HREF="#channel">channels</A></I> provide the "message plumbing" 
+      that interconnects servers into complex systems; they are unidirectional 
+      pipelines through which messages are conveyed. A channel is (of course) 
+      itself a server, with two <A
+			 HREF="#facet"><I>facets</I>:</A> an <I><A HREF="#acceptor">acceptor</A></I> 
+      and a <A HREF="#distributor"><I>distributor</I>.</A> (A server's facets 
+      represent subsets of its behavior.) Messages sent to the acceptor are carried 
+      through the channel to be delivered eventually to other servers. Messages 
+      sent to the distributor control to which other servers the channel delivers 
+      its messages. <BR>
+      <BR>
+      When a channel is forwarded to (i.e., delivers to) only a single server, 
+      messages to the acceptor of the channel act just like messages sent directly 
+      to the server. Thus, channels are <A
+			 NAME="trans"></A><I>transparent</I> to message sending. 
+      This is the typical case because it is used to get results back from requests. 
+      <BR>
+      <BR>
+      All servers to which a channel forwards are guaranteed to receive all messages 
+      (ever) sent to the channel's acceptor. Again, the important thing is not 
+      when things happen, but how things are connected. <BR>
+      <BR>
+      When executing, a server can refer only to servers that it already knows, 
+      that it creates, or that are handed to it by other servers. It can send 
+      messages to these servers, pass these servers as arguments in such messages, 
+      create new servers, and change which servers it remembers. 
+      <H1></H1>
+      <HR>
+      <H3>2. Techniques and Idioms</H3>
+      <H4>2.1 Message Sending </H4>
+      <BR>
+      Sending a message, the core activity in a Joule program, takes the form 
+      <PRE><CODE>
+&middot; &lt;RECEIVER&gt; &lt;MESSAGE&gt; </CODE></PRE>
+      . Typically, the message contains an operation and arguments. By convention, 
+      for operations that produce a value, the last argument is a distributor 
+      which will be forwarded to that value. For example: 
+      <PRE><CODE>&middot; account withdraw: amount result&gt; </CODE></PRE>
+      <H4>2.2 Server-Creating Procedure </H4>
+      <BR>
+      When multiple instances of a server are needed, nest the server definition 
+      inside a procedure for creating instances of that server. The procedure 
+      accepts values for initializing the instance. Its result port must be forwarded 
+      to the nested server. For example: 
+      <PRE><B><CODE>Server</CODE></B><CODE> makeFund :: balance fund&gt; 
+    &middot;fund&gt;  -&gt;  theFund 
+    <B>Server </B>theFund 
+       <B>var</B> myBalance = balance
+       ... 
+    <B>endServer
+</B>    ... <B> 
+endServer
+ </B></CODE></PRE>
+      <H4><BR>
+        2.3 Looping via Recursion </H4>
+      <BR>
+      An efficient looping mechanism involves a function that calls itself with 
+      different arguments. When you use recursion in this way, the stack does 
+      not need to duplicate state for each iteration. For example:<BR>
+      <BR>
+      <I>Reveal the new total after interest on the given principal accumulates 
+      at the given rate for the given units of time.</I> 
+      <PRE><B><CODE>Server </CODE></B><CODE>accInterest :: principal units rate 
+total&gt; 
+
+    <B>If </B>units &gt; 0 
+       <B>Def </B>sofar = principal * rate + 1 
+<I>       The recursion occurs in the line below. </I>
+       &middot; accInterest :: sofar (units   1) rate total&gt; 
+    <B>else </B>
+       &middot; total&gt; -&gt; principal 
+    <B>endIf
+endServer
+
+</B></CODE><B><CODE> </CODE></B></PRE>
+      <H3>3. Selected Terms </H3>
+      <TABLE BORDER="0">
+        <TR> 
+          <TD><HR></TD>
+          <TD><HR></TD>
+        </TR>
+        <TR> 
+          <TD NOWRAP="NOWRAP"><A NAME="module"></A><B>module</B></TD>
+          <TD>The basic unit of Joule code that can be loaded into a system.</TD>
+        </TR>
+        <TR> 
+          <TD><A NAME="export"></A><B>&nbsp;&nbsp;&nbsp;export</B></TD>
+          <TD> A <A HREF="#server">server</A> explicitly exported by a <A HREF="#module">module</A>, 
+            making it accessible to any importing module.</TD>
+        </TR>
+        <TR> 
+          <TD><A NAME="import"></A><B>&nbsp;&nbsp;&nbsp;import </B></TD>
+          <TD> A <A HREF="#module">module</A> that supplies facilities required 
+            by the current module; or, a <A HREF="#server">server</A> supplied 
+            by an imported module.</TD>
+        </TR>
+        <TR> 
+          <TD><HR></TD>
+          <TD><HR></TD>
+        </TR>
+        <TR> 
+          <TD><A NAME="server"></A><B>server</B></TD>
+          <TD> An object in a Joule program, so named because it supplies services 
+            to other servers.</TD>
+        </TR>
+        <TR> 
+          <TD><B>&nbsp;&nbsp;&nbsp;composite </B></TD>
+          <TD> Applies to a <A HREF="#server">server</A> whose behavior is provided 
+            by Joule code. Such a server builds upon the services of more primitive 
+            servers.</TD>
+        </TR>
+        <TR> 
+          <TD><A
+					 NAME="primitive"></A><B>&nbsp;&nbsp;&nbsp;primitive</B></TD>
+          <TD> Applies to a <A HREF="#server">server</A> that is built into the 
+            Joule implementation, such as a number, or that is supplied externally.</TD>
+        </TR>
+        <TR> 
+          <TD><A NAME="facet"></A><B>&nbsp;&nbsp;&nbsp;facet </B></TD>
+          <TD> Access to a subset of the <A HREF="#server">server's</A> methods, 
+            called the facet's behavior. All facets of a server share the server's 
+            state, so <A HREF="#message">messages</A> to different facets of the 
+            same server are serialized. </TD>
+        </TR>
+        <TR> 
+          <TD><A NAME="iv"></A><B>&nbsp;&nbsp;&nbsp;instance variable</B></TD>
+          <TD> A variable that holds a piece of the <A
+					 HREF="#server">server's</A> state. All 
+            state in Joule is held in this way. </TD>
+        </TR>
+        <TR> 
+          <TD><A NAME="method"></A><B>&nbsp;&nbsp;&nbsp;method </B></TD>
+          <TD> A block of code defining the action that a <A
+					 HREF="#server">server</A> takes in response 
+            to a <A
+					 HREF="#message">message</A>. </TD>
+        </TR>
+        <TR> 
+          <TD><A
+					 NAME="methodical"></A><B>&nbsp;&nbsp;&nbsp;methodical</B></TD>
+          <TD> Applies to a <A HREF="#facet">facet</A> that provides a fixed set 
+            of services, which it will perform separately in response to specific 
+            <A HREF="#message">messages</A>. This is the usual type of facet, 
+            and is like an object in a traditional object-oriented language. </TD>
+        </TR>
+        <TR> 
+          <TD><A NAME="nm"></A><B>&nbsp;&nbsp;&nbsp;non-methodical </B></TD>
+          <TD> Applies to a <A HREF="#facet">facet</A> that provides a single 
+            generic service in response to any <A HREF="#message">message</A>, 
+            regardless of the particulars of the message, such as <A
+					 HREF="#trans">transparently forwarding</A> 
+            the message. </TD>
+        </TR>
+        <TR> 
+          <TD><A NAME="port"></A><B>&nbsp;&nbsp;&nbsp;port</B></TD>
+          <TD> A reference to a <A HREF="#server">server</A> <A HREF="#facet">facet</A>. 
+            <A HREF="#message">Messages</A> sent to a port are ultimately delivered 
+            to the corresponding facet. </TD>
+        </TR>
+        <TR> 
+          <TD><A NAME="ps"></A><B>&nbsp;&nbsp;&nbsp;procedural server </B></TD>
+          <TD> A methodical <A HREF="#server">server</A> that provides a single 
+            service, in response to a '::' <A HREF="#message">message</A>. </TD>
+        </TR>
+        <TR> 
+          <TD><A
+					 NAME="signature"></A><B>&nbsp;&nbsp;&nbsp;signature</B></TD>
+          <TD> The set of operations supported by a <A
+					 HREF="#server">server</A> <A HREF="#facet">facet</A>,defining 
+            its contract with clients. </TD>
+        </TR>
+        <TR> 
+          <TD><HR></TD>
+          <TD><HR></TD>
+        </TR>
+        <TR> 
+          <TD><A NAME="message"></A><B>message</B></TD>
+          <TD> The object sent by one <A HREF="#server">server</A> when communicating 
+            with another server. A message is typically an <A HREF="#envelope">envelope</A>,containing 
+            an <A
+					 HREF="#operation">operation</A> and <A HREF="#argument">arguments</A>. 
+          </TD>
+        </TR>
+        <TR> 
+          <TD><A NAME="activation"></A><B>&nbsp;&nbsp;&nbsp;activation </B></TD>
+          <TD> The reception of a <A HREF="#message">message</A> by a <A HREF="#server">server</A> 
+            and the ensuing computation in response to that message. </TD>
+        </TR>
+        <TR> 
+          <TD><A NAME="argument"></A><B>&nbsp;&nbsp;&nbsp;argument</B></TD>
+          <TD> The value supplied for an <A HREF="#operation">operation</A> parameter. 
+          </TD>
+        </TR>
+        <TR> 
+          <TD><A NAME="envelope"></A><B>&nbsp;&nbsp;&nbsp;envelope</B> </TD>
+          <TD> A <A HREF="#server">server</A> that acts as a sealed container 
+            for an <A HREF="#operation">operation</A> and a set of arguments. 
+          </TD>
+        </TR>
+        <TR> 
+          <TD><A
+					 NAME="operation"></A><B>&nbsp;&nbsp;&nbsp;operation</B></TD>
+          <TD> A <A HREF="#sealer">sealer</A>/<A
+					 HREF="#unsealer">unsealer</A> pair, typically 
+            corresponding to the name of a <A HREF="#method">method</A>. </TD>
+        </TR>
+        <TR> 
+          <TD><A NAME="reveal"></A><B>&nbsp;&nbsp;&nbsp;reveal</B></TD>
+          <TD> To communicate the result of a computation. The result is typically 
+            revealed to the result <A HREF="#distributor">distributor</A>. Used 
+            instead of "return" because "reveal" does not mislead by implying 
+            a return of control to the <A HREF="#message">message</A> sender. 
+          </TD>
+        </TR>
+        <TR> 
+          <TD><B><A NAME="sealer">&nbsp;&nbsp;&nbsp;sealer</A> </B></TD>
+          <TD>The operation <A HREF="#facet">facet</A> that seals <A HREF="#argument">arguments</A> 
+            into a newly created <A
+					 HREF="#envelope">Envelope</A>. The Envelope 
+            created by a sealer can be opened only by the <A HREF="#unsealer">unsealer</A> 
+            of the same operation. </TD>
+        </TR>
+        <TR> 
+          <TD><B><A NAME="unsealer">&nbsp;&nbsp;&nbsp;unsealer</A></B></TD>
+          <TD> The operation <A HREF="#facet">facet</A> that unseals an <A HREF="#envelope">envelope</A> 
+            to extract its arguments. </TD>
+        </TR>
+        <TR> 
+          <TD><HR></TD>
+          <TD><HR></TD>
+        </TR>
+        <TR> 
+          <TD><A NAME="channel"></A><B>channel </B></TD>
+          <TD> A <A HREF="#message">message</A> pipeline that starts at an <A HREF="#acceptor">acceptor</A> 
+            and ends at a <A
+					 HREF="#distributor">distributor</A>. 
+            A channel is transparent: senders cannot distinguish between sending 
+            through a channel to a <A HREF="#server">server</A> and sending directly 
+            to that server. </TD>
+        </TR>
+        <TR> 
+          <TD><A NAME="acceptor"></A><B>&nbsp;&nbsp;&nbsp;acceptor</B></TD>
+          <TD> The <A HREF="#channel">channel</A> facet that accepts <A HREF="#message">messages</A> 
+            for delivery through the channel. Each such message is forwarded to 
+            all <A HREF="#server">servers</A> to which the <A HREF="#channel">channel</A> 
+            is ever forwarded. Thus, sending messages to the acceptor and forwarding 
+            the channel with the <A
+					 HREF="#distributor">distributor</A> can 
+            be performed in any order. </TD>
+        </TR>
+        <TR> 
+          <TD><A NAME="distributor"></A><B>&nbsp;&nbsp;&nbsp;distributor </B></TD>
+          <TD> The <A HREF="#channel">channel</A> facet that controls delivery 
+            of <A HREF="#message">messages</A>. Sending a forward (--&gt; <I>server</I>) 
+            message to a distributor causes the <A
+					 HREF="#channel">channel</A> to deliver 
+            to <I><A HREF="#server">server</A> </I>all messages, past and future, 
+            sent to the <A HREF="#acceptor">acceptor</A> of the channel. </TD>
+        </TR>
+        <TR> 
+          <TD><A NAME="forward"></A><B>&nbsp;&nbsp;&nbsp;forward </B></TD>
+          <TD> To direct a <A HREF="#message">message</A> or a <A HREF="#distributor">distributor</A> 
+            to a receiver. Thus, <I>forward </I>has two distinct meanings, comparable 
+            to forwarding a single letter versus forwarding a mailbox. </TD>
+        </TR>
+        <TR> 
+          <TD><HR></TD>
+          <TD><HR></TD>
+        </TR>
+      </TABLE>
+      <H3>4. Language Constructs </H3>
+      <BR>
+      <BR>
+      <TABLE BORDER="1" CELLSPACING="5" CELLPADDING="5">
+        <TR> 
+          <TH ALIGN="LEFT"> <B>Production</B></TH>
+          <TD> <B>Production Definition<BR>
+            </B></TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> module</TD>
+          <TD><B> Module</B> <I>Identifier</I><BR>
+            {import | export}*<BR>
+            block<BR> <B>endModule</B> </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> import</TD>
+          <TD><B> importModule</B> {<I>Identifier</I>},+ </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> export</TD>
+          <TD> <B>export</B> {<I>Identifier</I>},+ </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> block </TD>
+          <TD>{form}* </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> form </TD>
+          <TD>send | define | scoping | signal |<BR>
+            server | type | branch | loop </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> send </TD>
+          <TD>&middot; simpleExpr {opExpr};+ </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> define </TD>
+          <TD><B>Def </B>{param | param = nestExpr},+<BR>
+            |<BR> <B>Define</B> {param | param = nestExpr},* 
+            <PRE>    block</PRE>
+            <B>endDefine</B> </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> scoping </TD>
+          <TD><B>Expose </B>{<I>Identifier</I>},* 
+            <PRE>   block</PRE>
+            <B>endExpose</B> </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> signal </TD>
+          <TD><B>Signal</B> nestExpr </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> branch </TD>
+          <TD><B>If </B>nestExpr 
+            <PRE>   block</PRE>
+            {<B>orIf </B>nestExpr 
+            <PRE>   block}*</PRE>
+            {<B>elseIf</B> nestExpr 
+            <PRE>   block</PRE>
+            {<B>orIf</B> nestExpr 
+            <PRE>    block}* }*</PRE>
+            {<B>else</B> <PRE>   block}?</PRE>
+            <B>endIf</B><BR>
+            |<BR> <B>Switch</B> nestExpr 
+            <PRE>   {case pattern 
+   {or pattern}*&gt; 
+      block}* 
+   {otherwise param 
+      block}?</PRE>
+            <B>endSwitch</B> </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> server </TD>
+          <TD><B>Server</B> param {method}? 
+            <PRE>   {var}* 
+   ops 
+   {facet}*</PRE>
+            <B>endServer </B></TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> var </TD>
+          <TD><B>var </B>{param | param = nestExpr},+ 
+            <PRE>   block</PRE></TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> ops </TD>
+          <TD>{implements Identifier}?<BR>
+            {{op | do} method}*<BR>
+            {otherwise param 
+            <PRE>   block}?</PRE></TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> method </TD>
+          <TD>pattern 
+            <PRE>   block 
+   {change 
+   block}*</PRE></TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> change </TD>
+          <TD> <PRE>   to Identifier {opExpr};+ 
+   | set {Identifier = nestExpr},+</PRE></TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> facet </TD>
+          <TD><B>facet</B> param ops </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> type </TD>
+          <TD><B>Type</B> param 
+            <PRE>   {super Identifier}? 
+   {{op | do} pattern 
+   block 
+   {to Identifier {opExpr};+ 
+   block}*}*</PRE>
+            <B>endType</B> </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> loop </TD>
+          <TD><B>ForAll</B> param {f param}? 
+            <PRE>   block</PRE>
+            <B>endForAll </B></TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> opExpr </TD>
+          <TD>simpleExpr |<BR>
+            simpleExpr Operator opExpr </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> simpleExpr </TD>
+          <TD>Identifier | Literal |<BR>
+            envelope | '(' nestExpr ')' </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> nestExpr </TD>
+          <TD>simpleExpr | simpleExpr opExpr </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> envelope </TD>
+          <TD>{Operator | Label} {opExpr}* </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> pattern </TD>
+          <TD>{Operator | Label} {param}* </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> param </TD>
+          <TD>Identifier </TD>
+        </TR>
+        <TR> 
+          <TD ALIGN="right"> </TD>
+        </TR>
+      </TABLE>
+      <H4>4.1 Reserved Words </H4>
+      <BR>
+      <B>Assert, case, Def, Define, do, else, elseIf, endDefine, endExpose, endForAll, 
+      endIf, endModule, endServer, endSwitch, endType, export, Expose, facet, 
+      ForAll, If, implements, importModule, Module, op, orIf, otherwise, Server, 
+      set, Signal, super, Switch, to, Type, var </B> 
+      <PRE><HR></PRE>
+      <H3>5. Example </H3>
+      <PRE>
+<B><CODE>Module</CODE></B><CODE> FundImpl
+ 
+<B>export</B> FundType, makeFund 
+
+
+    <B>Type</B> FundType 
+         <B>super</B> Basic 
+         <B>op</B> balance: balance&gt; 
+         <B>op</B> withdraw: amount flag&gt; 
+         <B>op</B> deposit: amount flag&gt; 
+    <B>endType</B> 
+
+    <B>Server</B> makeFund :: fund&gt;
+       . fund&gt; -&gt; theFund 
+      <B> Server</B> theFund 
+          <B>var</B> myBalance = 0 
+          <B>implements</B> FundType 
+          <B>op</B> balance: balance&gt; 
+             . balance&gt; -&gt; myBalance 
+          <B>op</B> withdraw: amount flag&gt; 
+             <B>Def</B> newBalance 
+             <B>If</B> amount &gt; myBalance
+                 . newBalance&gt; -&gt; myBalance
+                 . flag&gt; -&gt; false 
+             <B>orIf</B> amount 0
+                 . newBalance&gt; -&gt; myBalance 
+                 . flag&gt; -&gt;false 
+             <B>else</B> 
+                 . newBalance&gt; -&gt; 
+                        myBalance - amount 
+                 . flag&gt; -&gt; true 
+            <B> endIf</B> 
+             <B>set</B> myBalance = newBalance 
+           <B>op </B>deposit: amount flag&gt; 
+             <B>Def</B> newBalance 
+             <B>If</B> amount 0 
+                 . newBalance&gt; -&gt; myBalance 
+                 . flag&gt; -&gt; false 
+             <B>else</B> 
+                 . newBalance&gt; -&gt; 
+                         myBalance + amount 
+                 . flag&gt; -&gt; true 
+             <B>endIf</B> 
+             <B>set</B> myBalance = newBalance 
+       <B> endServer</B> 
+      <B>endServer</B> 
+<B>endModule</B> </CODE></PRE>
+      <BR>
+      <BR>
+      <PRE><HR></PRE>
+      <CENTER>
+        <P> </P>
+      </CENTER>
+      <P ALIGN="left">&nbsp;<!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">history</a>&nbsp;/&nbsp;<a href="index.html">joule</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="bouncer.html" title="On to: The Bouncer: Proving Properties of Instruction-Level Programs"><img src="../../images/next.gif" width="64" height="32" alt="On to: The Bouncer: Proving Properties of Instruction-Level Programs" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

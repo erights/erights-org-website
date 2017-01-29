@@ -1,0 +1,2054 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+   <TITLE>The E Runtime</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.0Gold (Win95; I) [Netscape]">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+
+<PRE><IMG SRC="midi_e.gif" ALT="Electric Communities: E Programming Language" HEIGHT=30 WIDTH=30>  <A HREF="index.html">Contents</A>  <A HREF="../index.html">Home Page</A>
+</PRE>
+
+<P>
+<HR></P>
+
+<H1>The E Runtime</H1>
+
+<P>
+<HR></P>
+
+<BLOCKQUOTE>
+<P>This chapter discusses the concepts that a programmer needs to understand
+when developing an application for the E runtime environment. In many ways,
+the E runtime environment is similar to the Java runtime environment; however,
+this chapter points out several distinctions.</P>
+
+<P> Topics covered in this chapter:</P>
+
+<P> <A HREF="#Comparison to Java">Comparison to Java<BR>
+</A><A HREF="#Optimistic programming techniques">Optimistic programming
+techniques<BR>
+</A><A HREF="#Handling timeouts">Handling timeouts<BR>
+</A><A HREF="#Persistent object storage">Persistent object storage<BR>
+</A><A HREF="#Closures">Closures <BR>
+</A><A HREF="#Exception handling">Exception handling<BR>
+</A><A HREF="#Creating access-controlled objects">Creating access-controlled
+objects<BR>
+</A><A HREF="#Authentication">Authentication</A><BR>
+</P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="Comparison to Java"></A>Comparison to Java </H1>
+
+<BLOCKQUOTE>
+<P>E offers several enhancements to Java. While summarized in the <I>Getting
+Started with E </I>chapter, they are explained in detail in this section.</P>
+
+<P> </P>
+
+<UL>
+<LI><B>Optimistic computation. </B>Applications executing in a network
+environment can be slow and inefficient because of inherent network latency.
+E's model of messaging and optimistic computation helps optimize your distributed
+applications and make them operate more effectively over the network.</LI>
+
+<P> </P>
+
+<LI><B>Improved security through capability semantics. </B>E uses the concept
+of <I>trust</I> to restrict behavior while maintaining effectiveness at
+runtime. E grants specifically-requested capabilities to an object at load
+time, and those capabilities are not checked again. Imported objects can
+carry a cryptographic signature, which ensures that they have not been
+tampered with.</LI>
+
+<P> </P>
+
+<LI><B>Distributed communications extensions.</B> The network becomes almost
+transparent to an E programmer. The E runtime takes care of details related
+to network protocols and intersystem transmissions. Programs can pass references
+to E-objects across the network, and the form of those references is the
+same whether the programs are on the same or remote machines. </LI>
+
+<LI><B>Distributed garbage collection.</B> E implements an effective, transparent
+distributed garbage collection system that is not confused by object references
+crossing machine boundaries.<BR>
+</LI>
+</UL>
+
+<H2>Optimistic computation</H2>
+
+<P>This section describes E's implementation of <I>optimistic computation</I>,
+which improves efficiency in a distributed environment. Optimistic computation
+in E lets your program send a message to an object requesting a value,
+and still continue executing the rest of the code &quot;optimistically&quot;
+as if it already has the answer it needs; it does not need to wait for
+a response to continue processing. When the requested value is supplied,
+the associated code block can execute. </P>
+
+<P>Optimistic computation helps avoid long delays when communicating across
+a network. E implements optimistic computation through its messaging facility,
+channels, and deferring statements.</P>
+
+<P> </P>
+
+<H3>Messaging in E</H3>
+
+<P>Messaging is not unique to E. Both E and Java use the concept of messaging
+for communication among objects. When object A wants object B to perform
+one of its methods, object A sends a <I>message</I> to object B. This message
+contains the object to which the message is addressed, the name of the
+method to perform, and any parameters needed by this method. </P>
+
+<P>However, messaging in E does have distinct differences from Java:</P>
+
+<P> </P>
+
+<UL>
+<LI>You <I>send</I> a message to an E-object using the <TT>send</TT> operator
+(<TT>&lt;-</TT>), rather than using Java call/return semantics with the
+<TT>object.method</TT> syntax. Messages in E do not have return results;
+they are merely sent. In Java, you call a method and wait until a return
+value arrives. In E, you send your message and forget about it, assuming
+that the message will arrive and be acted upon. </LI>
+
+<LI>An E-method can only be a private void method, which means you cannot
+access them through normal Java programming techniques. </LI>
+
+<LI>E messages also contain a <I>sealer</I>, which is an object representing
+the right to send a message to another E-object. A sealer secures an envelope
+encapsulating the parameters of a message, and ensures that this message
+can only be read by an object with the appropriate unsealer.</LI>
+
+<P> </P>
+
+<LI>When you send a message referencing a Java object over the network,
+the entire object gets copied over. E, on the other hand, lets you send
+just a reference to the remote E-object.</LI>
+
+<P> </P>
+
+<LI>Messaging in E is one-way and asynchronous. This means that recipient
+E-methods, by default, might not furnish requested values in the same order
+that the corresponding E messages are sent (although you can force them
+to do so). Also, requested values from multiple objects can be queued up
+through their channels (see the following section on <I>Channels</I>) and
+delivered to the requesting object all at once.</LI>
+
+<P> </P>
+</UL>
+
+<P>To make a simplified analogy, E's messages are similar to ordinary letters
+you drop in the mailbox. Like the Post Office, the E runtime informs you
+only if the message is undeliverable. If the delivery goes normally, you
+don't know when a message arrives, and you don't know when the recipient
+will respond to it, assuming it requires a response. You simply drop the
+letter in the mailbox and continue doing other things, in the expectation
+that the mail will be delivered and the recipient will respond.</P>
+
+<P> In contrast, conventional Java method call/return procedures are like
+dialing someone on the phone. You know when you are successfully connected
+with the person you've phoned, and they respond in real time. The downside
+is that neither of you can do anything else while you're engaged in that
+phone call. A method making a Java call can't perform any other computations
+until that call is completed.</P>
+
+<P> <B>NOTE:</B> Either a Java or E-object can send a message to an E-object.
+However, the recipient must be an E-object.</P>
+
+<P> </P>
+
+<H4>Example of E messaging</H4>
+
+<P>This example shows the familiar Hello World program, written in both
+Java and E. While this is a very simple illustration, it introduces you
+to the difference between messaging in E and Java.</P>
+
+<P> <B>In Java. </B>This example shows Hello World written in Java.</P>
+
+<P> </P>
+
+<PRE><TT>  public class Hellojava
+  {
+    public static void main(String args[])
+    {
+      HelloWorld first = new HelloWorld();
+      first.hello();
+    }
+  }
+  class HelloWorld
+  {
+    public void hello()
+    {
+      System.out.println(&quot;Hello World&quot;);
+    }
+  }</TT>
+</PRE>
+
+<P>This program creates a new <I>HelloWorld</I> called <TT>first</TT>.
+It calls <TT>first</TT>'s method <TT>hello</TT>, and waits for <TT>hello</TT>
+to print &quot;Hello World&quot;. </P>
+
+<P><B>In E. </B>Here is the same program written in E.</P>
+
+<P> </P>
+
+<PRE><TT>  public class HelloE
+  {
+    public static void main(String args[])
+    {
+      HelloWorld first = new HelloWorld();
+      first &lt;- hello();
+    }
+  }
+
+  eclass HelloWorld
+  {
+    emethod hello()
+    {
+      System.out.println(&quot;Hello World&quot;);
+    }
+  }</TT>
+</PRE>
+
+<P>This example program creates a new <I>HelloWord</I> E-object called
+<TT>first</TT>. <TT>first</TT> is sent the <TT>hello</TT> message, and
+responds by executing its E-method called <TT>hello</TT>. In contrast to
+Java, however, the program does not know when, if ever, <TT>first</TT>
+will respond. </P>
+
+<H3>Channels</H3>
+
+<P>In E, you can never know when, if ever, a recipient E-object will furnish
+a value. In fact, you might send a message to an E-object that is not even
+yet instantiated. To let your program continue executing yet retain a placeholder
+for a requested result (if it ever arrives), you include a <I>channel</I>
+as one of the message parameters. </P>
+
+<P>A channel is a conduit object (of <I>EChannel</I>) carrying messages
+from one object to another, and acts as a placeholder for any values that
+might be furnished from the recipient E-object. Every channel has a <I>distributor</I>,
+which is an object (of <I>EDistributor</I>) that tells the channel where
+to send its messages. A distributor is like a nozzle on the end of a hose
+that directs the message to its destination.</P>
+
+<P> To obtain a channel's distributor (in order to tell the channel where
+to send messages, for example), you prefix the ampersand symbol (<TT>&amp;</TT>)
+to the channel name. For example <TT>&amp;mychannel</TT> gets the distributor
+for the channel <TT>mychannel</TT>.</P>
+
+<P> To tell a channel where to send its encapsulated messages, you send
+a <TT>forward</TT> message to the channel's distributor, enclosing the
+destination E-object(s) as one of the parameters. The requesting object
+can then use the channel as a reference to the requested result. </P>
+
+<P>This example sends a <TT>forward</TT> message to a distributor <I>MyResult</I><TT>.
+</TT>The <TT>forward</TT> message tells <I>MyResult</I> to send the messages
+in its associated channel to an E-object called <I>Answer</I>:</P>
+
+<P> </P>
+
+<PRE><TT>  emethod DieRollEwith (Edistributor MyResult)
+    {
+      MyResult &lt;- forward (Answer);
+    }</TT>
+</PRE>
+
+<P>A channel can be forwarded to multiple E-objects, which is called a
+<I>multicast</I> channel. Any message sent through that channel will be
+received by all the destinations. </P>
+
+<H3>E's deferring statements</H3>
+
+<P>As stated earlier, you can never know when, if ever, an E-object will
+furnish a requested value. In order for your program to continue executing
+and not hang, E's optimistic computation lets you defer execution of a
+certain block of code until a value is furnished for an E-object. This
+lets your code continue executing other parts of the program &quot;optimistically&quot;,
+as if it already has the values it requested. </P>
+
+<P>E implements this deferring feature through several E statements: <TT>eif</TT>,
+<TT>ewhen</TT>, <TT>ewhenever</TT>, and the <TT>ecatch</TT> portion of
+<TT>etry</TT>. These statements let you both establish the conditions under
+which blocks of code will be executed, and also link E-code to objects
+that should not or cannot execute optimistically.</P>
+
+<P> When your E program encounters one of these statements, it takes a
+snapshot of all the referenced local variables and parameters within the
+scope of that statement. This snapshot is called a <I>closure</I>. E saves
+this closure for whenever the deferring statement needs it. When the requested
+result is furnished, the deferred block of code executes, using the values
+in the closure.</P>
+
+<P> All other non-deferring statements in the code block which contains
+the deferring statement (including statements which follow the statement
+in the source text) execute before the code blocks associated with the
+deferring statement, regardless of when the value is produced. </P>
+
+<P>In the following example, an object sends a message to another object
+requesting a value, but can continue computing until the result is furnished.
+At that point, the object prints the result on the console.</P>
+
+<P> </P>
+
+<PRE><TT>  someObject &lt;- doSomething(&amp;aResult);
+  ewhen aResult (int theResult) {
+    System.out.println(&quot;The result is &quot; + theResult);
+  }
+  keepGoing();</TT>
+</PRE>
+
+<P>Note that even if a value for <TT>theResult</TT> is produced immediately,
+allowing the <TT>ewhen</TT> block to execute, the program executes the
+<TT>keepGoing()</TT> code first.</P>
+
+<P> For more information, see the section on <I>Closures</I> later in this
+chapter, and also the documentation on the deferring statements in the
+<I>E Language Specification</I> chapter.</P>
+
+<P> </P>
+
+<H3>How optimistic computation helps your distributed applications</H3>
+
+<P>E's implementation of optimistic computation is ideal for applications
+that contain many objects needing to communicate simultaneously over the
+net. Optimistic computation cannot eliminate network delays for a single
+transaction, but it does allow the program to queue up messages (and responses)
+without invoking a new latency &quot;penalty&quot; for each and every one.
+</P>
+
+<P>A requesting object can send messages to a channel immediately, even
+before the actual requested value has been determined. This lets the sending
+object continue executing without having to wait for a response from the
+recipient E-object. E-methods operate over the net asynchronously; they
+do not need to execute in a predetermined order, although they can be forced
+to do so.</P>
+
+<P> Since computation continues, E programs can send more messages over
+the network in a given period of time than conventional Java methods, which
+use call/return semantics. E also includes an exception handling mechanism
+to deal with bad messages or return values that never materialize.</P>
+
+<P> Another advantage of E's messaging is that it eliminates many unnecessary
+roundtrips across the network. You can nest channels within channels so
+that the anticipated result is altered &quot;through the pipeline,&quot;
+before it is actually received. For example, your program could send a
+series of messages with commands such as &quot;multiply these,&quot; &quot;add
+one to the result,&quot; &quot;send your result to the following object&quot;
+through a series of channels, without ever requiring a packet to be received
+back across the network. </P>
+
+<P>E's message passing semantics also help avoid deadlock and race conditions
+by enforcing these two rules in the E runtime:</P>
+
+<P> </P>
+
+<UL>
+<LI>No guarantees are given about the order of message arrival.</LI>
+
+<P> </P>
+
+<LI>Only one method at a time may be executed by a single instance of an
+E object, if that object contains mutable state information.<BR>
+By operating under these assumptions, the E environment guarantees that
+object state information will remain consistent and that processes can
+execute to completion.</LI>
+
+<P> </P>
+</UL>
+
+<H2>Improved security through capability semantics</H2>
+
+<P>E's security model is based on the use of <I>capabilities</I>, which
+grant permissions to send particular messages to particular objects in
+a distributed system. </P>
+
+<P>Controlling which capabilities an object is given lets you restrict
+access to sensitive system resources (such as files or data communications
+lines). For example, you could give an object the capability to add a limited
+number of records to a database, but prevent it from writing anywhere else
+in the file system. </P>
+
+<P>Capabilities are assigned directly to an object. This means that they
+are preserved regardless of where the object originates-whether on the
+network or on your local drive. You do not have to rely on third-party
+security mechanisms to assign privileges for your application.</P>
+
+<P> By creating a trusted object that implements limited capabilities,
+and giving an untrusted object the ability to send messages to this new
+object, you can obtain more functionality from the untrusted code without
+compromising security. </P>
+
+<P>This security model is different from Java, which has bases its security
+on an &quot;all-or-nothing&quot; approach: it assumes all code originating
+on the local hard disk is trusted, and all code that originated from the
+network is not trusted. This model can be very secure, but it does have
+loopholes. For example:</P>
+
+<P> </P>
+
+<UL>
+<LI>Ideally, there should be nothing a programmer can code that grants
+access privileges to an object that have not been otherwise granted. In
+Java, however, simply knowing the name of a public class is enough to access
+to that class's functionality-all you have to do is type the class name.
+In E this is not the case; you can grant an object specific access privileges
+to other objects. </LI>
+
+<LI>Similarly, specifying a file name when using the Java <I>File</I> class
+lets you refer to any file. This file name is then passed to the operating
+system, which does not know what you are going to do with the file, and
+must determine your access based on arbitrary, unrelated criteria, such
+as your user name. </LI>
+
+<P>E, in contrast, encapsulates <I>all</I> references to resources in objects
+which cannot be forged or synthesized by user code. You can restrict an
+application to access only certain files, and perform only certain operations
+on these files.</P>
+
+<P> </P>
+</UL>
+
+<P>Every piece of code executing in the E system must be &quot;vouched
+for&quot; by a cryptographic signature that can certify its integrity.
+This ensures that an object's security cannot be compromised by unauthorized
+modifications to its class definition or package. According to the &quot;trustedness&quot;
+of the signature, a set of access capabilities can be given to a class
+as it is loaded; these capabilities need never be checked again. To create
+the trust relationships among objects, E provides the Class Blesser. See
+the section on <I>Authentication</I> and the <I>Class Blesser</I> for more
+information. </P>
+
+<P>Another kind of capability within the E system is called a <I>sealer</I>,
+which is a permission to send a particular message. The objects that receive
+the message must have the corresponding <I>unsealer</I>. The sealer/unsealer
+objects are built into the E-object architecture. Each sealer/unsealer
+pair operates like a public/private key pair in public key cryptography;
+that is, if a given unsealer can successfully decrypt a sealed message,
+it is a guarantee that the sender was &quot;legally&quot; entitled to send
+that message.</P>
+
+<P> </P>
+
+<H2>Distributed communication extensions</H2>
+
+<P>E features a built-in model for remote object communication, that lets
+you automatically establish connections between objects without having
+to deal directly with the underlying network protocols. Any Java or E-object
+can send a message to another E-object, even if that E-object is on a different
+machine on the network. This lets machines talk directly, with messages
+directed only to specific objects. </P>
+
+<P>Other languages can require a lot of effort to establish remote communications.
+For example, Java requires many sockets to be built just to establish a
+pipe between two machines, and the result is not as secure. In contrast,
+E lets you do this easily with just a few keywords. </P>
+
+<P>Because many of the communications details are already built into E,
+you don't have to manually code things like:</P>
+
+<P> </P>
+
+<UL>
+<LI>Streams and threads.</LI>
+
+<P> </P>
+
+<LI>Network access details like socket interfaces, pipes, or any other
+underlying network protocol. <BR>
+</LI>
+</UL>
+
+<H2>Distributed garbage collection</H2>
+
+<P>The E runtime provides a distributed garbage collector. Unlike Java's
+garbage collector, which performs garbage collection only within the scope
+of your local machine, E's distributed garbage collector performs garbage
+collection over the net for your distributed objects. For information on
+using the distributed garbage collector, see <I>Appendix A.</I></P>
+
+<P> </P>
+
+<H2>Using Java and E Code together</H2>
+
+<P>Java and E code can coexist in the same program-you can write Java classes
+in an E program, and implement private Java methods within E classes. In
+fact, there are situations where you will want to use Java code in your
+E program in order to gain maximum efficiency. This section provides some
+guidelines when to use Java code instead of E, and vice versa. </P>
+
+<H3>When to use Java</H3>
+
+<P>Using Java code can be more efficient when you are developing code to
+address the following situations: </P>
+
+<UL>
+<LI><B>Efficiency on local machines.</B> When you need the best performance
+from your program, and the code only runs on a local machine, you may want
+to use Java classes, since they function synchronously. Synchronous execution
+dedicates all the system resources to the executing code until it completes
+its task. </LI>
+
+<LI><B>Streamlining code. </B>When you do not need E semantics (for example,
+with simple structural classes), there is no need to use E code. Java code
+is sufficient in some situations, and can use less resources.</LI>
+
+<P> </P>
+
+<LI><B>Synchronous processes. </B>Use Java if your code needs to deal with
+resources or objects that cannot operate asynchronously. This is because
+E methods can only operate within an asynchronous environment. An example
+is when you need to read from a blocking stream that might cause your thread
+to suspend until input is available. You should never suspend inside of
+an E-method or perform any operation which may result in your thread blocking
+from within an E-method.</LI>
+
+<P> </P>
+
+<LI><B>Non E-supporting frameworks</B>. Use Java when your code must execute
+within another framework which precludes using E. For example, to display
+a modal dialog using the Java <TT>awt</TT> package, you must use the special
+<TT>awt</TT> thread fielding UI events, such as button presses. Since there
+is no guarantee inside which thread an E-method executes, you cannot show
+a modal dialog inside of an E-method.</LI>
+
+<P> </P>
+</UL>
+
+<P>You can perform the following operations from within methods defined
+in Java classes:</P>
+
+<P> </P>
+
+<UL>
+<LI>Create E-objects. </LI>
+
+<LI>Obtain E-distributors from E-objects created within the current method
+scope. </LI>
+
+<LI>Send E messages to E-object.s </LI>
+
+<LI>Throw E exceptions. </LI>
+
+<LI>Forward E-objects to E-distributors.</LI>
+
+<P> </P>
+</UL>
+
+<P><B>NOTE:</B> You can only implement private Java methods within E-classes;
+no other access types of methods are allowed. Also, be aware that you cannot
+call these methods directly from within E-methods if they either are synchronous
+or must run in specific threads/environments.</P>
+
+<P> </P>
+
+<H3>When to use E</H3>
+
+<P>Use E, on the other hand, to address situations such as the following:</P>
+
+<P> </P>
+
+<UL>
+<LI><B>Asynchronicity.</B> Use E classes to implement asynchronous behavior.
+E classes provide asynchronicity with optimistic computation, asynchronous
+messaging, and asynchronous exception handling.</LI>
+
+<P> </P>
+
+<LI><B>Forwarding</B>. To forward an object to an E-distributor, the forwarded
+object must be an E-object.</LI>
+
+<P> </P>
+
+<LI><B>Distribution</B>. To distribute references to an object over the
+network for messaging purposes, you must use references to an E-object.</LI>
+
+<P> </P>
+
+<LI><B>E operations not supported in Java. </B>If you are using the following
+E operations, code them in E classes; these operations cannot be run from
+within Java classes (although you can call them within Java methods in
+E-classes):<BR>
+</LI>
+
+<UL>
+<P><A NAME="1002473"></A></P>
+
+<LI><TT>ewhen </TT><A NAME="1002574"></A><BR>
+</LI>
+
+<LI><TT>ewhenever </TT><A NAME="1002575"></A><BR>
+</LI>
+
+<LI><TT>eorwhen </TT><A NAME="1002576"></A><BR>
+</LI>
+
+<LI><TT>eif </TT><A NAME="1002577"></A><BR>
+</LI>
+
+<LI><TT>etry </TT><A NAME="1002578"></A><BR>
+</LI>
+
+<LI><TT>ecatch</TT> </LI>
+</UL>
+
+<LI><B>Distributed references. </B>You can only distribute references over
+the network to E-objects. Since all Java objects are sent over the network
+by copy, distributed messages over the network can only be sent to E-objects.<BR>
+</LI>
+</UL>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="Optimistic programming techniques"></A>Optimistic programming
+techniques </H1>
+
+<BLOCKQUOTE>
+<P>To write code for a program that will compute optimistically, break
+the problem down into three parts:</P>
+
+<P> </P>
+
+<OL>
+<P><A NAME="998165"></A></P>
+
+<LI>First, write the code exactly as if you already have all the values
+you need for the computation. <A NAME="998166"></A></LI>
+
+<LI>Next, create message protocols to deliver and receive the values you
+need. Set up channels (usually unforwarded at this stage) and distributors
+to move the information when it becomes available. This code goes at the
+beginning. <A NAME="998167"></A></LI>
+
+<LI>Write <TT>ewhen</TT>, <TT>ewhenever</TT> and <TT>eif</TT> statements
+for each value that you assumed you had in Step 1. These statements go
+after the protocols and encompass the body of code you wrote in Step 1.
+They enforce security and ensure that the code which uses a value you assumed
+doesn't execute until after it actually gets furnished that value. Protect
+yourself against the possibility you may not receive the information you
+need in a timely fashion by creating guarded-if constructs to encapsulate
+your information requests. (See the description of <TT>eif</TT> for an
+example.)</LI>
+
+<P> </P>
+</OL>
+
+<H2>Example</H2>
+
+<P>For example, to write a program in which players A and B each roll a
+die, exchange the values of their rolls, and receive the outcome of their
+combined rolls, you might do the following:</P>
+
+<P> </P>
+
+<OL>
+<P><A NAME="998171"></A></P>
+
+<LI>First, write code that decrypts the value of one player's roll using
+a key sent by that player, combines the decrypted value with the value
+of the other player's roll, and calculates the outcome. <A NAME="998172"></A></LI>
+
+<LI>Next, write the protocols to perform the following steps: </LI>
+
+<OL>
+<P><A NAME="1005931"></A></P>
+
+<P>Select a random number X. </P>
+
+<PRE><TT>    long X = randomGenerator.nextLong();</TT>
+</PRE>
+
+<P>Reveal the one way hash of X.</P>
+
+<P> </P>
+
+<PRE><TT>    myHash&lt;-forward (new EInteger(OneWayHash(X)));</TT>
+</PRE>
+
+<P>After receiving the other's hash, reveal X.</P>
+
+<P> </P>
+
+<PRE><TT>    myX&lt;-forward(newEInteger(X));</TT>
+</PRE>
+
+<P>After receiving the other's X, combine the Xs to produce the final result.</P>
+
+<P> </P>
+
+<PRE><TT>    long finalResult = Combine(X, otherX);</TT>
+</PRE>
+
+<P>Verify that there was no cheating.</P>
+
+<P> </P>
+
+<PRE><TT>    if (OneWayHash(otherX) != otherHash) {
+      System.out.println(&quot;There was cheating.&quot;);</TT>
+</PRE>
+</OL>
+
+<P><A NAME="998180"></A></P>
+
+<LI>Write deferring statements (such as <TT>ewhen</TT> and <TT>eif)</TT>
+to ensure security and guarantee that computations do not take place until
+expected values are provided. For example, to prevent a player from sending
+its key until the opponent's hashed value has been received, you could
+use this code: </LI>
+
+<PRE><TT>    ewhen hisHash (long otherHash) {
+      myX&lt;-forward(newEInteger(X));
+....</TT>
+</PRE>
+
+<P>Similarly, the following statement prevents a player from generating
+the final combined result until the opponent's X number has been received:</P>
+
+<P> </P>
+
+<PRE><TT>    ewhen hisX (long otherX) {
+      long finalResult = Combine(X, otherX);</TT>
+</PRE>
+</OL>
+
+<H2>Common pitfalls</H2>
+
+<UL>
+<LI>Avoid the recursion pitfall of having message forwards spawn uncontrollably.</LI>
+
+<P> </P>
+
+<LI>Watch out for side effects from <TT>ewhen</TT>, <TT>ewhenever</TT>,
+<TT>eorwhen</TT>, <TT>eif</TT> and <TT>eorif</TT> clauses due to modification
+of instance variables. See the section on <I>Closures</I> for more information.<BR>
+</LI>
+</UL>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="Handling timeouts"></A>Handling timeouts </H1>
+
+<BLOCKQUOTE>
+<P>To maintain a robust and reliable distributed environment, you must
+incorporate good timeout procedures in E-methods. That way, E-methods that
+have sent messages requesting values will not wait forever for those values
+to be provided. </P>
+
+<P>You should always take the time to include reasonable safeguards in
+your application. A user may engage the services of hundreds, if not thousands,
+of objects over the course of a work day. No programmer is infallible;
+the odds are that the user will eventually encounter an object which does
+not function perfectly all the time. If you do not plan for that possibility,
+you will not have a reliable system.</P>
+
+<P> In E, there are two general types of timeouts to be aware of:</P>
+
+<P> </P>
+
+<UL>
+<LI>Mailing timeouts</LI>
+
+<P> </P>
+
+<LI>Response timeouts<BR>
+</LI>
+</UL>
+
+<H3>Mailing time-outs</H3>
+
+<P>These occur when the system cannot successfully deliver a message to
+the recipient object within a predefined time period. The communication
+library E-classes handle mailing time-outs by throwing a message exception.
+You do not need to generate any code yourself to deal with this type of
+timeout.</P>
+
+<P> </P>
+
+<H3>Response time-outs</H3>
+
+<P>These occur when a message is successfully delivered to an object, but
+the receiving E-method does not respond in a timely fashion. E's runtime
+does not throw an exception here, since this is a legitimate situation.
+This is because E's messaging model is asynchronous; there is no way for
+a sending E-method to know when its requests will be serviced. You must
+develop your own procedures to handle these types of timeouts.</P>
+
+<P> Handling this type of timeout is especially important for a program
+that is not &quot;time-dependent&quot;. For example, an automated stock
+market broker or mouse event responder never can know when, if ever, it
+will receive a response. Since these programs may never &quot;complete&quot;,
+you should specify a termination procedure in the application-a mutually-agreed-upon
+handshake or procedure for acknowledging the receipt of messages-to let
+it shut down or keep running when it encounters a timeout. Otherwise, you
+will not know what, if anything, is wrong at the recipient's end that could
+be preventing it from responding appropriately. </P>
+
+<P>There are two ways of creating a timeout-handling procedure:</P>
+
+<P> </P>
+
+<UL>
+<LI>Include fall-back procedures for the <I>requesting</I> E-method to
+follow when a value is not received within an acceptable time period. </LI>
+
+<LI>Include procedures for the <I>responding</I> E-method to ensure that
+some response is sent to the requestor, even if the recipient cannot provide
+the requested values in a timely fashion. This implementation is generally
+more feasible since, as the stockmarket/mouse event example suggests, the
+requesting E-method cannot always tell when a message has been received.</LI>
+
+<P> </P>
+</UL>
+
+<P>To create a timeout handling mechanism, you can use the functionality
+in the <I>RtTimer</I> class. See the documentation in the <I>E Class Library</I>
+chapter on this class for specific information on its technical implementation.</P>
+
+<P> The following programs are examples of using <I>RtTimer</I> to create
+a timeout procedure. </P>
+
+<H4>Example 1</H4>
+
+<PRE><TT>eclass ThingThatHandlesTimeouts
+{
+  emethod doSomething (EObject other) {
+    EBoolean timeout;
+    EInteger result;
+    RtTimer timer = new RtTimer();
+    int tid;
+    
+    // set timeout
+    tid = timer.setTimeout(1000, &amp;timeout);
+    
+    // Ask some other object to do something for us
+    other &lt;- askForResult(&amp;result);
+    
+    // Other object notifies us it is done 
+    // by forwarding something to result
+    ewhen result (int res) {
+      timer.cancelTimeout(tid); // We don't need it
+      timer.terminate();  
+      System.out.println(&quot;Got result: &quot; + res);
+    }
+    // We'll enter here if we timeout before 
+    // the other responds
+    eorwhen timeout (boolean t) {
+      System.out.println(&quot;Timed out&quot;);
+      timer.terminate();  
+    }
+  }
+}</TT>
+</PRE>
+
+<H3>Example 2</H3>
+
+<PRE><TT>eclass SmartThingThatHandlesTimeouts
+{
+  emethod doSomething (EObject other) {
+    EBoolean timeout;
+    EBoolean cancel;
+    EInteger result;
+    RtTimer timer = new RtTimer();
+    boolean waiting = true;
+    int tid;
+    
+    // set timeout
+    tid = timer.setTimeout(1000, &amp;timeout);
+    
+    // Ask some other object to do something for us
+    other &lt;- askForResult(&amp;result);
+    
+    // Other object notifies us it is done 
+    // by forwarding something to result
+    ewhen result (int res) {
+      waiting = false;  // In case timer fires now
+      timer.cancelTimeout(tid); // We don't need it
+      timer.terminate();  
+      System.out.println(&quot;Got result: &quot; + res);
+    }
+    // We decided to cancel (see timeout code), 
+    // stop waiting for the result (note this is eORwhen)
+    eorwhen cancel (boolean c) {
+      System.out.println(&quot;Cancelled&quot;);
+      timer.terminate();  
+    }
+        // Here is the timeout handler
+    ewhenever timeout (boolean t) {
+      // Make sure result didn't just come in before we
+      // could be cancelled (check waiting flag). The call 
+      // to cancelWaitingForResult() tells us if 
+      // we should cancel or not - 
+      // that could be an alert panel to the user,
+      // or use some heuristic to realize we're tired of
+      // waiting for result...
+      if (waiting &amp;&amp; (cancelWaitingForResult() == true)) {
+        // This causes the eorwhen to fire above
+        &amp;cancel &lt;- forward(etrue);
+      }
+      else {
+        // Reset the timer 
+        timer.setTimeout(1000, &amp;timeout);
+      }
+    }
+  }
+}</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="Persistent object storage"></A>Persistent object storage </H1>
+
+<BLOCKQUOTE>
+<P>E provides a persistent object database object called <I>PObjDB</I>
+to store objects to and reclaim them from a database. This lets you store
+your objects to disk and later retrieve them in other applications. You
+must create your own storage and retrieval procedures using with <I>PObjDB</I>;
+E does not do this automatically. </P>
+
+<P>An example of creating an object database is at the end of this section.</P>
+
+<P> </P>
+
+<H2>How E stores objects in a object database </H2>
+
+<P>To store and retrieve objects, E uses a streaming protocol that is a
+subclass of the streaming protocols already implemented in Java. When a
+program requests object storage, and the object already implements a stream-out
+method, E uses that method. If not, E uses a generalized native method
+instead. To restore, E uses a stream-in method (local or native). </P>
+
+<P>E currently does not store sufficient meta data to the stream to handle
+class implementation changes. This means that an object database you create
+today will not work tomorrow if you change the instance variables of the
+classes involved. </P>
+
+<H2>Stream keys</H2>
+
+<P>To store an object in a persistent object database (called a database
+in this section), create a procedure in your E program to explicitly request
+this storage. When your program makes such a request, it receives a token
+called a <I>stream key</I>. Your E program can then later redeem this stream
+key for the object. </P>
+
+<P>This stream key can be stored in other objects, and these objects can
+also be stored out under other stream keys. </P>
+
+<P>You can specify a name for a stream key when you save it to the database.
+This name is called a <I>root key</I>. Later, when the same or another
+E program opens the same database, the program can retrieve the steam key
+using this name. That program can then redeem the stream key for other
+objects, which in turn may contain more stream keys. You can continue this
+process as needed to reconstruct an elaborate network of objects. </P>
+
+<P>You can save any E or Java object to the object database. Also, any
+E or Java object name can be the root key name. </P>
+
+<H2>Parent databases </H2>
+
+<P>You can create an object database that indirectly refers to another
+object database. The database that is referred to is called the <I>parent
+database.</I> Your actual production database is called the <I>child database</I>.
+If you do not define a stream or root key value for the child database,
+the parent handles the request instead. Similarly, changes made to a child
+will mask values held by the parent. </P>
+
+<P>Using child/parent databases is useful for modeling nested transactions.
+For example, you can use the child database as a testing environment for
+making changes to objects. When your modifications are complete, you can
+commit your changes by applying them to the parent. </P>
+
+<H2>Filters </H2>
+
+<P>To grant privileges for reading, writing, and committing changes to
+a database, you can use objects that implement the <I>RtDBViewFilter </I>interface.
+This lets you restrict other users' access to your object database. Currently,
+the E runtime system has two classes that implement this interface: </P>
+
+<UL>
+<LI><I>PObjDB</I>, which grants full access. </LI>
+
+<LI><I>RtDBViewLimiter</I>, which lets you selectively assign read, write,
+and commit permissions, along with basic key list control of root key manipulations.
+<BR>
+</LI>
+</UL>
+
+<H3>How the RtDBViewLimiter policies work</H3>
+
+<P>The grantor creates a <I>RtDBViewLimiter</I> object, initialized with
+the policy control parameters desired. This can be passed on to the grantee,
+who will be restricted to the operations allowed. These objects can be
+chained, with each link further limiting the powers of the ultimate grantee.
+Trying to establish a less restrictive policy will fail because all operations
+pass control back through the delegation chain. </P>
+
+<P>There are three master control flags: </P>
+
+<UL>
+<LI><TT>readPolicy </TT></LI>
+
+<LI><TT>writePolicy </TT></LI>
+
+<LI><TT>commitPolicy </TT></LI>
+</UL>
+
+<P>There are also two key control lists, which control which root keys
+the grantee can read or change. A null key control list means that all
+access is permitted. Otherwise, the list restricts the user to read or
+store only the specified root keys. These lists do not affect access to
+stream keys, which are considered to be capabilities in themselves. </P>
+
+<H2>Exceptions </H2>
+
+<P>Violating key control policies results in the <I>DBAccessException</I>
+being thrown. When allowed, a request for a non-existing value is handled
+by returning null, rather than throwing this exception. </P>
+
+<H2>Class-specific stream-in and stream-out methods </H2>
+
+<P>You may want to define your own methods for storing and filing a class
+state to and from the stream objects used to implement persistence and
+communication. This can be more efficient than relying on the native method
+stream-in and stream-out code. It can also be more robust with respect
+to instance variable type and position changes. For example, you can include
+code for your class that recognizes older versions streamed out long ago.
+</P>
+
+<P>To do this, declare your class as implementing the <I>RtCodeable</I>
+interface. This interface extends the <I>RtEncodeable</I> and <I>RtDecodeable</I>
+interfaces, which contain the <TT>encode</TT> and <TT>decode</TT> methods,
+respectively. These methods call appropriate read and write methods on
+the<I> RtEncoder</I> and <I>RtDecoder</I> objects to save or load internal
+state. These classes implement the standard Java <I>DataInputStream</I>
+and <I>DataOutputStream</I> protocols, along with some extensions for reading
+and writing objects. </P>
+
+<P>Note that the <TT>decode</TT> method is expected to return the object
+decoded, which should usually be yourself. (In some special cases this
+object can be different from the object sent the decode message, if necessary).
+</P>
+
+<P>If you only want the object to be encodeable, have your class only implement
+<I>RtEncodeable</I>, which contains the <TT>encode</TT> method. Likewise,
+to have a class only be decodeable, implement the <I>RtDecodeable</I> interface,
+which only contains <TT>decode</TT>.</P>
+
+<P> For example, assume you encode an object of class A so that it is decoded
+as an instance of a different class B. However, you might not want to force
+instances of class B to be encodeable just because you want to decode them;
+in other words, you want objects of class B to be sent over the network
+by reference only, even though they can show up as a copy when an A is
+encoded. </P>
+
+<P>To do this, have class <I>A </I>implement <I>RtEncodeable</I>, and class
+<I>B</I> implement <I>RtDecodeable</I>. This lets instances of <I>A </I>be
+encodeable, but only lets instances of <I>B</I> (encoded from an <I>A</I>)
+be decoded, and not encodeable themselves.</P>
+
+<P> </P>
+
+<H2>Example</H2>
+
+<PRE><TT>package ec.examples.dbe;
+
+import java.lang.*;
+import ec.e.db.*;
+import ec.e.stream.StreamDB;
+
+public class DBexample
+{
+  public static void main (String args[]) {
+    String dbFileName;
+    if(args.length &gt; 1) {
+      StreamDB.setDebugOn();
+    }
+    try {
+      System.out.println(&quot;Creating PObjDB&quot;);
+
+      if(args.length == 0)
+        dbFileName = &quot;/tmp/ExampleDB&quot;;
+      else dbFileName = args[0];
+
+      PObjDB btdb = new PObjDB(dbFileName);
+      System.out.println(&quot;DB created named: 
+        &quot; + dbFileName);
+      Object cat1[] = new Object[2];
+      Object cat2;
+      cat1[0] = &quot;Meow&quot;;
+      cat1[1] = new Integer(123456);
+      System.out.println(&quot;Storing first test object.&quot;);
+      RtStreamKey catKey = btdb.put(cat1);
+      System.out.println(catKey);
+      System.out.println(&quot;Closing root PObjDB file&quot;);
+      btdb.closeDB();
+      System.out.println(&quot;Reopening root file with an 
+        update view.&quot;);
+
+      PObjDB db1 = new PObjDB(dbFileName);
+      PObjDB db2 = new PObjDB(db1);
+      cat2 = db2.get(catKey);
+      System.out.println(&quot;Retrieved object &quot; + cat2);
+      System.out.println(&quot;Writing a string named DogName to
+        the update view&quot;);
+      String dog1 = new String(&quot;Woof&quot;);
+      RtStreamKey dogKey = db2.put(dog1);
+
+      db2.put(&quot;DogName&quot;, dogKey);
+      System.out.println(&quot;Committing the update view 
+        back against the root file.&quot;);
+      db2.commit();
+      db2.closeDB();
+      db1.closeDB();
+      System.out.println(&quot;Reopening the root file using a 
+        read only view limiter&quot;);
+      PObjDB db3 = new PObjDB(dbFileName);
+
+    /* Now open the view limiter */
+      RtDBViewLimiter readOnlyView = new RtDBViewLimiter
+        (db3, true, false, false, null, null);
+      RtStreamKey dog2Key = db3.get(&quot;DogName&quot;);
+      Object dog2 = db3.get(dog2Key);
+      System.out.println(&quot;Object retrieved under DogName 
+        is &quot; + dog2);
+      System.out.println(&quot;Attempting to write to the
+        readOnlyView&quot;);
+      System.out.println(&quot;(This should produce a
+        DBAccessException)&quot;);
+      readOnlyView.put(new String(&quot;BadGuy&quot;));
+      System.out.println(&quot;Security failure&quot;);
+    } 
+    catch (Exception e) {e.printStackTrace();}
+  }
+}</TT>
+</PRE>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="Closures"></A>Closures </H1>
+
+<BLOCKQUOTE>
+<P>In E, you can use certain statements to defer execution of a block of
+code until a certain value is furnished. These &quot;deferring&quot; statements
+include <TT>eif</TT>, <TT>ewhen</TT>, <TT>ewhenever</TT>, <TT>eorwhen</TT>,
+<TT>eorif</TT>, and the <TT>ecatch</TT> portions of <TT>etry.</TT></P>
+
+<P> When your E program encounters one of these statements, it takes a
+snapshot of all the referenced local variables and parameters within the
+scope of that statement. This snapshot is called a <I>closure</I>. E saves
+this closure for whenever the deferring statement needs it; the statement
+then uses the values in the closure when it executes.</P>
+
+<P> Each deferring statement gets its own closure. For an <TT>ewhenever</TT>,
+each execution operates on a copy of this closure. This ensures that the
+closure retains its original values for the next <TT>ewhenever</TT> execution.
+If your <TT>ewhenever</TT> statement modifies any of the values in the
+closure, those new values are not retained. </P>
+
+<P>Be aware, however, that if your deferring statement references Java
+objects, the closure captures the reference to that object, not the value
+of the object itself. This is especially an issue for <TT>ewhenever</TT>
+statements, which can have multiple executions. If your program subsequently
+modifies the object, the closure will reference that modified object, and
+the next <TT>ewhenever</TT> will execute using the new value. </P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="Exception handling"></A>Exception handling </H1>
+
+<BLOCKQUOTE>
+<P>For a description of E's exception handling environment, see the documentation
+for the <TT>etry</TT> statement in the<I>E Language Specification </I>chapter.</P>
+
+<P> </P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="Creating access-controlled objects"></A>Creating access-controlled
+objects </H1>
+
+<BLOCKQUOTE>
+<P>E applications are run inside of an environment provided by the E runtime.
+Within this general environment, you can use a special set of E classes
+and methods to create customized restricted environments, and pass these
+to less-trusted objects. This lets you take full advantage of the security
+features of the E environment. </P>
+
+<P>Currently, E provides classes and methods to set up the following facilities:</P>
+
+<P> </P>
+
+<UL>
+<LI><B>File system.</B> The E Environment provides file system capabilities
+wrapped within an <I>RtFileEnvironment</I> object.</LI>
+
+<P> </P>
+
+<LI><B>Network communication. </B>The E Environment provides network communication
+for distributed objects wrapped within an <I>RtNetworkEnvironment</I> object.<BR>
+</LI>
+</UL>
+
+<P><B>NOTE:</B> E also provides a set of wrapper classes that implement
+timing mechanisms. However, these are not described in this section, since
+you do not use E's launch facilities to implement them. See the documentation
+on <I>Timeouts</I> (in this chapter) and also the descriptions of<I> RtClock
+</I>and <I>RtTimer</I> in the <I>E Class Library</I> chapter for more information
+on these classes.</P>
+
+<P> You use these classes as &quot;factories&quot; to create other objects
+representing more specific capabilities, such as a file or network directory
+server. Because the E environment capabilities are wrapped in these standard
+&quot;factory&quot; objects, you can keep class constructors private. This
+means that other objects accessing the class you create cannot arbitrarily
+create instances of that class to bypass any restrictions you set up.</P>
+
+<P> Note that <I>capability</I> has a slightly different meaning here than
+for E's class certification. From the perspective of the E Environment,
+capability means an object's ability to either perform an action itself,
+or hand out another object that can perform the action. From the perspective
+of class certification, capability refers to a class that code (being loaded
+by the class loader) can access.</P>
+
+<P> </P>
+
+<H2>Using RtEEnvironment</H2>
+
+<P>To access the E environment classes and methods, you &quot;launch&quot;
+an object with <I>RtLauncher</I>'s <TT>launch</TT> method. Launching an
+object gets it started, and gives the full set of <I>RtEEnvironment</I>
+capabilities (assuming the object's class has been granted the capability
+to access the classes in the <I>RtEEnvironment</I> tree). <I>RtEEnvironment</I>
+is the main template for the E Environment. Launching is demonstrated in
+the following procedure, <I>Creating a restricted environment</I>.</P>
+
+<P> From the launched object, you can create a new environment with more
+limited capabilities, and pass it to other objects as needed. This ensures
+that these potentially untrusted objects only run with the restricted environment
+you created. </P>
+
+<H3>Specifying properties for the launched object</H3>
+
+<P>You can pass in arguments when you launch an object to set environment
+properties and arguments. You can pass in properties (those of <TT>x=y</TT>
+format, such as<TT> host=localhost</TT>), or arguments pertinent to your
+environment (arguments without &quot;=&quot;). When you launch an object,
+those arguments are put into an environment dictionary.</P>
+
+<P> You can pass in either arguments specific to that launched object,
+or the same ones that were entered at the command line. This lets you set
+the same environment properties for your launched object as you did for
+your main program. </P>
+
+<P>For example, assume you run your program with a restricted path argument<TT>
+path=myDirectory/mySubDirectory</TT> entered as a command line argument.
+You can then pass this argument string to an object you launched; this
+object can then use the argument to restrict other objects to accessing
+only <TT>myDirectory/mySubDirectory</TT>.</P>
+
+<P> In both Java and E, command line arguments are put into a standard
+arguments array. In E, when you launch an object, any argument of the form
+<TT>x=y</TT> is stripped out of the standard argument array, and put into
+a Properties hashtable, with <TT>x</TT> being the property key, and <TT>y</TT>
+being the property value. This makes it easy to specify properties on the
+command line, and then later retrieve specific ones to pass to environment
+objects. Arguments without &quot;=&quot; are retained in the standard argument
+string array.</P>
+
+<P> <B>NOTE:</B> After you launch an object, E strips out any E-provided
+system arguments (the <TT>-EC*</TT> arguments) from the standard arguments
+array, since these are only pertinent to that execution of the program.
+See the description of these arguments in the <I>E compiler </I>documentation
+in Appendix A, E <I>Tools and Utilities</I>, for more information.</P>
+
+<P> To access the arguments and property hash table, you use <I>RtEEnvironment</I>'s
+<TT>getObjectFromDictionary</TT> method:</P>
+
+<P> </P>
+
+<UL>
+<LI>To access the arguments array, run <TT>getObjectFromDictionary</TT>
+with the <TT>Args</TT> parameter:</LI>
+
+<P> </P>
+
+<PRE><TT>  env.getObjectFromDictionary(&quot;Args&quot;);</TT></PRE>
+
+<LI>To access the <I>RtEEnvironment</I>'s properties, first create a hash
+table, then run <TT>RtEEnvironment.getObjectFromDictionary</TT> with the
+<TT>Properties</TT> parameter. For example:<BR>
+</LI>
+
+<PRE><TT>    Hashtable properties = (Hashtable); 
+    env.getObjectFromDictionary(&quot;Properties&quot;);</TT>
+</PRE>
+
+<P>Note that this might return null if there are no properties. To retrieve
+the properties from the hashtable you created, use the standard method
+for retrieving data from a hash table:</P>
+
+<P> </P>
+
+<PRE><TT>    <I>String value</I> = (<I>String</I>) properties.get(<I>String key</I>);</TT>
+</PRE>
+
+<LI>You can also get properties one at a time by passing in the property's
+key to the <TT>RtEEnvironment.getProperty</TT> method:<BR>
+</LI>
+
+<PRE><TT>    <I>String value</I> = env.getProperty(<I>String key</I>); </TT>
+</PRE>
+
+<P>This returns null if the property is not found, and the value <TT>RtEEnvironment.DefaultPropertyValue</TT>,
+if the property was specified as &quot;key=&quot; with no value. </P>
+</UL>
+
+<H3>Creating a restricted environment</H3>
+
+<P>The following annotated sample program demonstrates using <I>RtEEnvironment</I>
+to create restricted E application environments. This example restricts
+an object's file system access so it can only traverse a specific directory
+hierarchy.</P>
+
+<P> Assume this example is run using the following line:</P>
+
+<P> </P>
+
+<PRE><TT>  javaec ec.examples.file.FileExample 
+    path=tmp/examples -ECenableDgc</TT>
+</PRE>
+
+<P>The <TT>path=tmp/examples</TT> argument is passed to the main object
+code. This argument is also passed to the launched <I>EFileExampleLauncher</I>
+object. The <I>EFileExampleLauncher</I> can then use this path in creating
+a restricted file system environment.</P>
+
+<P> </P>
+
+<PRE><TT>  import java.lang.*;
+  import java.io.*;
+  import java.util.Hashtable;
+  
+(1) import ec.e.comm.*;
+  
+  //
+  // This is the boilerplate main that starts the whole
+  // ball rolling. You launch something you trust and let
+  // that make the determination of what it wants to hand
+  // out to other objects.
+  //
+  public class FileExample
+  {
+    public static void main(String args[]) {
+      if (args.length &lt; 1) {
+        System.out.println(&quot;Need to specify restriction dir path&quot;);
+        System.exit(0);
+      }
+(2)  RtLauncher.launch(new EFileExampleLauncher(), args);
+    }
+  }
+  
+  //
+  // This is what is launched, and as stated before is something
+  // you trust. It determines what to hand out to other entities.
+  // In this (simple) case, it uses the directory handed to it
+  // from the command line arguments (found in the tEEnvironment)
+  // to determine the subdirectory it grants access to.
+  //
+(3)  eclass EFileExampleLauncher implements ELaunchable
+  {
+  emethod go (RtEEnvironment env) {
+  // Get the args, and use arg[0] as the directory to 
+  // restrict to
+(4) String resPath = env.getProperty(&quot;path&quot;);
+     System.out.println(&quot;Restricting path to &quot; + resPath);
+  
+  // Get the file environment and make the more restricted one
+(5)  RtFileEnvironment fileEnv = env.getFileEnvironment();
+(6)  RtFileEnvironment restrictedFileEnv = 
+         fileEnv.restrictPath(resPath);
+  
+  // Create the entity we trust with this restricted 
+  // file environment and hand it the file env in a message
+(7) EFileExample theFileExample = new EFileExample();
+     theFileExample &lt;- doStuff (restrictedFileEnv);
+  }
+}
+  
+  //
+  // This code would be loaded from somewhere else and
+  // you would provide the restricted file environment to it.
+  //
+(8)  eclass EFileExample
+{
+  emethod doStuff (RtFileEnvironment fileEnv) {
+  try {
+    String dirName = &quot;/home/gordie/temp&quot;;
+    System.out.println(&quot;Dir Env rooted at &quot; 
+      + fileEnv.getDirectory(dirName).getPath());
+  // This will return an object for temp in the
+  // restricted file env
+    RtFileDirectory dir = fileEnv.getDirectory(dirName);
+  // This will return a file object for temp/filetest
+    RtFile testFile = dir.getFile(&quot;filetest&quot;);
+  // etc....
+    }  catch (IOException e) {
+        System.out.println(&quot;Exception occurred: 
+          &quot; + e.getMessage());
+        e.printStackTrace();
+      }
+  }
+}</TT>
+</PRE>
+
+<OL>
+<P><A NAME="1004753"></A></P>
+
+<LI>This imports the comm package files necessary for creating an E environment,
+including <I>RtEEnvironment</I> and <I>RtLauncher </I>classes, plus the<I>
+ELaunchable</I> E-interface. <I>ELaunchable </I>contains the <TT>go</TT>
+method that your object will be sent to get it &quot;started&quot;. This
+example also uses the <I>RtFileEnvironment</I> class to create restricted
+file environments. <A NAME="1004659"></A></LI>
+
+<LI>&quot;Launch&quot; a trusted object with <I>RtEEnvironment</I>'s <TT>launch</TT>
+method. The object is launched with the command line string: </LI>
+
+<PRE><TT>  path=tmp/examples</TT></PRE>
+
+<P>passed in as an argument. This is put into a Properties hashtable, with
+<TT>path</TT> as its key and <TT>tmp/examples</TT> as its value. Note that
+the <TT>-ECenableDgc</TT> argument is stripped out and not passed in at
+launch time. <A NAME="1004763"></A></P>
+
+<LI>This is the code for your launched class. This is a trusted class that
+determines what to hand out to other entities. In this example, it is passed
+the command line argument (<TT>path=tmp/examples).</TT> The launched object
+uses this path to determine the subdirectory it grants access to. The <TT>go</TT>
+method passes an <I>RtEEnvironment</I> object parameter so your class can
+access the <I>RtEEnvironment</I> facilities. <A NAME="1007512"></A></LI>
+
+<LI>The restricted path passed to the launched object (<TT>tmp/examples</TT>)
+is retrieved from the Properties hash table using the <TT>RtEEnvironment.getProperty</TT>
+method, specifying the keyword <TT>path</TT>. A string called <TT>resPath</TT>
+is set to this restricted path. <A NAME="1004761"></A></LI>
+
+<LI>Create an instance of <I>RtFileEnvironment</I> called <TT>fileEnv</TT>.
+The <I>RtFileEnvironment</I> class definition gives read/write access to
+the entire file system, which you can then restrict. <A NAME="1004746"></A></LI>
+
+<LI>Using the restricted path (<TT>resPath</TT>), as a parameter to <I>RtFileEnvironment</I>'s
+<TT>restrictedFileEnv</TT> method, you create a more limited <I>RtFileEnvironment</I>
+that narrows file system access to <TT>resPath</TT>. <A NAME="1004803"></A></LI>
+
+<LI>Create an object with this restricted environment, and hand it the
+file environment in a message <TT>doStuff</TT>. <A NAME="1004660"></A></LI>
+
+<LI>This is the definition of the class to which you granted limited access.
+Typically, this would be in another file or package. </LI>
+</OL>
+
+<H2>The E runtime network facilities</H2>
+
+<P>E provides classes for implementing network registration and connection.
+Use this functionality to register and connect E-objects over the network.
+</P>
+
+<P><I>RtEEnvironment</I> holds onto two capability objects:</P>
+
+<P> </P>
+
+<UL>
+<LI>a <I>connector</I>, that encapsulates the right to establish outbound
+connections to other named (by URL) objects in the network.</LI>
+
+<P> </P>
+
+<LI>a <I>registrar</I>, which encapsulates the right to register objects
+by name in the local machine's object directory.</LI>
+
+<P> </P>
+</UL>
+
+<P>Both connectors and registrars restrict access by limiting the URL that
+objects can either look up on the network, or register themselves as. </P>
+
+<P>You can limit the domain name, object pathname, port, or class.</P>
+
+<P> The following example program demonstrates how to set up the registrar
+and connector.</P>
+
+<P> </P>
+
+<H3>Creating a registrar and connector</H3>
+
+<P>This program demonstrates how to create and connect a host and client
+object. The program is run first without a host name entered; this creates
+a host object which registers itself. The client then runs the program,
+using the host name as an argument, and connects to the host. The host
+can then shut down the environment.</P>
+
+<P> </P>
+
+<PRE><TT>import ec.e.comm.*;
+
+//
+// This is where it all starts, the main function 
+//
+public class HelloExample
+{
+  public static void main(String args[]) {
+(1)    RtLauncher.launch(new HelloLauncher(), args);
+  }
+}
+
+//
+// This object is totally trusted and makes subenvironments
+// that are passed to other less trusted objects.
+//
+eclass HelloLauncher implements ELaunchable
+{
+  emethod go(RtEEnvironment env) {
+(2)    RtNetworkController con;
+  int defaultPortNumber = env.getDefaultPortNumber();
+
+(3)    String hostname = env.getProperty(&quot;host&quot;);
+(4)    if (hostname == null) {
+  // We'll be the host
+    HelloExampleHost host = new HelloExampleHost();
+    con = env.startNetworkEnvironment(defaultPortNumber);
+    host &lt;- goHost(env, con);
+  }
+  else {
+  // We're the client, connect to host
+    HelloExampleClient client = new HelloExampleClient();
+    con = env.startNetworkEnvironment(defaultPortNumber+1);
+    client &lt;- goClient(env, con, hostname);
+    }
+  }
+}
+
+(5)  eclass HelloNetworkObject
+{
+  static RtNetworkController networkController = null;
+
+  emethod stopNetwork () {
+    this.stopNetworkEnvironment();
+  }
+
+  static void setNetworkController (RtNetworkController con) {
+    networkController = con;
+  }
+
+  static void stopNetworkEnvironment () {
+    if (networkController != null) 
+      networkController.stopNetworkEnvironment();
+  }
+}
+
+eclass HelloExampleClient extends HelloNetworkObject
+{
+  emethod goClient (RtEEnvironment env, 
+      RtNetworkController con, String hostname) {
+    HelloExampleHost host;
+    this.setNetworkController(con);
+    etry {
+      System.out.println(&quot;Connecting to host&quot;);
+(6)        env.getConnector().lookupOnPort(hostname,
+          &quot;HelloExampleHost&quot;,RtComMonitor.keBasePortNumber,
+          &amp;host);
+      } ecatch (RtDirectoryEException e) {
+          System.out.println(&quot;Client caught exception: &quot;
+          + e.getMessage());
+        }
+    host &lt;- helloThere(&quot;This is a string&quot;, this);
+  }
+}
+
+(7)  eclass HelloExampleHost extends HelloNetworkObject
+{
+  emethod goHost (RtEEnvironment env, RtNetworkController con)
+  {
+    this.setNetworkController(con);
+    System.out.println(&quot;Registering host&quot;);
+    env.getRegistrar().register(&quot;HelloExampleHost&quot;, this);
+  }
+
+(8)    emethod helloThere (String theString, EObject sender) {
+    System.out.println(&quot;Hello World&quot;);
+    if (sender != null) sender &lt;- stopNetwork();
+    this &lt;- stopNetwork();
+  }
+}</TT>
+</PRE>
+
+<OL>
+<P><A NAME="1008176"></A></P>
+
+<LI>A trusted <I>HelloLauncher</I> is launched, with the command line arguments
+passed in. <A NAME="1008262"></A></LI>
+
+<LI>A <I>RtNetworkController</I> called <TT>con</TT> is instantiated to
+handle the network environment for the host and client. <A NAME="1008263"></A></LI>
+
+<LI>A string called <TT>hostname</TT> is set to the value of the host entered
+at the command line. If none was entered, this is null. <A NAME="1008264"></A></LI>
+
+<LI>If no host was entered (<TT>hostname</TT> is null), the program assumes
+you are running as the host, and creates a <I>HelloExampleHost</I> called
+<TT>host</TT>. This object is sent the <TT>goHost</TT> method to register
+itself. If a host was entered, the program assumes you are running as the
+client, and creates a <I>HelloExampleClient</I> called <TT>client</TT>.
+This client is sent the <TT>goClient</TT> method to connect to the host.</LI>
+
+<P> <A NAME="1008290"></A></P>
+
+<LI>This is the template class for the network environment, which both
+the host and client extend. It contains methods to start and stop the network
+environment. <A NAME="1008291"></A></LI>
+
+<LI>The <TT>getConnector</TT> method lets the client connect to the host.
+If there is no host (for example, if you did not run the program to create
+a host first), it prints out an exception message. <A NAME="1008292"></A></LI>
+
+<LI>This is the code for the host object. It contains the <TT>getRegistrar</TT>
+method, which lets the host register itself on the network. The client
+then uses this registration information when trying to connect to the host.
+<A NAME="1008293"></A></LI>
+
+<LI>After the client connect to the host, it sends the host a <TT>helloThere</TT>
+message. The host accordingly prints out <TT>HelloWorld</TT>, then shuts
+down the network environment. </LI>
+</OL>
+
+<H2>The E runtime file system facilities</H2>
+
+<P>The E runtime provides the following file system wrappers. These are
+described in more detail in the <I>E Class Library</I> chapter:</P>
+
+<P> </P>
+
+<UL>
+<LI><I>RtFileEnvironment</I>. This class encapsulates all of the file management
+functions, including getting, creating and deleting directories and files.
+The <I>RtFileEnvironment</I> that you get from the E Environment starts
+with unrestricted access to the entire file system that you can then restrict
+further to give to less trusted objects. You get files and objects by string
+names which return <I>RtFileDirectory</I> or <I>RtFile</I> objects. </LI>
+
+<LI><I>RtFileDirectory</I>. This class lets you navigate and retrieve existing
+files and directories within its path. </LI>
+
+<LI><I>RtFile</I>. This class lets you get a series of file objects related
+to a file. These objects can be read-only, write-only and read-write. </LI>
+
+<LI><I>RtDataInputFile</I>, <I>RtDataOutputFile</I>, <I>RtRandomAccessFile</I>.
+These are runtime file primitives that wrap <I>java.io.RandomFileAccess</I>.
+<BR>
+For an example of creating restricted file environments, see the sample
+program at the beginning of this section.</LI>
+
+<P> </P>
+</UL>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<H1><A NAME="Authentication"></A>Authentication</H1>
+
+<BLOCKQUOTE>
+<P>The E runtime environment provides a framework for cryptographic verification
+of the authorship and integrity of E classes and packages. In a networked
+world, users will want to download and run software from disparate sources
+on their machines. However, indiscriminate use of unverified software can
+enable the spread of viruses or Trojan horses that may damage or misappropriate
+user data. The E authentication framework enables the user to verify that:</P>
+
+<P> </P>
+
+<UL>
+<LI>A class or package was in fact created by the entity claiming to be
+its author.</LI>
+
+<P> </P>
+
+<LI>A class or package has not been modified from the original version
+released by the author of record.</LI>
+
+<P> </P>
+
+<LI>No classes have been added to a package without the permission of the
+package's author.</LI>
+
+<P> </P>
+
+<LI>Classes and packages from unknown or untrusted sources are loaded only
+if they contain no references to capabilities the user has designated as
+restricted (such as disk or comm access).</LI>
+
+<P> </P>
+
+<LI>Only classes and packages from sources trusted by the user will be
+loaded. This provides the ability to control which classes are allowed
+to load which other classes. </LI>
+</UL>
+
+<H2>Public-Key Cryptography</H2>
+
+<P>The basic enabling technology for E's trust management mechanism is
+a mathematical technique called <I>public-key cryptography</I>. This powerful
+technology enables private communication of data over public channels,
+even when the parties involved are not previously known to each other,
+and it enables unforgeable digital signatures that can be used to conclusively
+prove the origin of a message.</P>
+
+<P> The security of conventional or <I>secret-key</I> cryptography relies
+on the secrecy of a <I>key</I>, or string of bits, used according to a
+specified recipe or <I>algorithm</I> to scramble the message being sent.
+Anyone who knows both the key and the algorithm can unscramble the message
+and retrieve the original (or <I>plaintext</I>) message. The secret key
+must be passed from one participant to the other, in some way immune to
+eavesdropping, before they can communicate.</P>
+
+<P> In public-key cryptography (PKC), instead of a single secret key, one
+uses a pair of complementary keys, each of which can unscramble messages
+scrambled with the other. However, because of the mathematics underlying
+PKC, knowing one key of the pair does not make it practical to guess or
+calculate the other. A PKC user can make one key of the pair his <I>public
+key</I>, known to the world, and keep the other as his <I>private key.</I></P>
+
+<P> The fact that a public key can be used to decipher messages encoded
+with the corresponding private key enables the technique of digital signatures.
+A PKC user who wishes to sign some digital file attaches to it a <I>digest</I>
+-a summary of the file, generated by a well-defined one-way mathematical
+function or <I>hash function</I>-that is then encrypted with his private
+key. This encrypted digest, or <I>digital signature,</I> can be verified
+by anyone who knows the author's public key. They can generate a digest
+of the file using the same hash function, use the author's public key to
+decrypt the digital signature, and compare the two results. If the file
+has been altered since the author signed it, the two summaries will not
+match. </P>
+
+<P>For more detailed information on this topic, see the excellent book
+<I>Applied Cryptography</I> (2d ed.) by Bruce Schneier.</P>
+
+<P> </P>
+
+<H2>Certificates and the Trust Boot File</H2>
+
+<P>E uses public-key cryptography and digital signatures to control the
+loading of classes and packages and to verify claims about their authorship
+and integrity. E allows classes to be loaded only if they are authenticated
+by trusted sources. The user can designate sources that are trusted by
+the system and can delegate that discredion to trusted certification authorities.
+</P>
+
+<P>The security of the E runtime environment can be no more secure than
+the user's operating system and hard drive. The term <I>trusted computing
+base</I> or TCB refers to a computing environment that can be reasonably
+expected to be secure: the machine itself, its local storage media, its
+operating system, and the Java virtual machine binaries underlying E. E
+explicitly does not address issues arising from the compromise of any of
+these aspects of a trusted computing base.</P>
+
+<P> Irrespective of the trustworthiness of the user's machine, the E runtime
+environment bases its trust management on a Trust Boot File (TBF) that
+resides on the user machine. In the TBF, the user specifies an initial
+set of statements regarding which users or code sources can be trusted,
+to what extent, and in what contexts. The user can also specify whether
+or not these trusted authorities may delegate trust, in the form of <I>capabilities,
+</I>to other entities.</P>
+
+<P> A capability is the ability or authority to communicate with some object,
+device, or service. As far as a software object is concerned, the only
+other objects that exist in the universe are those to which it possesses
+a capability. The object is created with some set of capabilities; it can
+gain new capabilities only by receiving them from objects it already knows.
+The object cannot &quot;make up&quot; or &quot;guess&quot; a capability
+to a foreign object. (&quot;Talking to strangers&quot; is not possible.)</P>
+
+<P> Trust, in the E environment, is represented by the digital signatures
+of trusted entities. The TBF contains <I>certificates</I>-well-formed assertions
+about keys, the entities or packages to which they correspond, and the
+kinds of claims those keys can credibly certify. The TBF also contains
+<I>hints,</I> which are URL-like constructs that indicate where to look
+for keys mentioned in the TBF and other forward-chained certificates.</P>
+
+<P> The <TT>POLICY</TT> certificates in the TBF can be considered the axioms
+of a system of statements about trust. These axioms are used to generate
+theorems about the trustworthiness of other certificates, entities, keys,
+classes, and packages. Only classes whose trustworthiness is logically
+demonstrable within this system will be loaded and executed. This &quot;predicate
+calculus of trust&quot; has a semantics distinct from that of the E language.</P>
+
+<P> Here is an example of what a certificate might look like:</P>
+
+<P> 
+<HR></P>
+
+<PRE><TT>FudcoKey = KeyFP(ECR, &quot;AAACAAAAAEDMGRQy4svezmyBOzQEwpjhuYX
+  RKC0pDqA4ha89oyuBqLI1ghcCoww1vdj/krFq97HvSOFMtf9/8bB8u
+  SdqMZE1AAAAAwEAAaA4&quot;);
+FudcoDevelop = KeyFP(ECR, &quot;FAAFAAFAA&quot;);
+
+POLICY states {
+  FudcoKey CanMakeClaim where (
+    delegate == &quot;true&quot; and claim == &quot;PkgBelongCert where
+      (pkg == \&quot;*\&quot;)&quot;
+    // BUG: claim == &quot;*&quot; breaks here
+  );
+
+  FudcoDevelop CanMakeClaim where (
+    delegate == &quot;yes&quot; and claim == &quot;PkgBelongCert where
+      (pkg == \&quot;fudco.*\&quot;)&quot;
+  );
+}
+##
+##
+Forward: &quot;http://fudco.com/keys/mis-boot-keys&quot;
+Resolve: &quot;http://keys1.fudco.com/keys/keyserve/&quot;
+Resolve: &quot;http://keys2.fudco.com/keys/keyserve/&quot;</TT>
+</PRE>
+
+<P>
+<HR></P>
+
+<H2>Assignment Statements</H2>
+
+<P>The first two lines of this example,</P>
+
+<P> </P>
+
+<PRE><TT>  FudcoKey = Key(ECR, &quot;AAACAAAAAEDMGRQy4svezmyBOzQEwpjhuYX&gt;
+    RKC0pDqA4ha89oyuBqLI1ghcCoww1vdj/krFq97HvSOFMtf9/8bB8u
+    SdqMZE1AAAAAwEAAaA4&quot;);
+  FudcoDevelop = KeyFP(ECR, &quot;FAAFAAFAA&quot;);</TT></PRE>
+
+<P>are assignment statements that bind variables to keys. These variables
+are local to the certificate; subsequent statements in the certificate
+can then refer to each key by the assigned name. Bindings are of the form:</P>
+
+<P> </P>
+
+<PRE><TT>    NAME = Key(key_type, key_value);
+    |  NAME = KeyFP(key_type, keyfp_value);
+    |  NAME = KeyID(key_type, keyid_value);</TT>
+</PRE>
+
+<P>The assignment statement can either provide the entire public key itself
+(as in the <TT>FudcoKey</TT> example above), a fingerprint of the key,
+or an ID for the key. A key's <I>fingerprint</I> is a digital digest or
+hash of the key's full text that can be used to refer to the key uniquely.
+The key's ID is a name, defined by some third party, by which the key can
+be looked up (as, for example, in a &quot;keyring&quot; file on the user's
+disk, or a public &quot;White Pages&quot; directory of public keys). </P>
+
+<P>The <TT>key_type</TT> tells the Trust Manager how to interpret the referenced
+key. </P>
+
+<P><B>NOTE:</B> The present release supports keys of type <TT>ECR</TT>;
+future releases will support additional standard key types.</P>
+
+<P> </P>
+
+<H2>Source Claim Statements</H2>
+
+<P>A source claim statement in a certificate asserts a rule for deciding
+the trustworthiness of keys, classes, or packages. The source of the claim
+may be <TT>POLICY</TT>, which indicates that the claim is assumed by the
+user to be true without proof, or the claim may be signed by a key. If
+the source of the claim is a key, it must be identified precisely so the
+source can be checked at runtime.</P>
+
+<P> Claims are of three types:</P>
+
+<P> </P>
+
+<UL>
+<LI>The source delegates some or all of its authority to another source
+(<TT>CanMakeClaim</TT>). </LI>
+
+<LI>The source asserts that a particular class belongs to a particular
+package (<TT>PkgBelongCert</TT>). </LI>
+
+<LI>The source declares that some class A is allowed to load another (potentially
+dangerous) class B (<TT>LoadOkayCert</TT>).</LI>
+
+<P> </P>
+</UL>
+
+<P><TT>CanMakeClaim</TT> allows formulation of claims about claims; a trusted
+source can define what types of claims another source can credibly make.
+</P>
+
+<P>For example, a user at FudCo might have the following in their TBF,
+where <TT>FudCoKey</TT> is a key belonging to FudCo's MIS department and
+<TT>FudCoDevelop</TT> is a key belonging to FudCo's R &amp; D department:</P>
+
+<P> </P>
+
+<PRE><TT>  FudCoKey = KeyFP(ECR,&quot;ABCABC&quot;);
+  FudcoDevelop = KeyFP(ECR,&quot;DEFDEF&quot;);
+
+  POLICY states {
+    FudCoKey CanMakeClaim where (
+      delegate == &quot;yes&quot; and claim == &quot;*&quot;
+    );
+
+    FudcoDevelop CanMakeClaim where (
+      delegate == &quot;yes&quot; and claim == &quot;PkgBelongCert where (pkg
+        == \&quot;fudco.*\&quot;)&quot;
+    }
+
+    FudcoDevelop CanMakeClaim where (
+      delegate == &quot;yes&quot; and claim == &quot;LoadOkayCert where ()&quot;
+    }
+  }</TT></PRE>
+
+<P>The first claim statement </P>
+
+<PRE><TT>  FudCoKey CanMakeClaim where (
+      delegate == &quot;yes&quot; and claim == &quot;*&quot;
+    )</TT></PRE>
+
+<P>means &quot;trust any claim made by <TT>FudCoKey</TT> about other keys.&quot;
+<TT>FudCoKey</TT> is allowed to delegate all of its authority to other
+keys. FudCo's MIS department can then use <TT>FudCoKey</TT> to set company-wide
+policy on what classes to allow or disallow. The next statement</P>
+
+<P> </P>
+
+<PRE><TT>  FudcoDevelop CanMakeClaim where (
+    delegate == &quot;yes&quot; and claim == &quot;PkgBelongCert where
+
+      (pkg == \&quot;fudco.*\&quot;)&quot;
+  }</TT>
+</PRE>
+
+<P>signifies that any claim signed by the <TT>FudCoDevelop</TT> key regarding
+class-package membership is to be trusted. The <TT>FudCoDevelop</TT> key
+might be used by FudCo's software R &amp; D division to sign work-in-progress
+for use internally.</P>
+
+<P> Finally, </P>
+
+<PRE><TT>  FudcoDevelop CanMakeClaim where (
+    delegate == &quot;yes&quot; and claim == &quot;LoadOkayCert where ()&quot;
+  }</TT>
+</PRE>
+
+<P>means that the holders of the <TT>FudCoDevelop</TT> key can specify
+what classes are allowed to load what other classes, and can delegate that
+authority to other keys.</P>
+
+<P> The LoadOkayCert predicate is used to restrict the ability of random
+classes to load potentially dangerous classes. For example, <TT>FileInputStream.class</TT>
+is used to read files from local storage; an E application able to load
+this class could potentially compromise user data. To extend this capability
+to some other class, some certificate would state:</P>
+
+<P> </P>
+
+<PRE><TT>  MySysopKey states {
+    FISKey CanMakeClaim where
+      (delegate == &quot;no&quot; and claim == &quot;LoadOkayCert&quot; where
+        (loaded_class == \&quot;FileInputStream.class\&quot;
+          and loaded_hash == \&quot;00C62F0D2F104EBA\&quot; ) &quot;
+      )
+  }</TT></PRE>
+
+<P>where <TT>MySysopKey</TT> is authorized to delegate such authority.
+<TT>FISKey</TT> can then make <TT>LoadOkayCert</TT> claims of the specified
+kind, like so:</P>
+
+<P> </P>
+
+<PRE><TT>  FISKey states {
+    LoadOkayCert where
+      (loading_class == &quot;Fud.class&quot; and
+      loading_hash == &quot;20502E182C10A9A3&quot; and
+      loaded_class == &quot;FileInputStream.class&quot; and
+      loaded_hash == &quot;00C62F0D2F104EBA&quot;
+      )
+  }</TT>
+</PRE>
+
+<H2>Hints</H2>
+
+<P>These are URLs where the Trust Manager is instructed to look for keys,
+certificates, and packages mentioned in the TBF. Hints are used to resolve,
+for example, the actual value of keys identified by their ID or fingerprint;
+the Trust Manager queries keyservers at these URLs to find the key that
+matches the fingerprint. For example, Sun might publish a key to verify
+the integrity of classes belonging to the Java distribution. </P>
+
+<PRE><TT>  SunMasterKey = KeyFP(ECR, &quot;10C0B1CD6DFA41ED&quot;);
+  FudcoMISKey = KeyFP(ECR, &quot;A9A0205720086700&quot;);
+
+  FudcoMISKey states {
+    SunMasterKey CanMakeClaim
+      where (delegate == &quot;yes&quot; and claim == 
+
+        &quot;PkgBelongCert where (pkg == \&quot;sun.*\&quot; or pkg ==
+
+        \&quot;java.*\&quot;)&quot;
+    );
+  }
+
+  Resolve: &quot;http://keys.javasoft.com/keyserve/&quot;</TT></PRE>
+
+<P>The <TT>Resolve:</TT> hint tells the trust manager where to look for
+an appropriate <TT>SunMasterKey</TT> that fits the specified fingerprint.
+Hints may also be used to tell the Trust Manager where to look for more
+certificates or classes signed by keys it has just been instructed to trust:</P>
+
+<P> </P>
+
+<PRE><TT>  Forward: &quot;http://fudco.com/keys/mis-boot-keys&quot;
+    /* a repository where FudCo's MIS department
+      maintains an up-to-date archive of trust
+      policies */</TT></PRE>
+
+<H2>Auxiliary Data</H2>
+
+<P>A certificate may contain other information such as generation and expiration
+dates, version numbers, and so on.</P>
+
+<P> </P>
+
+<H2>Signatures</H2>
+
+<P>A signed certificate contains a digital signature, generated by encrypting
+a digest of the other portions of the certificate. The Trust Manager can
+use this signature to verify that the certificate has not been tampered
+with. <TT>POLICY</TT> certificates are unsigned because they are assumed
+to be set by the user; their trustworthiness depends on the physical security
+of the user machine.</P>
+
+<P> </P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<ADDRESS>Copyright (c) 1996 Electric Communities. All rights reserved worldwide.<BR>
+Most recent update: 7/19/96<BR>
+</ADDRESS>
+
+</BODY>
+</HTML>

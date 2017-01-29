@@ -1,0 +1,392 @@
+ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Highlights of 0.8.30d</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">download</a>&nbsp;/&nbsp;<a href="index.html">0-8-30</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="swt-support.html" title="On to: SWT Support"><img src="../../images/next.gif" width="64" height="32" alt="On to: SWT Support" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Highlights
+              of 0.8.30d</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p><a href="#non-up">Non-Upwards Compatible Changes</a> </p>
+      <p><a href="#new_features">New features</a></p>
+      <p><a href="#bugs">Bugs Closed</a></p>
+      <h1><a name="non-up"></a>Non-Upwards Compatible Changes</h1>
+      <h2>&quot;<tt>//</tt>&quot; replaces &quot;<tt>_/</tt>&quot; as the floorDivide
+        operator syntax</h2>
+      <p>This now corresponds more closely with Python's usage. See the thread
+        containing <a href="http://www.eros-os.org/pipermail/e-lang/2004-August/009965.html">Complex,
+        rational, and other sorts of numbers in E</a>.</p>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">x</span> := 3
+<span class="stdout"># value: 3
+
+? </span><span class="keyword">def</span> <span class="defvar">x_</span> := 4
+<span class="stdout"># value: 4
+
+? </span><span class="keyword">pragma</span>.enable("<span class="litchars">dot-props</span>")
+<span class="stdout">? </span>interp::expand := true
+<span class="stdout"># value: true
+
+? </span>x_/1
+<span class="stdout"># expansion: x_.approxDivide(1)
+
+# value: 4.0
+
+? </span>x _/ 1
+<span class="stderr"># syntax error: For division,
+#               use '//' to truncate to the least integer,
+#               'truncDivide' to truncate to the int nearest to zero (least magnitude),
+#               and '/' for a float64 approximation.
+#   x _/ 1
+#     ^</span>
+<span class="stdout">
+? </span>x // 1
+<span class="stdout"># expansion: x.floorDivide(1)
+
+# value: 3
+
+? </span>-5 // 3
+<span class="stdout"># expansion: 5.negate().floorDivide(3)
+
+# value: -2
+
+? </span>(-5).truncDivide(3)
+<span class="stdout"># expansion: 5.negate().truncDivide(3)
+
+# value: -1&nbsp;</span></pre>
+      </blockquote>
+      <h2>Removal of previously deprecated or unofficial features</h2>
+      <h3><tt>__yourself</tt></h3>
+      <p>The previously deprecated Miranda method &quot;__yourself&quot; is gone.
+        Thanks to Kevin Reid for suggesting that it was now time to remove it.</p>
+      <h3><tt>e.enable.synthetic-slot</tt> and <tt>e.enable.access-slot</tt></h3>
+      <p>These syntax switches were never really useful, and have now been retired.
+        Instead, the experimental <tt>foo::&amp;bar</tt> syntax is now available,
+        as explained below. </p>
+      <h2>New Reserved Keyword: &quot;<tt class="keyword">delicate</tt>&quot;</h2>
+      <p>This keyword has been added to the list of reserved keywords, but doesn't
+        currently do anything. I reserved it after a conversation with Jonathan
+        Shapiro, which led me to think it might be good to provide syntactic support
+        for a &quot;delicate section&quot;. A <i>delicate section</i> would be
+        a block of code that, once entered, the programmer assumes will be able
+        to complete successfully, i.e., that it will not exit by throwing a problem.
+        Let's say we can declare a delicate section by syntax like &quot;<span class="keyword"><tt>delicate</tt></span><tt>
+        { expr }</tt>&quot;. </p>
+      <p>The semantics would be that, if expr does exit by throwing a problem,
+        the current vat incarnation aborts, as this is not a situation in which
+        we expect to be able to recover consistency. If this vat is persistent,
+        then aborting the current incarnation will cause it to roll back to its
+        most recent checkpoint, which is its only reliable hope.</p>
+      <p>(Alternatively, &quot;<tt>delicate</tt>&quot; could be the name of a
+        function, and we could write &quot;<tt>delicate(thunk{expr})</tt>&quot;.
+        This is probably superior on all dimensions. To enable this to be written
+        in the language, <font color="#009000"><i><b>E</b></i></font>'s try-catch
+        block would need to be changed to catch Errors as well as Exceptions,
+        but still not Ejectors. To support this and other uses, we have reserved
+        <tt>__abortIncarnation()</tt> in the safe scope, but we must eventually
+        implement it.) </p>
+      <h1><a name="new_features"></a>New features</h1>
+      <p>What should '<tt>foo.bar</tt>' mean -- property access or curried verb
+        access? (Link please to previous e-lang discussion?) Thanks to Tyler Close's
+        <a href="http://www.waterken.com/dev/Web/">web calculus</a> for suggesting
+        the desireability of currying on the verb, as a cheap way of making a
+        facet. Thanks to Kevin Reid for suggesting this way of resolving the conflict:
+        '<tt>foo.bar</tt>' should be curried verb access (as well as '<tt>foo
+        &lt;- bar</tt>'), and we introduce the new experimental syntax '<tt>foo::bar</tt>'
+        for property access.</p>
+      <p>Both of the following are experimental: they are not an official part
+        of the language, and are off by default. To use these, you must turn on
+        the appropriate syntactic switch.</p>
+      <h2>Experimental: Property Slot Access / Non-identifier variables</h2>
+      <ul>
+        <li>
+          <p>New Syntax: <b><tt>foo::propName</tt></b></p>
+          <p>The new experimental syntax for property access is '<tt>foo::propName</tt>'
+            rather than the old '<tt>foo.propName</tt>'. Rather than expanding
+            directly to '<tt>foo.getPropName()</tt>' as it used to, in order to
+            accomodate other property naming conventions (as in Corba &amp; .NET),
+            it now expands to '<tt>foo.__getPropertySlot(&quot;<span class="litchars">propName</span>&quot;).getValue()</tt>'.
+            Likewise, when used as an lValue, '<tt>foo::propName := newValue</tt>'
+            expands approximately to '<tt>foo.__getPropertySlot(&quot;<span class="litchars">propName</span>&quot;).setValue(newValue)</tt>',
+            except that the expansion also arranges that the value of the assignment
+            expression is newValue. Finally, '<tt>foo::&amp;propName</tt>' expands
+            directly to '<tt>foo.__getPropertySlot(&quot;<span class="litchars">propName</span>&quot;)</tt>'</p>
+        </li>
+        <li>
+          <p>Relevant Syntactic Switch: <b><tt>e.enable.dot-props</tt></b></p>
+          <p>This syntax can only be used when the &quot;<tt>e.enable.dot-props</tt>&quot;
+            switch is turned on, such as by a '<tt><span class="keyword">pragma</span>.enable(&quot;<span class="litchars">dot-props</span>&quot;)</tt>'.
+            Since we are now using a double colon for this rather than a dot,
+            this syntactic switch name is now stupid. But the concept is the same,
+            so we're keeping the old name.</p>
+        </li>
+        <li>
+          <p>New Miranda Method: <b>__getPropertySlot</b>/1</p>
+          <p>When the argument is an identifier, the Miranda behavior for '<tt>foo.__getPropertySlot(&quot;<span class="litchars">propName</span>&quot;)</tt>'
+            synthesizes a Slot whose <tt>getValue()</tt> behavior does a '<tt>foo.getPropName()</tt>',
+            and whose <tt>setValue(newValue)</tt> behavior does a '<tt>foo.setPropName(newValue)</tt>'.</p>
+        </li>
+      </ul>
+      <h2>Experimental: Curried Verb Access</h2>
+      <ul>
+        <li>
+          <p>New Syntax: <b><tt>foo.bar</tt></b> and <b><tt>foo &lt;- bar</tt></b></p>
+          <p> The old experimental syntax '<tt>foo.bar</tt>' is no longer interpreted
+            as an attempted property access, but rather as a currying of the message
+            selector (i.e., the verb). '<tt>foo.bar</tt>' expands into '<tt>__maeVerbFacet.curryCall(foo,
+            &quot;<span class="litchars">bar</span>&quot;)</tt>'. Likewise, '<tt>foo
+            &lt;- bar</tt>' expands into '<tt>__makeVerbFacet.currySend(foo, &quot;<span class="litchars">bar</span>&quot;)</tt>'.</p>
+        </li>
+        <li>
+          <p>Relevant Syntactic Switch: <b><tt>e.enable.verb-curry</tt></b></p>
+          <p>This syntax can only be used when the &quot;<tt>e.enable.verb-curry</tt>&quot;
+            switch is turned on, such as by a '<tt><span class="keyword">pragma</span>.enable(&quot;<span class="litchars">verb-curry</span>&quot;)</tt>'.</p>
+        </li>
+        <li>
+          <p>New universally accessible object: <b>__makeVerbFacet</b> with methods
+            <tt><b>curryCall/2</b></tt> and <b><tt>currySend/2</tt></b></p>
+          <p>These methods cause '<tt>(foo.bar)(args...)</tt>' to have the same
+            effect as '<tt>foo.bar(args...)</tt>', and '<tt>(foo &lt;- bar)(args...)</tt>'
+            to have the same effect as '<tt>foo &lt;- bar(args...)</tt>'. In addition,
+            the curried object created by these methods respond to <tt>__respondsTo/2</tt>
+            and __getAllegedType/0 according to the response of the original <tt>foo</tt>
+            object to <tt>bar</tt> messages, as seen in the examples below.</p>
+        </li>
+      </ul>
+      <h2>Example Session</h2>
+      <blockquote>
+        <pre><span class="stdout">? </span><span class="keyword">pragma</span>.enable("<span class="litchars">verb-curry</span>")
+<span class="stdout"># expansion: null
+
+? </span><span class="keyword">def</span> <span class="defvar">exiter</span> := interp.exitAtTop
+<span class="stdout"># expansion: def exiter := __makeVerbFacet.curryCall(interp, "exitAtTop")
+
+# value: &lt;calling "exitAtTop" facet&gt;
+
+? </span>help(exiter)
+<span class="stdout"># expansion: help.run(exiter)
+
+# value: an org.erights.e.elang.evm.EImplByProxy
+#        /**
+#         * A facet-function on some underlying object for sending only messages
+#         * with a given verb (message selector) to that underlying object.
+#         * &lt;p&gt;
+#         * For example, '&lt;tt&gt;foo.bar&lt;/tt&gt;' results in a function such that
+#         * '&lt;tt&gt;(foo.bar)(args...)&lt;/tt&gt;' invokes '&lt;tt&gt;foo.bar(args...)&lt;/tt&gt;'.
+#         */
+#        interface "org.erights.e.elang.interp.__makeVerbFacet$makeVerbFacet__C$verbFacet__C" {
+#
+#            /**
+#             * Exit reporting successful completion
+#             */
+#            to run() :any
+#
+#            /**
+#             * Exit reporting optProblem as the reason for termination.
+#             * &lt;p&gt;
+#             * If optProblem is null, this indicates successful completion.
+#             * If optProblem isn't null, it's the alleged reason for unsuccessful
+#             * termination.
+#             */
+#            to run(_ :any) :any
+#        }
+#
+
+? </span><span class="keyword">def</span> &<span class="defvar">expander</span> := interp::&expand
+<span class="stdout"># expansion: def &expander := interp.__getPropertySlot("expand")
+
+# value: ::&expand
+
+? </span><span class="keyword">def</span> <span class="defvar">setExpander</span> := interp.setExpand
+<span class="stdout"># expansion: def setExpander := __makeVerbFacet.curryCall(interp, "setExpand")
+
+# value: &lt;calling "setExpand" facet&gt;
+
+? </span>expander
+<span class="stdout"># expansion: expander
+
+# value: true
+
+? </span>setExpander(false)
+<span class="stdout"># expansion: setExpander.run(false)
+
+? </span>expander
+<span class="stdout"># value: false
+
+? </span>expander := true
+<span class="stdout"># value: true
+
+? </span>expander
+<span class="stdout"># expansion: expander
+
+# value: true</span></pre></blockquote>
+      <h2>Experimental eventual property access syntax</h2>
+      <p>Thanks to David Hopwood for <a href="http://www.eros-os.org/pipermail/e-lang/2004-August/009946.html">suggesting</a>
+        this natural extension of the above property access syntax, for use with
+        eventual references.</p>
+      <blockquote><pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">expVow</span> := interp &lt;- ::expand
+<span class="stdout"># expansion: def expVow := E.send(E.send(interp,\
+#                                        "__getPropertySlot",\
+#                                        __makeList.run("expand")),\
+#                                 "getValue",
+#                                 __makeList.run())
+
+# value: &lt;Promise&gt;
+
+? </span>interp.waitAtTop(expVow)
+<span class="stdout"># expansion: interp.waitAtTop(expVow)
+
+? </span>expVow
+<span class="stdout"># expansion: expVow
+
+# value: true
+
+? </span><span class="keyword">def</span> <span class="defvar">expSlotVow</span> := interp &lt;- ::&expand
+<span class="stdout"># expansion: def expSlotVow := E.send(interp,\
+#                                     "__getPropertySlot",\
+#                                     __makeList.run("expand"))
+
+# value: &lt;Promise&gt;
+
+? </span>interp.waitAtTop(expSlotVow)
+<span class="stdout"># expansion: interp.waitAtTop(expSlotVow)
+
+? </span>expSlotVow
+<span class="stdout"># expansion: expSlotVow
+
+# value: ::&expand</span></pre>
+      </blockquote>
+      <h2>RSAPublicKey and RSAPrivateKey now serialize with Data-E</h2>
+      <p>0.8.30d still uses DSAPublicKey and DSAPrivateKey for vat-identities,
+        and these continue to serialize with Data-E.</p>
+      <p>This release now also serializes RSA keys, which we expect to use in
+        the upcoming switch to TLS and the Redirectory.</p>
+      <h1><a name="bugs"></a>Bugs Closed</h1>
+      <table cellpadding="12">
+        <tr>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <th>Thanks to...</th>
+        </tr>
+        <tr>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125639&amp;group_id=16380">Nondeterminism
+            leak in BaseAuditor#coerce/2</a></td>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125639&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+          <td>Kevin Reid</td>
+        </tr>
+        <tr>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125638&amp;group_id=16380">MessageDesc#synopsize
+            expanded whitespace</a></td>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125638&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125637&amp;group_id=16380">FileSugar#copyTo
+            doesn't create needed directories</a></td>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125637&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+          <td>Anthony Hannan</td>
+        </tr>
+        <tr>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125632&amp;group_id=16380">Ref.whenResolved
+            doesn't accept non-near 2nd argument</a></td>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125632&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+          <td>Kevin Reid</td>
+        </tr>
+        <tr>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125633&amp;group_id=16380">Expansion
+            of expr with undefined variable isn't printed</a></td>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125633&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+          <td>Kevin Reid</td>
+        </tr>
+        <tr>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125634&amp;group_id=16380">JComboBox
+            prints in the wrong thread</a></td>
+          <td><a href="https://bugs.sieve.net/bugs/?func=detailbug&bug_id=125634&amp;group_id=16380"><img src="../../images/bug-check.gif" width="34" height="47" border="0"></a></td>
+          <td>Kevin Reid</td>
+        </tr>
+      </table>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">download</a>&nbsp;/&nbsp;<a href="index.html">0-8-30</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="swt-support.html" title="On to: SWT Support"><img src="../../images/next.gif" width="64" height="32" alt="On to: SWT Support" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

@@ -1,0 +1,616 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Data Pluribus</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">distrib</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="../obj-passing.html" title="Back to: Types of Object Passing"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Types of Object Passing" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><a href="CommSystemOverview.html" title="1st child: Data Pluribus Overview"><img src="../../../images/first.gif" width="32" height="64" alt="1st child: Data Pluribus Overview" border="0"></a><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="../captp/index.html" title="On to: CapTP: The Capability Transport Protocol"><img src="../../../images/next.gif" width="64" height="32" alt="On to: CapTP: The Capability Transport Protocol" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>VatTP</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> <b>Last updated:</b><i> </i>[98/07/07 
+      Bill]<br>
+      [98/9/15 Bill] Added link to E Data Comm System Throught Firewalls. 
+      <p>Author: Bill Frantz (frantz-at-pwpconsult.com).</p>
+      <h2>Introduction</h2>
+      <p>This system performs the basic byte array transport between &quot;vats&quot; 
+        for the New E runtime. It is also responsible for connection establishment 
+        and tear down; and confidentiality and authentication of the data sent 
+        on the connections.</p>
+      <p>A vat is the part of the Neocosm implementation that has a unique network 
+        identity. We expect that normal circumstances, there will only be one 
+        vat running on a particular machine at one time. Neocom currently (28 
+        May 1998) supports only one avatar per vat.</p>
+      <h4>Related Documents</h4>
+      <p>See <a href="CommSystemOverview.html">Comm System Overview</a> for information 
+        about the Comm System used in the 1998 alpha release, version r167.</p>
+      <p>See <a href="DataComm_startup.html">DataComm Startup Protocol</a> for 
+        information on the start up protocol.</p>
+      <p>See <a href="DataCommThruFirewalls.html">E Data Comm System Through Firewalls</a> 
+        for some thoughts on working through firewalls.</p>
+      <p>Hal Finney's <a href="http://www.eros-os.org/pipermail/e-lang/1999-November/003008.html">review</a> 
+        of an earlier version of VatTP.</p>
+      <h2>Requirements</h2>
+      <p>The basic requirements of the Data Comm system are; connection management, 
+        reliability, ordering, encryption, authentication, and network location 
+        independence. These, and other requirements, are discussed in more detail 
+        below.</p>
+      <ul>
+        <li>Connection management: The Data Comm system will maintain a list of 
+          current connections. It will build new connections as needed. It will 
+          tear down connections when requested. It will accept new connections 
+          from other vats.</li>
+        <li>Wire protocol: The Data Comm system will define the basic wire protocol. 
+          Certain parts of the protocol (e.g. insertion of the <a href="#message-type">message 
+          type numbers</a>) may be implemented by users of the Data Comm system.</li>
+        <li>Data Streaming: The Data Comm system will provide a primitive sufficient 
+          to support a streaming protocol for long messages. This will be designed 
+          with needs of art down loading in mind.</li>
+        <li>Reliability and ordering: The Data Comm system will provide &quot;reliable&quot; 
+          message transport with sufficent ordering to implement the E ordering 
+          guarantees.</li>
+        <li>Exception handling: The Data Comm system will provide sufficient error 
+          reporting so that the E runtime can correctly implement its &quot;broken 
+          promise&quot; logic. In addition, it will maintain a log of unusual 
+          events to aid in debugging the communication problems that will inevitability 
+          be encountered by Neocosm users.</li>
+        <li>Multicast support: The Data Comm system will cooperate with other 
+          software to support a &quot;send to multiple objects&quot; abstraction. 
+          This cooperation includes point to point message delivery, and link 
+          failure notification.</li>
+        <li>Secure Authenticated Links: The Data Comm system will implement authenticated, 
+          confidential links between E &quot;vats&quot; running on the same or 
+          different machines. </li>
+        <li>Network location independence: The Data Comm system will cooperate 
+          with one or more PLSs to allow an identity to move from one network 
+          address to another. </li>
+        <li>Firewall support: The Data Comm system will allow users to operate 
+          through certain kinds of firewall.</li>
+        <li>Kill Dead Connections: Connections will be periodically checked to 
+          ensure they are still working.</li>
+        <li>Build a authenticated connection to the vat at an arbitrary IP&nbsp;address. 
+          The initial user of this feature will be PLS registration.</li>
+      </ul>
+      <h2>Architecture</h2>
+      <p>Conceptual objects</p>
+      <ul>
+        <li><tt>VatIdentity </tt>the serializable class which holds the public/private 
+          keys that define the identity of the vat. It's <tt>getVatTPMgr </tt>method 
+          is how the <tt>VatTPMgr </tt>is created.<font size=-1> (Thanks to Arturo 
+          Bejar for the suggestion of separating the infrequently changing vat 
+          identity code, which must be saved, from the more frequently changing 
+          communications code which can be recreated after every restart of the 
+          application.)</font></li>
+        <li><tt>VatTPMgr </tt>which manages all the connections.</li>
+        <li><tt>VatTPConnection </tt>which implements a single (TCP) connection.</li>
+        <li><tt>ListenThread </tt>which listens for new incoming connections.</li>
+      </ul>
+      <p>Connection establishment and tear down</p>
+      <ul>
+        <p><a name="getConnection"></a>The <tt>VatTPMgr </tt>implements a method: 
+          <tt>public VatTPConnection getConnection(String registrarID, String[] 
+          plsList)</tt> which either returns an existing VatTPConnection, or creates 
+          a new one and starts it building a network connection. <tt>registrarID 
+          </tt>is the hash of the public key of the desired vat, and <tt>plsList 
+          </tt>is an array of PLS locations to try in attempting to locate that 
+          vat. The PLS locations are &lt;IP address:port number&gt; e.g. <tt>&quot;george.communities.com:1670&quot;</tt>.</p>
+        <p>Because of the need to build an authenticated connection to the vat 
+          at an arbitrary IP address, the <tt>VatTPMgr </tt>also implements <tt>Promise 
+          connectToVatAt(String ipPort)</tt>. <tt>ipPort </tt>is &lt;IP address:port 
+          number&gt; as above. If a remote vat is listening at that IP:port address, 
+          then the <tt>Promise </tt>will be forwarded to the <tt>VatTPConnection 
+          </tt>when the remote vat has been identified. If a connection error 
+          occurs before the remote vat is identified, then the Promise will be 
+          &quot;smashed&quot;. Since this connection is a full fledged E-vat to 
+          E-vat connection, the <tt>NewConnectionNoticer </tt>registered with 
+          <tt><a href="#registerNewConnectionNoticer">registerNewConnectionNoticer()</a></tt> 
+          will be called to hook up the normal E connection services.</p>
+        <p>The <tt>VatTPMgr</tt> implements a registration method <tt>public void 
+          <a name="registerNewConnectionNoticer"></a>registerNewConnectionNoticer(NewConnectionNoticer 
+          noticer)</tt>. It will call the object registered for each new VatTPConnection 
+          with public <tt>void noticeNewConnection(VatTPConnection connection)</tt>. 
+          This call is designed to allow higher levels to register their <a href="#Receiving">message 
+          handlers</a> on new inbound connections.</p>
+        <p>To allow all the necessary &quot;plumbing&quot; to be connected when 
+          a connection is established, the VatTPConnection object will not send 
+          or receive any high level data until the <tt>noticeNewConnection </tt>method 
+          of the registered <tt><a href="#registerNewConnectionNoticer">NewConnectionNoticer 
+          </a></tt>has returned. This method should ensure that all the necessary 
+          <a href="#Receiving">message handlers</a> have been registered.</p>
+        <p>Each <tt>VatTPConnection </tt>implements a method: <tt>public void 
+          shutDownConnection()</tt> which closes the connection. After this call 
+          the <tt>VatTPConnection </tt>object is no longer usable and should be 
+          discarded so it can be garbage collected.</p>
+      </ul>
+      <p>Sending Data</p>
+      <ul>
+        <p>Each <tt>VatTPConnection </tt>implements two methods: <tt>public void 
+          sendMsg(byte[] message) throws IOException </tt>and <tt>public void 
+          sendMsg(byte[] message, Runnable notification, Runner placeToRun) throws 
+          IOException</tt>.</p>
+        <p>In both cases, <tt>message </tt>is the message to be sent. It must 
+          not be altered after the call to <tt>sendMsg</tt>. The first byte of 
+          <tt>message </tt>is the <a name="message-type"></a>message type and 
+          must be chosen from the types defined in the definition class <tt>Msg</tt>. 
+          (These two restrictions allow <tt>sendMsg </tt>to avoid copying the 
+          message into a private buffer.) </p>
+        <p>A further restriction will be that there must be a <a href="#Receiving">handler</a> 
+          registered for the message type. This restriction will allow sendMsg 
+          to use the handler data structure to validate sends. If this restriction 
+          is a problem it is easy to remove, but it seems to be a reasonable one 
+          give the symetric nature of the communication protocols.</p>
+        <pre><tt><font size=-1>/* Message type codes. */
+
+    /* Connection admin */
+
+    static final String[] Version     = {&quot;A&quot;, &quot;A&quot;}; // E protocol versions supported
+
+    static final byte PROTOCOL_VERSION  = 1;  // Initial message followed by version string above
+    static final byte STARTUP           = 2;  // Conn. startup protocol msg
+    static final byte PROTOCOL_ACCEPTED = 3;  // Followed by version string of the selected protocol version
+    static final byte SUSPEND           = 4;  // Take down physical connection
+                                              //   leaving logical connection intact
+    static final byte PING              = 5;  // Check to see the connection is still there
+    static final byte PONG              = 6;  // Response to ping
+    public static final byte E_MSG     = 7;   // An E level message with envlelope etc.</font></tt></pre>
+        <p>Parameter <tt>notification </tt>is a <tt>Runnable </tt>that will be 
+          enqueued using <tt>placeToRun.enqueue(notification)</tt> after <tt>message 
+          </tt>has been placed in the network output queue. If some error prevents 
+          <tt>message </tt>from being sent, <tt>notification </tt>may not be queued. 
+          This mechanism allows code outside the Data Comm system to implement 
+          a data streaming protocol with flow control for large data transfers. 
+          A suggested use is to start streaming by calling <tt>sendMsg </tt>two 
+          or three times with the initial blocks of the stream. The <tt>notification 
+          </tt>includes the next block number to send. The <tt>Runnable </tt>fetches 
+          that block, calculates the next block and calls <tt>sendMsg </tt>with 
+          the appropriate parameters to continue the stream.</p>
+        <p>If there is a problem with the connection which prevents the message 
+          from being sent, <tt>IOException </tt>will be thrown. See <a href="#Failure">Failure 
+          Notification</a> for the fine print.</p>
+      </ul>
+      <p><a name="Receiving"></a>Receiving Data</p>
+      <ul>
+        <p>Each <tt>VatTPConnection </tt>implements a method: <tt>public void 
+          registerMsgHandler(int msgType, MsgHandler handler) throws IOException</tt>. 
+          The parameter <tt>msgType </tt>is the message type to be handled (from 
+          <tt>MsgTypes</tt>). An attempt to register more than one handler for 
+          a message type, or to register for an invalid message type will throw 
+          an exception. The parameter <tt>handler </tt>is an object which will 
+          handle the message data. It will be called with: <tt>void processMessage(byte[] 
+          message, VatTPConnection connection)</tt>where <tt>message </tt>is the 
+          only reference to the byte array, and connection is the VatTPConnection 
+          object which received the message. Note that one handler can process 
+          more than one message type by selecting on the first byte of the message. 
+          One handler can process more than one connection by selecting based 
+          on the VatTPConnection object passed.</p>
+      </ul>
+      <p><a name="Failure"></a>Failure Notification</p>
+      <ul>
+        <p>There are at least two queues between the <tt>VatTPConnection </tt>and 
+          the network hardware. One is maintained as part of the <tt>VatTPConnection 
+          </tt>and allows <tt>sendMessage </tt>to be non-blocking. The other is 
+          maintained as part of the JavaVM/Platform TCP implementation. Senders 
+          are only notified of problems known before the message is placed in 
+          the <tt>VatTPConnection </tt>output queue. If a problem occurs when 
+          a message is in either of the output queues, the message is silently 
+          discarded. However, any failure to deliver an outbound message will 
+          cause the connection to be terminated. This termination will notify 
+          the input message handlers.</p>
+        <p>If the sender is notified of a connection problem, the notification 
+          will be by having the call to <tt>sendMessage </tt>throw an <tt>IOException</tt>.</p>
+        <p>Input message handlers will be notified of connection termination by: 
+          <tt>void connectionDead(Throwable /*nullOK*/ error)</tt> being called. 
+          To avoid multiple trace entries, any necessary Trace log entries will 
+          be made by the Data Comm layer.</p>
+      </ul>
+      <h4>Off the shelf alternatives</h4>
+      <p>Using SSL has been rejected. See <a href="SSLvsDataComm.html">SSL vs. 
+        E Comm</a> for the reasons.</p>
+      <h4>Other Design Objectives, Constraints and Assumptions</h4>
+      <p>The bug in the current connection set up protocol which allows a man-in-the-middle 
+        to eliminate encryption by modifing the crypto negoition should be fixed 
+        by verifing a hash of all the startup protocol messages after authentication 
+        has been set up.</p>
+      <h2>Current implementation</h2>
+      <p>This design is a simpilification of the r167 system. Basic code that 
+        will come over mostly unchanged includes the encryption, send and receive 
+        threads, message queuing, Trace log error handling, and startup protocol 
+        negoition.</p>
+      <p>The new design will have two threads per link instead of three (the function 
+        of RawConnection being taken over elsewhere). There will be many fewer 
+        classes and objects per connection. The main bodies of code should fairly 
+        clearly follow the conceptual objects described above. 
+      <hr width="100%">
+      <p></p>
+      <p>The following description written 6/22/98 - Bill</p>
+      <p>The code consists of the following major classes:</p>
+      <ul>
+        <li><tt>VatIdentity </tt>- Owns the public/private keys which define the 
+          identity of the vat.</li>
+        <li><tt>VatTPMgr </tt>- Manages the connections from this vat to other 
+          vats.</li>
+        <li><tt>VatTPConnection </tt>- Manages one logical connection from this 
+          vat to a single other vat.</li>
+        <li><tt>DataPath </tt>- Manages a single (TCP) connection. DataPaths can 
+          come and go with suspend/resume events and crossed connections while 
+          the <tt>VatTPConnection </tt>persists.</li>
+        <li><tt>SendThread </tt>- A separate thread which sends data to the TCP 
+          socket. It is a separate thread to allow sends to be non-blocking.</li>
+        <li><tt>RecvThread </tt>- A spearate thread to listen to the socket for 
+          incoming messages. It is a separate thread to allow vat processing of 
+          other events while waiting for an incoming message.</li>
+        <li><tt>ListenThread </tt>- A separate thread to listen for new TCP connections. 
+          There is one instance of this thread for each identity.</li>
+        <li><tt>StartUpProtocol </tt>- Handles the start up protocol for the connection.</li>
+      </ul>
+      <p><b>Startup, Shutdown, and Steady State</b></p>
+      <p>The construction starts with a <tt>VatIdentity </tt>object which has 
+        either been instantiated or restored from a checkpoint. We further assume 
+        that it has been called for the instance of its <tt>VatTPMgr </tt>so the 
+        connections manager has been built. As part of building the connections 
+        manager, the <tt>ListenThread </tt>has been created and started.</p>
+      <p>The object of startup is to create the objects needed for the steady 
+        state. The object of shutdown is to clean up the steady state. Because 
+        of these objectives, I will describe the steady state first.</p>
+      <p>Steady State</p>
+      <p>There is a <tt>VatTPConnection </tt>object which is connected to the 
+        higher-level things. That <tt>VatTPConnection </tt>object is connected 
+        to a <tt>DataPath </tt>object which is connected to a <tt>SendThread </tt>and 
+        a <tt>RecvThread</tt>. The <tt>VatTPMgr </tt>has the <tt>VatTPConnection 
+        </tt>object registered in its list of running connections.</p>
+      <p>Startup Protocol</p>
+      <p>The startup protocol is handled by <tt>StartUpProtocol</tt>. It identifies 
+        the remote vat and sets up the secure connection. The startup protocol 
+        has four possible outcomes which are signaled by calling appropriate methods 
+        in its associated DataPath object.</p>
+      <ul>
+        <li><tt>abandonAllConnectionAttempts </tt>- Used when this connection 
+          is the one of a pair of crossed connections which will be closed.</li>
+        <li><tt>tryNext </tt>- Used to try the next address in the search path. 
+          This is the return that is used after getting an address from the PLS 
+          or if a location fails to respond or has an error.</li>
+        <li><tt>resumeConnection </tt>- Used to try to resume a connection. The 
+          suspendID presented by the remote end must match the local copy.</li>
+        <li><tt>startupSuccessful </tt>- Used when the startup protocol has successfully 
+          completed and the connection is ready for higher level data.</li>
+      </ul>
+      <p>Outbound Search Strategy</p>
+      <p>The request to create a new outbound connection, <tt><a href="#getConnection">getConnection</a>, 
+        </tt>takes a parameter which is the list of addresses to try in order 
+        to locate the remote vat. These addresses will be tried in the order presented. 
+        They can be either the expected address of the vat, or the address of 
+        a PLS the vat may register with. If the address is a PLS, it can return 
+        a new address to try in response to the <a href="DataComm_startup.html">start 
+        up protocol</a> request for the registrarID. That address will be tried 
+        before the next address in the list passed to <tt>getConnection()</tt>. 
+        No address will be tried more than once. </p>
+      <p>If the address is not a PLS, either there is nothing listening at the 
+        remote address, there is a non-E system listening, there is some other 
+        vat listening, or it is the address of the desired vat. If there is nothing 
+        listening, then the TCP socket build will fail, and the next address will 
+        be tried. If there is a non-E system listening, then either it will perform 
+        an illegal start up protocol operation, or the start up will timeout. 
+        If it is some other vat, it will respond NOT_ME to the start up protocol. 
+        If it is the desired vat, the start up protocol will succeed and the connection 
+        will be made, or the two ends will be unable to agree on a version of 
+        the E comm protocol/encryption technique, and the attempt will fail. In 
+        this last case, the other addresses in the list will be tried.</p>
+      <p><a name="OutboundStartup"></a>Outbound Startup</p>
+      <p>The <tt>VatTPMgr </tt>has been called for a connection to a remote vat. 
+        It has determined that no existing connection exists. It creates a new 
+        <tt>VatTPConnection </tt>object which in turn creates a <tt>DataPath </tt>object 
+        and a <tt>StartUpProtocol </tt>object. The <tt>DataPath </tt>object creates 
+        a <tt>SendThread </tt>which builds a TCP connection to the first address 
+        in the search path and then creates a <tt>RecvThread</tt>. The <tt>StartUpProtocol 
+        </tt>object sends messages to initiate the startup protocol. If the first 
+        address is not the requested vat, the <tt>DataPath</tt>, <tt>StartUpProtocol</tt>, 
+        <tt>SendThread</tt>, and <tt>RecvThread </tt>are closed and the process 
+        continues by building a <tt>DataPath </tt>object for the next address 
+        in the search list.</p>
+      <p>Inbound Startup</p>
+      <p>The <tt>ListenThread </tt>receives the incoming socket and passes it 
+        to the <tt>VatTPMgr</tt>. The <tt>VatTPMgr </tt>creates a <tt>DataPath 
+        </tt>object to perform the startup protocol with this socket. When the 
+        startup protocol has proceeded far enough to identify the remote vat, 
+        the <tt>VatTPMgr </tt>is used to either connect it to an existing <tt>VatTPConnection 
+        </tt>object or to create a new one. If it is connected to an existing 
+        <tt>VatTPConnection </tt>object, there may be a crossed connection to 
+        contend with. If there is a crossed connection, the two <tt>StartUpProtocol 
+        </tt>objects work through the two <tt>DataPath </tt>objects and the single 
+        <tt>VatTPConnection </tt>object to resolve the connection down to only 
+        one <tt>DataPath </tt>object.</p>
+      <p>Shutdown</p>
+      <p>When a request to shutdown the connection is received by the <tt>VatTPConnection</tt>, 
+        it sends a shutdown message to the other end. It will not send any new 
+        messages after it has sent the shutdown message. When the other end receives 
+        the shutdown message, it notifies its registered <tt>MsgHandler </tt>objects 
+        that the connection has shut down and echos the shut down message. It 
+        then closes the socket, destroys the <tt>SendThread</tt>, and <tt>RecvThread</tt>, 
+        and notifies its <tt>VatTPConnection </tt>that it is dead. When the connection 
+        that originated the shutdown receives the shutdown message, it performs 
+        the same cleanup.</p>
+      <p>Suspend </p>
+      <p>Suspend is similar to shutdown except that the <tt>VatTPConnection </tt>remains 
+        in suspended state instead of becoming dead. Any attempt to send a message 
+        on a suspended <tt>VatTPConnection </tt>object will initiate a new connection 
+        attempt as in <a href="#OutboundStartup">Outbound Startup</a>.</p>
+      <p>Resume</p>
+      <p>Resume is very much like startup. Part way thru the startup protocol, 
+        a resume message informs the other end that the operation is a resumption. 
+        The resuming vat presents its suspendID. If the ID matches the one stored 
+        locally, the connection is resumed. If it does not match, or none has 
+        been generated locally, the connection is not resumed. If there is a suspended 
+        connection with that identity, it is shutdown.</p>
+      <p> 
+      <hr width="100%">
+      <p></p>
+      <h4>Is it JavaDoc'ed?</h4>
+      <p><i>In many cases, this section can link to JavaDoc output from actual 
+        Java classes and interfaces. This saves writing documentation twice (the 
+        designers will have to JavaDoc their interfaces anyway). The JavaDoc should 
+        be linked into the design document. Chip's JavaDoc style guidelines (XXX 
+        file missing) explain how to use JavaDoc effectively.</i> </p>
+      <h4>Examples</h4>
+      <p>All of these examples assume that a VatIdentity object, called <tt>vi</tt>, 
+        has been build and a VatTPMgr object has been collected by <tt>VatTPMgr 
+        cm = vi.getVatTPMgr(...)</tt>. Furthermore, a permanent NewConnectionNoticer 
+        object, called <tt>ncn</tt>, has been registered with the VatTPMgr.</p>
+      <ul>
+        <li>Building a connection to connect a proxy to a remote object</li>
+        <ol>
+          <li><tt>VatTPConnection dc = cm.getConnection(...);</tt></li>
+          <li><tt>MsgHandler mh = new RelayMsgHandler(...);</tt></li>
+          <li><tt>dc.registerMsgHandler(Msg.E_MSG, mh);</tt></li>
+          <li><tt>dc.sendMsg(</tt>first proxy protocol message<tt>);</tt></li>
+        </ol>
+      </ul>
+      <ul>
+        <li>Receiving a connection from a remote vat</li>
+        <ol>
+          <li><tt>ncn </tt>is called with <tt>ncn.noticeNewConnection(dc); ncn 
+            </tt>does:</li>
+          <ol>
+            <li><tt>MsgHandler mh = new RelayMsgHandler(...);</tt></li>
+            <li><tt>dc.registerMsgHandler(Msg.E_MSG, mh);</tt></li>
+          </ol>
+          <li><tt>mh </tt>will be called with the first proxy protocol message.<br>
+          </li>
+        </ol>
+        <li>Building a connection to register with a PLS at a specific IP:port 
+          address using E objects.</li>
+        <ol>
+          <li><tt>Promise pr = cm.connectToVatAt(ipport, rn);</tt></li>
+          <li><tt>Object doReg = new PLSRegistration(pr);</tt></li>
+          <li><tt>E.whenKept(pr, doRegistration);</tt></li>
+          <li><tt>E.whenBroken(pr, doRegistration);</tt></li>
+          <li>When the Promise <tt>pr </tt>is resolved, <tt>doReg </tt>is called 
+            with <tt>doReg.run(Object o); doReg </tt>does:</li>
+          <ol>
+            <li><tt>if (myPromise.state == &quot;BROKEN&quot;)</tt> //bitch and 
+              moan, we didn't find the PLS. <tt>return;</tt></li>
+            <li><tt>VatTPConnection dc = (VatTPConnection)o; </tt>// Kept, object 
+              is the VatTPConnection</li>
+            <li><tt>String rid = dc.getRemoteRegistrarID();</tt></li>
+            <li><tt>rn </tt>then creates a sturdy ref for the well known PLS registration 
+              swiss number, <tt>sn, </tt>and calls the <tt>CapTPMgr </tt>to resolve 
+              it: <tt>Proxy rp = proxyManager.resolveReference(rid, null, sn);</tt></li>
+            <li>It can then engage in the registration protocol using the standard 
+              proxy.</li>
+          </ol>
+          <li>When the startup protocol has completed, <tt>ncn </tt>is called 
+            with <tt>ncn.noticeNewConnection(dc); ncn </tt>does (same as above 
+            so the connection will handle E proxy messages.):</li>
+          <ol>
+            <li><tt>MsgHandler mh = new RelayMsgHandler(...);</tt></li>
+            <ol>
+              <li><tt>dc.registerMsgHandler(Msg.E_MSG, mh);</tt><br>
+              </li>
+            </ol>
+          </ol>
+        </ol>
+        <li>Building a connection to register with a PLS at a specific IP:port 
+          address using special messages:</li>
+        <ol>
+          <li><tt>PPromise pr = cm.connectToVatAt(ipport, rn);</tt></li>
+          <li><tt>Object doReg = new PLSRegistration(pr);</tt></li>
+          <li><tt>E.whenKept(pr, doRegistration);</tt></li>
+          <li><tt>E.whenBroken(pr, doRegistration);</tt></li>
+          <li>When the Promise <tt>pr </tt>is resolved, <tt>doReg </tt>is called 
+            with <tt>doReg.run(Object o); doReg </tt>does:</li>
+          <ol>
+            <li><tt>if (myPromise.state == &quot;BROKEN&quot;)</tt> //bitch and 
+              moan, we didn't find the PLS. <tt>return;</tt></li>
+            <li><tt>VatTPConnection dc = (VatTPConnection)o; </tt>// Kept, object 
+              is the VatTPConnection</li>
+            <li><tt>RegistrationMsgHandler rmh = new RegistrationMsgHandler(...);</tt></li>
+            <li><tt>dc.registerMsgHandler(Msg.PLS_PROTOCOL, rmh);</tt></li>
+            <li><tt>dc.sendMsg(</tt>first message in PLS registration protocol<tt>)</tt></li>
+            <li><tt>rmh </tt>will receive the responses to the first message. 
+              <tt>rmh </tt>could be the same object as <tt>doReg, </tt>to keep 
+              all the registration protocol state machine in the same object.</li>
+          </ol>
+          <li>When the startup protocol has completed, <tt>ncn </tt>is called 
+            with <tt>ncn.noticeNewConnection(dc); ncn </tt>does (same as above 
+            so the connection will handle E proxy messages.):</li>
+          <ol>
+            <li><tt>MsgHandler mh = new RelayMsgHandler(...);</tt></li>
+            <li><tt>dc.registerMsgHandler(Msg.E_MSG, mh);</tt></li>
+          </ol>
+        </ol>
+      </ul>
+      <h4>Testing and Debugging</h4>
+      <p>See <a href="DataCommTesting.html">DataComm Testing</a>. </p>
+      <h2>Design Issues</h2>
+      <h4>Resolved Issues</h4>
+      <p><i>History of issues raised and resolved during initial design, or during 
+        design inspections. Can also include alternative designs, with the reasons 
+        why they were rejected</i> </p>
+      <ul>
+        <li>[as of 6/15/98] There is no way to connect an incoming connection 
+          to the higher levels (multi-comm, object-com, proxy-comm). This issue 
+          is resolved by the addition of the <a href="#registerNewConnectionNoticer">registerNewConnectionNoticer 
+          </a>method.</li>
+        <li>[as of 6/15/98] There is a race condition for outgoing connections 
+          where the startup protocol can complete before the higher levels have 
+          registered their listeners. If this occurs, incoming messages may be 
+          dropped (with error spam). This issue is resolved with the introduction 
+          of the enable()&nbsp;method on the VatTPConnection. [7/7/98]Upon reflection, 
+          the enable method is unnecessary. The VatTPMgr is notified that the 
+          connection is RUNNING when the last start up protocol message is processed. 
+          It calls the registered NewConnectionNoticer as a result of that notification. 
+          It can register the MsgHandlers before it returns which is before the 
+          RecvThread can introduce new messages into the DataPath/VatTPConnection 
+          (since the RecvThread is busy while the last start up message finishes 
+          being processed.)</li>
+      </ul>
+      <h4>Open Issues</h4>
+      <ul>
+        <li>In 1.1.3, Java appears to get the IP address of the machine once at 
+          startup. In the case of someone running Microcosm who is dropped by 
+          their ISP, they get a new IP&nbsp;address when they re-dial. We need 
+          to deal with this problem one way or another.</li>
+        <p>Jeff says, &quot;Getting the IP address on windows is no problem. I've 
+          done a bunch a work with winsock. We could just add something to &lt;shudder&gt; 
+          native.dll.&quot;</p>
+        <li>You can't get the IP address of the local machine unless it is connected 
+          (duh). Eric reported this as a problem that had to be worked around 
+          in the r167 comm system. He also reported that the work around wasn't 
+          complete.</li>
+        <li>In r167, you can't perform in-world operations (e.g. build a turf) 
+          without being connected. Randy says we need to fix this. The fix is 
+          probably outside the Data Comm system level.</li>
+        <li>I (wsf) currently believe that the data streaming protocol described 
+          above will be sufficient to solve the art downloading problem. It will 
+          limit the delay in transmitting other E messages to the length of a 
+          small number of art blocks. If that is not sufficient, we can add a 
+          second, low priority, output queue which is served only when the high 
+          priority queue is empty.</li>
+        <li>Sidney suggests having a way to configure the &quot;listen&quot; address 
+          (IP + port number) during PLS registration to handle certain proxying 
+          firewalls.</li>
+        <li>Does LDAP (Lightweight Directory Access Protocol) have any application 
+          to our PLS requirements?</li>
+        <li>[as of 6/15/98] The reconnection of suspend connections is messy. 
+          A connection which is being resumed needs to be connected to the old 
+          VatTPConnection object so that object's clients are unaware of the suspend/resume. 
+          In R167 this was handled with two objects, but it would be nice to avoid 
+          the overhead of the extra method invocations multiple objects require.</li>
+      </ul>
+      <p><b>Thread Handling</b></p>
+      <p>Each communication connection seems to need to juggle three threads. 
+        They are:</p>
+      <ul>
+        <li>The Vat thread</li>
+        <li>The send thread - which allows non-blocking sends</li>
+        <li>The receive thread - which monitors the connection for input</li>
+      </ul>
+      <p>The send and receive threads need to communicate with objects inside 
+        the vat for several reasons. These reasons include: updating comm statistics, 
+        new messages available for processing, error reporting, progress of send 
+        operations (the data streaming), and shutdown progress.</p>
+      <p>The E vat code provides two techniques for threads outside the vat to 
+        synchronize with the vat and communicate with in-vat objects. Both of 
+        these are implemented in org.erights.e.elib.prim.Runner. They are:</p>
+      <p><tt>public Object callNow(Object rec, String verb, Object[] args) throws 
+        Throwable; </tt>Which does a normal E style CRAPI call of rec.verb(arg...) 
+        and</p>
+      <p><tt>public Object now(Thunk todo) throws Throwable; </tt>Which calls 
+        the &quot;Object run()&quot; method in todo which implements Thunk.</p>
+      <p>In the r167 version, the external threads simply grabbed the vat lock 
+        and then used their reference to the in-vat objects to call directly.<br>
+        <br>
+        The E techniques both have performance implications: callNow does: <tt>return 
+        now(new CallThunk(rec, verb, args));</tt> And CallThunk saves the arguments 
+        and does an E.call with them in its run method.</p>
+      <p>Using now(...) directly increases class bloat with a Thunk for each method 
+        called, or has an obscure switch function in one common DataCommThunk 
+        class.</p>
+      <p>In both cases, some extra objects are created and made garbage to acomplish 
+        the call. Is tight control of the vat lock (in Runner) worth the cost 
+        in object creation and extra classes?</p>
+      <p>The version as of 6/16/98 uses a single thunk with the messy switch statement 
+        for communication from the <tt>SendThread </tt>and <tt>RecvThread </tt>to 
+        the <tt>VatTPConnection</tt>. The CRAPI interface is used to notify the 
+        <tt>VatTPMgr </tt>of newly arrived <tt>Sockets</tt>.</p>
+      <P ALIGN="left">&nbsp; <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">distrib</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="../obj-passing.html" title="Back to: Types of Object Passing"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: Types of Object Passing" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><a href="CommSystemOverview.html" title="1st child: Data Pluribus Overview"><img src="../../../images/first.gif" width="32" height="64" alt="1st child: Data Pluribus Overview" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="../captp/index.html" title="On to: CapTP: The Capability Transport Protocol"><img src="../../../images/next.gif" width="64" height="32" alt="On to: CapTP: The Capability Transport Protocol" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

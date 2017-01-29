@@ -1,0 +1,419 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>Java/ELib Coding Conventions</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="index.html">elib</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="Tracing.html" title="Back to: The Tracing Interface"><img src="../images/prev.gif" width="64" height="32" alt="Back to: The Tracing Interface" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><img src="../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B><font size="6">Java/ELib<br>
+              </font> <font size="6">Coding Conventions</font></B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <h1>Communities.com Design Rules and Coding Conventions</h1>
+      <i><b>Version 1.1, 21-April-1997</b> This page is maintained by Chip. </i> 
+      <p> The following is the official set of design rules and coding conventions 
+        which we will henceforth be using here at Communities.com. This is intended 
+        to discipline us into writing better software. We have demonstrated by 
+        the current state of things that we both lack this discipline and require 
+        it. 
+      <p> All of these rules are motivated by practical experience. However, they 
+        are not set in concrete. Expect them to change and expand as we learn. 
+        Your feedback in improving these rules is encouraged, nay, demanded. And 
+        when you find it makes more sense to break one of these rules, break it 
+        - but be conscious that you are doing so and that you have a good reason 
+        you can articulate. 
+      <p> These rules are not intended to harass you or make your life difficult; 
+        quite the opposite. However, <i>I</i> will harass you and make your life 
+        difficult if you don't start following them. 
+      <p> First rule: regardless of whatever other rules you may be following 
+        or not following, you must format neatly and consistently. 
+      <p> Prefer small methods, small classes, shallow inheritance, small packages 
+      <h2>Ordering</h2>
+      Order your classes neatly when you have multiple classes in a file: public 
+      before package scope, then interfaces before classes, then alphabetical 
+      by class name. 
+      <p> Order the things declared inside a class too: instance variables before 
+        constructors before static methods before non-static methods, then public 
+        before package before protected before private, then in alphabetical order 
+        by name. 
+      <h2>Scoping</h2>
+      Always prefer the most restrictive scope that works. If a variable is only 
+      used inside a block, declare it in that block. Take advantage of the fact 
+      that, unlike C, Java lets you declare anywhere, not just at the top of a 
+      block. Declare simple iteration variables in the <tt>for</tt> construct 
+      if they're not used outside it: 
+      <pre><tt>
+    for (int i=0; i&lt;limit; ++i) { ...
+</tt></pre>
+      <p>No public instance variables, ever. Package scope instance variables 
+        only under duress. 
+      <p>No public mutable static variables, ever. Mutable static variables in 
+        general should be avoided. Assume that statics can get reinitialized at 
+        any time (under persistence, they can) - you can use statics for tracing, 
+        caching, and diagnostics, but not for holding critical state. 
+      <p>Import individual classes, not packages. That is, don't have imports 
+        of the form: 
+      <pre><tt>
+import foo.bar.*;
+</tt></pre>
+      <h2>Naming</h2>
+      Instance variables should have names of the form <tt>myFoo</tt>. In 
+      addition to improving legibility, this convention has two other beneficial 
+      consequences: First, it makes dealing with the no public instance variables 
+      rule less burdensome, because you can (now by convention) name accessor 
+      functions after the things they access, i.e., instead of: 
+      <pre><tt>
+    int getFoo() {
+        return foo;
+    }
+</tt></pre>
+      <p>you can say: 
+      <pre><tt>
+    int foo() {
+        return myFoo;
+    }
+</tt></pre>
+      <p>Second, constructors no longer have to dance around naming their parameters, 
+        i.e., you can have a constructor like this: 
+      <pre><tt>
+    SomeClass(int foo) {
+        myFoo = foo;
+    }
+</tt></pre>
+      <p>instead of the somewhat awkward: 
+      <pre><tt>
+    SomeClass(int foo) {
+        this.foo = foo;
+    }
+</tt></pre>
+      <p>or the truly evil (which I have seen in some of our code!): 
+      <pre><tt>
+    SomeClass(int Foo) {
+        foo = Foo;
+    }
+</tt></pre>
+      <p>Methods which implement boolean predicates should have names of the form 
+        <tt>isFoo</tt>. That said, we have too many of these and often they 
+        should be avoided (see below). 
+      <h2>Symbol capitalization</h2>
+      <p>midCaps: first letter of new English word always capitalized, even if 
+        one letter. Underbars and dollar signs only in generated names. 
+      <p>initial small: methods, non-static variables, package names 
+      <p>Initial Cap: types (classes, interfaces), static variables. 
+      <p>ALL_CAPS: manifest constants (<tt>static final int FOO = 47;</tt>). 
+        Underbars as word separators but dollar signs only in generated names. 
+      <h2>Indentation and brace formatting</h2>
+      Use 4-space indents. Since Pluribus nests structures with wild abandon, 
+      in Pluribus sources 2-space indents are the norm. 
+      <p> However, the TAB character per se is BANNED. 
+      <p>We will use the <i>one true brace</i>; style: 
+      <pre><tt>
+    if (cond) {
+        stuff;
+    }
+
+    if (cond) {
+        stuff;
+    } else if (cond2) {
+        morestuff;
+    } else {
+        evenmorestuff;
+    }
+
+    while (cond) {
+        stuff;
+    }
+
+    do {
+        stuff;
+    } while (cond);
+
+    switch (num) {
+        case FIRST:
+            stuff1;
+            break;
+        case SECOND:
+            stuff2;
+            break;
+        default:
+            stuffd;
+            break;
+    }
+
+    try {
+        stuff;
+    } catch (AnExceptionClass e) {
+        catchstuff;
+    }
+
+    public foo aMethod(AClass param1, AnotherClass param2) throws Foon {
+        stuff;
+    }
+</tt></pre>
+      <p>Use braces even if the consequent or loop body is one line. 
+      <p>Never put conditions and their consequents on the same line: 
+      <pre><tt>
+    if (....) { y = f(x); }   // BAD
+</tt></pre>
+      <h2>Line breakage</h2>
+      <p>Format lines to fit within 80-characters. First choice for breaking up 
+        long lines is to indent so that parameters line up: 
+      <pre><tt>
+    somevar = methodCall(expr1,
+                         innerCall(expr2,
+                                   expr3),
+                         expr4);
+</tt></pre>
+      <p>If this does not work (because you are already too deeply indented or 
+        because expressions themselves are too complicated), break at a logical 
+        point and then indent one level deeper than the start of the expression: 
+      <pre><tt>
+    somevar = reallyReallyReallyReallyLongMethodCall(longparameterexpr,
+        extremelylonglonglongstuff, evenmorestuff, evenmoreevenlongerstuff,
+        yetmorestuff);
+</tt></pre>
+      <p>The exception is when the thing being continued is itself a conditional 
+        or a method declaration which itself would be followed by indented code. 
+        In such cases the continuation should be indented two levels deeper. E.g.: 
+      <pre><tt>
+    if (aReallyLongPrettyComplicatedConditionalExpression &amp;&amp; anotherOne &amp;&amp;
+            yetAnotherOne &amp;&amp; stillMore) {
+        consequences;
+    }
+</tt></pre>
+      <h2>Exceptions</h2>
+      <p>Use exceptions. Don't write methods that indicate error conditions by 
+        returning special values that have to be checked; have them throw exceptions 
+        instead. 
+      <p>Then catch these exceptions. 
+      <p>Catch exceptions and handle them sensibly. 
+      <p>Don't handle exceptions by simply discarding them. 
+      <p>Don't handle exceptions by printing error messages and stack traces, 
+        unless you KNOW you are in some reasonable context for doing so (e.g., 
+        the top of a command-line interpreter loop). If you do handle exceptions 
+        by printing error messages and stack traces, output them to System.err, 
+        not System.out. 
+      <p>Don't catch exceptions indiscriminately (e.g., don't catch <tt>Exception</tt> 
+        unless you have a REALLY good reason). 
+      <p>Note: a more comprehensive set of guidelines for exception usage will 
+        be forthcoming, giving a taxonomy of exception types and principles for 
+        their sensible enjoyment. 
+      <h2>Irksome habits some people have</h2>
+      <p>Throw and return statements should look like statements, not method calls: 
+      <pre><tt>
+    return aResult;
+    throw new FoobarException(&quot;hey!&quot;);
+</tt></pre>
+      <p> not 
+      <p> 
+      <pre><tt>
+    return(aResult);
+    throw(new FoobarException(&quot;hey!&quot;));
+</tt></pre>
+      <p>Don't put spaces between a method name and the parameter list in either 
+        calls or declarations: 
+      <pre><tt>
+    doFoobaration(47, mySnozzgrom);
+</tt></pre>
+      <p> not 
+      <p> 
+      <pre><tt>
+    doFoobaration (47, mySnozzgrom);
+</tt></pre>
+      <p>Don't put spaces between a statement and its terminating semicolon. 
+      <p>If you have a boolean flag that you are testing for falsehood, the test 
+        is: 
+      <pre><tt>
+    if (!flag) { ...
+</tt></pre>
+      <p> not 
+      <p> 
+      <pre><tt>
+    if (flag == false) { ...
+</tt></pre>
+      <p>Certainly you should use parentheses for disambiguating complex expressions, 
+        but don't get all silly about it. Java/C/C++ operator precedence rules 
+        may be a bit obtuse at times, but they're not crazy. Use parentheses on 
+        the weird cases (e.g., the <tt>?:</tt> operator), but multiplication 
+        does take precedence over addition, and comparison does take precedence 
+        over and and or, and that's mainly what's important. My eyes hurt from 
+        trying to parse conditionals which are illegible because every single 
+        subexpression has been parenthesized: 
+      <p>Use 
+      <pre><tt>
+    if (0 &lt; i &amp;&amp; i+1 &lt;= k+1 &amp;&amp; j == k-1) ...
+</tt></pre>
+      <p> or maybe 
+      <p> 
+      <pre><tt>
+if ((0 &lt; i) &amp;&amp; (i+1 &lt;= k+1) &amp;&amp; (j == k-1)) ...
+</tt></pre>
+      <p> but not 
+      <p> 
+      <pre><tt>
+if (((0 &lt; i) &amp;&amp; ((i + 1) &lt;= (k + 1))) &amp;&amp; (j == (k - 1))) ...
+</tt></pre>
+      <p>Avoid assignments within conditionals. They're too easy to misread. 
+      <h2>Documentation</h2>
+      <p>Comment your code! And make the comments useful and accurate - which 
+        means keeping them up to date. Don't forget that comments are not code; 
+        the program doesn't execute them. If what the code does and what the comments 
+        say it does are different, the result is bad confusion (by the way, bugs 
+        in comments which you find should be reported to ec_bugs just like any 
+        other). 
+      <p>Don't write uncommented code with the intention of commenting it later. 
+        Later usually doesn't come. Also, I've found that the mental discipline 
+        of writing clear comments as you code actually increases significantly 
+        the odds of producing bug free code on the first try. 
+      <p>Comment for javadoc, even on private things. (Javadoc comments on private 
+        things are currently ignored by javadoc but our soon-to-be-available edoc 
+        tool will use this info, and human readers certainly can use this info 
+        too). 
+      <p>FYI, documentation on javadoc itself can be found at 
+      <p><a href="http://www.javasoft.com/products/jdk/1.1/docs/tooldocs/solaris/javadoc.html">http://www.javasoft.com/products/jdk/1.1/docs/tooldocs/solaris/javadoc.html</a> 
+      <p>Use HTML tags in your javadoc only very lightly, if at all, but do use 
+        <tt>@param</tt>, <tt>@returns</tt>, etc. 
+      <p>And make your makefiles have targets for running javadoc on your code. 
+      <p>Use javadoc commenting conventions in C code too. It's a reasonable notation 
+        for describing functions. And once you've developed the javadoc habit 
+        from Java, using it in C too is quite a natural thing to do. When we have 
+        a chance we'll produce a tool to process javadoc comments in C (and also 
+        in E code that javadoc currently chokes on). 
+      <p>Implementation comments are the non-javadoc ones. Use implementation 
+        comments liberally. Always be skeptical as to whether something is self 
+        evidently obvious. 
+      <p>Use longer class, method, procedure and variable names in preference 
+        to short names that require a comment to be comprehensible. In any case, 
+        instance variable declarations should be accompanied by brief comments 
+        stating what the variables are for. 
+      <p>By convention, the easily-grepped-for string &quot;<tt>XXX</tt>&quot; 
+        in a comment flags something demanding future attention. Use this for 
+        things that should be taken out before ship (kind of like those big red 
+        &quot;REMOVE BEFORE FLIGHT&quot; tags on airplane parts), known hacks 
+        that need to get fixed, questionable security situations that need to 
+        be revisited, etc. 
+      <p>Chip has also written up more extensive guidelines (XXX javadoc guidelines 
+        not found) for using Javadoc at Communities.com. 
+      <h2>Security and robustness </h2>
+      <p>No public instance variables. 
+      <p>No public mutable static variables. 
+      <p>No static methods which confer authority (i.e., which let you effect 
+        the state of the system or the outside world or which provide access to 
+        objects that let you do this). 
+      <p>Don't directly refer to Java library classes (such as <tt>java.io.FileOutputStream</tt>) 
+        which statically confer authority, unless what you are doing is writing 
+        a wrapper to protect other people from having to break this rule. Use 
+        the <tt>EEnvironment</tt> to obtain access to privileged powers rather 
+        than using class names. 
+      <p>Avoid separation of designation from authority, even when you don't think 
+        the authority concerns anything important. For example, don't create methods 
+        where you indicate things via, say, string parameters that get looked 
+        up in hashtables, if you can indicate things by passing objects that directly 
+        embody the operations desired. 
+      <p>More generally, try to program in an object-oriented style. This should 
+        be one of those things that goes without saying, but experience shows 
+        that it's not. 
+      <p>In particular, don't write methods that take a string or a number that 
+        is then used in a switch statement or cascaded-if to decide what to do 
+        - just pass an object that KNOWS what to do; it's cleaner and more extensible. 
+      <p>It's also generally bad to write predicate methods of the form <tt>isFoo</tt> 
+        to determine if an object is a foo or not - usually being a foo means 
+        that it supports some kind of foo operations, in which case this should 
+        be reflected in the object's type and you should be able to test it with 
+        the <tt>instanceof</tt> operator. 
+      <p>Similarly, you generally shouldn't create objects with methods of the 
+        form: 
+      <pre><tt>
+    if (iAmAFoo) {
+        actOneWay;
+    } else {
+        actADifferentWay;
+    }
+</tt></pre>
+      <p>This is what classes are for. If you really need to do a test of this 
+        sort, the form is: 
+      <pre><tt>
+    if (someobj instanceof SomeKindOfFoo) ...</tt></pre>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="index.html">elib</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="Tracing.html" title="Back to: The Tracing Interface"><img src="../images/prev.gif" width="64" height="32" alt="Back to: The Tracing Interface" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><img src="../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

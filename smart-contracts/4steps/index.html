@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>4 Steps to Smart Contracting</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../index.html">smart-contracts</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="../exchange.html" title="Back to: Trading Electronic Rights"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Trading Electronic Rights" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><img src="../../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B>Four
+              Steps to<br>
+              Smart Contracting</B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <P ALIGN="left">*** some abstract thing.
+      <h1 ALIGN="left">Overview</h1>
+      <P ALIGN="left">* <i><b><font color="#009000">E</font></b></i>'s data-comm layer that provides SSL-like secure data
+        pipes between vats, but with a handshake based on the logic of the capability
+        introduction rather than CAs. Also provides for vat mobility via the Vat
+        Location Service (sort of a secure decentralized DNS). Can be layered
+        on top of an IP-mix network like Freedom, in which case the two orthogonal
+        forms of pseudonymity complement each other well.
+      <P ALIGN="left">* <i><b><font color="#009000">E</font></b></i>'s CapTP layer
+        that provides cryptographic capabilities, given the VatTP layer. This
+        is where <i><b><font color="#009000">E</font></b></i>'s fundamental engineering
+        premise is explained: "capability == object reference". For this paper,
+        I would not explain Promise Pipelining, but I would explain live vs Sturdy
+        references, and a bit about distributed fault recovery.
+      <P ALIGN="left">* ERTP: How capabilities are used to build the kinds of
+        exchangeable rights that rich electronic markets should/will be made of.
+      <P ALIGN="left">* The Game Design Game: Rather than have separate mutually
+        trusted third parties for escrow exchange, for auctioning, for bonding,
+        for notary timestamping, etc.., rather we can better leverage the difficulty
+        of finding mutually trusted third parties by simply trusting them to execute
+        code provided jointly by the contracting parties. Contract negotiation
+        becomes collaborative design of rules for a game that both parties would
+        be willing to play, the embodiment of these rules in the code for a board
+        manager for this game, and the election of a trusted third party GameMaster
+        to run the game. Contract commitment becomes turning the game over to
+        the GameMaster, which verifies for the contracting sides that they have
+        agreed on the same game and on their respective roles. Contract execution
+        becomes the interaction of the two parties by making moves in the game.
+        Once they are committed, their interaction through the game is governed
+        solely by the logic of the game they mutually agreed to play. This requires
+      <P ALIGN="left">1) secure execution of untrusted code, since the GameMaster
+        will generally not trust the contracting parties.
+      <P ALIGN="left">2) capability & erights confinement, since the game must
+        be able to escrow erights obtained from the players, only to be released
+        according to further moves that may be taken. Ie, erights placed on the
+        board may only be picked back up according to the rules of the game.
+      <P ALIGN="left">3) information confinement, since the game must be privy
+        to information not revealed to the players.
+      <P ALIGN="left">4) Non-repudiatable behavior: my (proud proud) new invention.
+        (patent pending -- sorry. But I'm not expecting to use the patent aggressively.)
+        Non repudiatable behavior leverages <i><b><font color="#009000">E</font></b></i>'s "loggable non-determinism" so
+        that, under dispute, an honest GameMaster can show that the game behavior
+        that was reported corresponds to a correct execution of the agreed game
+        code.
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../index.html"><img src="../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../index.html">smart-contracts</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="../exchange.html" title="Back to: Trading Electronic Rights"><img src="../../images/prev.gif" width="64" height="32" alt="Back to: Trading Electronic Rights" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><img src="../../images/next-gray.gif" width="64" height="32" alt="No Next Sibling"><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

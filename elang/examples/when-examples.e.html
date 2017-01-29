@@ -1,0 +1,223 @@
+<HTML>
+<HEAD>
+<TITLE>when-examples.e</TITLE>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="KEYWORDS" CONTENT="IntelliJ_IDEA_Html">
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#C0C0C0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+C:\Documents and Settings\MILLERM1\Desktop\when-examples.e</FONT>
+</center></TD></TR></TABLE>
+<PRE>
+
+<FONT style="font-family:monospaced;" COLOR="#404040"><I># .............................................................................</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">pragma</FONT><FONT style="font-family:monospaced;" COLOR="#000000">.enable(</FONT><FONT style="font-family:monospaced;" COLOR="#008000">&quot;easy-return&quot;</FONT><FONT style="font-family:monospaced;" COLOR="#000000">) 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">pragma</FONT><FONT style="font-family:monospaced;" COLOR="#000000">.disable(</FONT><FONT style="font-family:monospaced;" COLOR="#008000">&quot;explicit-result-guard&quot;</FONT><FONT style="font-family:monospaced;" COLOR="#000000">) 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">pragma</FONT><FONT style="font-family:monospaced;" COLOR="#000000">.enable(</FONT><FONT style="font-family:monospaced;" COLOR="#008000">&quot;easy-when&quot;</FONT><FONT style="font-family:monospaced;" COLOR="#000000">) 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">pragma</FONT><FONT style="font-family:monospaced;" COLOR="#000000">.enable(</FONT><FONT style="font-family:monospaced;" COLOR="#008000">&quot;when-sequence&quot;</FONT><FONT style="font-family:monospaced;" COLOR="#000000">) 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># account, service, option, and combio are stubs barely large enough</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># to enable the example to run</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> account { 
+    </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">to</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> getCurrency() {} 
+    </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">to</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> makeOffer(amount :</FONT><FONT style="font-family:monospaced;" COLOR="#00cc00">int</FONT><FONT style="font-family:monospaced;" COLOR="#000000">) {} 
+} 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> service { 
+    </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">to</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> getCurrency() {} 
+    </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">to</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> getPrice() {</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">return</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> </FONT><FONT style="font-family:monospaced;" COLOR="#0000ff">3</FONT><FONT style="font-family:monospaced;" COLOR="#000000">} 
+    </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">to</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> perform(payment) {} 
+} 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> option { 
+    </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">to</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> getPrice() {</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">return</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> </FONT><FONT style="font-family:monospaced;" COLOR="#0000ff">4</FONT><FONT style="font-family:monospaced;" COLOR="#000000">} 
+    </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">to</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> exercise(hold) {} 
+} 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> combio { 
+    </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">to</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> makeOption(fromCurrency, toCurrency, toAmount :</FONT><FONT style="font-family:monospaced;" COLOR="#00cc00">int</FONT><FONT style="font-family:monospaced;" COLOR="#000000">) {} 
+} 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I>################## MarcS' sequential version ####################</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I>#immediate call version</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># few intermediate variables are necessary</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">if</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> (service.getCurrency() == account.getCurrency()) { 
+    service.perform(account.makeOffer(service.getPrice())) 
+} </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">else</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> { 
+    </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> option :=combio.makeOption(account.getCurrency(), 
+                                   service.getCurrency(), 
+                                   service.getPrice()) 
+    </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> payment := option.exercise(account.makeOffer(option.getPrice())) 
+    service.perform(payment) 
+} 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I>############ MarcS' slavish when-chained version ####################</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># naive, thoughtless, brutal, slavish when-chained</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># created by cranking the syntax mechanically from immediate call</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># to when-chain</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># The general clumsiness of having to make more intermediate result vars</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># makes the getting of the service price &quot;when needed&quot; truly</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># painfully clumsy. We learn that you want to get it early, before you fully</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># understand how much you will need it later.</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># Currently, you need to put &quot;\&quot; at the end of the when(blah) line</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># if you want to put the &quot;and then&quot; symbol &quot;-&gt;&quot; on the</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># next line. Can this be fixed?</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">when</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> (</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> myCurrency := account &lt;- getCurrency()) 
+-&gt; (</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> servCurrency := service &lt;- getCurrency()) 
+-&gt; { 
+    </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">if</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> (servCurrency == myCurrency) { 
+        </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">when</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> (</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> price := service &lt;- getPrice()) -&gt; { 
+            service &lt;- perform(account &lt;- makeOffer(price)) 
+        } 
+    } </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">else</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> { 
+        </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">when</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> (</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> servPrice := service &lt;- getPrice()) 
+        -&gt; (</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> option := combio &lt;- makeOption(myCurrency, 
+                                               servCurrency, 
+                                               servPrice)) 
+        -&gt; (</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> optionPrice := option &lt;- getPrice()) 
+        -&gt; (</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> payment := 
+              option &lt;- exercise(account &lt;- makeOffer(optionPrice))) 
+        -&gt; {service &lt;- perform(payment)} 
+    } 
+} 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I>################## MarcS' when-based version ####################</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I>#somewhat thoughtful, evolved event sequenced</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># the big change is, we get the servprice at the beginning in</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># parallel with the currency brands, solving the problem observed</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># in the comments in the slavish when-chain version.</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># Fascinating result: the event sequencing has disappeared, i.e.,</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># it is now all normal &quot;easy-when&quot; clauses</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># the nested when has not been wiped out by event sequencing because</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># it is inside an else clause</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">when</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> (</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> myCurrency := account &lt;- getCurrency(), 
+      </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> servCurrency := service &lt;- getCurrency(), 
+      </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> servPrice := service &lt;- getPrice()) 
+-&gt; { 
+    </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">if</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> (servCurrency == myCurrency) { 
+        service &lt;- perform(account &lt;- makeOffer(servPrice)) 
+    } </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">else</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> { 
+        </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> option := combio &lt;- makeOption(myCurrency, 
+                                           servCurrency, 
+                                           servPrice) 
+        </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">when</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> (</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> optionPrice := option &lt;- getPrice()) -&gt; { 
+            </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> payment := 
+              option &lt;- exercise(account &lt;- makeOffer(optionPrice)) 
+            service &lt;- perform(payment) 
+        } 
+    } 
+} </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">catch</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> prob { 
+    println(</FONT><FONT style="font-family:monospaced;" COLOR="#008000">&quot;service failed: &quot;</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> + prob) 
+} 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># Normal easy-when: no additional example is needed, the above is</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># already a normal easy-when!</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I>################## MarcS' __when-based version ####################</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># Note: __when version not ever interpreted, probably has syntax errors</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># version using __when. The thunk clause is just big enough</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># to make it clumsier. I dislike the indentation I have used</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># for this more than the indentation I have used in the others,</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># perhaps someone else can do better.</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># the intermixing of braces and parentheses feels more disturbing</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># for me when I try to put on my non-lambda beginner hat (well,</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># actually, it disturbs me even without the beginner hat :-).</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># I have used markm's intermediate variable with a when.broken</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># for the error handler. Seems ok. Perhaps 3-arg allFulfilled is not required.</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> prob := __when.allFulfilled([</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> myCurrency := account &lt;- getCurrency(), 
+                                 </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> servCurrency := service &lt;- getCurrency(), 
+                                 </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> servPrice := service &lt;- getPrice()], 
+                                </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">thunk</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> { 
+    </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">if</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> (servCurrency == myCurrency) { 
+        service &lt;- perform(account &lt;- makeOffer(price)) 
+    } </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">else</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> { 
+        </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> option := combio &lt;- makeOption(myCurrency, 
+                                           servCurrency, 
+                                           servPrice) 
+        __when(</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> optionPrice := option &lt;- getPrice(), 
+               </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">thunk</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> { 
+            </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> payment := 
+              option &lt;- exercise(account &lt;- makeOffer(optionPrice)) 
+            service &lt;- perform(payment) 
+        }) 
+    } 
+}) 
+__when.broken(prob, </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">thunk</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> {println(</FONT><FONT style="font-family:monospaced;" COLOR="#008000">&quot;service failed: &quot;</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> + prob)}) 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I>################## Dean's sequential version ####################</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I>## the &quot;simple&quot; version used patterns that in other circumstances lead to</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I>## TOCTOU vulnerabilities, so I've introduced appropriate temporaries here.</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I>## This also avoids fetching the values twice, which may be surprisingly</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I>## expensive. The &quot;simple&quot; example also had the service expression twice.</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I>## Since that's the heart of the operation, that is especially bad code to</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I>## duplicate.  For example, you'd hate to fix a bug in the service</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I>## invocation in just one branch of the if.</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># cleaner immediate call version</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> myCurrency := account.getCurrency() 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> servCurrency := service.getCurrency() 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> price := service.getPrice() 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> payment := </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">if</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> (servCurrency == myCurrency) { 
+    account.makeOffer(price) 
+} </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">else</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> { 
+    </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> option := combio.makeOption(myCurrency, servCurrency, price) 
+    option.exercise(account.makeOffer(option.getPrice())) 
+} 
+service.perform(payment) 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I>################## Dean's when-based version ####################</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># transformation to when-based approach</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> myCurrency := account &lt;- getCurrency() 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> servCurrency := service &lt;- getCurrency() 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> price := service &lt;- getPrice() 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> payment := </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">when</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> (myCurrency, servCurrency) -&gt; { 
+    </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">if</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> (servCurrency == myCurrency) { 
+        account &lt;- makeOffer(price) 
+    } </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">else</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> { 
+        </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> option := combio &lt;- makeOption(myCurrency, servCurrency, price) 
+        option &lt;- exercise(account &lt;- makeOffer(option &lt;- getPrice())) 
+    } 
+} </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">catch</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> prob { 
+    println(</FONT><FONT style="font-family:monospaced;" COLOR="#008000">&quot;service failed: &quot;</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> + prob) 
+} 
+service &lt;- perform(payment) 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I>########### MarkM's translation to a __when-based version #########</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#404040"><I># transformation to when-based approach</I></FONT><FONT style="font-family:monospaced;" COLOR="#000000"> 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> myCurrency := account &lt;- getCurrency() 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> servCurrency := service &lt;- getCurrency() 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> price := service &lt;- getPrice() 
+ 
+</FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> payment := __when.allFulfilled( 
+    [myCurrency, servCurrency], 
+    </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">thunk</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> { 
+        </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">if</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> (servCurrency == myCurrency) { 
+            account &lt;- makeOffer(price) 
+        } </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">else</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> { 
+            </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> option := 
+              combio &lt;- makeOption(myCurrency, servCurrency, price) 
+            option &lt;- exercise(account &lt;- makeOffer(option &lt;- getPrice())) 
+        } 
+    }, 
+    </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">def</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> </FONT><FONT style="font-family:monospaced;" COLOR="#cc00cc">_</FONT><FONT style="font-family:monospaced;" COLOR="#000000">(prob) { 
+        println(</FONT><FONT style="font-family:monospaced;" COLOR="#008000">&quot;service failed: &quot;</FONT><FONT style="font-family:monospaced;" COLOR="#000000"> + prob) 
+    }) 
+service &lt;- perform(payment) 
+</FONT></PRE>
+</BODY>
+</HTML>

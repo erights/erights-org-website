@@ -1,0 +1,300 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>provideFor()</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">distrib</a>&nbsp;/&nbsp;<a href="index.html">captp</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="reactToLostClient.html" title="Back to: reactToLostClient()"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: reactToLostClient()" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="acceptFrom.html" title="On to: acceptFrom()"><img src="../../../images/next.gif" width="64" height="32" alt="On to: acceptFrom()" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><B><font size="6">CapTP
+              Ops:</font><font size="5"><br>
+              <font size="7">provideFor()</font></font></B></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" --> 
+      <table cellpadding="12">
+        <tr> 
+          <td> <pre>NonceLocator &lt;-
+<a href="../../../javadoc/net/captp/jcomm/NonceLocator.html#provideFor(java.lang.Object,java.lang.String,java.math.BigInteger)">provideFor</a>(gift    :any,
+           recipID :VatID,
+       <i>    nonce</i>   :Nonce) :Vine</pre></td>
+          <td> <p>VatA (the donor) deposits a reference to <tt>gift</tt> at <tt>nonce</tt> 
+              in VatC's (the host's) from-VatA-for-VatB table, and returns a Vine 
+              for the gift-entry.</p></td>
+        </tr>
+        <tr> 
+          <td> <pre>NonceLocator &lt;-
+<a href="../../../javadoc/net/captp/jcomm/NonceLocator.html#provideFor(java.lang.Object,java.lang.String,java.math.BigInteger,java.math.BigInteger)">provideFor</a>(gift      :any,
+           recipID   :VatID,
+       <i>    nonce</i>     :Nonce,
+           swissHash :SwissHash) :Vine</pre></td>
+          <td> <p>VatA (the donor) deposits a reference to <tt>gift</tt> at <tt>[nonce, 
+              swissHash] </tt> in VatC's (the host's) from-VatA-for-VatB table, 
+              and returns a Vine for the gift-entry.</p>
+            <p><font color="#ff0000">*** Doesn't work until the WormholeOp is 
+              implemented. Until then, use the above provideFor without the swissHash.</font></p></td>
+        </tr>
+      </table>
+      <p><tt>recipPos</tt> identifies Carol (an export or answer on VatC's side 
+        of the VatA-VatC connection).</p>
+      <p><tt>vatID</tt> identifies VatB.</p>
+      <P ALIGN="left">VatB is the recipient. 
+      <P ALIGN="left">This page can be read in sequence as an illustrated narrative, 
+        or the pictures can be flipped through as a crude animation. <a href="#elems1">Aligns 
+        the first frame</a> Click on each picture to advance to the next frame. 
+      <table width="100%" cellspacing="6" cellpadding="12">
+        <tr> 
+          <td><a name="elems1" href="#elems2"><img src="3vat/images/elems1.png" width="653" height="386" border="1" align="right"></a> 
+            Say Alice says: 
+            <blockquote> 
+              <pre align="left">carol &lt;- w()
+bob &lt;- x(carol)
+carol &lt;- y()</pre>
+            </blockquote>
+            <p>and Bob responds according to his <tt>x</tt> method:</p>
+            <blockquote> 
+              <pre>to x(carol) {
+    carol &lt;- z()
+}</pre>
+            </blockquote>
+            <P ALIGN="left"> <a href="../../concurrency/partial-order.html">E-Order</a> 
+              requires that Carol receive <tt>w()</tt> before <tt>y()</tt> or 
+              <tt>z()</tt>, and that <tt>y()</tt> or <tt>z()</tt> may arrive in 
+              either order. When Alice, Bob, and Carol are on three different 
+              vats, the protocol must enforce E-Order on VatB even if it does 
+              not obey the protocol. In other words, the information provided 
+              to VatB by the encoding of the <tt>x</tt> message must only enable 
+              VatB to cause messages to be delivered to Carol after w() has already 
+              been delivered to Carol. 
+            <p>The protocol shown here is an adaptation of the proposed <a href="../../../history/client-utility.html">Client 
+              Utility</a> introduction protocol. However, the Client Utility was 
+              not designed for <a href="../pipeline.html">pipelining</a>, and 
+              so relied on round trips. Here, we show how CapTP adapts their idea 
+              for use with pipelining. </p>
+            <P ALIGN="left">Say <tt>w()</tt> is already in flight towards VatC. 
+              How does the introduction protocol serialize the <tt>x</tt> message 
+              onto the network? 
+            <P ALIGN="left">In order to illustrate a point, let's say the VatA/VatC 
+              link is slow and the other two links are fast. </td>
+        </tr>
+        <tr> 
+          <td><a name="elems2" href="#elems3"><img src="3vat/images/elems2.png" width="653" height="386" border="1" align="right"></a> 
+            The Locator shown in VatC is actually a NonceLocator specific to VatC's 
+            side of the VatA/VatC connection. Between every pair of vats, there 
+            is at most one inter-vat CapTP connection. All live references between 
+            a pair of vats is multiplexed over this connection. 
+            <P ALIGN="left">The three-vat CapTP protocol is layered on the two-vat 
+              protocol. Each side of each CapTP connection exports a NonceLocator 
+              object at position 0 in its incoming table, enabling the remote 
+              vat to send it messages using the two-vat CapTP protocol, in order 
+              to implement the three-vat CapTP protocol. 
+            <P ALIGN="left">Here, we see that VatA, in order to serialize the 
+              <tt>x</tt> message onto the network, generates a nonce -- a randomly 
+              chosen use-once unique number, which it sends to both VatB and VatC. 
+              It is sent to VatB in a <a href="Promise3Desc.html"><tt>Promise3Desc</tt></a> 
+              or a <a href="Far3Desc.html"><tt>Far3Desc</tt></a> as the representation 
+              of the message argument, saying to VatB in effect &quot;<i>Get the 
+              argument from VatC by asking it for the object associated with this 
+              nonce.</i>&quot; It is also sent as an argument in a <tt>provideFor</tt> 
+              message to VatC's NonceLocator for the VatA/VatC connection, saying 
+              to VatC in effect &quot;<i>Provide VatB access to Carol when he 
+              asks for the object associated with this nonce.</i>&quot; 
+            <blockquote> 
+              <pre align="left"><span class="keyword">def</span> <span class="defvar">vine</span> := locator &lt;- provideFor(carol,
+                                  vatBVatID,
+                                  nonce)</pre>
+            </blockquote></td>
+        </tr>
+        <tr> 
+          <td><a name="elems3" href="#elems4"><img src="3vat/images/elems3.png" width="653" height="386" border="1" align="right"></a> 
+            The E-Order safety of this protocol depends on the two-vat protocol 
+            to provide E-Order, so that the reference-to-Carol carried by the 
+            provideFor message will itself be a reference to post-x Carol. The 
+            two-vat CapTP protocol implements this simply by handling messages 
+            on a connection in FIFO order, and queing them in their vat's local 
+            queue, which is also serviced in FIFO order. 
+            <P ALIGN="left"> VatB unserializes the <a href="Promise3Desc.html"><tt>Promise3Desc</tt></a> 
+              or <a href="Far3Desc.html"><tt>Far3Desc</tt></a> in the <tt>x</tt> 
+              message by <a href="../vattp/index.html">initiating an attempt to 
+              connect</a> to VatC, and setting up on its side of the provisional 
+              VatB/VatC connection a remote reference, to VatC's NonceLocator 
+              for VatB. Using this remote reference, it sends an <a href="acceptFrom.html"><tt>acceptFrom</tt></a> 
+              message to this NonceLocator asking it for the object that VatA 
+              has made available to it at this nonce. 
+            <blockquote> 
+              <pre align="left"><span class="keyword">def</span> <span class="defvar">c2</span> := locator &lt;- acceptFrom(vatASearchPath,
+                                vatAVatID,
+                                carolNonce,
+                                vine)</pre>
+            </blockquote></td>
+        </tr>
+        <tr> 
+          <td><a name="elems4" href="#elems5"><img src="3vat/images/elems4.png" width="653" height="386" border="1" align="right"></a> 
+            The Locator in our illustrations represents both VatC's NonceLocator 
+            for VatA and VatC's NonceLocator for VatB, which are really two separate 
+            objects accessing common state. The <a href="Vine.html">vine</a> is 
+            present to prevent a potential race condition in three-vat distributed 
+            garbage collection, and is explained separately. 
+            <P ALIGN="left">At the time that the <tt>acceptFrom</tt> message arrives 
+              at VatC, VatC and VatA may not yet be connected, so VatB sends to 
+              VatC the information needed to connect to VatA. 
+            <P ALIGN="left">The unserialization of the x message argument <i>is</i> 
+              the promise for the result of this <tt>acceptFrom</tt> message, 
+              and so VatB can proceed to send Bob the x message immediately, without 
+              blocking on the search for a VatC. 
+            <blockquote> 
+              <pre align="left">bob &lt;- x(c2) </pre>
+            </blockquote></td>
+        </tr>
+        <tr> 
+          <td><a name="elems5" href="#elems6"><img src="3vat/images/elems5.png" width="653" height="386" border="1" align="right"></a> 
+            Bob receives the <tt>x</tt> message, and reacts by sending the <tt>z()</tt> 
+            message to <tt>c2</tt>. </td>
+        </tr>
+        <tr> 
+          <td><a name="elems6" href="#elems7"><img src="3vat/images/elems6.png" width="653" height="386" border="1" align="right"></a> 
+            <P ALIGN="left"></td>
+        </tr>
+        <tr> 
+          <td><a name="elems7" href="#elems8"><img src="3vat/images/elems7.png" width="653" height="386" border="1" align="right"></a> 
+          </td>
+        </tr>
+        <tr> 
+          <td><a name="elems8" href="#elems9"><img src="3vat/images/elems8.png" width="653" height="386" border="1" align="right"></a> 
+            If the <tt>acceptFrom</tt> message arrives before the matching <tt>provideFor</tt>, 
+            then a table entry is created associating the nonce with a local promise 
+            for the object that will be associated with this nonce. The table 
+            also remembers the resolver of this promise, so that the matching 
+            provideFor can resolve it. </td>
+        </tr>
+        <tr> 
+          <td><P ALIGN="left"><a href="#elems10"><img src="3vat/images/elems9.png" width="653" height="386" border="1" align="right"></a><a name="elems9"></a> 
+              This promise -- the local promise for the object to be associated 
+              with this nonce -- is returned as the result for the <tt>acceptFrom</tt>, 
+              so the <tt>z()</tt> message is queued in this promise. By queing 
+              <tt>z()</tt> in VatC while waiting for the matching <tt>provideFor</tt>, 
+              we minimize the latency cost associated with enforcing E-Order. 
+            </td>
+        </tr>
+        <tr> 
+          <td><a name="elems10" href="#elems11"><img src="3vat/images/elems10.png" width="653" height="386" border="1" align="right"></a>
+            <tt>w()</tt> arrives and is delivered to Carol. </td>
+        </tr>
+        <tr> 
+          <td><a name="elems11" href="#elems12"><img src="3vat/images/elems11.png" width="653" height="386" border="1" align="right"></a>
+          </td>
+        </tr>
+        <tr> 
+          <td><a name="elems12" href="#elems13"><img src="3vat/images/elems12.png" width="653" height="386" border="1" align="right"></a>
+            The matching <tt>provideFor</tt> finally arrives, resolving the promise's 
+            resolver to Carol. This promise becomes a direct reference to Carol. 
+          </td>
+        </tr>
+        <tr> 
+          <td><a name="elems13" href="#elems1"><img src="3vat/images/elems13.png" width="653" height="386" border="1" align="right"></a>
+            When a promise resolves, it re-sends to its target all messages which 
+            have been queued in the promise. The <tt>z()</tt> message is now sent 
+            to Carol. </td>
+        </tr>
+      </table>
+      <P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp;
+<P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp; 
+      <P ALIGN="left">&nbsp;<!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">elib</a>&nbsp;/&nbsp;<a href="../index.html">distrib</a>&nbsp;/&nbsp;<a href="index.html">captp</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><a href="reactToLostClient.html" title="Back to: reactToLostClient()"><img src="../../../images/prev.gif" width="64" height="32" alt="Back to: reactToLostClient()" border="0"></a><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="acceptFrom.html" title="On to: acceptFrom()"><img src="../../../images/next.gif" width="64" height="32" alt="On to: acceptFrom()" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

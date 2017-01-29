@@ -1,0 +1,16 @@
+Minefield 4.0b12pre (2011-02-16)
+
+RangeError.prototype (15.11.7.7) .message enumerable?: should be false but was true
+RangeError.prototype (15.11.7.7) .name enumerable?: should be false but was true
+TypeError.prototype (15.11.7.7) .message enumerable?: should be false but was true
+TypeError.prototype (15.11.7.7) .name enumerable?: should be false but was true
+EvalError.prototype (15.11.7.7) .message enumerable?: should be false but was true
+EvalError.prototype (15.11.7.7) .name enumerable?: should be false but was true
+URIError.prototype (15.11.7.7) .message enumerable?: should be false but was true
+URIError.prototype (15.11.7.7) .name enumerable?: should be false but was true
+ReferenceError.prototype (15.11.7.7) .message enumerable?: should be false but was true
+ReferenceError.prototype (15.11.7.7) .name enumerable?: should be false but was true
+SyntaxError.prototype (15.11.7.7) .message enumerable?: should be false but was true
+SyntaxError.prototype (15.11.7.7) .name enumerable?: should be false but was true
+passed: 3760
+failed: 12

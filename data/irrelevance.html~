@@ -1,0 +1,357 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" --> 
+<TITLE>The Power of Irrelevance</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<P> 
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> 
+      <P> 
+      <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> 
+            <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="index.html">data</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><a href="common-syntax.html" title="Back to: Common Syntactic Element"><img src="../images/prev.gif" width="64" height="32" alt="Back to: Common Syntactic Element" border="0"></a><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="terml/index.html" title="On to: TermL: Representing Trees of Symbols"><img src="../images/next.gif" width="64" height="32" alt="On to: TermL: Representing Trees of Symbols" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table>
+          </TD>
+          <TD ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>The 
+              Power of Irrelevance:<font size="5"><br>
+              Designing notations to support adversarial reviews</font></b></FONT><!-- #EndEditable --></FONT> 
+          </TD>
+        </TR>
+      </TABLE>
+      <hr>
+      <!-- #BeginEditable "LongBody" --> 
+      <P ALIGN="left">From <a href="http://www.eros-os.org/pipermail/e-lang/2004-February/009526.html">http://www.eros-os.org/pipermail/e-lang/2004-February/009526.html</a>: 
+      <P ALIGN="left">I'd like to thank Dave Liebs for prodding me into writing 
+        this. 
+      <blockquote> 
+        <pre>
+At 11:08 PM 1/31/2004 Saturday, Dean Tribble wrote: 
+&gt;[...] 
+&gt;I presume that requiring parens on the argument to 'match' would introduce 
+&gt;other problems (in addition to actually violating backwards compatibility).</pre>
+      </blockquote>
+      <p>Yes. The general style followed by most of <i><font color="#009000"><b>E</b></font></i>, 
+        after a clause-introducing keyword, is that parens surround expressions, 
+        not patterns:</p>
+      <blockquote> 
+        <pre><span class="keyword">escape</span> pattern { ... 
+} <span class="keyword">catch</span> pattern { ... 
+<span class="keyword">while</span> (expr) { ... 
+<span class="keyword">if</span> (expr) { ... </pre>
+      </blockquote>
+      <p>The other major style is function / method declaration, in which we have 
+        an identifier followed by a list of patterns within parens:</p>
+      <blockquote> 
+        <pre><span class="keyword">to</span> <span class="defverb">ident</span>(pattern,...) ... { 
+<span class="keyword">def</span> <span class="defobj">ident</span>(pattern,...) ... { 
+<span class="keyword">when</span> (expr,...) -&gt; <span class="defobj">ident</span>(pattern) ... {</pre>
+      </blockquote>
+      <p>Our glaring inconsistency, we don't require parens around the collection 
+        expression in a for-loop. We accept:</p>
+      <blockquote> 
+        <pre><span class="keyword">for</span> pattern =&gt; pattern <span class="keyword">in</span> expr { ...</pre>
+      </blockquote>
+      <p>and</p>
+      <blockquote> 
+        <pre><span class="keyword">for</span> pattern <span class="keyword">in</span> expr { ...</pre>
+      </blockquote>
+      <p>whereas, if we were consistent, we'd require</p>
+      <blockquote> 
+        <pre><span class="keyword">for</span> pattern =&gt; pattern <span class="keyword">in</span> (expr) { ...</pre>
+      </blockquote>
+      <p>and </p>
+      <blockquote> 
+        <pre><span class="keyword">for</span> pattern <span class="keyword">in</span> (expr) { ...</pre>
+      </blockquote>
+      <p>What's cool about this convention is that it enables a human reader to 
+        perform scope analysis on the pre-expansion text by following a few simple 
+        rules. Why is this important?</p>
+      <h1 align="center"> The Power of Irrelevance:</h1>
+      <h2 align="center"> On the design of notation to support the review process</h2>
+      <p> One the lessons driven home by our Xanadu experience: Any data structure 
+        used to answer queries from a huge amount of data must first of all provide 
+        the property of quick reject: it must quickly disqualify most of the data 
+        it holds from being relevant to the query, so that it can afford to do 
+        more subtle calculations on what remains. A good example might be rectangular 
+        bounding boxes around complex shapes in a graphics app, so that we can 
+        quickly reject all shapes that don't almost intersect a ray. We can then 
+        do a more subtle calculation on the remaining candidates, to see if they 
+        do intersect.</p>
+      <p>In thinking about lessons from the <a href="http://www.combex.com/papers/darpa-review/index.html">security 
+        review</a> you and David put us through ;), I came to realize that much 
+        of its success was due to E's support for a similar quick reject property. 
+        Given a question and a large body of largely unfamiliar code, the first 
+        job of a programming language notation is to help human readers (both 
+        with and without IDE help) do a quick reject: to disqualify most of the 
+        program as being irrelevant to the current question without needing to 
+        look at most of it. (See also <a href="http://www.visibleworkings.com/">Visible 
+        Workings</a>.)</p>
+      <p>Scope analysis is the reader's main tool for quickly determining, when 
+        looking at a program fragment, which things cannot influence what other 
+        things. Scope analysis gives a first conservative bound on possible influence 
+        analysis.</p>
+      <p>This explanation helps explains what's wrong with Smalltalk-72, all macro 
+        systems I know about <a href="#foot1"><sup>1</sup></a> <a href="#foot2"><sup>2</sup></a>, 
+        dynamic scoping, ambient authority, Pascal's <tt>var</tt> and C++'s references. 
+        When looking at a call site (or something that locally looks like it is 
+        a call site), can the reader tell, without knowledge of the thing apparently 
+        being called, what things of the caller are being made accessible to the 
+        callee. All the above language elements disrupt that analysis. For example, 
+        in E or C-without-macros, in the call</p>
+      <blockquote> 
+        <p><tt>foo(x)</tt> </p>
+      </blockquote>
+      <p>without knowing foo, we still know that the callee is being given access 
+        to x's value, but isn't given the ability to assign to the x variable. 
+        If the E or C-without-macro programmer wishes to give foo the ability 
+        to change x's value, they need to write</p>
+      <blockquote> 
+        <p><tt> foo(&amp;x)</tt> </p>
+      </blockquote>
+      <p>which makes this extra access visible to readers that don't know foo. 
+        Pascal and C++ don't have this property. Unless you know how foo declares 
+        the corresponding parameter, you can't tell what the caller has given 
+        the callee the ability to do. These tend towards the failure mode of which 
+        Smalltalk-72 was the extreme: you can't understand anything about the 
+        program until you understand everything.</p>
+      <p>In Smalltalk-76, Smalltalk-80, Squeak, ML, Kernel-E, or Scheme-without-macros, 
+        the program is written in a simple language with very few scoping rules, 
+        where those rules reliably allow the reader, from a program fragment, 
+        to use scope analysis to disqualify much of the program from relevance 
+        to a question, without looking up the definition of things mentioned at 
+        call sites. This property is essential for secure code, but is also important 
+        in general.</p>
+      <p>Clearly, all macro systems prior to Scheme's invention of the notion 
+        of hygienic macros (who invented this notion?) fatally disrupt this ability. 
+        Scope analysis was only done after macro expansion, so the reader would 
+        have to simulate the expansion in their head before that could use scope 
+        analysis. This requires understanding which calls are actually macro calls, 
+        and it requires looking up the definition of all those macros and understanding 
+        them.</p>
+      <p>What about hygienic macros themselves? This has pointed the way towards 
+        sense, but doesn't go far enough to achieve the above goal. The reader 
+        of a fragment of a Scheme program that might be using hygienic macros 
+        must still do everything listed above before scope analysis allows them 
+        to disqualify any of the program from relevance to their question.</p>
+      <p>In the absence of macro expansion, we can think of the normal analysis 
+        of code as proceeding by the following steps:</p>
+      <ul>
+        <li>1. Reading sequences of bits to recognize characters. (With UTF-8, 
+          this step isn't as trivial as it once was.) 
+        <li>2. Lexing: Reading sequences of characters to recognize tokens. 
+        <li>3. Parsing: Reading sequences of tokens to recognize BNF productions, 
+          producing ASTs. 
+        <li>4. Scope Analysis: Walking ASTs to match use and defining occurrences 
+          of identifiers, hopefully by simple lexical scoping rules. 
+      </ul>
+      <p>I believe the above sequence works so well because it has some kind of 
+        psychological match to what kinds of recognition tasks humans perform 
+        well when looking at program text. I won't try to defend this claim, but 
+        I do assume it. From my own introspection it seems right. Yes, I know 
+        introspection is a terrible guide, but it's the best I've got.</p>
+      <p>In any case, we categorize macro systems according to where they intervene 
+        in the above sequence:</p>
+      <ul>
+        <li>1.5. Pre-ANSI-C operated on character sequences prior to lexing. 
+        <li>2.5. ANSI-C operates on the token stream between lexing and parsing. 
+        <li>3.5. Non-hygienic Lisp macro systems operated on the S-Expression 
+          (Lisp's AST) between parsing and scope analysis. 
+        <li>4. Scheme's hygienic macros operates after parsing, and interleaved 
+          with scope analysis. 
+      </ul>
+      <p>I believe most would agree that each step along this sequence has led 
+        to an increase in quality, from a software engineering standpoint. I claim 
+        that the reason is that each step has enabled a reader to understand more 
+        about a program fragment prior to simulating the expansion of the macros. 
+        The E-to-Kernel-E expansion comes close to providing the following property. 
+        Where E fails to provide the following property, that should be considered 
+        a bug to be fixed. Should E ever allow user-defined macros, these must 
+        preserve the following property as well. The productions reserved for 
+        macros in the E grammar are indeed able to produce a macro system with 
+        this property.</p>
+      <ul>
+        <li>4.5. Expansion happens after scope analysis. Scope analysis therefore 
+          happens on the pre-expansion text, without reference to the definition 
+          of the macros being invoked. (Of course, it need not be implemented 
+          this way, as long as the effect is equivalent.) 
+      </ul>
+      <p>I claim this would be better by direct extrapolation of the above argument.</p>
+      <p>However, we also wish the results of expansion to be a program in the 
+        language, so that we may use the same notation to explain the results 
+        of expansion. This leads to the following rule:</p>
+      <p>Imagine that we printed the expanded program (in our case, the resulting 
+        Kernel-E program) as the source text of a program in the source language 
+        (in our case, an E program). If a scope analysis of the expanded program 
+        would yield different bindings than the pre-expansion scope analysis, 
+        statically reject the program.</p>
+      <p>Here's an example where the current E implementation fails to obey this 
+        rule, should be considered buggy, and should be fixed:</p>
+      <blockquote> 
+        <pre><span class="stdout">? </span><span class="keyword">def</span> <span class="defvar">i</span> := 3 
+<span class="stdout"># value: 3
+ 
+? </span><span class="keyword">for</span> <span class="defvar">i</span> <span class="keyword">in</span> (0..i) { println(i) } 
+<span class="stdout"># stdout: 0 
+#         1 
+#         2 
+#         3 
+ 
+? </span></pre>
+      </blockquote>
+      <p>Surprised? You should be. By the normal E rules, which the E reader can 
+        rely on almost all the time, an identifier comes into scope starting at 
+        its defining occurrence and proceeding left-to-right until the end of 
+        its containing scope box, except as shadowed by definitions of the same 
+        identifier in contained scope boxes. A scope box starts at the keyword 
+        introducing a clause (here, <tt class="keyword">for</tt>), and lasts until 
+        the corresponding close curly. <a href="../elang/blocks/ifExpr.html">http://www.erights.org/elang/blocks/ifExpr.html</a></p>
+      <p>By this rule, the reader would be justified in expecting the <tt>i</tt> 
+        in <tt>(0..i)</tt> to refer to the <tt>i</tt> in <span class="keyword"><tt>for</tt></span><tt> 
+        <span class="defvar">i</span> <span class="keyword">in</span></tt>. Because 
+        of the expansion of the for-loop, and because the current E implementation's 
+        scope analysis, like pre-hygienic Lisps, operates only after expansion, 
+        and because the for-loop expansion reverses the order in which these two 
+        parts occur, as well as placing the iteration variable <tt>i</tt> in a 
+        nested scope box, the <tt>i</tt> in <tt>(0..i)</tt> refers to the <span class="keyword"><tt>def</tt></span><tt> 
+        <span class="defvar">i</span></tt>, whereas the <tt>i</tt> in <tt>println(i)</tt> 
+        refers to the iteration variable <tt class="defvar">i</tt> which shadows 
+        the <tt class="defvar">i</tt> in <span class="keyword"><tt>def</tt></span><tt> 
+        <span class="defvar">i</span></tt>.</p>
+      <p>What E should do, i.e., what we are here specifying a non-buggy E will 
+        do, is to statically reject the above program. This may possibly give 
+        the program's author an unpleasant static surprise. But the inability 
+        to author this kind of obfuscated program will prevent nasty surprises 
+        to the readers, which is vastly more important. Even for programs I author, 
+        I read them much more than I author them. Legal programs must fulfill 
+        the expectations both of readers who are thinking about the pre-expanded 
+        text, and of readers who are simulating the expansion in their head.</p>
+      <p>What does this have to do with parens around patterns? At the head of 
+        a scope box, ie, the part between the keyword introducing the clause and 
+        the open curly, when we see an identifier, in order to do scope analysis 
+        by the above rule, we need to be able to tell whether it's a use occurrence 
+        or a defining occurrence. In order to determine this, you need to know 
+        if it's in an expression, a pattern, or something else. Given that we 
+        can ask the reader to memorize a small fixed set of &quot;something else&quot; 
+        cases (eg, <tt><span class="defverb">identifier</span>(patterns,...)</tt> 
+        after a <tt class="keyword">to</tt>), the only remaining rule is: If it's 
+        surrounded with parens, it's an expression. If not, it's a pattern.</p>
+      <p>Should we ever allow user-defined macros, they would be constrained to 
+        play by this rule, enabling pre-expansion scope analysis to proceed using 
+        the left-to-right rule. As with the for-loop, rather than constrain macros 
+        only to produce expansions that preserve the scope analysis, we can instead 
+        reject just those programs that cause an expansion that would disrupt 
+        the pre-expansion scope analysis.</p>
+      <p>Other known occurrences of this bug in the current E implementation: 
+      <ul>
+        <li> 
+          <p>Dean has objected that the current expansions of &amp;&amp; and || 
+            can disrupt a pre-expansion scope analysis. I agree. The current expansions 
+            of these must be considered buggy on these grounds. Fortunately, an 
+            alternate expansion can fix this in all cases, never requiring a surprising 
+            static reject of a program.</p>
+        <li> 
+          <p>In the expansion of, for example, the quasi-pattern `-$i-@i-@j-$j-`, 
+            the relative order among the embedded dollar-hole expressions is preserved, 
+            and the relative order among the @-hole patterns is preserved, but 
+            all the extracted expressions occur in the expansion to the left of 
+            all the extracted patterns. As one would expect from the pre-expansion 
+            text, $i refers to the i already in scope, not that defined by @i. 
+            But $j also refers to the j already in scope, not the j defined by 
+            @j. This violates the left-to-right rule. E must instead statically 
+            reject the program, rather than allow a reader to be confused about 
+            the meaning of $j.</p>
+      </ul>
+      <hr>
+      <p> <a name="foot1"></a><sup>1</sup> JSE, The Java Syntactic Extender, is 
+        a possible exception. It is clearly a fellow traveller, but I don't yet 
+        understand it well enough to know it is has the property we advocate here.</p>
+      <p> <a name="foot2"></a><sup>2</sup> Since writing the original email, Oleg 
+        Kiselyov has pointed out the large and wonderful world of &quot;<a href="http://www.google.com/search?q=multi%2Bstage%2Bprogramming&sourceid=mozilla-search&start=0&start=0&ie=utf-8&oe=utf-8">multi-stage 
+        programming</a>&quot;, much of which takes the above perspective to an 
+        even greater extreme: it moves macro expansion after both scope and type 
+        analysis, statically ensuring that dynamically generated expansions are 
+        type safe.<!-- #EndEditable --></TD>
+    <TD WIDTH="10%">&nbsp;</TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> 
+      <hr>
+      <div align="center"> 
+        <table cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> 
+              <div align="left"><a href="../index.html"><img src="../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a></div>
+            </td>
+            <td> 
+              <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> 
+                    <div align="center"><font size="-1"><a href="../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../elang/index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../related.html">Related</a> 
+                      </font></div>
+                  </td>
+                </tr>
+                <tr> 
+                  <td> 
+                    <div align="center"><font size="-1"><a href="../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../donate.html">Donate</a></font></div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <table width="100%" border="0" cellspacing="0" cellpadding="4">
+        <tr> 
+          <td><i>email webmaster-at-erights.org</i> <br>
+            or <a href="http://bugs.sieve.net/bugs/?func=addbug&amp;group_id=16380"><i>report 
+            bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+            html</a>)</td>
+          <td> 
+            <div align="right"> 
+              <p><a href="http://www.epic.org/crypto/"><img src="../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a> <a href="http://www.stoppoliceware.org/"><img src="../images/stoppoliceware_gray_88x32.gif" width="88" height="32" border="0" alt="Stop Policeware Campaign"></a> 
+            </div>
+          </td>
+        </tr>
+      </table>
+    </TD>
+    <TD WIDTH="10%" valign="bottom">&nbsp;</TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

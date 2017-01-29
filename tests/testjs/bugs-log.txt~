@@ -1,0 +1,6 @@
+new Function('var break = 1;');
+
+Uncaught TypeError: Cannot read property 'line' of undefined
+DebuggerScript._frameMirrorToJSCallFrame:206
+DebuggerScript.currentCallFrame:140
+InjectedScript.callFrames:297

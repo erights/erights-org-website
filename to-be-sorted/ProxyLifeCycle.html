@@ -1,0 +1,48 @@
+<HTML>
+<HEAD>
+
+<TITLE>The Life and Times of a Proxy</TITLE>
+
+<META NAME="generator" CONTENT="BBEdit 4.5">
+
+</HEAD>
+<B>Last updated:</B><I> [98/07/15 Bob]</I>
+Author: Bob Schumaker.
+<H2>Introduction</H2>
+The management of proxies in order to allow distributed garbage collection requires careful thought and planning. There are two levels of data flow that complicate matters, making it difficult to keep the design straight:
+<OL TYPE="1" START="0">
+	<LI>The high level message flow, which travels from Proxies to Objects</LI>
+	<Li>The underlying 'plumbing', where control flows in both directions, with one end being the 'master' for a given set of proxy-object connections.</LI>
+</OL>
+It is further complicated by a duplicate set of data flow for proxy-object connections in the opposite direction.
+
+<H4>The Life and Times of a Proxy</H4>
+<P>Proxies can be created on either end of a connection, but for the purposes of this walk through we will start with the creation of a proxy from a "Sturdy Reference" (my thanks to Mark Miller for the Indra terminology for the tables).
+<UL TYPE=DISC>
+	<LI>A proxy is created using the Registrar ID and Swiss number of the remote object and placed in the 'Future' table using a 'weak reference'.</LI>
+	<LI>A <tt>PROXY_REQUEST</tt> message is sent to the remote end.</LI>
+	<LI>The object corresponding to the Swiss number requested is entered in the 'Answer' table.</LI>
+	<LI>Messages are routed through the proxy to the remote object.</LI>
+	<LI>On the remote end, and object is referenced as an argument to an <tt>E.send</tt>. The object is entered into the 'Export' table and a <tt>ProxiedObject</tt> is encoded over the wire.</LI>\
+	<LI>The <tt>ProxiedObject</tt> is decoded and a Proxy is created and entered into the 'Import' table using a 'weak reference'.</LI>
+	<LI>If the new proxy points to the same object as one in the 'Future' table, the 'Future' proxy is set to point to the new proxy.</LI>
+	<LI>Eventually, all references to the proxy are released and it is garbage collected. In its <tt>finalize</tt> routine, the proxy code schedules a <tt>Runner</tt> to initiate the distributed garbage collection.</LI>
+	<LI>If the proxy is in the 'Futures' table:</LI>
+	<UL TYPE=DISC>
+		<LI>The entry is cleared.</LI>
+		<LI>A <tt>PROXY_GARBAGE</tt> message is sent to the remote end.</LI>
+		<LI>The remote end clears the matching table entry, removing a referene to the object (which might now also be garbage collected).</LI>
+	</UL>
+	<LI>If the proxy is in the 'Import' table:</LI>
+	<UL TYPE=DISC>
+		<LI>Its entry is not cleared (the swiss number is stored there)</LI>
+		<LI>Instead, the weak reference is cleared and the <tt>PROXY_GARBAGE</tt> message is sent to the remote end, including a 'wire count'.</LI>
+		<LI>The remote end checks the 'wire count' and, if they match, the table entry is cleared (removing a reference to the object).</LI>
+		<LI>If the wire counts don't match, the table entry is left intact.</LI>
+		<LI>A new proxy is created (using the information left in the 'Import' table) when the unaccounted for message arrives, and the process begines again.</LI>
+			<LI>Eventually, the remote end will re-use the table entry, overwriting the previous value.</LI>
+	</UL>
+</UL>
+<IMG SRC="ProxyLifeCycle.gif" WIDTH="526" HEIGHT="555" HSPACE="0" VSPACE="0">
+</BODY>
+</HTML>

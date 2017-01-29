@@ -1,0 +1,66 @@
+
+updoc: started
+
+c:/Documents and Settings/millerm1/e/doc/data/common-syntax/baking-chars.html:..
+c:/Documents and Settings/millerm1/e/doc/data/common-syntax/conformance.html:
+c:/Documents and Settings/millerm1/e/doc/data/common-syntax/index.html:
+c:/Documents and Settings/millerm1/e/doc/data/common-syntax/lexing.html:
+c:/Documents and Settings/millerm1/e/doc/data/common-syntax/wysiwyg-ascii.html:
+c:/Documents and Settings/millerm1/e/doc/data/index.html:
+c:/Documents and Settings/millerm1/e/doc/data/irrelevance.html:..
+c:/Documents and Settings/millerm1/e/doc/data/overview.html:
+c:/Documents and Settings/millerm1/e/doc/data/report.txt:
+c:/Documents and Settings/millerm1/e/doc/data/serial/index.html:
+c:/Documents and Settings/millerm1/e/doc/data/serial/jhu-paper/acks-n-refs.html:
+c:/Documents and Settings/millerm1/e/doc/data/serial/jhu-paper/conclusions.html:
+c:/Documents and Settings/millerm1/e/doc/data/serial/jhu-paper/data-e-manual.html:..................
+c:/Documents and Settings/millerm1/e/doc/data/serial/jhu-paper/deconstructing.html:...........................................
+c:/Documents and Settings/millerm1/e/doc/data/serial/jhu-paper/entry-security.html:
+c:/Documents and Settings/millerm1/e/doc/data/serial/jhu-paper/exit-security.html:..........................................
+at: <file:c:/Documents and Settings/millerm1/e/doc/data/serial/jhu-paper/exit-security.html#:span::797:37::797:63>
+expr: surgeon.serialize(capitals)
+original and new value differ
+original value: "de: <import:org.erights.e.elib.tables.ConstMap>.fromColumns(
+                [\"New York\", \"California\"],
+                [\"Albany\", \"Sacramento\"]
+                )"
+     new value: "de: <import:org.erights.e.elib.tables.makeConstMap>.fromColumns(
+                [\"New York\", \"California\"],
+                [\"Albany\", \"Sacramento\"]
+                )"
+
+at: <file:c:/Documents and Settings/millerm1/e/doc/data/serial/jhu-paper/exit-security.html#:blob::803:10::803:11>
+expr: <import>.optUncall(<elib:tables.ConstMap>)
+original and new value differ
+original value: [<import>, "get", ["org.erights.e.elib.tables.ConstMap"]]
+     new value: [<import>, "get", ["org.erights.e.elib.tables.makeConstMap"]]
+.
+at: <file:c:/Documents and Settings/millerm1/e/doc/data/serial/jhu-paper/exit-security.html#:span::808:52::808:54>
+expr: def depiction := surgeon.serialize(capitals)
+original and new value differ
+original value: "de: <elib:tables.ConstMap>.fromColumns([\"New York\", \"California\"],
+                [\"Albany\", \"Sacramento\"])"
+     new value: "de: <elib:tables.makeConstMap>.fromColumns([\"New York\", \"California\"],
+                [\"Albany\", \"Sacramento\"])"
+.
+c:/Documents and Settings/millerm1/e/doc/data/serial/jhu-paper/index.html:
+c:/Documents and Settings/millerm1/e/doc/data/serial/jhu-paper/intro.html:
+c:/Documents and Settings/millerm1/e/doc/data/serial/jhu-paper/outtakes.html:
+c:/Documents and Settings/millerm1/e/doc/data/serial/jhu-paper/recog-n-build.html:......
+c:/Documents and Settings/millerm1/e/doc/data/serial/jhu-paper/related.html:....
+c:/Documents and Settings/millerm1/e/doc/data/serial/jhu-paper/subgraph-security.html:.....................
+c:/Documents and Settings/millerm1/e/doc/data/serial/jhu-paper/upgrade.html:
+c:/Documents and Settings/millerm1/e/doc/data/serial/safe-serial-paper/acks-n-refs.html:
+c:/Documents and Settings/millerm1/e/doc/data/serial/safe-serial-paper/conclusions.html:
+c:/Documents and Settings/millerm1/e/doc/data/serial/safe-serial-paper/index.html:
+c:/Documents and Settings/millerm1/e/doc/data/serial/safe-serial-paper/leaf-security.html:
+c:/Documents and Settings/millerm1/e/doc/data/serial/safe-serial-paper/modeling.html:
+c:/Documents and Settings/millerm1/e/doc/data/serial/safe-serial-paper/modelling.html:
+c:/Documents and Settings/millerm1/e/doc/data/serial/safe-serial-paper/overview.html:
+c:/Documents and Settings/millerm1/e/doc/data/serial/safe-serial-paper/related.html:
+c:/Documents and Settings/millerm1/e/doc/data/serial/safe-serial-paper/root-security.html:
+c:/Documents and Settings/millerm1/e/doc/data/serial/safe-serial-paper/subgraph-security.html:
+c:/Documents and Settings/millerm1/e/doc/data/serial/safe-serial-paper/upgrade.html:
+c:/Documents and Settings/millerm1/e/doc/data/terml/embeddings.html:
+c:/Documents and Settings/millerm1/e/doc/data/terml/index.html:
+c:/Documents and Settings/millerm1/e/doc/data/terml/terml-spec.html:

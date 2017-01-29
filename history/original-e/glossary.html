@@ -1,0 +1,603 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+   <TITLE>Glossary</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.0Gold (Win95; I) [Netscape]">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000EE" VLINK="#551A8B" ALINK="#FF0000">
+
+<A HREF="index.html"><IMG SRC="ehed.gif" border=0 HEIGHT=48 WIDTH=79></A><A HREF="index.html">  E Home Page</A>
+
+<P>
+<HR></P>
+
+<H1>Glossary</H1>
+
+<P>
+<HR></P>
+
+<P>&lt;- (send operator) </P>
+
+<P><A NAME="446747"></A></P>
+
+<BLOCKQUOTE>
+<P>Sends E messages to an E-object. </P>
+</BLOCKQUOTE>
+
+<P>&amp; (distributor operator) </P>
+
+<P><A NAME="446931"></A></P>
+
+<BLOCKQUOTE>
+<P>Obtains a channel's distributor (in order to send it a <TT>forward</TT>
+message, for example). </P>
+</BLOCKQUOTE>
+
+<P>authentication </P>
+
+<P><A NAME="447231"></A></P>
+
+<BLOCKQUOTE>
+<P>A means for cryptographic verification of the authorship and integrity
+of E classes and packages. </P>
+</BLOCKQUOTE>
+
+<P>capabilities </P>
+
+<P><A NAME="446222"></A></P>
+
+<BLOCKQUOTE>
+<P>The authority to send specific messages to specific objects in a distributed
+system. In E, you can control a object's access to particular resources
+(such as a file system) by giving it only certain capabilities. </P>
+</BLOCKQUOTE>
+
+<P>capability semantics </P>
+
+<P><A NAME="446218"></A></P>
+
+<BLOCKQUOTE>
+<P>A programming security model based on the use of capabilities. E's capability
+semantics model lets you restrict objects to send only certain messages
+to certain other objects. </P>
+</BLOCKQUOTE>
+
+<P>certificates </P>
+
+<P><A NAME="447307"></A></P>
+
+<BLOCKQUOTE>
+<P>Assertions about keys, the entities or packages to which they correspond,
+and the kinds of claims those keys can credibly certify. Certificates are
+used at run-time to determine a class's set of capabilities. </P>
+</BLOCKQUOTE>
+
+<P>channel </P>
+
+<P><A NAME="446666"></A></P>
+
+<BLOCKQUOTE>
+<P>A conduit E-object that carries messages from one object to another
+E-object, and acts as a placeholder for any requested values that the recipient
+E-object may reveal to the sending object. </P>
+</BLOCKQUOTE>
+
+<P>child database </P>
+
+<P><A NAME="447194"></A></P>
+
+<BLOCKQUOTE>
+<P>An object database that indirectly refers to another (parent) object
+database. </P>
+</BLOCKQUOTE>
+
+<P>Class Blesser </P>
+
+<P><A NAME="447377"></A></P>
+
+<BLOCKQUOTE>
+<P>The user interface E provides to manage the TBF, keys, certificates,
+and E's trust relationships in general. You can invoke the Class Blesser
+either through an interactive graphical user interface, or a command-line
+interface. </P>
+</BLOCKQUOTE>
+
+<P>closure </P>
+
+<P><A NAME="446672"></A></P>
+
+<BLOCKQUOTE>
+<P>A snapshot of all referenced local variables and parameters within the
+scope of a deferring statement (such as <I>ewhen</I>), taken when E encounters
+such a statement. </P>
+</BLOCKQUOTE>
+
+<P>connector </P>
+
+<P><A NAME="447211"></A></P>
+
+<BLOCKQUOTE>
+<P>An E environment object that encapsulates the right to establish outbound
+connections to other named (by URL) objects in the network. </P>
+</BLOCKQUOTE>
+
+<P>database filters </P>
+
+<P><A NAME="447200"></A></P>
+
+<BLOCKQUOTE>
+<P>A <I>RtDBViewFilter</I> object lets you restrict other users' read,
+write, and update privileges to your object database. </P>
+</BLOCKQUOTE>
+
+<P>digital signature </P>
+
+<P><A NAME="447338"></A></P>
+
+<BLOCKQUOTE>
+<P>A summary, or digest, of a certificate that is encrypted by a user's
+private key. It can be verified by anybody having the corresponding public
+key. The Trust Manager can use this signature to verify that the certificate
+has not been tampered with. </P>
+</BLOCKQUOTE>
+
+<P>distributed communications </P>
+
+<P><A NAME="446707"></A></P>
+
+<BLOCKQUOTE>
+<P>A model that lets remote objects on different machines communicate over
+the network. E has a built-in model for distributed communications, letting
+you send messages to remote objects without having to code any underlying
+networking protocols. </P>
+</BLOCKQUOTE>
+
+<P>distributed garbage collector </P>
+
+<P><A NAME="447128"></A></P>
+
+<BLOCKQUOTE>
+<P>Unlike Java's garbage collector, which performs garbage collection only
+within the scope of your local machine, E's distributed garbage collector
+performs garbage collection over the net for your distributed objects.
+</P>
+</BLOCKQUOTE>
+
+<P>distributor </P>
+
+<P><A NAME="446710"></A></P>
+
+<BLOCKQUOTE>
+<P>A node at the end of a channel that tells the channel where to route
+messages. </P>
+</BLOCKQUOTE>
+
+<P>E environment objects </P>
+
+<P><A NAME="446876"></A></P>
+
+<BLOCKQUOTE>
+<P>An object, descended from <I>RtEEnvironment</I>, containing classes
+and methods to create other objects that take full advantage of the E environment
+facilities, such as networking and file system access. </P>
+</BLOCKQUOTE>
+
+<P>E-interface </P>
+
+<P><A NAME="446948"></A></P>
+
+<BLOCKQUOTE>
+<P>Similar to a regular Java interface, except that it describes E-methods
+instead of regular Java methods. You designate an E-interface with the
+<TT>einterface</TT> keyword. </P>
+</BLOCKQUOTE>
+
+<P>E-exception </P>
+
+<P><A NAME="446849"></A></P>
+
+<BLOCKQUOTE>
+<P>An exception thrown by <TT>ethrow</TT> and caught by <TT>ecatch</TT>
+blocks. Unlike Java exceptions, an E exception does not encapsulate a back
+stack trace. </P>
+</BLOCKQUOTE>
+
+<P>E-method </P>
+
+<P><A NAME="446965"></A></P>
+
+<BLOCKQUOTE>
+<P>A block of code that is invoked when an E-object receives a corresponding
+message with that E-method name. An E-class must have an <TT>emethod</TT>
+declaration for each message it can receive. </P>
+</BLOCKQUOTE>
+
+<P>EARL (E Absolute Reference Locator) </P>
+
+<P><A NAME="446841"></A></P>
+
+<BLOCKQUOTE>
+<P>The E equivalent to a Universal Resource Locator (URL), referencing
+an E-object. </P>
+</BLOCKQUOTE>
+
+<P>E-classes </P>
+
+<P><A NAME="447568"></A></P>
+
+<BLOCKQUOTE>
+<P>The classes E provides to implement E functionality such as messaging
+and security capabilities. They are interoperable with Java classes and
+can contain both E and Java methods internally. Many of these are similar
+to Java classes. </P>
+</BLOCKQUOTE>
+
+<P>ecomp (E compiler) </P>
+
+<P><A NAME="447354"></A></P>
+
+<BLOCKQUOTE>
+<P>The name of the E runtime compiler. The <TT>ecomp</TT> compiler compiles
+both Java and E code directly to Java bytecodes (<TT>.class</TT> files).
+</P>
+</BLOCKQUOTE>
+
+<P>eif </P>
+
+<P><A NAME="447516"></A></P>
+
+<BLOCKQUOTE>
+<P>Similar to the Java <TT>if</TT> statement, handling conditional execution
+clauses. However, it uses optimistic computation to determine the condition.
+</P>
+</BLOCKQUOTE>
+
+<P>E-object </P>
+
+<P><A NAME="447543"></A></P>
+
+<BLOCKQUOTE>
+<P>Similar to a Java object, but is derived from EObject, rather than Java's
+Object class. An E-object implements E functionality such as messaging
+and security capabilities. </P>
+</BLOCKQUOTE>
+
+<P>eforall </P>
+
+<P><A NAME="446990"></A></P>
+
+<BLOCKQUOTE>
+<P>An alternative to an <TT>emethod</TT> declaration. It receives all messages
+sent to instances of its class, but it is given these messages in sealed
+envelopes which it cannot open, since it lacks unsealers. </P>
+</BLOCKQUOTE>
+
+<P>envelope </P>
+
+<P><A NAME="447562"></A></P>
+
+<BLOCKQUOTE>
+<P>Encapsulates the parameters of a message and ensures that they can only
+be read by a recipient E-object with the correct unsealer. The message
+in the envelope is secured by the unforgeable sealer and unsealer associated
+with it. </P>
+</BLOCKQUOTE>
+
+<P>eorif </P>
+
+<P><A NAME="913260"></A></P>
+
+<BLOCKQUOTE>
+<P>A clause of the <TT>eif</TT> statement. An <TT>eif</TT> statement containing
+one or more <TT>eorif</TT> clauses is called a multiway-guarded <TT>eif</TT>
+statement. A multiway guarded <TT>eif</TT> handles conditional cases that
+are evaluated concurrently, such as timeouts. </P>
+</BLOCKQUOTE>
+
+<P>eorwhen </P>
+
+<P><A NAME="447100"></A></P>
+
+<BLOCKQUOTE>
+<P>A clause of the <TT>ewhen</TT> statement. An <TT>ewhen</TT> statement
+contains one or more <TT>eorwhen</TT> clauses, it is called a multiway
+guarded <TT>ewhen</TT> statement. This means that the expression associated
+with the <TT>ewhen</TT> code block and the various alternate expressions
+associated with the other <TT>eorwhen</TT> code blocks are evaluated concurrently.
+</P>
+</BLOCKQUOTE>
+
+<P>ethrow </P>
+
+<P><A NAME="447044"></A></P>
+
+<BLOCKQUOTE>
+<P>Similar to Java's <TT>throw</TT> statement, except that it throws an
+E-exception. </P>
+</BLOCKQUOTE>
+
+<P>etry </P>
+
+<P><A NAME="447056"></A></P>
+
+<BLOCKQUOTE>
+<P>Similar to Java's <TT>try</TT> statement, but contains one or more <TT>ecatch</TT>
+clauses that receive E-exceptions and determine what to do with them. These
+<TT>ecatch</TT> clauses collectively establish a new E-exception handling
+environment for the execution of the <TT>etry</TT> code block. </P>
+</BLOCKQUOTE>
+
+<P>ewhen </P>
+
+<P><A NAME="446682"></A></P>
+
+<BLOCKQUOTE>
+<P>Defers execution of its associated block of code until a value is furnished
+for an E-object. The rest of your program can continue executing <I>optimistically</I>,
+as if it already has the result(s) it is expecting. </P>
+
+<P>You can use ewhen to get values or data from an E-object. For example,
+you can use <TT>ewhen</TT> to get a Java integer value from an <I>EInteger</I>
+object, and add this value to another Java integer. </P>
+</BLOCKQUOTE>
+
+<P>ewhenever </P>
+
+<P><A NAME="447123"></A></P>
+
+<BLOCKQUOTE>
+<P>An <TT>ewhen</TT> statement that executes its code block every time
+it receives a value for its argument. </P>
+</BLOCKQUOTE>
+
+<P>forward </P>
+
+<P><A NAME="446788"></A></P>
+
+<BLOCKQUOTE>
+<P>A message that provides a channel's distributor with a destination.
+When a channel is forwarded, all messages sent to that channel are delivered
+to the E-object that the channel is forwarded to. You can even send messages
+to an unforwarded channel; these messages will be delivered later when
+the channel is eventually forwarded. </P>
+
+<P>You can forward a channel to many recipients; all messages sent through
+that channel will be received by all the recipients. </P>
+</BLOCKQUOTE>
+
+<P>key </P>
+
+<P><A NAME="447273"></A></P>
+
+<BLOCKQUOTE>
+<P>A string of bits used in E's public-key cryptographical authentication
+mechanism. </P>
+</BLOCKQUOTE>
+
+<P>javaec (E Java interpreter) </P>
+
+<P><A NAME="447369"></A></P>
+
+<BLOCKQUOTE>
+<P>The E Java interpreter that interprets and executes Java bytecodes generated
+by the compiler. The <TT>javaec</TT> interpreter is based on Java's interpreter,
+<TT>java</TT>, but includes E features such as the Distributed Garbage
+Collector and Trust Manager. </P>
+</BLOCKQUOTE>
+
+<P>launch </P>
+
+<P><A NAME="913275"></A></P>
+
+<BLOCKQUOTE>
+<P>The means of giving an E-object access to the E Environment facilities.
+An object is launched through <I>RtLauncher</I>'s <TT>launch</TT> method,
+which creates a general environment object. From this trusted object, you
+can create a more specified, restricted environment and pass this to another
+object. </P>
+</BLOCKQUOTE>
+
+<P>mailing timeout </P>
+
+<P><A NAME="913277"></A></P>
+
+<BLOCKQUOTE>
+<P>In E, these occur when the system cannot successfully deliver a message
+to the recipient object within a predefined time period. </P>
+</BLOCKQUOTE>
+
+<P>message </P>
+
+<P><A NAME="446661"></A></P>
+
+<BLOCKQUOTE>
+<P>E-objects only respond to messages, rather than the call/return semantics
+of Java. A message consists of the name of an E-method to be executed by
+the recipient E-object, an envelope encapsulating the message parameters,
+and a sealer. The recipient E-object responds to the message by executing
+that specified E-method. In E, messaging is asynchronous and unidirectional.
+</P>
+</BLOCKQUOTE>
+
+<P>optimistic computation </P>
+
+<P><A NAME="446061"></A></P>
+
+<BLOCKQUOTE>
+<P>A method of preventing long delays when communicating across a network.
+It lets objects send messages and continue execution of the rest of the
+code without waiting for a reply. </P>
+</BLOCKQUOTE>
+
+<P>persistent object storage </P>
+
+<P><A NAME="447154"></A></P>
+
+<BLOCKQUOTE>
+<P>A means of storing your objects to a an object database, and later retrieving
+them to use in other applications. </P>
+</BLOCKQUOTE>
+
+<P>POLICY statement </P>
+
+<P><A NAME="447315"></A></P>
+
+<BLOCKQUOTE>
+<P>In a Trust Boot File, these are the axioms of a system of statements
+about trust. These axioms are used to generate theorems about the trustworthiness
+of other certificates, entities, keys, classes, and packages. Only classes
+whose trustworthiness is logically demonstrable within this system will
+be loaded and executed. </P>
+</BLOCKQUOTE>
+
+<P>public key cryptography (PKC) </P>
+
+<P><A NAME="447253"></A></P>
+
+<BLOCKQUOTE>
+<P>A mathematical technology enabling private communication of data over
+public channels (even when the parties involved are not previously known
+to each other) and unforgeable digital signatures that can be used to conclusively
+prove the origin of a message. </P>
+
+<P>In public-key cryptography, instead of a single secret key, one uses
+a pair of complementary keys, each of which can unscramble messages scrambled
+with the other. However, because of the mathematics underlying PKC, knowing
+one key of the pair does not make it practical to guess or calculate the
+other. A PKC user can make one key of the pair his <I>public key</I>, known
+to the world, and keep the other as his <I>private key.</I> </P>
+</BLOCKQUOTE>
+
+<P>registrar </P>
+
+<P><A NAME="447222"></A></P>
+
+<BLOCKQUOTE>
+<P>An E environment object that encapsulates the right to register objects
+by name in the local machine's object directory. </P>
+</BLOCKQUOTE>
+
+<P>response timeout </P>
+
+<P><A NAME="447147"></A></P>
+
+<BLOCKQUOTE>
+<P>In E, these occur when a message is successfully delivered to an object,
+but the receiving E-method does not respond in a timely fashion. Since
+E's messaging model is asynchronous, this is a legitimate situation; there
+is no way for a sending E-method to know when its requests will be serviced.
+</P>
+</BLOCKQUOTE>
+
+<P>parent database </P>
+
+<P><A NAME="447190"></A></P>
+
+<BLOCKQUOTE>
+<P>An object database that is referred to indirectly by another (child)
+object database. </P>
+</BLOCKQUOTE>
+
+<P>root key </P>
+
+<P><A NAME="447181"></A></P>
+
+<BLOCKQUOTE>
+<P>A name you can specify for a stream key when you save it to the database.
+</P>
+</BLOCKQUOTE>
+
+<P>sealer </P>
+
+<P><A NAME="446812"></A></P>
+
+<BLOCKQUOTE>
+<P>An object representing the right to send a message to another E-object.
+A sealer seals an envelope encapsulating the parameters of a message, and
+ensures that this message can only be read by an object with the appropriate
+unsealer. </P>
+</BLOCKQUOTE>
+
+<P>secret key cryptography </P>
+
+<P><A NAME="913285"></A></P>
+
+<BLOCKQUOTE>
+<P>The conventional cryptographical technology. The security of secret-key
+cryptography relies on the secrecy of a key, or string of bits, used according
+to a specified recipe or algorithm to scramble the message being sent.
+Anyone who knows both the key and the algorithm can unscramble the message
+and retrieve the original (or plaintext) message. The secret key must be
+passed from one participant to the other, in some way immune to eavesdropping,
+before they can communicate. See also <I>public key cryptography.</I> </P>
+</BLOCKQUOTE>
+
+<P>signatures </P>
+
+<P><A NAME="446238"></A></P>
+
+<BLOCKQUOTE>
+<P>See <I>Digital signature.</I> </P>
+</BLOCKQUOTE>
+
+<P>source claim statement </P>
+
+<P><A NAME="447327"></A></P>
+
+<BLOCKQUOTE>
+<P>In a certificate, these statements assert a rule for deciding the trustworthiness
+of keys, classes, or packages. </P>
+</BLOCKQUOTE>
+
+<P>stream key </P>
+
+<P><A NAME="447170"></A></P>
+
+<BLOCKQUOTE>
+<P>A token received when your application makes a request to store an object
+in the persistent object database. Your E program can then later redeem
+this stream key for the object. </P>
+</BLOCKQUOTE>
+
+<P>trust boot file (TBF) </P>
+
+<P><A NAME="447295"></A></P>
+
+<BLOCKQUOTE>
+<P>A file containing an initial set of statements regarding which users
+or code sources can be trusted, to what extent, and in what contexts. The
+file also contains information on whether these trusted authorities may
+delegate trust, in the form of <I>capabilities, </I>to other entities.
+</P>
+</BLOCKQUOTE>
+
+<P>Trust Manager </P>
+
+<P><A NAME="447344"></A></P>
+
+<BLOCKQUOTE>
+<P>E's authentication mechanism that verifies the authorship and integrity
+of E classes and packages. This mechanism includes the concept of sealers/unsealers,
+the Trust Boot File, certificates, and the Class Blesser. </P>
+</BLOCKQUOTE>
+
+<P>unsealer </P>
+
+<P><A NAME="446829"></A></P>
+
+<BLOCKQUOTE>
+<P>An object representing the right to receive and open a message sealed
+by another object. Only an E-object with the correct unsealer can read
+a message sealed by another E-object. </P>
+</BLOCKQUOTE>
+
+<P>
+<HR></P>
+
+<ADDRESS>Copyright (c) 1996 Electric Communities. All rights reserved worldwide.<BR>
+Most recent update: 6/13/96<BR>
+</ADDRESS>
+
+</BODY>
+</HTML>

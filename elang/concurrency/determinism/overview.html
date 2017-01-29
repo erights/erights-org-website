@@ -1,0 +1,260 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--last modified on Saturday, October 03, 1998 04:19 PM -->
+<HTML><!-- #BeginTemplate "/Templates/pink.dwt" --><!-- DW6 -->
+<HEAD>
+<!-- #BeginEditable "doctitle" -->
+<TITLE>Uses of Determinism</TITLE>
+<!-- #EndEditable --> 
+<meta http-equiv=content-type content="text/html; charset=UTF-8">
+<meta name="Author" content="Mark S. Miller">
+<link rel=author rev=made title="Mark S. Miller">
+<META NAME="description" CONTENT="E: Cryptographic Capabilities for Distributed Smart Contracting">
+<META NAME="keywords" CONTENT="p2p, p2p language, p2p computing, p2p objects, secure p2p, p2p capabilities, object oriented p2p,
+  capability-based p2p, Capability Security, Capabilities, Cryptography, Distributed Objects, Distributed
+  Language, Distributed Capabilities, Lambda Calculus, Scripting Language, Distributed Language, Persistent
+  Language, Persistent Capabilities, Persistent Objects, Java Shell, Capability Shell, Scripting Java, Smart
+  Contracting, Agoric E-Commerce, Open Source, Message pipelining, quasi literal, vat, event loop, granovetter diagram ">
+<link rel="stylesheet" href="../../../erights.css" type="text/css">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFEEDD" LINK="#0000FF" VLINK="#800080">
+<TABLE BORDER="0" width="100%">
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp; </TD>
+    <TD> <TABLE BORDER="0" WIDTH="100%">
+        <TR> 
+          <TD ALIGN="LEFT" valign="top"> <table cellpadding="2">
+              <tr> 
+                <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                  <!-- #BeginEditable "Path" -->/&nbsp;<a href="../../index.html">elang</a>&nbsp;/&nbsp;<a href="../index.html">concurrency</a>&nbsp;/&nbsp;<a href="index.html">determinism</a>&nbsp;<!-- #EndEditable --></td>
+              </tr>
+              <tr> 
+                <td valign="top" align="right"><!-- #BeginEditable "PrevButton" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton" --><!-- #EndEditable --></td>
+                <td valign="top" align="left"><!-- #BeginEditable "NextButton" --><a href="challenges.html" title="On to: Challenges for Determinism"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Challenges for Determinism" border="0"></a><!-- #EndEditable --></td>
+              </tr>
+            </table></TD>
+          <TD rowspan="2" ALIGN="RIGHT"> <P ALIGN="RIGHT"><FONT SIZE="7"><!-- #BeginEditable "BigTitle" --><FONT SIZE="7"><b>Uses
+              of Determinism</b></FONT><!-- #EndEditable --></FONT> </TD>
+        </TR>
+        
+      </TABLE>
+      <hr> <!-- #BeginEditable "LongBody" -->
+      <p ALIGN="left"><i>(Derived from <a href="http://www.eros-os.org/pipermail/e-lang/1999-May/002591.html">this
+        email message</a>)</i></p>
+      <p ALIGN="left"><i>This page represents speculative future plans for <b><font color="#009000"><i>E</i></font></b>.
+        The features it describes are not currently supported. Until they are
+        explored further, it is uncertain which of these are actually in <b><font color="#009000"><i>E</i></font></b>'s
+        future.</i></p>
+      <hr>
+      <h1 ALIGN="left"><a name="models"></a>Models of Computation</h1>
+      <P ALIGN="left">The Turing and Von Neumann models of computation are strictly
+        deterministic (as is that other Von Neumann model, cellular automata).
+        In all of these systems, given the initial state of a computation and
+        the specification of the machine it ran on, one can necessarily deterministically
+        replay the computation.
+      <p>Of course, this is true only because these models idealize-away many
+        of the messy issues that plague real computation. Actors are an alternative
+        foundational model of computation that idealizes-in many of the issues
+        that these systems idealize-away. (Though the reverse is also true.)</p>
+      <p>The first such issue, explored by many besides Actors, is the contrast
+        of &quot;transformational&quot; vs &quot;reactive&quot; computation. A
+        compiler is <i>transformational</i>: all its inputs exist before it begins,
+        it runs deterministically producing output, and terminates. A compiler
+        that doesn't terminate is buggy. </p>
+      <p>A calculator is <i>reactive</i>: new inputs come in after it's started,
+        these inputs effect both its state and its outputs. Its outputs may effect
+        what further inputs it gets, so these outputs need to be transmitted before
+        the calculator terminates. We do not require the calculator to terminate
+        in order to be correct. Indeed, for a calculator, the opposite is true.
+        Even though you can replay a calculator from a log of its inputs, you
+        cannot model a calculator as something that computes from pre-existing
+        inputs, since the inputs depend (via the external human) on previous outputs.</p>
+      <p>Actors are inherently distributed and asynchronous, and so are pervasively
+        non-deterministic. Actors successfully idealize all non-determinism as
+        <i>arrival order non-determinism</i>: Messages race towards an actor from
+        multiple asynchronous sources. As Einstein would insist, these messages
+        had no prior determined intrinsic full order. Nevertheless, they are delivered
+        to the recipient actor in some partially arbitrary fully serialized order.
+        In order to replay an actor, you not only need the messages sent to it
+        by the external world, you need to know how these races were resolved.</p>
+      <h1>Loggable Non-Determinism</h1>
+      <p>An <i><b><font color="#009000">E</font></b></i> Vat is an Actor, and at Vat granularity, <i><b><font color="#009000">E</font></b></i> computation is Actor
+        computation. Within a Vat we have approximately the singly threaded synchronous
+        deterministic world of Von Neumann. It seems this is a good enough approximation
+        that we could, under constrained but useful circumstances, arrange to
+        segregate and log all the non-deterministic inputs to a Vat, or a subgraph
+        of objects within a Vat, such that the remainder of the Vat's computation
+        is deterministically replayable from these logged non-deterministic inputs.</p>
+      <p> We call this property <i>loggable non-determinism</i> -- the ability
+        to deny to a (possibly adversarial) subgraph of objects any unlogged sources
+        of non-determinism. Ideally, such a subgraph should not be able to escape
+        deterministic replay. </p>
+      <p>Why would one want this property?</p>
+      <h3> <a name="commitment"></a>1) Cheaper Commitment.</h3>
+      <p>Databases often use this technique by writing a &quot;transaction log&quot;.
+        Once a transaction request has been successfully logged, the transaction
+        can be committed even though a crash may destroy its result state, given
+        that the transaction can be deterministically reproduced from the logged
+        request. I first saw this technique applied to committing general purpose
+        computation by Rob Strom: Do a full checkpoint occasionally, and cheaply
+        log inputs until you take the next checkpoint. </p>
+      <p>It's not clear whether this wins over KeyKOS/EROS mmu-based checkpointing,
+        since that's also incremental. But is sure beats the crap out of non-incremental
+        checkpointing, which is the only reasonable alternative for those sitting
+        above the jvm.</p>
+      <p>( <a href="commitment.html">Read More...</a> )</p>
+      <h3> <a name="fault-tolerance"></a>2) Cheaper Fault Tolerance.</h3>
+      <p>This is really a variation of #1, where the understudy is separated in
+        space rather than time. I first saw this technique applied by Auragen
+        (which since disappeared), and since rather brilliantly by Rob Strom.</p>
+      <p>( <a href="fault-tolerance.html">Read More...</a> )</p>
+      <h3> <a name="inconfine"></a>3) Inward Bit Confinement. </h3>
+      <p>Once we've plugged all means of communication accounted for by causality
+        in our computational-model (or system-specification), all remaining ability
+        to communicate must ride on informational inputs that are modelled as
+        uncaused (&quot;spontaneous&quot;?). These are exactly the non-deterministic
+        inputs to computation. In <a href="../../../elib/capability/confinement.html">the
+        confinement scenario</a>, Alice generally isn't in a position to constrain
+        Mallet (or verify that he is constrained), but she is in a position to
+        constrain Bob (or verify that he is constrained).</p>
+      <p>If she constrains Bob to be deterministic except for non-deterministic
+        inputs that she believes Mallet cannot influence, then she knows that
+        Bob cannot receive covert information from Mallet. Therefore, Bob cannot
+        receive instructions from Mallet for making use of those powers given
+        to him by Alice, but which Alice wishes Mallet not to exercise. Even though
+        Bob wishes to use these powers to do Mallet's bidding, he cannot find
+        out what that bidding is.</p>
+      <p>( <a href="inward-bit.html">Read More...</a> )</p>
+      <h3> <a name="debug"></a>4) Debugging. </h3>
+      <p>When a compiler demonstrates a bug, since you presumably have the program
+        which elicited the bug, you can reproduce it. Assuming your debugger doesn't
+        effect computation as experienced by the compiler, you should be able,
+        after the fact, to reproduce the bug under the debugger; even though it's
+        later, the bug didn't happen under the debugger, and no extra cost was
+        spent to instrument the compiler. This effect, normally taken for granted,
+        shows the power of deterministic replay at its best.</p>
+      <p>For non-deterministic computation, if we don't log non-deterministic
+        inputs, we can't replay past computations. Such a non-deterministic program
+        may drive us crazy with bugs that occasionally manifest themselves, but
+        that we can never catch under the debugger, because it happens to take
+        other paths then.</p>
+      <p>If we are willing to pay the instrumentation costs to log these inputs,
+        then we can deterministically replay the remainder of the computation
+        under a debugger, and watch a previous bug occur under the scrutiny of
+        the debugger. Unfortunately, these instrumentation costs can be large.
+        Fortunately, tricks #1 (commit) or #2 (fault tolerance) would already
+        have us pay these costs, because they're still cheaper than the alternative.</p>
+      <p>For example, one can combine these techniques to build a server that
+        is extremely resilient to its own bugs, and that really helps in finding
+        these bugs. (We came up with this plan originally at EC, but never came
+        close to implementing it.) The server process occasionally checkpoints,
+        and also logs all non-deterministic inputs needed to replay it from one
+        checkpoint to the next. It keeps at most three checkpoints on disk simultaneously.
+        In order from oldest to youngest:</p>
+      <ul>
+        <li> a) the one committed to. </li>
+        <li>b) the one being checked. </li>
+        <li>c) the one being written out.</li>
+      </ul>
+      <p>as well as the two log-sequences a..b and b..c. Unlike scenario #1, the
+        log doesn't let us commit at finer granularity that a full checkpoint.
+        Rather, while it typically allows us to recover (from a crash) at this
+        fine granularity, our only real commitment is to checkpoint #a. Once #b
+        is completely written out, it is read-in/revived in a checking process
+        which asks all the objects which can to check their internal consistency.
+        If all these objects say everything's cool, we commit to #b and throw
+        away #a and a..b. If we're not cool, then we save away #a, a..b, and #b
+        for debugging, crash the server, revive it from #a, and continue the service
+        forward. </p>
+      <p>This time, we hope that non-determinism will allow the live service to
+        avoid hitting the bug again. We can even use our knowledge of where the
+        non-determinism lies to ensure that other correct choices are made whenever
+        possible, to make path divergence more likely. The very irreproducibility
+        of non-deterministic bugs, that's normally such a liability to robustness,
+        is potentially an asset for staying in operation while we figure out what's
+        wrong.</p>
+      <p>To do this figuring out, we've got #a, which reported itself to be consistent,
+        or we wouldn't have committed to it. We've got #b, with a known inconsistency.
+        And we have the a..b log, which should allow us to scrutinize the computation
+        as it proceeds from an apparently consistent state to an inconsistent
+        one. Given the <i><b><font color="#009000">E</font></b></i> model that non-deterministic inputs only enter as discrete
+        events on the event loop, and given enough spare cycles, one could even
+        automatically isolate, with the self-consistency checking, the event at
+        which inconsistency becomes evident. Only the execution of this individual
+        event would then need to be stepped through manually in a debugger.</p>
+      <p>( <a href="debugging.html">Read More...</a> )</p>
+      <h3> 5) Contract Verification.</h3>
+      <p>This is a new discovery, and is the most interesting. <font color="#FF0000">***
+        to be written</font></p>
+      <p>( <a href="behavior-verify.html">Read More...</a> )</p>
+      <hr>
+      <h1>Hash Tables and Free Will</h1>
+      <p> <font color="#FF0000">*** to be written. Some notes:</font></p>
+      <p>I don't expect to do any of these immediately, but #3 (confinement) and
+        #5 (contract verification) do become relevant in the near future. It turns
+        out that #5 has a lot in common with #1 (checkpoint), #2 (fault tolerance),
+        and #4 (debugging), but #3 (confinement) is curiously different. To do
+        any of these, we need to do a good job identifying all the hidden sources
+        of non-determinism. I thought I had, but recently hit a rude surprise:
+        hash table enumeration order. Do KeyKOS and EROS also have this covert
+        channel? (I think so.) Was this channel identified? Are it's dangers understood?</p>
+      <p>To plug this, I came up with a scheme, refined by Ping, to make hash
+        tables deterministic. It's cheap but it's not free. However, it does force
+        a non-upwards compatible change to the determination of whether two ConstMaps
+        are the same. In all other ways, the proposed hash tables are upwards
+        compatible to the current ones. I look forward to writing this up.</p>
+      <p>( <a href="challenges.html">Read More...</a> )</p>
+      <!-- #EndEditable --></TD>
+    <TD WIDTH="10%" rowspan="2" align="right" valign="bottom"> </TD>
+  </TR>
+  <TR VALIGN="TOP"> 
+    <TD WIDTH="10%">&nbsp;</TD>
+    <TD> <hr>
+      Unless stated otherwise, all text on this page which is either unattributed 
+      or by Mark S. Miller is hereby placed in the public domain. 
+        <div align="center"> 
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr> 
+            <td> <table align="left" cellpadding="2">
+                <tr> 
+                  <td valign="top" align="left" colspan="3"><a href="../../../index.html"><img src="../../../images/e-lambda.gif" width="32" height="32" border="0" alt="ERights Home"></a> 
+                    <!-- #BeginEditable "Path2" -->/&nbsp;<a href="../../index.html">elang</a>&nbsp;/&nbsp;<a href="../index.html">concurrency</a>&nbsp;/&nbsp;<a href="index.html">determinism</a>&nbsp;<!-- #EndEditable --></td>
+                </tr>
+                <tr> 
+                  <td valign="top" align="right"><!-- #BeginEditable "PrevButton2" --><img src="../../../images/prev-gray.gif" width="64" height="32" alt="No Previous Sibling"><!-- #EndEditable --></td>
+                  <td valign="bottom" align="left"><!-- #BeginEditable "FirstButton2" --><!-- #EndEditable --></td>
+                  <td valign="top" align="left"><!-- #BeginEditable "NextButton2" --><a href="challenges.html" title="On to: Challenges for Determinism"><img src="../../../images/next.gif" width="64" height="32" alt="On to: Challenges for Determinism" border="0"></a><!-- #EndEditable --></td>
+                </tr>
+              </table></td>
+            <td> <table border="3" align="center" cellpadding="6" cellspacing="3">
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../elib/index.html">ELib</a> 
+                      &nbsp;&nbsp; <a href="../../index.html">E Language</a> 
+                      &nbsp;&nbsp; <a href="../../../smart-contracts/index.html">Smart 
+                      Contracts</a> &nbsp;&nbsp; <a href="../../../related.html">Related</a> 
+                      </font></div></td>
+                </tr>
+                <tr> 
+                  <td> <div align="center"><font size="-1"><a href="../../../download/index.html">Download</a> 
+                      &nbsp;&nbsp; <a href="http://mumble.net/e/faq.html">FAQ</a> 
+                      &nbsp;&nbsp; <a href="../../../javadoc/index.html">API</a> &nbsp;&nbsp; 
+                      <a href="http://www.eros-os.org/pipermail/e-lang/">Mail 
+                      Archive</a> &nbsp;&nbsp; <a href="../../../donate.html">Donate</a></font></div></td>
+                </tr>
+              </table></td>
+            <td><div align="right"> 
+                <p><a href="https://sourceforge.net/tracker/?func=add&amp;group_id=75274&amp;atid=551529"><i>report 
+                  bug</i></a> (including <a href="http://validator.w3.org/check/referer">invalid 
+                  html</a>) </p>
+                <p><a href="http://www.epic.org/crypto/"><img src="../../../images/key.gif" width="37" height="19" alt="Golden Key Campaign" border="0"></a>&nbsp;<a href="http://www.eff.org/br/"><img src="../../../images/ribbon.gif" width="18" height="30"
+alt="Blue Ribbon Campaign" border="0"></a></div></td>
+          </tr>
+          
+        </table>
+      </div></TD>
+  </TR>
+</TABLE>
+</BODY>
+<!-- #EndTemplate --></HTML>

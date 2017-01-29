@@ -1,0 +1,68 @@
+
+updoc: started
+
+skipping c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/acks-n-refs.html
+skipping c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/conclusions.html
+c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/data-e-manual.html:..................
+c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/deconstructing.html:...........................................
+skipping c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/entry-security.html
+c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/exit-security.html:......
+expr: <ehome:eprops.txt>.getText().size()
+original and new value differ
+original value: 25108
+     new value: 24338
+.......
+expr: <stolenHome:eprops.txt>.getText().size()
+original and new value differ
+original value: 25108
+     new value: 24338
+....
+expr: dir.get("eprops.txt").getText().size()
+original and new value differ
+original value: 25108
+     new value: 24338
+................
+expr: eprops2.getText().size()
+original and new value differ
+original value: 25108
+     new value: 24338
+..........
+ignoring c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/images/depiction.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/images/depiction.sdr
+ignoring c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/images/lit-real.gif
+ignoring c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/images/lit-real.sdr
+skipping c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/index.html
+skipping c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/intro.html
+skipping c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/outtakes.html
+c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/recog-n-build.html:.......
+skipping c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/record.txt
+c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/related.html:.....
+c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/report.txt:
+c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/subgraph-security.html:.................
+expr: neprops.getText().size()
+original and new value differ
+original value: 25108
+     new value: 24338
+...
+skipping c:/Documents and Settings/MILLERM1/e/doc/data/serial/jhu-paper/upgrade.html
+[8257, "1.1%", "ok org.erights.e.tools.html.htmlTokenizer$htmlTokenizer__C$1#run/0"]
+[8261, "1.1%", "ok EMap#get(Object, Object)"]
+[8261, "1.1%", "ok FirstCharSplitter#run(String)"]
+[8261, "1.1%", "ok org.erights.e.tools.text.first__quasiParser$first__quasiParser__C#matchMaker/1"]
+[8520, "1.2%", "ok SimpleQuasiParser#valueMaker(Twine)"]
+[8520, "1.2%", "ok Substituter#substitute(ConstList)"]
+[10704, "1.5%", "ok EList#size()"]
+[11355, "1.5%", "ok static BooleanSugar#not()"]
+[15338, "2.1%", "ok FirstCharSplitter#findIn(String)"]
+[15338, "2.1%", "ok org.erights.e.tools.text.first__quasiParser$first__quasiParser__C$FirstCharMatchMaker__C#matchBind/2"]
+[15368, "2.1%", "ok static IntegerSugar#negate()"]
+[18445, "2.5%", "ok FlexList#push(Object)"]
+[20874, "2.8%", "ok Twine#run(int, int)"]
+[26978, "3.7%", "ok Equalizer#sameEver(Object, Object)"]
+[27666, "3.8%", "ok org.erights.e.tools.html.html2updoc$findTag__C$1#run/2"]
+[63938, "8.7%", "ok SimpleQuasiParser#matchMaker(Twine)"]
+[63938, "8.7%", "ok Substituter#matchBind(ConstList, Object)"]
+[141807, "19.3%", "ok static ConstList#match(String, ConstList)"]
+[142326, "19.4%", "ok ConstList#__printOn(TextWriter)"]
+Call site cache hits: 526596 misses: 8731 (98%)
+Run after initialization: 55680 ms

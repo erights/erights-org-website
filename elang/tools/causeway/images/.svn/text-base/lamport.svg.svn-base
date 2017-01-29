@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="202.81639"
+   height="281.13025"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   sodipodi:docbase="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited"
+   sodipodi:docname="lamport.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   version="1.0"
+   inkscape:export-filename="/Users/erights/e/doc/elang/tools/causeway/images/lamport.png"
+   inkscape:export-xdpi="1200"
+   inkscape:export-ydpi="1200">
+  <defs
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 372.04724 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1052.3622 : 372.04724 : 1"
+       inkscape:persp3d-origin="526.18109 : 248.03149 : 1"
+       id="perspective76" />
+    <marker
+       inkscape:stockid="Dot_m"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Dot_m"
+       style="overflow:visible">
+      <path
+         id="path3299"
+         d="M -2.5,-1 C -2.5,1.76 -4.74,4 -7.5,4 C -10.26,4 -12.5,1.76 -12.5,-1 C -12.5,-3.76 -10.26,-6 -7.5,-6 C -4.74,-6 -2.5,-3.76 -2.5,-1 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none;marker-end:none"
+         transform="matrix(0.4,0,0,0.4,2.96,0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Mend"
+       style="overflow:visible">
+      <path
+         id="path3261"
+         style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.97309,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z"
+         transform="scale(-0.6,-0.6)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend"
+       style="overflow:visible">
+      <path
+         id="path3243"
+         d="M 0,0 L 5,-5 L -12.5,0 L 5,5 L 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend"
+       style="overflow:visible">
+      <path
+         id="path3237"
+         d="M 0,0 L 5,-5 L -12.5,0 L 5,5 L 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10000"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.3705699"
+     inkscape:cx="169.22233"
+     inkscape:cy="85.5"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     inkscape:window-width="1393"
+     inkscape:window-height="856"
+     inkscape:window-x="1460"
+     inkscape:window-y="42"
+     width="1052.3622px"
+     height="744.09448px"
+     showgrid="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid2448"
+       visible="true"
+       enabled="true" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-192.48366,-110.08559)">
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="191.39381"
+       y="119.10229"
+       id="text2186"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999"><tspan
+         sodipodi:role="line"
+         id="tspan2194"
+         x="191.39381"
+         y="119.10229"
+         style="font-family:Century Schoolbook">p1</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text2196"
+       y="169.10229"
+       x="191.39381"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999"><tspan
+         style="font-family:Century Schoolbook"
+         y="169.10229"
+         x="191.39381"
+         id="tspan2198"
+         sodipodi:role="line">p2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="191.39381"
+       y="213.10229"
+       id="text2200"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999"><tspan
+         sodipodi:role="line"
+         id="tspan2202"
+         x="191.39381"
+         y="213.10229"
+         style="font-family:Century Schoolbook">p3</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text2204"
+       y="263.10229"
+       x="191.39381"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999"><tspan
+         style="font-family:Century Schoolbook"
+         y="263.10229"
+         x="191.39381"
+         id="tspan2206"
+         sodipodi:role="line">p4</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text2208"
+       y="119.10229"
+       x="295.3938"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999"><tspan
+         style="font-family:Century Schoolbook"
+         y="119.10229"
+         x="295.3938"
+         id="tspan2210"
+         sodipodi:role="line">q1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="295.3938"
+       y="169.10229"
+       id="text2212"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999"><tspan
+         sodipodi:role="line"
+         id="tspan2214"
+         x="295.3938"
+         y="169.10229"
+         style="font-family:Century Schoolbook">q3</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text2216"
+       y="213.10229"
+       x="295.3938"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999"><tspan
+         style="font-family:Century Schoolbook"
+         y="213.10229"
+         x="295.3938"
+         id="tspan2218"
+         sodipodi:role="line">q5</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="295.3938"
+       y="263.10229"
+       id="text2220"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999"><tspan
+         sodipodi:role="line"
+         id="tspan2222"
+         x="295.3938"
+         y="263.10229"
+         style="font-family:Century Schoolbook">q7</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="383.3938"
+       y="119.10229"
+       id="text2224"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999"><tspan
+         sodipodi:role="line"
+         id="tspan2226"
+         x="383.3938"
+         y="119.10229"
+         style="font-family:Century Schoolbook">r1</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text2228"
+       y="169.10229"
+       x="383.3938"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999"><tspan
+         style="font-family:Century Schoolbook"
+         y="169.10229"
+         x="383.3938"
+         id="tspan2230"
+         sodipodi:role="line">r2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="383.3938"
+       y="213.10229"
+       id="text2232"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999"><tspan
+         sodipodi:role="line"
+         id="tspan2234"
+         x="383.3938"
+         y="213.10229"
+         style="font-family:Century Schoolbook">r3</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text2236"
+       y="263.10229"
+       x="383.3938"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999"><tspan
+         style="font-family:Century Schoolbook"
+         y="263.10229"
+         x="383.3938"
+         id="tspan2238"
+         sodipodi:role="line">r4</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text2240"
+       y="145.10229"
+       x="295.3938"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999"><tspan
+         style="font-family:Century Schoolbook"
+         y="145.10229"
+         x="295.3938"
+         id="tspan2242"
+         sodipodi:role="line">q2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="295.3938"
+       y="189.10229"
+       id="text2244"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999"><tspan
+         sodipodi:role="line"
+         id="tspan2246"
+         x="295.3938"
+         y="189.10229"
+         style="font-family:Century Schoolbook">q4</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text2248"
+       y="239.10229"
+       x="295.3938"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999"><tspan
+         style="font-family:Century Schoolbook"
+         y="239.10229"
+         x="295.3938"
+         id="tspan2250"
+         sodipodi:role="line">q6</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.03416991px;stroke-linecap:butt;stroke-linejoin:miter;marker-start:none;marker-end:url(#Arrow1Mend);stroke-opacity:1"
+       d="M 210.67256,115.57041 L 210.67256,268.94042"
+       id="path2254"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <path
+       id="path2256"
+       d="M 288.65651,115.57041 L 288.65651,268.94042"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.03416991px;stroke-linecap:butt;stroke-linejoin:miter;marker-start:none;marker-end:url(#Arrow1Mend);stroke-opacity:1"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.03416991px;stroke-linecap:butt;stroke-linejoin:miter;marker-start:none;marker-end:url(#Arrow1Mend);stroke-opacity:1"
+       d="M 376.6384,115.57041 L 376.6384,268.94042"
+       id="path2258"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#007f00;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4612"
+       width="10.377459"
+       height="42.858334"
+       x="205.58005"
+       y="110.88265"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <rect
+       y="159.07797"
+       x="205.77536"
+       height="87.441223"
+       width="9.9868269"
+       id="rect5583"
+       style="fill:none;fill-opacity:1;stroke:#007f00;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#007f00;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect5585"
+       width="10.627411"
+       height="23.120054"
+       x="205.45506"
+       y="252.75768"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <rect
+       y="110.71059"
+       x="283.40799"
+       height="21.786493"
+       width="10.721581"
+       id="rect6556"
+       style="fill:none;fill-opacity:1;stroke:#007f00;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#007f00;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect6558"
+       width="9.8398066"
+       height="110.85176"
+       x="283.84888"
+       y="135.59392"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <rect
+       y="252.75768"
+       x="283.45508"
+       height="23.120054"
+       width="10.627411"
+       id="rect6560"
+       style="fill:none;fill-opacity:1;stroke:#007f00;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#007f00;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect6562"
+       width="9.9119864"
+       height="84.510918"
+       x="371.81277"
+       y="111.11539"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <rect
+       y="202.09575"
+       x="371.60428"
+       height="44.594528"
+       width="10.32899"
+       id="rect6564"
+       style="fill:none;fill-opacity:1;stroke:#007f00;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#007f00;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect6566"
+       width="10.627411"
+       height="23.120054"
+       x="371.45508"
+       y="252.75768"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#00007f;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#Dot_m);marker-end:url(#Arrow2Mend);stroke-miterlimit:4;stroke-dasharray:2, 1;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 210.16615,116.28732 L 288.21389,141.97702"
+       id="path3431"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <path
+       id="path4602"
+       d="M 288.69135,117.00119 L 211.11643,164.82071"
+       style="fill:none;fill-rule:evenodd;stroke:#00007f;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#Dot_m);marker-end:url(#Arrow2Mend);stroke-miterlimit:4;stroke-dasharray:2, 1;stroke-dashoffset:0;stroke-opacity:1"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;fill-rule:evenodd;stroke:#00007f;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#Dot_m);marker-end:url(#Arrow2Mend);stroke-miterlimit:4;stroke-dasharray:2, 1;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 288.69135,117.00119 L 376.01934,259.40788"
+       id="path4604"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <path
+       id="path4606"
+       d="M 376.4968,166.61484 L 289.28469,259.76481"
+       style="fill:none;fill-rule:evenodd;stroke:#00007f;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#Dot_m);marker-end:url(#Arrow2Mend);stroke-miterlimit:4;stroke-dasharray:2, 1;stroke-dashoffset:0;stroke-opacity:1"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;fill-rule:evenodd;stroke:#00007f;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#Dot_m);marker-end:url(#Arrow2Mend);stroke-miterlimit:4;stroke-dasharray:2, 1;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 288.69135,187.67387 L 376.01934,210.15116"
+       id="path4608"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <path
+       id="path4610"
+       d="M 287.97748,210.8745 L 211.11643,259.05094"
+       style="fill:none;fill-rule:evenodd;stroke:#00007f;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#Dot_m);marker-end:url(#Arrow2Mend);stroke-miterlimit:4;stroke-dasharray:2, 1;stroke-dashoffset:0;stroke-opacity:1"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="250.09224"
+       y="298.95654"
+       id="text8506"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999"><tspan
+         sodipodi:role="line"
+         id="tspan8508"
+         x="250.09224"
+         y="298.95654">process order</tspan><tspan
+         sodipodi:role="line"
+         x="250.09224"
+         y="313.95654"
+         id="tspan8514">message order</tspan><tspan
+         sodipodi:role="line"
+         x="250.09224"
+         y="328.95654"
+         id="tspan8510">send event</tspan><tspan
+         sodipodi:role="line"
+         x="250.09224"
+         y="343.95654"
+         id="tspan8512">receive event</tspan><tspan
+         sodipodi:role="line"
+         x="250.09224"
+         y="358.95654"
+         id="tspan8516">turn</tspan></text>
+    <path
+       id="path8518"
+       d="M 245.53412,287.93035 L 245.53412,300.93504"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.03416991px;stroke-linecap:butt;stroke-linejoin:miter;marker-start:none;marker-end:url(#Arrow1Mend);stroke-opacity:1"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <path
+       id="path8520"
+       d="M 228.87608,307.25926 L 247.31663,314.1054"
+       style="fill:none;fill-rule:evenodd;stroke:#00007f;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#Dot_m);marker-end:url(#Arrow2Mend);stroke-miterlimit:4;stroke-dasharray:2, 1;stroke-dashoffset:0;stroke-opacity:1"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;fill-rule:evenodd;stroke:#00007f;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#Dot_m);marker-end:none;stroke-miterlimit:4;stroke-dasharray:2, 1;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 228.87608,321.25926 L 247.31663,328.1054"
+       id="path8522"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <path
+       id="path8524"
+       d="M 228.87608,335.25926 L 247.31663,342.1054"
+       style="fill:none;fill-rule:evenodd;stroke:#00007f;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker-start:none;marker-end:url(#Arrow2Mend);stroke-miterlimit:4;stroke-dasharray:2, 1;stroke-dashoffset:0;stroke-opacity:1"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <rect
+       y="349.59448"
+       x="235.70186"
+       height="10.04493"
+       width="6.7817855"
+       id="rect8526"
+       style="fill:none;fill-opacity:1;stroke:#007f00;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <path
+       sodipodi:nodetypes="cc"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.03416991px;stroke-linecap:butt;stroke-linejoin:miter;marker-start:none;marker-end:none;stroke-opacity:1"
+       d="M 247.53412,337.93035 L 247.53412,346.70485"
+       id="path9497"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <path
+       id="path10468"
+       d="M 228.87096,317.44847 L 228.87096,326.22297"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.03416991px;stroke-linecap:butt;stroke-linejoin:miter;marker-start:none;marker-end:none;stroke-opacity:1"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Documents and Settings\Terry\My Documents\causeway-paper-revisited\lamport.png"
+       inkscape:export-xdpi="629.35999"
+       inkscape:export-ydpi="629.35999" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+       x="15.322094"
+       y="278.63416"
+       id="text2619"
+       sodipodi:linespacing="100%"
+       transform="translate(192.48366,110.08559)"><tspan
+         sodipodi:role="line"
+         id="tspan2621"
+         x="15.322094"
+         y="278.63416">Figure 1: Lamport diagram</tspan></text>
+  </g>
+</svg>
